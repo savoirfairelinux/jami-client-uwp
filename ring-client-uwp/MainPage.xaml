@@ -1,0 +1,44 @@
+﻿<!-- **********************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/> .  *
+*********************************************************************** -->
+<Page x:Class="RingClientUWP.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:local="using:ring_client_uwp"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d">
+
+    <SplitView x:Name="_outerSplitView_"
+               IsPaneOpen="False">
+        <SplitView.Pane>
+            <Frame x:Name="_debugPanel_"/>
+        </SplitView.Pane>
+        <SplitView.Content>
+            <SplitView x:Name="_innerSplitView_"
+                       IsPaneOpen="False"
+                       DisplayMode="CompactInline">
+                <SplitView.Pane>
+                    <Frame x:Name="_leftPanel_"/>
+                </SplitView.Pane>
+                <SplitView.Content>
+                    <Frame x:Name="_mainframe_"/>
+                </SplitView.Content>
+            </SplitView>
+        </SplitView.Content>
+    </SplitView>
+</Page>
