@@ -1,0 +1,67 @@
+﻿<!-- **********************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/> .  *
+*********************************************************************** -->
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+<!-- general styles section -->
+    <Style x:Key="TextStyle1"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="20"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+    </Style>
+
+<!-- styles for the console -->
+    <Style x:Key="ConsoleScrollViewerStyle"
+           TargetType="ScrollViewer">
+        <Setter Property="Background"
+                Value="Black"/>
+    </Style>
+    <Style x:Key="ConsoleTextStyle1"
+           TargetType="RichTextBlock">
+        <Setter Property="FontSize"
+                Value="12"/>
+        <Setter Property="Foreground"
+                Value="GreenYellow"/>
+    </Style>
+    <Style x:Key="ButtonSendCmdStyle"
+           TargetType="Button">
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Width"
+                Value="50"/>
+        <Setter Property="Height"
+                Value="30"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+        <Setter Property="FontSize"
+                Value="17"/>
+        <Setter Property="Content"
+                Value="&#xE751;"/>
+        <Setter Property="Background"
+                Value="Transparent"/>
+    </Style>
+    <Style x:Key="ConsoleTextBoxStyle"
+           TargetType="TextBox">
+        <Setter Property="Height"
+                Value="30"/>
+    </Style>
+
+</ResourceDictionary>
