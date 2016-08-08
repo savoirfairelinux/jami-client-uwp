@@ -1,0 +1,122 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Common">
+      <UniqueIdentifier>e1354e5c-d116-4970-86d8-c5b0c0ca4591</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets">
+      <UniqueIdentifier>dcac1771-4f06-4a41-b772-3f502f0f39da</UniqueIdentifier>
+      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
+    </Filter>
+    <Filter Include="Views">
+      <UniqueIdentifier>{1d1ef61d-6e71-458f-9bb7-45441e9a94d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Dlls">
+      <UniqueIdentifier>{06835bd7-8bac-406a-8651-007b82da36ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{f6781cdb-0686-4a19-a1b8-3dc7df5efd56}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en-US">
+      <UniqueIdentifier>{70f7b244-b108-4bf1-8b6d-679a424b973f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr-Fr">
+      <UniqueIdentifier>{d42f40f3-a5fb-40d3-83b9-2c816189dc77}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Styles">
+      <UniqueIdentifier>{38929305-13e6-4beb-9e52-4020da29e403}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="App.xaml.cpp" />
+    <ClCompile Include="MainPage.xaml.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="SmartListPage.xaml.cpp" />
+    <ClCompile Include="WelcomePage.xaml.cpp" />
+    <ClCompile Include="RingConsolePage.xaml.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="App.xaml.h" />
+    <ClInclude Include="MainPage.xaml.h" />
+    <ClInclude Include="SmartListPage.xaml.h" />
+    <ClInclude Include="WelcomePage.xaml.h" />
+    <ClInclude Include="RingConsolePage.xaml.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ring-client-uwp_TemporaryKey.pfx" />
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainPage.xaml" />
+    <Page Include="WelcomePage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="SmartListPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="Styles.xaml">
+      <Filter>Styles</Filter>
+    </Page>
+    <Page Include="RingConsolePage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="localization\US-en\Resources.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\Fr-fr\Resources.resw">
+      <Filter>Strings\fr-Fr</Filter>
+    </PRIResource>
+  </ItemGroup>
+</Project>
