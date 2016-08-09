@@ -17,7 +17,7 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "SmartListPage.xaml.h"
+#include "SmartPanel.xaml.h"
 #include "RingConsolePage.xaml.h"
 #include "WelcomePage.xaml.h"
 
@@ -47,11 +47,21 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
-    _mainframe_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
-    _leftPanel_->Navigate(TypeName(RingClientUWP::Views::SmartListPage::typeid));
-    _debugPanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePage::typeid));
-
+    /* set the title bar */
     Window::Current->SetTitleBar(_titleBar_);
+
+    /* populate the frames */
+    _welcomeframe_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
+    RingClientUWP::Views::WelcomePage^ welcomePage = dynamic_cast<WelcomePage^>(_welcomeframe_->Content);
+    _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
+    RingClientUWP::Views::SmartPanel^ smartListPage = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
+    _debugPanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePage::typeid));
+    RingClientUWP::Views::RingConsolePage^ ringConsolePage = dynamic_cast<RingConsolePage^>(_debugPanel_->Content);
+
+    /* connect events */
+    smartListPage->toggleSmartPan += ref new ToggleSmartPan([this]() {
+        _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
+    });
 }
 
 void
@@ -66,4 +76,6 @@ MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
 void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
+    SmartPanel::Mode mode = (_innerSplitView_->IsPaneOpen) ? SmartPanel::Mode::Normal : SmartPanel::Mode::Minimized;
+    dynamic_cast<SmartPanel^>(_smartPanel_->Content)->setMode(mode);
 }

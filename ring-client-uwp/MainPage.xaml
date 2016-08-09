@@ -55,13 +55,21 @@
         </SplitView.Pane>
         <SplitView.Content>
             <SplitView x:Name="_innerSplitView_"
-                       IsPaneOpen="False"
+                       IsPaneOpen="True"
+                       CompactPaneLength="60"
                        DisplayMode="CompactInline">
                 <SplitView.Pane>
-                    <Frame x:Name="_leftPanel_"/>
+                    <Frame x:Name="_smartPanel_"/>
                 </SplitView.Pane>
                     <SplitView.Content>
-                        <Frame x:Name="_mainframe_"/>
+                        <StackPanel>
+                        <Frame x:Name="_welcomeframe_"
+                               Visibility="Visible"/>
+                        <Frame x:Name="_instantMessageframe_"
+                               Visibility="Collapsed"/>
+                        <Frame x:Name="_videoframe_"
+                               Visibility="Collapsed"/>
+                        </StackPanel>
                     </SplitView.Content>
             </SplitView>
         </SplitView.Content>
