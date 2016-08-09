@@ -19,13 +19,17 @@
 
 #include "MainPage.xaml.h"
 
+using namespace Concurrency;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
+using namespace Windows::UI;
+using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::ViewManagement;
+
 
 using namespace RingClientUWP;
 
@@ -34,8 +38,34 @@ App::App()
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
 
     ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
-    ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(320, 800);
+    ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(400, 800);
 
+
+}
+
+void RingClientUWP::App::TOTO(Object ^ sender, Windows::UI::Core::VisibilityChangedEventArgs ^ e)
+{
+    if (!e->Visible) {
+        //Window^ toto = ref new Window();
+        create_task(CoreApplication::CreateNewView()->Dispatcher->RunAsync(CoreDispatcherPriority::Normal, ref new DispatchedHandler([]()
+        {
+            CoreWindow::GetForCurrentThread();
+            auto rootFrame = ref new Windows::UI::Xaml::Controls::Frame();
+            Window::Current->Activate();
+        })));
+    }
+
+
+
+
+    /* auto m_DPI = DisplayInformation::GetForCurrentView()->LogicalDpi;
+     float W = (float(200) * 96.f / m_DPI);
+     float H = (float(100) * 96.f / m_DPI);
+
+     auto desiredSize = Size(W, H);
+
+     ApplicationView::GetForCurrentView()->SetPreferredMinSize(desiredSize);
+     ApplicationView::GetForCurrentView()->TryResizeView(desiredSize);*/
 }
 
 void
@@ -51,12 +81,13 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
 
         Window::Current->Content = rootFrame;
         Window::Current->Activate();
+        Window::Current->VisibilityChanged += ref new Windows::UI::Xaml::WindowVisibilityChangedEventHandler(this, &App::TOTO);
     } else
         rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
 
     auto m_DPI = DisplayInformation::GetForCurrentView()->LogicalDpi;
 
-    float W = (float(320) * 96.f / m_DPI);
+    float W = (float(400) * 96.f / m_DPI);
     float H = (float(800) * 96.f / m_DPI);
 
     auto desiredSize = Size(W, H);
@@ -64,6 +95,8 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     ApplicationView::GetForCurrentView()->SetPreferredMinSize(desiredSize);
     ApplicationView::GetForCurrentView()->TryResizeView(desiredSize);
     CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::Transparent;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::Transparent;
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::LightBlue;
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
+    ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }
