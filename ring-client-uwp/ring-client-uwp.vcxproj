@@ -157,6 +157,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Account.h" />
+    <ClInclude Include="AccountsViewModel.h" />
+    <ClInclude Include="ContactsViewModel.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -164,6 +167,7 @@
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Contact.h" />
     <ClInclude Include="RingConsolePage.xaml.h">
       <DependentUpon>RingConsolePage.xaml</DependentUpon>
     </ClInclude>
@@ -214,6 +218,9 @@
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\Users\user\Documents\contactAvatar.png" />
+    <Image Include="..\..\..\Users\user\Documents\face.png" />
+    <Image Include="..\..\..\Users\user\Documents\qrcode.png" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
@@ -223,10 +230,13 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Account.cpp" />
+    <ClCompile Include="AccountsViewModel.cpp" />
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="ContactsViewModel.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
@@ -238,6 +248,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Contact.cpp" />
     <ClCompile Include="RingConsolePage.xaml.cpp">
       <DependentUpon>RingConsolePage.xaml</DependentUpon>
     </ClCompile>
