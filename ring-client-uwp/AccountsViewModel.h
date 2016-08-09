@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,16 +16,41 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "SmartListPage.g.h"
+using namespace Platform::Collections;
 
 namespace RingClientUWP
 {
-namespace Views
+
+namespace ViewModel {
+public ref class AccountsViewModel sealed
 {
-public ref class SmartListPage sealed
-{
-public:
-    SmartListPage();
+internal:
+    /* singleton */
+    static property AccountsViewModel^ instance
+    {
+        AccountsViewModel^ get()
+        {
+            static AccountsViewModel^ instance_ = ref new AccountsViewModel();
+            return instance_;
+        }
+    }
+
+    /* functions */
+
+    /* properties */
+    property Vector<Account^>^ accountsList
+    {
+        Vector<Account^>^ get()
+        {
+            return accountsList_;
+        }
+    }
+
+    /* events */
+
+private:
+    AccountsViewModel(); // singleton
+    Vector<Account^>^ accountsList_;
 };
 }
 }

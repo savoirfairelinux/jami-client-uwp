@@ -1,6 +1,7 @@
-﻿<!-- **********************************************************************
+#pragma once
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -13,17 +14,28 @@
 * GNU General Public License for more details.                            *
 *                                                                         *
 * You should have received a copy of the GNU General Public License       *
-* along with this program.  If not, see <http://www.gnu.org/licenses/> .  *
-*********************************************************************** -->
-<Page x:Class="RingClientUWP.Views.SmartListPage"
-      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:RingClientUWP"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      mc:Ignorable="d">
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+**************************************************************************/
+using namespace Platform;
+using namespace Windows::UI::Xaml::Data;
 
-    <StackPanel>
-    </StackPanel>
+namespace RingClientUWP
+{
+public ref class Contact sealed : public INotifyPropertyChanged
+{
+public:
+    Contact(String^ name, String^ ringID);
 
-</Page>
+
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    property String^ name_;
+    property String^ ringID_;
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+
+};
+}
+

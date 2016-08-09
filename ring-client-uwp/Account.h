@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,16 +16,26 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "RingConsolePage.g.h"
+using namespace Platform;
+using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-namespace Views
-{
-public ref class RingConsolePage sealed
+public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    RingConsolePage();
+    Account(String^ name, String^ ringID);
+
+
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    property String^ name_;
+    property String^ ringID_;
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+
 };
 }
-}
+

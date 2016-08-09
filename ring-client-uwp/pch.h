@@ -17,4 +17,12 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 
+/* standard system include files. */
+#include <ppltasks.h>
+
+/* required by generated headers. */
 #include "App.xaml.h"
+#include "Account.h"
+#include "AccountsViewModel.h"
+#include "Contact.h"
+#include "ContactsViewModel.h"
