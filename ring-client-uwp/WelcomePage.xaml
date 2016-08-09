@@ -30,7 +30,7 @@
                    Style="{StaticResource TextStyle1}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   TextWrapping="Wrap" />
+                   TextWrapping="Wrap"/>
     </StackPanel>
 
 </Page>
