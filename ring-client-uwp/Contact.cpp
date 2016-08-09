@@ -1,7 +1,6 @@
-﻿#pragma once
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,13 +15,32 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#include "pch.h"
 
-/* standard system include files. */
-#include <ppltasks.h>
-
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
 #include "Contact.h"
-#include "ContactsViewModel.h"
+
+using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Windows::UI::Core;
+
+using namespace RingClientUWP;
+
+Contact::Contact(String^ name,
+                 String^ ringID)
+{
+    name_ = name;
+    ringID_ = ringID;
+}
+
+void
+Contact::NotifyPropertyChanged(String^ propertyName)
+{
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([this, propertyName]()
+    {
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+
+    }));
+}

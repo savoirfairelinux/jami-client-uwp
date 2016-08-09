@@ -1,5 +1,5 @@
 ﻿#pragma once
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
