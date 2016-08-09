@@ -34,8 +34,7 @@ App::App()
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
 
     ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
-    ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(320, 800);
-
+    ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(400, 800);
 }
 
 void
@@ -56,13 +55,13 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
 
     auto m_DPI = DisplayInformation::GetForCurrentView()->LogicalDpi;
 
-    float W = (float(320) * 96.f / m_DPI);
+    float W = (float(400) * 96.f / m_DPI);
     float H = (float(800) * 96.f / m_DPI);
 
     auto desiredSize = Size(W, H);
 
     ApplicationView::GetForCurrentView()->SetPreferredMinSize(desiredSize);
     ApplicationView::GetForCurrentView()->TryResizeView(desiredSize);
-    CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
+    /// CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
 
 }

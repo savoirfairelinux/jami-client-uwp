@@ -48,11 +48,21 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
-    _mainframe_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
-    _leftPanel_->Navigate(TypeName(RingClientUWP::Views::SmartListPage::typeid));
-    _debugPanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePage::typeid));
-
+    /* set the title bar */
     Window::Current->SetTitleBar(_titleBar_);
+
+    /* populate the frames */
+    _mainframe_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
+    RingClientUWP::Views::WelcomePage^ welcomePage = dynamic_cast<WelcomePage^>(_mainframe_->Content);
+    _leftPanel_->Navigate(TypeName(RingClientUWP::Views::SmartListPage::typeid));
+    RingClientUWP::Views::SmartListPage^ smartListPage = dynamic_cast<SmartListPage^>(_leftPanel_->Content);
+    _debugPanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePage::typeid));
+    RingClientUWP::Views::RingConsolePage^ ringConsolePage = dynamic_cast<RingConsolePage^>(_debugPanel_->Content);
+
+    /* connect events */
+    smartListPage->toggleSmartPan += ref new ToggleSmartPan([this]() {
+        _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
+    });
 }
 
 void

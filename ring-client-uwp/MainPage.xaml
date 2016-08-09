@@ -48,7 +48,8 @@
         </SplitView.Pane>
         <SplitView.Content>
             <SplitView x:Name="_innerSplitView_"
-                       IsPaneOpen="False"
+                       IsPaneOpen="True"
+                       CompactPaneLength="60"
                        DisplayMode="CompactInline">
                 <SplitView.Pane>
                     <Frame x:Name="_leftPanel_"/>
