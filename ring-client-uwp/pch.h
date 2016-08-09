@@ -18,3 +18,9 @@
 **************************************************************************/
 
 #include "App.xaml.h"
+
+/* required by generated headers */
+#include "Account.h"
+#include "AccountsViewModel.h"
+#include "Contact.h"
+#include "ContactsViewModel.h"

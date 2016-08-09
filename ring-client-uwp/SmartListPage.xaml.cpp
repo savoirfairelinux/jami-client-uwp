@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+﻿/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
@@ -21,9 +21,15 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
+
 
 SmartListPage::SmartListPage()
 {
     InitializeComponent();
+
+    _accountList_->ItemsSource = AccountsViewModel::instance->accountsList;
+    _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
+
 }
 

@@ -1,5 +1,5 @@
 ﻿#pragma once
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
@@ -17,15 +17,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 #include "SmartListPage.g.h"
-
 namespace RingClientUWP
 {
+
+delegate void CloseSmartList();
+delegate void SumonMessageTextPage();
+delegate void SumonVideoPage();
+
 namespace Views
 {
 public ref class SmartListPage sealed
 {
 public:
     SmartListPage();
+
+internal:
+    event CloseSmartList^ closeSmartList;
+    event SumonMessageTextPage^ sumonMessageTextPage;
+    event SumonVideoPage^ sumonVideoPage;
 };
 }
 }

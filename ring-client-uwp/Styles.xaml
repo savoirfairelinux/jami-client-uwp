@@ -19,7 +19,7 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-<!-- general styles section -->
+    <!-- general -->
     <Style x:Key="TextStyle1"
            TargetType="TextBlock">
         <Setter Property="FontSize"
@@ -27,8 +27,39 @@
         <Setter Property="Foreground"
                 Value="Black"/>
     </Style>
+    <Style x:Key="TextStyle2"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="20"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+    </Style>
+    <Style x:Key="ButtonStyle1"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="50"/>
+        <Setter Property="Height"
+                Value="50"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+    </Style>
+    <Style x:Key="ButtonStyle2"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="50"/>
+        <Setter Property="Height"
+                Value="30"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+    </Style>
 
-<!-- styles for the console -->
+    <!-- console -->
     <Style x:Key="ConsoleScrollViewerStyle"
            TargetType="ScrollViewer">
         <Setter Property="Background"
@@ -63,5 +94,9 @@
         <Setter Property="Height"
                 Value="30"/>
     </Style>
+
+
+
+
 
 </ResourceDictionary>
