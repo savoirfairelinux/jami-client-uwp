@@ -19,15 +19,18 @@
 
 #include "MainPage.xaml.h"
 
+using namespace Concurrency;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::UI;
+using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::ViewManagement;
+
 
 using namespace RingClientUWP;
 
@@ -37,7 +40,6 @@ App::App()
 
     ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
     ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(400, 800);
-
 }
 
 void
