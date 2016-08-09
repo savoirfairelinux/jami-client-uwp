@@ -19,11 +19,130 @@
 
 #include "SmartListPage.xaml.h"
 
+using namespace Platform;
+
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
+using namespace Windows::Media::Capture;
+using namespace Windows::UI::Xaml;
+using namespace Windows::Storage;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Shapes;
+using namespace Windows::UI::Xaml::Media;
+using namespace Concurrency;
+using namespace Windows::Foundation;
 
 SmartListPage::SmartListPage()
 {
     InitializeComponent();
+
+    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
+    _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
 }
 
+void RingClientUWP::Views::SmartListPage::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
+{
+    _shareMenuButton_->IsChecked = false;
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void RingClientUWP::Views::SmartListPage::_accountsMenuButton__Unchecked(Object^ sender, RoutedEventArgs^ e)
+{
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void RingClientUWP::Views::SmartListPage::_settings__Checked(Object^ sender, RoutedEventArgs^ e)
+{
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _settings_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+void RingClientUWP::Views::SmartListPage::_settings__Unchecked(Object^ sender, RoutedEventArgs^ e)
+{
+    _settings_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+void RingClientUWP::Views::SmartListPage::setMode(RingClientUWP::Views::SmartListPage::Mode mode)
+{
+    if (mode == RingClientUWP::Views::SmartListPage::Mode::Normal) {
+        _rowRingTxtBx_->Height = 40;
+        _selectedAccountAvatar_->Height = 80;
+        _selectedAccountAvatarColumn_->Width = 90;
+        _selectedAccountRow_->Height = 90;
+    }
+    else {
+        _rowRingTxtBx_->Height = 0;
+        _selectedAccountAvatar_->Height = 50;
+        _selectedAccountAvatarColumn_->Width = 60;
+        _selectedAccountRow_->Height = 60;
+    }
+
+    _selectedAccountAvatar_->Width = _selectedAccountAvatar_->Height;
+    _settingsTBtn_->IsChecked = false;
+    _accountsMenuButton_->IsChecked = false;
+    _shareMenuButton_->IsChecked = false;
+}
+
+void RingClientUWP::Views::SmartListPage::_shareMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _accountsMenuButton_->IsChecked = false;
+}
+
+void RingClientUWP::Views::SmartListPage::_shareMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartListPage::_addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartListPage::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+}
+
+
+void RingClientUWP::Views::SmartListPage::_createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+}
+
+
+void RingClientUWP::Views::SmartListPage::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+
+
+    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo)).then([this](StorageFile^ photo)
+    {
+        if (photo != nullptr) {
+            // maybe it would be possible to move some logics to the style sheet
+            auto brush = ref new ImageBrush();
+
+            auto circle = ref new Ellipse();
+            circle->Height = 80; // TODO : use some global constant when ready
+            circle->Width = 80;
+            auto path = photo->Path;
+            auto uri = ref new Windows::Foundation::Uri(path);
+            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+            bitmapImage->UriSource = uri;
+
+            brush->ImageSource = bitmapImage;
+            circle->Fill = brush;
+            _avatarWebcamCaptureBtn_->Content = circle;
+        }
+    });
+
+}

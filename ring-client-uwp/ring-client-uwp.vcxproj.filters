@@ -26,6 +26,15 @@
     <Filter Include="Styles">
       <UniqueIdentifier>{38929305-13e6-4beb-9e52-4020da29e403}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{d11ded85-ba32-4a0f-9b1f-3f4fa5640ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModels">
+      <UniqueIdentifier>{12707db3-fead-40a2-89ba-8e5e5539c4ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\TESTS">
+      <UniqueIdentifier>{758258ab-8169-4388-a89d-a834cebce79a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -36,7 +45,19 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="SmartListPage.xaml.cpp" />
     <ClCompile Include="WelcomePage.xaml.cpp" />
+    <ClCompile Include="Contact.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="ContactsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
     <ClCompile Include="RingConsolePage.xaml.cpp" />
+    <ClCompile Include="AccountsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="Account.cpp">
+      <Filter>Models</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -44,7 +65,19 @@
     <ClInclude Include="MainPage.xaml.h" />
     <ClInclude Include="SmartListPage.xaml.h" />
     <ClInclude Include="WelcomePage.xaml.h" />
+    <ClInclude Include="Contact.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="ContactsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
     <ClInclude Include="RingConsolePage.xaml.h" />
+    <ClInclude Include="AccountsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="Account.h">
+      <Filter>Models</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -67,6 +100,15 @@
     </Image>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
+    </Image>
+    <Image Include="..\..\..\Users\user\Documents\face.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="..\..\..\Users\user\Documents\contactAvatar.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="..\..\..\Users\user\Documents\qrcode.png">
+      <Filter>Assets\TESTS</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

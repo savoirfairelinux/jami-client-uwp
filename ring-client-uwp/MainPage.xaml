@@ -46,8 +46,8 @@
                        Height="32"
                        VerticalAlignment="Top"
                        Fill="Transparent"/>
-        </Grid>
-        <SplitView x:Name="_outerSplitView_"
+    </Grid>
+    <SplitView x:Name="_outerSplitView_"
                    Grid.Row="1"
                    IsPaneOpen="False">
         <SplitView.Pane>
@@ -55,7 +55,8 @@
         </SplitView.Pane>
         <SplitView.Content>
             <SplitView x:Name="_innerSplitView_"
-                       IsPaneOpen="False"
+                       IsPaneOpen="True"
+                       CompactPaneLength="60"
                        DisplayMode="CompactInline">
                 <SplitView.Pane>
                     <Frame x:Name="_leftPanel_"/>

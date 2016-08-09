@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,13 +16,26 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+using namespace Platform;
+using namespace Windows::UI::Xaml::Data;
 
-/* standard system include files. */
-#include <ppltasks.h>
+namespace RingClientUWP
+{
+public ref class Account sealed : public INotifyPropertyChanged
+{
+public:
+    Account(String^ name, String^ ringID);
 
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
+
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    property String^ name_;
+    property String^ ringID_;
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+
+};
+}
+

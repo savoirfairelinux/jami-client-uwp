@@ -23,6 +23,7 @@ using namespace Windows::UI::Xaml::Controls;
 
 namespace RingClientUWP
 {
+
 ref class App sealed
 {
 protected:
