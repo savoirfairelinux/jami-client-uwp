@@ -17,15 +17,38 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 #include "SmartListPage.g.h"
-
 namespace RingClientUWP
 {
+
+delegate void ToggleSmartPan();
+delegate void SumonMessageTextPage();
+delegate void SumonVideoPage();
+
 namespace Views
 {
 public ref class SmartListPage sealed
 {
 public:
     SmartListPage();
+
+internal:
+    enum class Mode { Minimized, Normal };
+    event ToggleSmartPan^ toggleSmartPan;
+    event SumonMessageTextPage^ sumonMessageTextPage;
+    event SumonVideoPage^ sumonVideoPage;
+    void setMode(RingClientUWP::Views::SmartListPage::Mode mode);
+
+private:
+    void _accountsMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _accountsMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _settings__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _settings__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _shareMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _shareMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
