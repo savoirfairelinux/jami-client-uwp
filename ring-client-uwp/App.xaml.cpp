@@ -64,5 +64,6 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     ApplicationView::GetForCurrentView()->SetPreferredMinSize(desiredSize);
     ApplicationView::GetForCurrentView()->TryResizeView(desiredSize);
     CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
-
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::Transparent;
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::Transparent;
 }
