@@ -27,6 +27,7 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
 
 using namespace Platform;
+using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI::ViewManagement;
@@ -37,7 +38,6 @@ using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Data;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Interop;
-using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
@@ -46,6 +46,8 @@ using namespace Windows::System;
 MainPage::MainPage()
 {
     InitializeComponent();
+
+    Window::Current->SetTitleBar(_titleBar_);
 
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
@@ -59,4 +61,9 @@ MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
         _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
         _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
     }
+}
+
+void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
 }

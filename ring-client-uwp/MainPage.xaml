@@ -23,8 +23,33 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <SplitView x:Name="_outerSplitView_"
-               IsPaneOpen="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Canvas.ZIndex="2" Grid.Row="0" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- hamburger button. -->
+            <Button x:Name="_toggleSmartBoxButton_"
+                        Grid.Row="0"
+                        Content="&#xE700;"
+                        Click="_toggleSmartBoxButton__Click"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource ButtonStyle2}"/>
+            <!-- _titleBar_ is used to move the window. -->
+            <Rectangle x:Name="_titleBar_"
+                       Grid.Column="1"
+                       Height="32"
+                       VerticalAlignment="Top"
+                       Fill="Transparent"/>
+        </Grid>
+        <SplitView x:Name="_outerSplitView_"
+                   Grid.Row="1"
+                   IsPaneOpen="False">
         <SplitView.Pane>
             <Frame x:Name="_consolePanel_"/>
         </SplitView.Pane>
@@ -48,4 +73,5 @@
             </SplitView>
         </SplitView.Content>
     </SplitView>
+    </Grid>
 </Page>
