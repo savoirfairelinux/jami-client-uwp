@@ -27,7 +27,30 @@
         <Setter Property="Foreground"
                 Value="Black"/>
     </Style>
-
+    <Style x:Key="ButtonStyle1"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="50"/>
+        <Setter Property="Height"
+                Value="50"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+    </Style>
+    <Style x:Key="ButtonStyle2"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="50"/>
+        <Setter Property="Height"
+                Value="30"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+        <Setter Property="Background"
+                Value="Transparent"/>
+    </Style>
 <!-- styles for the console -->
     <Style x:Key="ConsoleScrollViewerStyle"
            TargetType="ScrollViewer">
