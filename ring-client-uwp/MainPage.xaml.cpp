@@ -27,6 +27,7 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
 
 using namespace Platform;
+using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::UI::ViewManagement;
@@ -50,6 +51,8 @@ MainPage::MainPage()
     _mainframe_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _leftPanel_->Navigate(TypeName(RingClientUWP::Views::SmartListPage::typeid));
     _debugPanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePage::typeid));
+
+    Window::Current->SetTitleBar(_titleBar_);
 }
 
 void
