@@ -18,13 +18,38 @@
 <Page x:Class="RingClientUWP.MainPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:local="using:ring_client_uwp"
+      xmlns:local="using:RingClientUWP"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <SplitView x:Name="_outerSplitView_"
-               IsPaneOpen="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Canvas.ZIndex="2" Grid.Row="0" Background="LightBlue">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="50"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <!-- hamburger button. -->
+            <Button x:Name="_toggleSmartBoxButton_"
+                        Grid.Row="0"
+                        Content="&#xE700;"
+                        Click="_toggleSmartBoxButton__Click"
+                        HorizontalAlignment="Center"
+                        Style="{StaticResource ButtonStyle2}"/>
+            <!-- _titleBar_ is used to move the window. -->
+            <Rectangle x:Name="_titleBar_"
+                       Grid.Column="1"
+                       Height="32"
+                       VerticalAlignment="Top"
+                       Fill="Transparent"/>
+        </Grid>
+        <SplitView x:Name="_outerSplitView_"
+                   Grid.Row="1"
+                   IsPaneOpen="False">
         <SplitView.Pane>
             <Frame x:Name="_debugPanel_"/>
         </SplitView.Pane>
@@ -35,10 +60,11 @@
                 <SplitView.Pane>
                     <Frame x:Name="_leftPanel_"/>
                 </SplitView.Pane>
-                <SplitView.Content>
-                    <Frame x:Name="_mainframe_"/>
-                </SplitView.Content>
+                    <SplitView.Content>
+                        <Frame x:Name="_mainframe_"/>
+                    </SplitView.Content>
             </SplitView>
         </SplitView.Content>
     </SplitView>
+    </Grid>
 </Page>
