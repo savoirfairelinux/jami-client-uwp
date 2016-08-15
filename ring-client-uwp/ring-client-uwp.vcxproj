@@ -161,6 +161,9 @@
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactsViewModel.h" />
+    <ClInclude Include="MessageTextPage.xaml.h">
+      <DependentUpon>MessageTextPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -188,6 +191,7 @@
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MessageTextPage.xaml" />
     <Page Include="RingConsolePanel.xaml" />
     <Page Include="SmartPanel.xaml" />
     <Page Include="Styles.xaml" />
@@ -244,6 +248,9 @@
     <ClCompile Include="ContactsViewModel.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="MessageTextPage.xaml.cpp">
+      <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

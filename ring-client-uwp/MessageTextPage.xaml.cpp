@@ -17,61 +17,73 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "MessageTextPage.xaml.h"
-#include "SmartPanel.xaml.h"
-#include "RingConsolePanel.xaml.h"
-#include "VideoPage.xaml.h"
-#include "WelcomePage.xaml.h"
-
+#include "ContactsViewModel.h"
 #include "MainPage.xaml.h"
 
-using namespace RingClientUWP;
+#include "MessageTextPage.xaml.h"
+
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
 
 using namespace Platform;
-using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
-using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Controls::Primitives;
-using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Data;
+using namespace Windows::UI::Xaml::Documents;
 using namespace Windows::UI::Xaml::Input;
-using namespace Windows::UI::Xaml::Interop;
+using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
-using namespace Windows::ApplicationModel::Activation;
-using namespace Windows::Graphics::Display;
-using namespace Windows::System;
 
-MainPage::MainPage()
+MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
-
-    /* set the title bar */
-    Window::Current->SetTitleBar(_titleBar_);
-
-    /* populate the frames */
-    _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
-    _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
-    _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
-    _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
-    _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
 }
 
 void
-MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
+RingClientUWP::Views::MessageTextPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
-    if (e->Key == VirtualKey::F5) {
-        _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
-        _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
+    updatePageContent();
+}
+
+void
+RingClientUWP::Views::MessageTextPage::updatePageContent()
+{
+    auto contact = ContactsViewModel::instance->selectedContact;
+    if (!contact)
+        return;
+
+    _title_->Text = contact->name_;
+
+    _messagesWindowOutput_->Children->Clear();
+}
+
+void
+RingClientUWP::Views::MessageTextPage::_sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    sendMessage();
+}
+
+void
+RingClientUWP::Views::MessageTextPage::_messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (e->Key == Windows::System::VirtualKey::Enter) {
+        sendMessage();
     }
 }
 
-void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+RingClientUWP::Views::MessageTextPage::sendMessage()
 {
-    _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
-    SmartPanel::Mode mode = (_innerSplitView_->IsPaneOpen) ? SmartPanel::Mode::Normal : SmartPanel::Mode::Minimized;
-    dynamic_cast<SmartPanel^>(_smartPanel_->Content)->setMode(mode);
+    auto contact = ContactsViewModel::instance->selectedContact;
+    auto txt = _messageTextBox_->Text;
+
+    /* empty the textbox */
+    _messageTextBox_->Text = "";
+
+    if (!contact || txt->IsEmpty())
+        return;
+
 }
