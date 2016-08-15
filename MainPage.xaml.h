@@ -18,6 +18,7 @@
 **************************************************************************/
 #include "MainPage.g.h"
 
+using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Input;
 
 namespace RingClientUWP
@@ -33,5 +34,6 @@ protected:
     virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
 private:
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
 };
 }
