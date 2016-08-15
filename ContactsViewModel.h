@@ -21,7 +21,7 @@ using namespace Platform::Collections;
 namespace RingClientUWP
 {
 
-delegate void NewContactSelected(Contact^ contact);
+delegate void NewContactSelected();
 delegate void NoContactSelected();
 
 namespace ViewModel {
@@ -55,7 +55,7 @@ internal:
             oldItem_ = currentItem_;
             currentItem_ = value;
             if (value)
-                newContactSelected(currentItem_);
+                newContactSelected();
             else
                 noContactSelected();
         }
