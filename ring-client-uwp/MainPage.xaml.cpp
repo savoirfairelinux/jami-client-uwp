@@ -17,8 +17,11 @@
 **************************************************************************/
 #include "pch.h"
 
+#include "ContactsViewModel.h"
+#include "MessageTextPage.xaml.h"
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
+#include "RingDebug.h"
 #include "VideoPage.xaml.h"
 #include "WelcomePage.xaml.h"
 
@@ -26,6 +29,7 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
 
 using namespace Platform;
 using namespace Windows::ApplicationModel::Core;
@@ -56,6 +60,12 @@ MainPage::MainPage()
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
     _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
+    _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
+
+    /* connect to delegates */
+    ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
+        showFrame(_messageTextFrame_);
+    });
 }
 
 void
@@ -72,4 +82,23 @@ void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sen
     _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
     SmartPanel::Mode mode = (_innerSplitView_->IsPaneOpen) ? SmartPanel::Mode::Normal : SmartPanel::Mode::Minimized;
     dynamic_cast<SmartPanel^>(_smartPanel_->Content)->setMode(mode);
+}
+
+void
+RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
+{
+    _welcomeFrame_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _videoFrame_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _messageTextFrame_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    if (frame == _welcomeFrame_) {
+        _welcomeFrame_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    }
+    if (frame == _videoFrame_) {
+        _videoFrame_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    }
+    if (frame == _messageTextFrame_) {
+        _messageTextFrame_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
+    }
 }
