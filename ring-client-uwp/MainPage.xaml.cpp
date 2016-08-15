@@ -17,6 +17,8 @@
 **************************************************************************/
 #include "pch.h"
 
+#include "ContactsViewModel.h"
+#include "MessageTextPage.xaml.h"
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
 #include "VideoPage.xaml.h"
@@ -26,6 +28,7 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
 
 using namespace Platform;
 using namespace Windows::ApplicationModel::Core;
@@ -54,6 +57,15 @@ MainPage::MainPage()
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
     _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
+    _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
+
+    /* connect to delegates */
+    ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
+        showFrame(_messageTextFrame_);
+    });
+    ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
+        showFrame(_welcomeFrame_);
+    });
 }
 
 void
@@ -68,4 +80,21 @@ MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
 void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
+}
+
+void
+RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
+{
+    _navGrid_->SetRow(_welcomeFrame_, 0);
+    _navGrid_->SetRow(_messageTextFrame_, 0);
+    _navGrid_->SetRow(_videoFrame_, 0);
+
+    if (frame == _welcomeFrame_) {
+        _navGrid_->SetRow(_welcomeFrame_, 1);
+    } else if (frame == _videoFrame_) {
+        _navGrid_->SetRow(_videoFrame_, 1);
+    } else if (frame == _messageTextFrame_) {
+        _navGrid_->SetRow(_messageTextFrame_, 1);
+        dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
+    }
 }
