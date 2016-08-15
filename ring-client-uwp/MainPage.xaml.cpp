@@ -19,6 +19,7 @@
 
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
+#include "VideoPage.xaml.h"
 #include "WelcomePage.xaml.h"
 
 #include "MainPage.xaml.h"
@@ -54,6 +55,7 @@ MainPage::MainPage()
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
+    _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
 }
 
 void
