@@ -1,5 +1,4 @@
-﻿#pragma once
-/**************************************************************************
+﻿/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
@@ -16,24 +15,27 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "MainPage.g.h"
+#pragma once
 
-using namespace Windows::UI::Xaml::Controls;
-using namespace Windows::UI::Xaml::Input;
+#include "MessageTextPage.g.h"
 
 namespace RingClientUWP
 {
-namespace Views {
-}
-public ref class MainPage sealed
+namespace Views
+{
+public ref class MessageTextPage sealed
 {
 public:
-    MainPage();
+    MessageTextPage();
+    void updatePageContent();
 
 protected:
-    virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
+    virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+
 private:
-    void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
+    void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+    void sendMessage();
 };
+}
 }
