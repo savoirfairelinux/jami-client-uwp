@@ -62,15 +62,24 @@
                     <Frame x:Name="_smartPanel_"/>
                 </SplitView.Pane>
                 <SplitView.Content>
-                    <StackPanel>
-                        <Frame x:Name="_welcomeFrame_"
-                               Visibility="Visible"/>
-                        <Frame x:Name="_messageTextFrame_"
-                               Visibility="Collapsed"/>
-                        <Frame x:Name="_videoFrame_"
-                               Visibility="Collapsed"/>
-                    </StackPanel>
-                </SplitView.Content>
+                        <Grid x:Name="_navGrid_">
+                            <Grid.RowDefinitions>
+                                <!-- stores the hidden frames. -->
+                                <RowDefinition Height="0"/>
+                                <!-- nesting the showed frame. -->
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Frame x:Name="_welcomeFrame_"
+                                   Grid.Row="1"
+                                   Visibility="Visible"/>
+                            <Frame x:Name="_messageTextFrame_"
+                                   Grid.Row="0"
+                                   Visibility="Visible"/>
+                            <Frame x:Name="_videoFrame_"
+                                   Grid.Row="0"
+                                   Visibility="Visible"/>
+                        </Grid>
+                    </SplitView.Content>
             </SplitView>
         </SplitView.Content>
     </SplitView>
