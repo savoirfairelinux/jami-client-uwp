@@ -149,6 +149,9 @@
     <Page Include="SmartPanel.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="VideoPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="localization\US-en\Resources.resw">
