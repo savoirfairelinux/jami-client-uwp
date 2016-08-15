@@ -1,4 +1,4 @@
-﻿﻿/**************************************************************************
+﻿﻿/***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
  * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
  *                                                                         *
@@ -145,4 +145,13 @@ void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::
         }
     });
 
+}
+
+
+void
+SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+    auto listbox = safe_cast<ListBox^>(sender);
+    auto contact = safe_cast<Contact^>(listbox->SelectedItem);
+    ContactsViewModel::instance->selectedContact = contact;
 }
