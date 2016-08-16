@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_f5d7f2bd",
+        "filename": "ring-client-uwp/MainPage.xaml.cpp",
+        "patchSetId": 22
+      },
+      "lineNbr": 69,
+      "author": {
+        "id": 83
+      },
+      "writtenOn": "2016-08-16T14:31:30Z",
+      "side": 1,
+      "message": "rtl",
+      "range": {
+        "startLine": 68,
+        "startChar": 0,
+        "endLine": 69,
+        "endChar": 1
+      },
+      "revId": "0eb2389486db92f402d6a88dda44231e31d9cd08",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    }
+  ]
+}
