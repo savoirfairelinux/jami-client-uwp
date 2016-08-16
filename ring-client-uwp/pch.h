@@ -19,6 +19,7 @@
 
 /* standard system include files. */
 #include <ppltasks.h>
+#include <iomanip>
 
 /* required by generated headers. */
 #include "App.xaml.h"
