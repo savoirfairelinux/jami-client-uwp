@@ -58,6 +58,14 @@
     <ClCompile Include="ContactsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
+    <ClCompile Include="RingDebug.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="MessageTextPage.xaml.cpp" />
+    <ClCompile Include="VideoPage.xaml.cpp" />
+    <ClCompile Include="RingD.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -77,6 +85,17 @@
     </ClInclude>
     <ClInclude Include="ContactsViewModel.h">
       <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="RingDebug.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="MessageTextPage.xaml.h" />
+    <ClInclude Include="VideoPage.xaml.h" />
+    <ClInclude Include="RingD.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
