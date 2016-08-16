@@ -175,9 +175,11 @@
     <ClInclude Include="RingConsolePanel.xaml.h">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="RingDebug.h" />
     <ClInclude Include="SmartPanel.xaml.h">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Utils.h" />
     <ClInclude Include="VideoPage.xaml.h">
       <DependentUpon>VideoPage.xaml</DependentUpon>
     </ClInclude>
@@ -263,6 +265,7 @@
     <ClCompile Include="RingConsolePanel.xaml.cpp">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="RingDebug.cpp" />
     <ClCompile Include="SmartPanel.xaml.cpp">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
     </ClCompile>

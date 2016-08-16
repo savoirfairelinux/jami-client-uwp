@@ -19,6 +19,7 @@
 
 /* standard system include files. */
 #include <ppltasks.h>
+#include <iomanip>
 
 /* required by generated headers. */
 #include "App.xaml.h"
@@ -26,3 +27,7 @@
 #include "AccountsViewModel.h"
 #include "Contact.h"
 #include "ContactsViewModel.h"
+
+/* ensure to be accessed from anywhere */
+#include "RingDebug.h"
+#include "Utils.h"
