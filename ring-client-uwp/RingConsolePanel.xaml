@@ -30,6 +30,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer x:Name="_scrollView_"
                       Grid.Row="0"
+                      Padding="5,5"
                       Style="{StaticResource ConsoleScrollViewerStyle}">
             <RichTextBlock x:Name="_debugWindowOutput_"
                            Style="{StaticResource ConsoleTextStyle1}"/>
