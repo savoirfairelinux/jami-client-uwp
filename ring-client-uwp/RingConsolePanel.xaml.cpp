@@ -21,8 +21,30 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace Windows::UI::Xaml::Documents;
 
 RingConsolePanel::RingConsolePanel()
 {
     InitializeComponent();
+
+    RingDebug::instance->messageToScreen += ref new debugMessageToScreen([this](Platform::String^ message) {
+        output(message);
+    });
+}
+
+void
+RingConsolePanel::output(Platform::String^ message)
+{
+    try {
+        Run^ inlineText = ref new Run();
+        inlineText->Text = message;
+        Paragraph^ paragraph = ref new Paragraph();
+        paragraph->Inlines->Append(inlineText);
+        _debugWindowOutput_->Blocks->Append(paragraph);
+    }
+    catch (Platform::Exception^ e) {
+        return;
+    }
+    _scrollView_->UpdateLayout();
+    _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
 }

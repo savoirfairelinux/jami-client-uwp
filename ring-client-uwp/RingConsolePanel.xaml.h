@@ -26,6 +26,7 @@ public ref class RingConsolePanel sealed
 {
 public:
     RingConsolePanel();
+    void output(Platform::String^ message);
 };
 }
 }

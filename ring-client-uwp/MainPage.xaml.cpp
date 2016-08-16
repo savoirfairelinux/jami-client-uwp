@@ -21,7 +21,6 @@
 #include "MessageTextPage.xaml.h"
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
-#include "RingDebug.h"
 #include "VideoPage.xaml.h"
 #include "WelcomePage.xaml.h"
 
