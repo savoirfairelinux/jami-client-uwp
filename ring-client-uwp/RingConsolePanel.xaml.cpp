@@ -21,8 +21,96 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml::Documents;
 
 RingConsolePanel::RingConsolePanel()
 {
     InitializeComponent();
+
+    RingDebug::instance->messageToScreen += ref new debugMessageToScreen([this](Platform::String^ message) {
+        output(message);
+    });
+}
+
+void
+RingConsolePanel::output(Platform::String^ message)
+{
+    try {
+        Run^ inlineText = ref new Run();
+        inlineText->Text = message;
+        Paragraph^ paragraph = ref new Paragraph();
+        paragraph->Inlines->Append(inlineText);
+        _debugWindowOutput_->Blocks->Append(paragraph);
+        _scrollView_->UpdateLayout();
+        _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
+    }
+    catch (Platform::Exception^ e) {
+        return;
+    }
+}
+
+void RingConsolePanel::_btnSendDbgCmd__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    sendCommand();
+}
+
+
+void RingConsolePanel::_sendDbgCmd__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (e->Key == Windows::System::VirtualKey::Enter && _tBoxDbg_->Text != "") {
+        sendCommand();
+    }
+    else if (e->Key == Windows::System::VirtualKey::PageUp) {
+
+        if (historyLevel < 1)
+            return;
+        if (historyLevel == historyCmds.Size)
+            currentCmd = _tBoxDbg_->Text;
+        historyLevel--;
+        _tBoxDbg_->Text = historyCmds.GetAt(historyLevel);
+
+    }
+    else if (e->Key == Windows::System::VirtualKey::PageDown) {
+        if (historyLevel < historyCmds.Size) {
+            _tBoxDbg_->Text = historyCmds.GetAt(historyLevel);
+            historyLevel++;
+
+        }
+        else {
+            _tBoxDbg_->Text = currentCmd;
+        }
+        return;
+    }
+}
+
+/*\ ADD EACH NEW COMMAND TO THE HELP LIST \*/
+void RingConsolePanel::sendCommand()
+{
+    auto cmdInput = _tBoxDbg_->Text;
+    addCommandToHistory();
+    historyLevel++;
+    _tBoxDbg_->Text = "";
+    currentCmd = "";
+    historyLevel = historyCmds.Size;
+
+    if (cmdInput == "") {
+        return;
+    }
+    else if (cmdInput == "help") {
+        MSG_(">> Help :");
+        MSG_("use PgUp/PgDown for crawling commands history.");
+        return;
+    }
+
+    std::wstring wStr(cmdInput->Begin());
+    std::string result(wStr.begin(), wStr.end());
+
+    MSG_(">> error, command \'" + result + "\' not found");
+}
+
+void RingConsolePanel::addCommandToHistory()
+{
+    historyCmds.Append(_tBoxDbg_->Text);
 }
