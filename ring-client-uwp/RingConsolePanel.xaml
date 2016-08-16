@@ -30,6 +30,7 @@
         </Grid.RowDefinitions>
         <ScrollViewer x:Name="_scrollView_"
                       Grid.Row="0"
+                      Padding="5,5"
                       Style="{StaticResource ConsoleScrollViewerStyle}">
             <RichTextBlock x:Name="_debugWindowOutput_"
                            Style="{StaticResource ConsoleTextStyle1}"/>
@@ -42,8 +43,10 @@
             </Grid.ColumnDefinitions>
             <TextBox x:Name="_tBoxDbg_"
                      Grid.Column="0"
+                     KeyDown="_sendDbgCmd__KeyDown"
                      Style="{StaticResource ConsoleTextBoxStyle}"/>
             <Button x:Name="_btnSendDbgCmd_"
+                    Click="_btnSendDbgCmd__Click"
                     Grid.Column="1"
                     Style="{StaticResource ButtonSendCmdStyle}"/>
         </Grid>
