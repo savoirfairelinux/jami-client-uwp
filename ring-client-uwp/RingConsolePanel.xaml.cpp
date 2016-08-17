@@ -101,6 +101,18 @@ void RingConsolePanel::sendCommand()
     else if (cmdInput == "help") {
         MSG_(">> Help :");
         MSG_("use PgUp/PgDown for crawling commands history.");
+        MSG_("start : start the daemon");
+        MSG_("stop : start the daemon");
+        return;
+    }
+    else if (cmdInput == "start")
+    {
+        RingD::instance->startDaemon();
+        return;
+    }
+    else if (cmdInput == "stop")
+    {
+        RingD::instance->stopDaemon();
         return;
     }
 
