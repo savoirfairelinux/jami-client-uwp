@@ -1,7 +1,6 @@
-﻿#pragma once
-/**************************************************************************
+/***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,20 +15,45 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
 
-/* standard system include files. */
-#include <ppltasks.h>
-#include <iomanip>
+using namespace concurrency;
 
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
+namespace RingClientUWP
+{
 
-/* ensure to be accessed from anywhere */
-#include "RingD.h"
-#include "RingDebug.h"
-#include "Utils.h"
+public ref class RingD sealed
+{
+public:
+    static property RingD^ instance
+    {
+        RingD^ get()
+        {
+            static RingD^ instance_ = ref new RingD();
+            return instance_;
+        }
+    }
 
+    property bool daemonRunning
+    {
+        bool get()
+        {
+            return daemonRunning_;
+        }
+    }
+
+
+    /* properties */
+
+    /* functions */
+internal:
+    void startDaemon();
+    void stopDaemon();
+
+private:
+    RingD(); // singleton
+    std::string localFolder_;
+    bool daemonRunning_ = false;
+
+};
+}

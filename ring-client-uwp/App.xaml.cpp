@@ -72,4 +72,8 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
+
+    /* summon the daemon */
+    RingD::instance->startDaemon();
+
 }
