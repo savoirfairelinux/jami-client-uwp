@@ -120,13 +120,10 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="..\..\..\Users\user\Documents\face.png">
+    <Image Include="Assets\TESTS\contactAvatar.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
-    <Image Include="..\..\..\Users\user\Documents\contactAvatar.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
-    <Image Include="..\..\..\Users\user\Documents\qrcode.png">
+    <Image Include="Assets\TESTS\qrcode.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
   </ItemGroup>
@@ -135,25 +132,25 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
   </ItemGroup>

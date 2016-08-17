@@ -46,7 +46,7 @@
                            Grid.Column="0"
                            Width="55"
                            Height="55"
-                           Source="ms-appx:///contactAvatar.png"/>
+                           Source="Assets\TESTS\contactAvatar.png"/>
                     <!-- visual notifications. -->
                     <Border x:Name="_visualNotificationVideoChat_"
                             Visibility="Collapsed"
@@ -120,7 +120,7 @@
                        Grid.Column="0"
                        Width="55"
                        Height="55"
-                       Source="ms-appx:///contactAvatar.png"/>
+                       Source="Assets\TESTS\contactAvatar.png"/>
                 <TextBlock x:Name="_accountName_"
                            Grid.Column="1"
                            Text="{x:Bind name_}"/>
@@ -153,7 +153,7 @@
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <Image x:Name="_selectedAccountAvatar_"
-                       Source="ms-appx:///contactAvatar.png"
+                       Source="Assets\TESTS\contactAvatar.png"
                        Width="80"
                        Margin="5"
                        Grid.Column="0"
@@ -307,7 +307,7 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Image x:Name="_selectedAccountQrCode_"
-                           Source="ms-appx:///qrcode.png"
+                           Source="Assets\TESTS\qrcode.png"
                            Width="200"
                            Margin="5"
                            Grid.Row="0"

@@ -37,9 +37,6 @@ using namespace RingClientUWP;
 App::App()
 {
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
-
-    ApplicationView::PreferredLaunchWindowingMode = ApplicationViewWindowingMode::PreferredLaunchViewSize;
-    ApplicationView::PreferredLaunchViewSize = Windows::Foundation::Size(400, 800);
 }
 
 void
@@ -58,15 +55,6 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     } else
         rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
 
-    auto m_DPI = DisplayInformation::GetForCurrentView()->LogicalDpi;
-
-    float W = (float(400) * 96.f / m_DPI);
-    float H = (float(800) * 96.f / m_DPI);
-
-    auto desiredSize = Size(W, H);
-
-    ApplicationView::GetForCurrentView()->SetPreferredMinSize(desiredSize);
-    ApplicationView::GetForCurrentView()->TryResizeView(desiredSize);
     CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
