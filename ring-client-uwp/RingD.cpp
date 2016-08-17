@@ -52,9 +52,50 @@ RingClientUWP::RingD::startDaemon()
 
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 
+        std::map<std::string, SharedCallback> callHandlers = {
+            // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
+            DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
+                const std::string& accountId,
+                const std::string& callId,
+                const std::string& from)
+            {
+                MSG_("<IncomingCall>");
+                MSG_("accountId = " + accountId);
+                MSG_("callId = " + callId);
+                MSG_("from = " + from);
+            }),
+            DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
+                const std::string& callId,
+                const std::string& state,
+                int code)
+            {
+                MSG_("<StateChange>");
+                MSG_("callId = " + callId);
+                MSG_("state = " + state);
+                MSG_("code = " + std::to_string(code));
+            }),
+            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
+                const std::string& accountId,
+                const std::string& from,
+                const std::map<std::string, std::string>& payloads)
+            {
+                MSG_("<IncomingAccountMessage>");
+                MSG_("accountId = " + accountId);
+                MSG_("from = " + from);
+
+                for (auto i : payloads) {
+                    MSG_("payload = " + i.second);
+                    auto payload = Utils::toPlatformString(i.second);
+                }
+            })
+        };
+
+        registerCallHandlers(callHandlers);
+
         std::map<std::string, SharedCallback> dringDebugOut;
         dringDebugOut.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
                              (std::bind(&DebugOutputWrapper, std::placeholders::_1)));
+
         registerCallHandlers(dringDebugOut);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG)
@@ -71,6 +112,7 @@ RingClientUWP::RingD::startDaemon()
         MSG_("\nstarting daemon loop.\n");
 
         while (daemonRunning_) {
+            MSG_(".");
             DRing::pollEvents();
 
             Sleep(1000);
@@ -92,4 +134,5 @@ void RingClientUWP::RingD::stopDaemon()
 RingClientUWP::RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+    MSG_(localFolder_);
 }
