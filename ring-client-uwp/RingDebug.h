@@ -65,5 +65,3 @@ ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), 
 ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), RingDebug::Type::ERR); }))
 
 }
-
-}

@@ -21,7 +21,12 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace Windows::ApplicationModel::Core;
 using namespace Windows::UI::Xaml::Documents;
+
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Storage;
+using namespace Windows::UI::Core;
 
 RingConsolePanel::RingConsolePanel()
 {
