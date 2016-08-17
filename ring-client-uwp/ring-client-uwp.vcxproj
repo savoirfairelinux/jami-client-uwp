@@ -134,11 +134,12 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>..\..\ring-daemon\MSVC;..\..\ring-daemon\src\media;..\..\ring-daemon\src;..\..\ring-daemon\src\dring;..\..\ring-daemon\contrib\include;..\..\ring-daemon\contrib\include\pjlib;..\..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>C:\ring-project\ring-daemon\contrib\lib\x64;C:\ring-project\ring-daemon\MSVC\x64\ReleaseLib\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -153,7 +154,7 @@
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Link>
-      <AdditionalOptions>/nodefaultlib:libcmt.lib /ignore:4006 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/nodefaultlib:libcmt.lib /ignore:4006,4049 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -205,39 +206,38 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
+    <None Include="..\..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\..\..\Users\user\Documents\contactAvatar.png" />
-    <Image Include="..\..\..\Users\user\Documents\face.png" />
-    <Image Include="..\..\..\Users\user\Documents\qrcode.png" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png" />
     <Image Include="Assets\StoreLogo.png" />
+    <Image Include="Assets\TESTS\contactAvatar.png" />
+    <Image Include="Assets\TESTS\qrcode.png" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>

@@ -58,7 +58,7 @@ RingClientUWP::RingD::startDaemon()
         registerCallHandlers(dringDebugOut);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG)
-                    , "");
+                    , localFolder_.c_str());
         MSG_("\ndaemon initialized.\n");
 
         MSG_("\nstarting daemon.\n");
