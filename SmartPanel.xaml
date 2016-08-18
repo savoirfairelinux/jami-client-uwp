@@ -23,7 +23,338 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
+    <Page.Resources>
+        <!-- template for contacts. -->
+        <DataTemplate x:Key="ContactTemplate"
+                      x:DataType="local:Contact">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                    <RowDefinition x:Name="_contactBar_"
+                                   Height="0"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="*"
+                                          MinWidth="200"/>
+                    </Grid.ColumnDefinitions>
+                    <Image x:Name="_contactAvatar_"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Grid.Column="0"
+                           Width="55"
+                           Height="55"
+                           Source="Assets\TESTS\contactAvatar.png"/>
+                    <!-- visual notifications. -->
+                    <Border x:Name="_visualNotificationVideoChat_"
+                            Visibility="Collapsed"
+                            Style="{StaticResource BorderStyle1}">
+                        <TextBlock Text="&#xE8AA;"
+                                   Style="{StaticResource TextSegoeStyle1}"/>
+                        <Border.RenderTransform>
+                            <TranslateTransform X="17" Y="-14"/>
+                        </Border.RenderTransform>
+                    </Border>
+                    <Border x:Name="_visualNotificationNewMessage_"
+                            Visibility="Collapsed"
+                            Style="{StaticResource BorderStyle2}">
+                        <TextBlock Text="0"
+                                   Style="{StaticResource TextStyle3}"/>
+                        <Border.RenderTransform>
+                            <TranslateTransform X="-17" Y="-14"/>
+                        </Border.RenderTransform>
+                    </Border>
+                    <!-- name of the contact. -->
+                    <TextBlock x:Name="_contactName_"
+                               Grid.Column="1"
+                               FontSize="20"
+                               Text="{x:Bind name_}">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform X="8" Y="3"/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Grid>
+                <!-- button bar for accept/reject or cancel call. -->
+                <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
+                <Grid Width="320"
+                      HorizontalAlignment="Left"
+                      Grid.Row="1"
+                      Background="DarkGray">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_acceptIncomingCallBtn_"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource ButtonStyle2}"
+                            Content="&#xE10B;"/>
+                        <Button x:Name="_rejectIncomingCallBtn_"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Style="{StaticResource ButtonStyle2}"
+                            Content="&#xE106;"/>
+                    </StackPanel>
+                    <TextBlock x:Name="_contactCallStatus_"
+                               Foreground="DarkGray"
+                               Text="Incoming call"
+                               HorizontalAlignment="Center">
+                        <TextBlock.RenderTransform>
+                            <TranslateTransform Y="-30"/>
+                        </TextBlock.RenderTransform>
+                    </TextBlock>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+        <!-- template for accounts. -->
+        <DataTemplate x:Key="AccountTemplate"
+                      x:DataType="local:Account">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="_accountAvatar_"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       Grid.Column="0"
+                       Width="55"
+                       Height="55"
+                       Source="Assets\TESTS\contactAvatar.png"/>
+                <TextBlock x:Name="_accountName_"
+                           Grid.Column="1"
+                           Text="{x:Bind name_}"/>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
     <Grid>
+        <Grid.RowDefinitions>
+            <!-- where accounts and share menu drop down are. -->
+            <RowDefinition Height="auto"/>
+            <!-- where contacts and settings are. -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- drop down menus. -->
+        <Grid Background="LightBlue">
+            <Grid.RowDefinitions>
+                <!-- where the selected account is shown. -->
+                <RowDefinition x:Name="_selectedAccountRow_"
+                               Height="90"/>
+                <!-- where the drop down menus are shown. -->
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <!-- selected account. -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition x:Name="_selectedAccountAvatarColumn_"
+                                      Width="90"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="50"/>
+                </Grid.ColumnDefinitions>
+                <Image x:Name="_selectedAccountAvatar_"
+                       Source="Assets\TESTS\contactAvatar.png"
+                       Width="80"
+                       Margin="5"
+                       Grid.Column="0"
+                       Height="80"/>
+                <StackPanel Grid.Column="1"
+                            VerticalAlignment="Bottom">
+                    <TextBlock Text="TOT fdsfds fdsO"
+                               Margin="10"
+                               Style="{StaticResource TextStyle2}"/>
+                    <StackPanel Orientation="Horizontal">
+                        <!--Content="&#xE0A1;-->
+                        <ToggleButton x:Name="_accountsMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="&#xE168;"
+                                      Checked="_accountsMenuButton__Checked"
+                                      Unchecked="_accountsMenuButton__Unchecked"
+                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                        <ToggleButton x:Name="_shareMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="&#xE72D;"
+                                      Checked="_shareMenuButton__Checked"
+                                      Unchecked="_shareMenuButton__Unchecked"
+                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                    </StackPanel>
+                </StackPanel>
+                <ToggleButton x:Name="_settingsTBtn_"
+                              Grid.Column="2"
+                              VerticalAlignment="Bottom"
+                              Content="&#xE115;"
+                              Checked="_settings__Checked"
+                              Unchecked="_settings__Unchecked"
+                              Style="{StaticResource ToggleButtonStyle1}"/>
+            </Grid>
+
+            <!--sub menus like the accounts list or the share menu are just below, technicaly they are nested inside the
+            same row. To sumon them we use the visibility of their own grid, by linking it to a toggle button-->
+
+            <!-- accounts menu. -->
+            <Grid x:Name="_accountsMenuGrid_"
+                  MaxHeight="350"
+                  Grid.Row="1"
+                  Visibility="Collapsed"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <ListBox x:Name="_accountsList_"
+                         Grid.Row="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                         ScrollViewer.HorizontalScrollMode="Enabled"
+                         Width="320"
+                         ItemContainerStyle="{StaticResource contactsListBoxStyle}"
+                         Background="#FFE4F1F9"
+                         ItemTemplate="{StaticResource AccountTemplate}"/>
+                <Button x:Name="_addAccountBtn_"
+                        Grid.Row="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="&#xE948;"
+                        Click="_addAccountBtn__Click"
+                        Style="{StaticResource ButtonStyle2}"/>
+            </Grid>
+            <!-- account creation menu. -->
+            <Grid x:Name="_accountCreationMenuGrid_"
+                  Grid.Row="2"
+                  Visibility="Collapsed"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Background="#FFE4F1F9">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock VerticalAlignment="Center"
+                                   Text="Account type : "
+                                   Margin="10,10,0,10"/>
+                        <ComboBox SelectedIndex="0"
+                                  Margin="10"
+                                  VerticalAlignment="Center"
+                                  Width="195">
+                            <ComboBoxItem Content="Ring"/>
+                            <ComboBoxItem Content="Sip"/>
+                        </ComboBox>
+                    </StackPanel>
+                    <Button  x:Name="_avatarWebcamCaptureBtn_"
+                             VerticalAlignment="Center"
+                             Content="&#xE8B8;"
+                             Style="{StaticResource ButtonStyle3}"
+                             Click="_avatarWebcamCaptureBtn__Click"
+                             HorizontalAlignment="Center"/>
+                    <!-- RING account. -->
+                    <StackPanel x:Name="_ringAccountCreationStack_"
+                                Visibility="Visible">
+                        <TextBox  Margin="10"
+                                  PlaceholderText="Enter your username"/>
+                        <PasswordBox Margin="10"
+                                     PlaceholderText="Enter your password"/>
+                        <PasswordBox  Margin="10"
+                                      PlaceholderText="Repeat your Password"/>
+                    </StackPanel>
+                    <!-- SIP account. -->
+                    <StackPanel x:Name="_sipAccountCreationStack_"
+                                Visibility="Collapsed">
+                        <TextBox Margin="10"
+                                 PlaceholderText="Enter hostname"/>
+                        <TextBox Margin="10"
+                                 PlaceholderText="Enter your username"/>
+                        <PasswordBox Margin="10"
+                                     PlaceholderText="Enter your password"/>
+                        <PasswordBox Margin="10"
+                                     PlaceholderText="Repeat your Password"/>
+                    </StackPanel>
+                </StackPanel>
+                <!-- buttons yes/no to create the new account. -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_createAccountYes_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE081;"
+                                Click="_createAccountYes__Click"
+                                Style="{StaticResource ButtonStyle2}"/>
+                        <Button x:Name="_createAccountNo_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE106;"
+                                Click="_createAccountNo__Click"
+                                Style="{StaticResource ButtonStyle2}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <!-- share menu. -->
+            <Grid x:Name="_shareMenuGrid_"
+                  Grid.Row="2"
+                  Visibility="Collapsed"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid Background="#FFE4F1F9">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Image x:Name="_selectedAccountQrCode_"
+                           Source="Assets\TESTS\qrcode.png"
+                           Width="200"
+                           Margin="5"
+                           Grid.Row="0"
+                           Height="200"/>
+                    <TextBlock Text="RingId:"
+                               Grid.Row="1"
+                               HorizontalAlignment="Center"/>
+                    <TextBox Style="{StaticResource TextBoxStyle2}"
+                             HorizontalAlignment="Center"
+                             Text="c4fc649aed8b2497a5e98fd2d856222f07020044"
+                             Grid.Row="2"/>
+                </Grid>
+            </Grid>
+        </Grid>
+        <!-- contact list and settings. -->
+        <Grid Grid.Row="1">
+            <!-- contacts list. -->
+            <Grid x:Name="_smartGrid_"
+                  Grid.Row="0">
+                <Grid.RowDefinitions>
+                    <RowDefinition x:Name="_rowRingTxtBx_"
+                                   Height="40"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="_ringTxtBx_"
+					     HorizontalAlignment="Center"
+                         VerticalAlignment="Center"
+                         Width="320"
+					     TextWrapping="Wrap"
+                         Style="{StaticResource TextBoxStyle1}"
+					     Text=""/>
+                <ListBox x:Name="_smartList_"
+                         Grid.Row="1"
+                         Margin="0"
+                         Padding="0"
+				         ScrollViewer.HorizontalScrollBarVisibility="Auto"
+				         ScrollViewer.HorizontalScrollMode="Enabled"
+                         ItemContainerStyle="{StaticResource contactsListBoxStyle}"
+                         ItemTemplate="{StaticResource ContactTemplate}"/>
+            </Grid>
+            <!-- settings. -->
+            <Grid x:Name="_settings_"
+                  Grid.Row="0"
+                  Visibility="Collapsed">
+                <TextBlock>some settings</TextBlock>
+            </Grid>
+        </Grid>
     </Grid>
 
 </Page>
