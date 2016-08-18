@@ -29,6 +29,12 @@
     <Filter Include="Assets\TESTS">
       <UniqueIdentifier>{758258ab-8169-4388-a89d-a834cebce79a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ModelViews">
+      <UniqueIdentifier>{c9f1f5bd-c315-4f6f-a91b-bc67fe27e0b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{8ea3251c-a70e-4de5-9f26-8db3df45c2c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -40,6 +46,18 @@
     <ClCompile Include="WelcomePage.xaml.cpp" />
     <ClCompile Include="SmartPanel.xaml.cpp" />
     <ClCompile Include="RingConsolePanel.xaml.cpp" />
+    <ClCompile Include="Contact.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Account.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
+    <ClCompile Include="ContactsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -48,6 +66,18 @@
     <ClInclude Include="WelcomePage.xaml.h" />
     <ClInclude Include="SmartPanel.xaml.h" />
     <ClInclude Include="RingConsolePanel.xaml.h" />
+    <ClInclude Include="Contact.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="Account.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountsViewModel.h">
+      <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="ContactsViewModel.h">
+      <Filter>ModelViews</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
