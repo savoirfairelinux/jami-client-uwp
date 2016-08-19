@@ -9,19 +9,21 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <!--<DataTemplate x:Key="MessageTemplate" x:DataType="local:RingInstantMessage">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Image x:Name="_contactAvatar_"
-                       Margin="2,2"
-                       Source="ms-appx:///contact-avatar-test.png"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="_msgContent_" Text="{x:Bind msg_}"/>
-            </Grid>
-        </DataTemplate>-->
+        <!-- template for message text bublbe. -->
+        <datatemplate x:key="messagetemplate"
+                      x:datatype="local:conversationmessage">
+            <grid>
+                <grid.columndefinitions>
+                    <columndefinition width="70" />
+                    <columndefinition />
+                </grid.columndefinitions>
+                <image x:name="_contactavatar_"
+                       margin="2,2"
+                       source="ms-appx:///contact-avatar-test.png"
+                       verticalalignment="center" horizontalalignment="center"/>
+                <textblock x:name="_msgcontent_" text="{x:bind msg_}"/>
+            </grid>
+        </datatemplate>
 
 
         <!-- barre d'envoi de message -->
@@ -60,33 +62,38 @@
                                 BorderThickness="1"
                                 Grid.RowSpan="1"/>
                         <ScrollViewer x:Name="ContentElement"
-                                      Grid.Row="1"
-                                      HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                                      VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                                      IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                                      Margin="{TemplateBinding BorderThickness}"
-                                      Padding="{TemplateBinding Padding}"
-                                      IsTabStop="False"
-                                      AutomationProperties.AccessibilityView="Raw"
-                                      ZoomMode="Disabled" />
+                                    Grid.Row="1"
+                                    HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
+                                    HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
+                                    VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
+                                    VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
+                                    IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
+                                    IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
+                                    IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
+                                    Margin="{TemplateBinding BorderThickness}"
+                                    Padding="{TemplateBinding Padding}"
+                                    IsTabStop="False"
+                                    AutomationProperties.AccessibilityView="Raw"
+                                    ZoomMode="Disabled">
+                            <ListBox x:Name="_conversationOutput_"
+                                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                     ItemTemplate="{StaticResource AccountTemplate}"
+                                     Style="{StaticResource ConsoleTextStyle1}"/>
+                        </ScrollViewer>
 
                         <Button x:Name="_sendBtn_"
-                                Background="Transparent"
-                                Grid.Row="1"
-                                FontFamily="Segoe MDL2 Assets"
-                                Foreground="LightBlue"
-                                Content="&#xE122;"
-                                IsTabStop="False"
-                                Grid.Column="1"
-                                Click="_sendBtn__Click"
-                                Visibility="Visible"
-                                MinWidth="34"
-                                FontSize="20"
-                                VerticalAlignment="Stretch"/>
+                            Background="Transparent"
+                            Grid.Row="1"
+                            FontFamily="Segoe MDL2 Assets"
+                            Foreground="LightBlue"
+                            Content="&#xE122;"
+                            IsTabStop="False"
+                            Grid.Column="1"
+                            Click="_sendBtn__Click"
+                            Visibility="Visible"
+                            MinWidth="34"
+                            FontSize="20"
+                            VerticalAlignment="Stretch"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

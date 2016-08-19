@@ -52,27 +52,15 @@ RingClientUWP::RingD::startDaemon()
 
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 
+        /* ALPHABETICAL ORDER */
         std::map<std::string, SharedCallback> callHandlers = {
-            // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
-            DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
-                const std::string& accountId,
+            DRing::exportable_callback<DRing::CallSignal::AudioMuted>([this](
                 const std::string& callId,
-                const std::string& from)
+                bool state)
             {
-                MSG_("<IncomingCall>");
-                MSG_("accountId = " + accountId);
+                MSG_("<AudioMuted>");
                 MSG_("callId = " + callId);
-                MSG_("from = " + from);
-            }),
-            DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
-                const std::string& callId,
-                const std::string& state,
-                int code)
-            {
-                MSG_("<StateChange>");
-                MSG_("callId = " + callId);
-                MSG_("state = " + state);
-                MSG_("code = " + std::to_string(code));
+                MSG_("state = " + (state) ? "true" : "false");
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
                 const std::string& accountId,
@@ -87,7 +75,46 @@ RingClientUWP::RingD::startDaemon()
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
                 }
-            })
+            }),
+            // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
+            DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
+                        const std::string& accountId,
+                        const std::string& callId,
+                        const std::string& from)
+            {
+                MSG_("<IncomingCall>");
+                MSG_("accountId = " + accountId);
+                MSG_("callId = " + callId);
+                MSG_("from = " + from);
+            }),
+            DRing::exportable_callback<DRing::CallSignal::NewCallCreated>([this](
+                        const std::string& accountId,
+                        const std::string& callId,
+                        const std::string& to)
+            {
+                MSG_("<NewCallCreated>");
+                MSG_("accountId = " + accountId);
+                MSG_("callId = " + callId);
+                MSG_("to = " + to);
+            }),
+            DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
+                        const std::string& callId,
+                        const std::string& state,
+                        int code)
+            {
+                MSG_("<StateChange>");
+                MSG_("callId = " + callId);
+                MSG_("state = " + state);
+                MSG_("code = " + std::to_string(code));
+            }),
+            DRing::exportable_callback<DRing::CallSignal::VideoMuted>([this](
+                        const std::string& callId,
+                        bool state)
+            {
+                MSG_("<VideoMuted>");
+                MSG_("callId = " + callId);
+                MSG_("state = " + (state) ? "true" : "false");
+            })//,
         };
 
         registerCallHandlers(callHandlers);
@@ -98,8 +125,8 @@ RingClientUWP::RingD::startDaemon()
         registerCallHandlers(dringDebugOut);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-            DRing::DRING_FLAG_DEBUG |
-            DRing::DRING_FLAG_AUTOANSWER)
+                    DRing::DRING_FLAG_DEBUG |
+                    DRing::DRING_FLAG_AUTOANSWER)
                     , localFolder_.c_str());
 
         MSG_("\ndaemon initialized.\n");

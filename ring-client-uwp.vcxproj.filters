@@ -66,6 +66,9 @@
     <ClCompile Include="RingD.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Conversation.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -96,6 +99,9 @@
     <ClInclude Include="VideoPage.xaml.h" />
     <ClInclude Include="RingD.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Conversation.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

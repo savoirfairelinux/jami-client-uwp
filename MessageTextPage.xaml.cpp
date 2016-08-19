@@ -86,4 +86,9 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     if (!contact || txt->IsEmpty())
         return;
 
+    contact->conversation->addMessage("some date", MSG_FROM_ME, txt);
+
+//    Controls::RingMessageBubble^ toto = ref new Controls::RingMessageBubble();
+//    _messagesWindowOutput_->Children->Append(toto);
+
 }

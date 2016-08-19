@@ -21,6 +21,8 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
+ref class Conversation;
+
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
@@ -31,11 +33,18 @@ public:
 
     property String^ name_;
     property String^ ringID_;
+    property Conversation^ conversation {
+        Conversation^ get() {
+            return conversation_;
+        };
+    };
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 
+private:
+    Conversation^ conversation_;
 };
 }
 

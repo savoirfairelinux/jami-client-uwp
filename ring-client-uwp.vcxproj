@@ -162,6 +162,7 @@
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactsViewModel.h" />
+    <ClInclude Include="Conversation.h" />
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
@@ -251,6 +252,7 @@
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
     <ClCompile Include="ContactsViewModel.cpp" />
+    <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>

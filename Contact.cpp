@@ -30,6 +30,7 @@ Contact::Contact(String^ name,
 {
     name_ = name;
     ringID_ = ringID;
+    conversation_ = ref new Conversation();
 }
 
 void
