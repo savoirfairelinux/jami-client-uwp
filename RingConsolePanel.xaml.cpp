@@ -46,12 +46,12 @@ RingConsolePanel::output(Platform::String^ message)
         Paragraph^ paragraph = ref new Paragraph();
         paragraph->Inlines->Append(inlineText);
         _debugWindowOutput_->Blocks->Append(paragraph);
+        _scrollView_->UpdateLayout();
+        _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
     }
     catch (Platform::Exception^ e) {
         return;
     }
-    _scrollView_->UpdateLayout();
-    _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
 }
 
 void RingConsolePanel::_btnSendDbgCmd__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -104,18 +104,6 @@ void RingConsolePanel::sendCommand()
     else if (cmdInput == "help") {
         MSG_(">> Help :");
         MSG_("use PgUp/PgDown for crawling commands history.");
-        MSG_("start : start the daemon");
-        MSG_("stop : start the daemon");
-        return;
-    }
-    else if (cmdInput == "start")
-    {
-        RingD::instance->startDaemon();
-        return;
-    }
-    else if (cmdInput == "stop")
-    {
-        RingD::instance->stopDaemon();
         return;
     }
 
