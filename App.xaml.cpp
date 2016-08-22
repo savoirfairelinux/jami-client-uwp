@@ -18,6 +18,7 @@
 #include "pch.h"
 
 #include "MainPage.xaml.h"
+#include "Wizard.xaml.h"
 
 //daemon
 //#include <dring.h>
@@ -56,22 +57,29 @@ using namespace RingClientUWP;
 App::App()
 {
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
+
 }
 
 void
 App::OnLaunched(LaunchActivatedEventArgs^ e)
 {
+    bool noAccountFound = true;
     rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
 
     if (rootFrame == nullptr) {
         rootFrame = ref new Frame();
 
         if (rootFrame->Content == nullptr)
-            rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
+            if(noAccountFound)
+                rootFrame->Navigate(TypeName(Views::Wizard::typeid), e->Arguments);
+            else
+                rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
 
         Window::Current->Content = rootFrame;
         Window::Current->Activate();
-    } else
+    } else if (noAccountFound)
+        rootFrame->Navigate(TypeName(Views::Wizard::typeid), e->Arguments);
+    else
         rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
 
     CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
