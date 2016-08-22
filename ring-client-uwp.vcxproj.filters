@@ -183,6 +183,9 @@
     <Page Include="MessageTextPage.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="Wizard.xaml">
+      <Filter>Views</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="localization\US-en\Resources.resw">

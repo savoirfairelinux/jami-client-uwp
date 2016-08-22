@@ -190,6 +190,9 @@
     <ClInclude Include="WelcomePage.xaml.h">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Wizard.xaml.h">
+      <DependentUpon>Wizard.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -204,6 +207,7 @@
     <Page Include="Styles.xaml" />
     <Page Include="VideoPage.xaml" />
     <Page Include="WelcomePage.xaml" />
+    <Page Include="Wizard.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -282,6 +286,9 @@
     </ClCompile>
     <ClCompile Include="WelcomePage.xaml.cpp">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Wizard.xaml.cpp">
+      <DependentUpon>Wizard.xaml</DependentUpon>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
