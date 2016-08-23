@@ -43,6 +43,9 @@ RingClientUWP::RingD::startDaemon()
 {
     g_dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
 
+    /* connect to delegates */
+
+
     create_task([&]() {
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
         using namespace std::placeholders;
@@ -89,22 +92,12 @@ RingClientUWP::RingD::startDaemon()
 
         std::map<std::string, SharedCallback> dringDebugOutHandler;
         dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                             (std::bind(&DebugOutputWrapper, _1)));
+                                    (std::bind(&DebugOutputWrapper, _1)));
         registerCallHandlers(dringDebugOutHandler);
 
-        std::map<std::string, SharedCallback> getAppPathHandler =
-        {
-            DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
-            ([this](std::vector<std::string>* paths){
-                paths->emplace_back(localFolder_);
-            })
-        };
-        registerCallHandlers(getAppPathHandler);
-
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-            DRing::DRING_FLAG_DEBUG |
-            DRing::DRING_FLAG_AUTOANSWER)
-                    , localFolder_.c_str());
+                    DRing::DRING_FLAG_DEBUG |
+                    DRing::DRING_FLAG_AUTOANSWER));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
@@ -114,14 +107,94 @@ RingClientUWP::RingD::startDaemon()
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
+                pushEvents(); // dequeue
             }
             DRing::fini();
         }
     });
 }
 
+void RingClientUWP::RingD::pushEvents()
+{
+    for (int i = 0; i < listEvents.size(); i++)
+    {
+        MSG_("push");
+        auto task = listEvents.front();
+        std::wstring wstr(task->order->Begin());
+        std::string str(wstr.begin(), wstr.end());
+
+        listEvents.pop();
+
+        if (task->order == "sendMessage") {
+            MSG_("{sendMessage}");
+            std::map<std::string, std::string> payload;
+            auto messageText = dynamic_cast<MessageText^>(task);
+
+            std::wstring accountIdWStr(messageText->accountId->Begin());
+            std::string accountIdStr(accountIdWStr.begin(), accountIdWStr.end());
+
+            std::wstring toWStr(messageText->to->Begin());
+            std::string toStr(toWStr.begin(), toWStr.end());
+
+            std::wstring payloadWStr(messageText->payload->Begin());
+            std::string payloadStr(payloadWStr.begin(), payloadWStr.end());
+
+
+            payload["Text/plain"] = payloadStr;
+            DRing::sendAccountTextMessage(accountIdStr, toStr, payload);
+
+            MSG_("accountId = " + accountIdStr);
+            MSG_("to = " + toStr);
+            MSG_("payload = " + payloadStr);
+
+        }
+        else if (task->order == "StartDaemon") {
+            MSG_(str);
+        }
+        else if (task->order == "StopDaemon") {
+            MSG_(str);
+        }
+
+        // during a call :
+        /*void sendTextMessage(const std::string& callID,
+        const std::map<std::string, std::string>& messages,
+        const std::string& from,
+        bool isMixed);*/
+
+    }
+}
+
 RingClientUWP::RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     MSG_(localFolder_);
+}
+
+void RingClientUWP::RingD::emitSendMessage(String^ accountId, String^ to, String^ payload)
+{
+    //ringDaemonSendMessage();
+    auto messageText = ref new MessageText();
+    messageText->order = "sendMessage";
+    messageText->accountId = accountId;
+    messageText->to = to;
+    messageText->payload = payload;
+
+    listEvents.push(messageText); //enqueue
+}
+
+void RingClientUWP::RingD::emitStartDaemon(Task^ task)
+{
+    //ringDaemonStart(task);
+    task->order = "StartDaemon";
+    listEvents.push(task);
+}
+
+void RingClientUWP::RingD::emitStopDaemon(Task^ task)
+{
+    //ringDaemonStop(task);
+    task->order = "StopDaemon";
+    std::wstring wstr(task->order->Begin());
+    std::string str(wstr.begin(), wstr.end());
+
+    listEvents.push(task);
 }

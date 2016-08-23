@@ -22,9 +22,29 @@ using namespace concurrency;
 
 namespace RingClientUWP
 {
+// TODO :: move the tasks in private, use enum for order
+ref class Task
+{
+public:
+    property String^ order;
+};
+
+ref class MessageText : public Task {
+
+public:
+    property String^ accountId;
+    property String^ to;
+    property String^ payload;
+};
+
+ref class File : public Task {
+
+};
+
 
 public ref class RingD sealed
 {
+
 public:
     static property RingD^ instance
     {
@@ -40,10 +60,20 @@ public:
     /* functions */
 internal:
     void startDaemon();
+    void pushEvents();
+
+    void emitSendMessage(String^ accountId, String^ to, String^ payload);
+    void emitStartDaemon(Task^ task);
+    void emitStopDaemon(Task^ task);
+
+    event RingDaemonSendMessage^ ringDaemonSendMessage;
+    event RingDaemonStart^ ringDaemonStart;
+    event RingDaemonStop^ ringDaemonStop;
 
 private:
     RingD(); // singleton
     std::string localFolder_;
+    std::queue<Task^> listEvents;
 
 };
 }

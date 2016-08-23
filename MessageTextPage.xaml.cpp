@@ -37,6 +37,10 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Storage;
+using namespace Windows::UI::Core;
+
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
@@ -85,5 +89,7 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
 
     if (!contact || txt->IsEmpty())
         return;
+
+    RingD::instance->emitSendMessage("FROMmySUPERaccount", "TOmySUPERcontact", "HI");
 
 }

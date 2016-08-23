@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,22 +16,33 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+using namespace Platform;
+using namespace Windows::UI::Xaml::Data;
 
-/* standard system include files. */
-#include <ppltasks.h>
-#include <iomanip>
-#include <queue>
+namespace RingClientUWP
+{
+public ref class ConversationMessage sealed
+{
+public:
+    property String^ Date;
+    property bool FromContact;
+    property String^ Payload;
+};
 
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
-#include "Conversation.h"
+public ref class Conversation sealed
+{
+private:
 
-/* ensure to be accessed from anywhere */
-#include "EventsManager.h"
-#include "RingD.h"
-#include "RingDebug.h"
-#include "Utils.h"
+
+public:
+    Conversation();
+    void addMessage(String^ date, bool fromContact, String^ payload);
+
+private:
+    Vector<ConversationMessage^> messages;
+
+};
+#define MSG_FROM_CONTACT true
+#define MSG_FROM_ME false
+}
+

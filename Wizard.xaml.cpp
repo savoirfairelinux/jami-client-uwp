@@ -28,7 +28,7 @@ Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
 {
     // you must ensure alias not null for the daemon
     auto alias = _aliasTextBox_->Text;
-    if (alias->IsEmpty)
+    if (alias->IsEmpty())
         alias = "windows user";
     std::wstring wstr(alias->Begin());
     std::string str(wstr.begin(), wstr.end()); // --> what daemon wants
