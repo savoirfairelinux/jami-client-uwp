@@ -23,10 +23,36 @@
 #include <memory>
 #include <WinNls.h>
 
+using namespace Platform;
+using namespace Windows::Storage;
+
 namespace RingClientUWP
 {
 namespace Utils
 {
+
+task<bool>
+fileExists(StorageFolder^ folder, String^ fileName)
+{
+    return create_task(folder->GetFileAsync(fileName))
+        .then([](task<StorageFile^> taskResult)
+    {
+        bool exists;
+        try {
+            taskResult.get();
+            exists = true;
+        }
+        catch (COMException ^e) {
+            if (e->HResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
+                exists = false;
+            }
+            else {
+                throw;
+            }
+        }
+        return exists;
+    });
+}
 
 std::string makeString(const std::wstring& wstr)
 {
