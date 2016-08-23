@@ -45,7 +45,7 @@ App::App()
 void
 App::OnLaunched(LaunchActivatedEventArgs^ e)
 {
-    bool noAccountFound = true;
+    bool noAccountFound = false;
     rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
 
     if (rootFrame == nullptr) {

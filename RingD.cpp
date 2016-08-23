@@ -89,21 +89,21 @@ RingClientUWP::RingD::startDaemon()
 
         std::map<std::string, SharedCallback> dringDebugOutHandler;
         dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                             (std::bind(&DebugOutputWrapper, _1)));
+                                    (std::bind(&DebugOutputWrapper, _1)));
         registerCallHandlers(dringDebugOutHandler);
 
-        std::map<std::string, SharedCallback> getAppPathHandler =
-        {
-            DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
-            ([this](std::vector<std::string>* paths){
-                paths->emplace_back(localFolder_);
-            })
-        };
-        registerCallHandlers(getAppPathHandler);
+        //std::map<std::string, SharedCallback> getAppPathHandler =
+        //{
+        //    DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
+        //    ([this](std::vector<std::string>* paths){
+        //        paths->emplace_back(localFolder_);
+        //    })
+        //};
+        //registerCallHandlers(getAppPathHandler);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-            DRing::DRING_FLAG_DEBUG |
-            DRing::DRING_FLAG_AUTOANSWER)
+                    DRing::DRING_FLAG_DEBUG |
+                    DRing::DRING_FLAG_AUTOANSWER)
                     , localFolder_.c_str());
 
         if (!DRing::start()) {

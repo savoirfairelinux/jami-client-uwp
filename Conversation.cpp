@@ -1,4 +1,3 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
@@ -16,36 +15,28 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#include "pch.h"
+
+#include "Conversation.h"
+
+using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
-using namespace Windows::UI::Xaml::Data;
+using namespace Windows::UI::Core;
 
-namespace RingClientUWP
+using namespace RingClientUWP;
+
+Conversation::Conversation()
 {
-ref class Conversation;
-public ref class Contact sealed : public INotifyPropertyChanged
-{
-public:
-    Contact(String^ name, String^ ringID);
-
-
-    virtual event PropertyChangedEventHandler^ PropertyChanged;
-
-    property String^ name_;
-    property String^ ringID_;
-    property Conversation^ _conversation
-    {
-        Conversation^ get()
-        {
-            return conversation_;
-        }
-    }
-
-protected:
-    void NotifyPropertyChanged(String^ propertyName);
-
-private:
-    Conversation^ conversation_;
-
-};
+    MSG_("yo");
 }
 
+void RingClientUWP::Conversation::addMessage(String^ date, bool fromContact, String^ payload)
+{
+    ConversationMessage^ message = ref new ConversationMessage();
+    message->Date = date;
+    message->FromContact = fromContact;
+    message->Payload = payload;
+    std::string owner((fromContact) ? "from contact" : " from me");
+    MSG_("{Conversation::addMessage}");
+    MSG_("owner = " + owner);
+}

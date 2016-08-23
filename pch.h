@@ -27,6 +27,7 @@
 #include "AccountsViewModel.h"
 #include "Contact.h"
 #include "ContactsViewModel.h"
+#include "Conversation.h"
 
 /* ensure to be accessed from anywhere */
 #include "RingD.h"

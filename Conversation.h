@@ -21,31 +21,28 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-ref class Conversation;
-public ref class Contact sealed : public INotifyPropertyChanged
+public ref class ConversationMessage sealed
 {
 public:
-    Contact(String^ name, String^ ringID);
+    property String^ Date;
+    property bool FromContact;
+    property String^ Payload;
+};
+
+public ref class Conversation sealed
+{
+private:
 
 
-    virtual event PropertyChangedEventHandler^ PropertyChanged;
-
-    property String^ name_;
-    property String^ ringID_;
-    property Conversation^ _conversation
-    {
-        Conversation^ get()
-        {
-            return conversation_;
-        }
-    }
-
-protected:
-    void NotifyPropertyChanged(String^ propertyName);
+public:
+    Conversation();
+    void addMessage(String^ date, bool fromContact, String^ payload);
 
 private:
-    Conversation^ conversation_;
+    Vector<ConversationMessage^> messages;
 
 };
+#define MSG_FROM_CONTACT true
+#define MSG_FROM_ME false
 }
 
