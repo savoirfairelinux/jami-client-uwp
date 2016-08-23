@@ -21,13 +21,33 @@ using namespace concurrency;
 
 namespace RingClientUWP
 {
+// TODO :: move the tasks in private, use enum for order
+ref class Task
+{
+public:
+    property String^ order;
+};
 
-/* delegate */
+ref class MessageText : public Task {
+
+public:
+    property String^ accountId;
+    property String^ to;
+    property String^ payload;
+};
+
+ref class File : public Task {
+
+};
+
+/* delegates */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, String^ state, int code);
+delegate void MessageSent(String^ accountId, String^ to, String^ payload);
 
 public ref class RingD sealed
 {
+
 public:
     /* functions */
 
@@ -52,6 +72,9 @@ public:
 internal:
     /* functions */
     void startDaemon();
+    void dequeueTasks();
+
+    void sendMessage(String^ accountId, String^ to, String^ payload);
 
     /* TODO : move members */
     bool hasConfig;
@@ -60,10 +83,12 @@ internal:
     /* events */
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
+    event MessageSent^ messageSent;
 
 private:
     RingD(); // singleton
     std::string localFolder_;
     bool daemonRunning_ = false;
+    std::queue<Task^> tasksList_;
 };
 }

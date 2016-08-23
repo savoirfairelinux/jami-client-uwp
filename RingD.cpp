@@ -135,13 +135,63 @@ RingClientUWP::RingD::startDaemon()
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
+                dequeueTasks();
             }
             DRing::fini();
         }
     });
 }
 
+void RingClientUWP::RingD::dequeueTasks()
+{
+    for (int i = 0; i < tasksList_.size(); i++)
+    {
+        MSG_("push");
+        auto task = tasksList_.front();
+        std::wstring wstr(task->order->Begin());
+        std::string str(wstr.begin(), wstr.end());
+
+        tasksList_.pop();
+
+        if (task->order == "sendMessage") {
+            MSG_("{sendMessage}");
+            std::map<std::string, std::string> payload;
+            auto messageText = dynamic_cast<MessageText^>(task);
+
+            std::wstring accountIdWStr(messageText->accountId->Begin());
+            std::string accountIdStr(accountIdWStr.begin(), accountIdWStr.end());
+
+            std::wstring toWStr(messageText->to->Begin());
+            std::string toStr(toWStr.begin(), toWStr.end());
+
+            std::wstring payloadWStr(messageText->payload->Begin());
+            std::string payloadStr(payloadWStr.begin(), payloadWStr.end());
+
+            payload["Text/plain"] = payloadStr;
+            DRing::sendAccountTextMessage(accountIdStr, toStr, payload);
+            // nb, during a call use :
+            /* void sendTextMessage(const std::string& callID,  const std::map<std::string, std::string>& messages,
+                                                                              const std::string& from, bool isMixed); */
+
+            MSG_("accountId = " + accountIdStr);
+            MSG_("to = " + toStr);
+            MSG_("payload = " + payloadStr);
+        }
+    }
+}
+
 RingClientUWP::RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+}
+
+void RingClientUWP::RingD::sendMessage(String^ accountId, String^ to, String^ payload)
+{
+    auto messageText = ref new MessageText();
+    messageText->order = "sendMessage";
+    messageText->accountId = accountId;
+    messageText->to = to;
+    messageText->payload = payload;
+
+    tasksList_.push(messageText); //enqueue
 }
