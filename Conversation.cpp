@@ -25,9 +25,9 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 
-Conversation::Conversation()
+
+RingClientUWP::Conversation::Conversation()
 {
-    MSG_("yo");
 }
 
 void RingClientUWP::Conversation::addMessage(String^ date, bool fromContact, String^ payload)
