@@ -20,8 +20,6 @@
 #pragma once
 
 #include <string>
-#include <memory>
-#include <WinNls.h>
 
 using namespace Platform;
 using namespace Windows::Storage;
