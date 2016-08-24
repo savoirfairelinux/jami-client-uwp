@@ -337,6 +337,7 @@
                          VerticalAlignment="Center"
                          Width="320"
                          TextWrapping="Wrap"
+                         KeyDown="_ringTxtBx__KeyDown"
                          Style="{StaticResource TextBoxStyle1}"
                          Text=""/>
                 <ListBox x:Name="_smartList_"

@@ -155,3 +155,13 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
     auto contact = safe_cast<Contact^>(listbox->SelectedItem);
     ContactsViewModel::instance->selectedContact = contact;
 }
+
+
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    /* add contact, test purpose but will be reused later in some way */
+    if (e->Key == Windows::System::VirtualKey::Enter && _ringTxtBx_->Text != "") {
+        ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "1234567890");
+        _ringTxtBx_->Text = "";
+    }
+}
