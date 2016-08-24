@@ -1,6 +1,7 @@
 ﻿/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -17,14 +18,10 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "ContactsViewModel.h"
-#include "MessageTextPage.xaml.h"
-#include "SmartPanel.xaml.h"
-#include "RingConsolePanel.xaml.h"
-#include "VideoPage.xaml.h"
-#include "WelcomePage.xaml.h"
+#include "LoadingPage.xaml.h"
 
 #include "MainPage.xaml.h"
+#include "Wizard.xaml.h"
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
@@ -47,60 +44,24 @@ using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::System;
 
-MainPage::MainPage()
+LoadingPage::LoadingPage()
 {
     InitializeComponent();
 
-    Window::Current->SetTitleBar(_titleBar_);
-
-    _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
-    _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
-    _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
-    _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
-    _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
-
-    /* connect to delegates */
-    ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
-        showFrame(_messageTextFrame_);
+    Utils::fileExists(ApplicationData::Current->LocalFolder, ".config\\dring.yml")
+        .then([this](bool config_exists)
+    {
+        if (config_exists) {
+            RingD::instance->hasConfig = true;
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
+                this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
+            }));
+        }
+        else {
+            RingD::instance->hasConfig = false;
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
+                this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
+            }));
+        }
     });
-    ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
-        showFrame(_welcomeFrame_);
-    });
-}
-
-void
-MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
-{
-    if (e->Key == VirtualKey::F5) {
-        _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
-        _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
-    }
-}
-
-void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-    _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
-}
-
-void
-RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
-{
-    _navGrid_->SetRow(_welcomeFrame_, 0);
-    _navGrid_->SetRow(_messageTextFrame_, 0);
-    _navGrid_->SetRow(_videoFrame_, 0);
-
-    if (frame == _welcomeFrame_) {
-        _navGrid_->SetRow(_welcomeFrame_, 1);
-    } else if (frame == _videoFrame_) {
-        _navGrid_->SetRow(_videoFrame_, 1);
-    } else if (frame == _messageTextFrame_) {
-        _navGrid_->SetRow(_messageTextFrame_, 1);
-        dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
-    }
-}
-
-void
-RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
-{
-    RingD::instance->startDaemon();
 }

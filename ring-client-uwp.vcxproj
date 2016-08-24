@@ -162,6 +162,9 @@
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactsViewModel.h" />
+    <ClInclude Include="LoadingPage.xaml.h">
+      <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
@@ -187,11 +190,15 @@
     <ClInclude Include="WelcomePage.xaml.h">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="Wizard.xaml.h">
+      <DependentUpon>Wizard.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="LoadingPage.xaml" />
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -201,6 +208,7 @@
     <Page Include="Styles.xaml" />
     <Page Include="VideoPage.xaml" />
     <Page Include="WelcomePage.xaml" />
+    <Page Include="Wizard.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -249,6 +257,9 @@
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
     <ClCompile Include="ContactsViewModel.cpp" />
+    <ClCompile Include="LoadingPage.xaml.cpp">
+      <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
@@ -276,6 +287,9 @@
     </ClCompile>
     <ClCompile Include="WelcomePage.xaml.cpp">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Wizard.xaml.cpp">
+      <DependentUpon>Wizard.xaml</DependentUpon>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

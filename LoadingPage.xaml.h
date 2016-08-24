@@ -1,6 +1,7 @@
-/***************************************************************************
+﻿#pragma once
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -15,47 +16,16 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#pragma once
-
-using namespace concurrency;
+#include "LoadingPage.g.h"
 
 namespace RingClientUWP
 {
-
-public ref class RingD sealed
+namespace Views
+{
+public ref class LoadingPage sealed
 {
 public:
-    static property RingD^ instance
-    {
-        RingD^ get()
-        {
-            static RingD^ instance_ = ref new RingD();
-            return instance_;
-        }
-    }
-
-    property bool daemonRunning
-    {
-        bool get()
-        {
-            return daemonRunning_;
-        }
-    }
-
-
-    /* properties */
-
-
-    /* functions */
-
-internal:
-    void startDaemon();
-    bool hasConfig;
-    std::string accountName;
-
-private:
-    RingD(); // singleton
-    std::string localFolder_;
-    bool daemonRunning_ = false;
+    LoadingPage();
 };
+}
 }

@@ -31,6 +31,7 @@ public:
     MainPage();
 
 protected:
+    virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
     virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
 private:
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
