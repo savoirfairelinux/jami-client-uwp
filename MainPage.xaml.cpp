@@ -74,10 +74,10 @@ MainPage::MainPage()
 void
 MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
 {
-    /*if (e->Key == VirtualKey::F5) {
+    if (e->Key == VirtualKey::F5) {
         _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
         _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
-    }*/
+    }
 }
 
 void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -102,4 +102,10 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
         _navGrid_->SetRow(_messageTextFrame_, 1);
         dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
     }
+}
+
+void
+RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
+{
+    RingD::instance->startDaemon();
 }

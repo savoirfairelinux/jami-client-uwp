@@ -37,13 +37,16 @@ public:
 
     /* properties */
 
+
     /* functions */
+
 internal:
-    void startDaemon();
+    void        startDaemon();
+    bool        hasConfig;
+    std::string accountName;
 
 private:
-    RingD(); // singleton
-    std::string localFolder_;
-
+    RingD()                             ; // singleton
+    std::string     localFolder_        ;
 };
 }

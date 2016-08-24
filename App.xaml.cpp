@@ -18,6 +18,7 @@
  **************************************************************************/
 #include "pch.h"
 
+#include "LoadingPage.xaml.h"
 #include "MainPage.xaml.h"
 
 using namespace Concurrency;
@@ -49,19 +50,16 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
         rootFrame = ref new Frame();
 
         if (rootFrame->Content == nullptr)
-            rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
+            rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
 
         Window::Current->Content = rootFrame;
         Window::Current->Activate();
     } else
-        rootFrame->Navigate(TypeName(MainPage::typeid), e->Arguments);
+        rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
 
     CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
-
-    /* summon the daemon */
-    RingD::instance->startDaemon();
 }
