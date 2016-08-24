@@ -1,6 +1,7 @@
 ﻿﻿/***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
  * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+ * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify    *
  * it under the terms of the GNU General Public License as published by    *
@@ -15,6 +16,7 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
+
 #include "pch.h"
 
 #include "SmartPanel.xaml.h"
@@ -161,7 +163,7 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
 {
     /* add contact, test purpose but will be reused later in some way */
     if (e->Key == Windows::System::VirtualKey::Enter && _ringTxtBx_->Text != "") {
-        ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "1234567890");
+        ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
         _ringTxtBx_->Text = "";
     }
 }
