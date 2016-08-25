@@ -64,6 +64,16 @@
     <ClCompile Include="RingD.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="LoadingPage.xaml.cpp" />
+    <ClCompile Include="MessageTextPage.xaml.cpp" />
+    <ClCompile Include="VideoPage.xaml.cpp" />
+    <ClCompile Include="Wizard.xaml.cpp" />
+    <ClCompile Include="Call.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="CallsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -92,6 +102,16 @@
     </ClInclude>
     <ClInclude Include="RingD.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="LoadingPage.xaml.h" />
+    <ClInclude Include="MessageTextPage.xaml.h" />
+    <ClInclude Include="VideoPage.xaml.h" />
+    <ClInclude Include="Wizard.xaml.h" />
+    <ClInclude Include="Call.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="CallsViewModel.h">
+      <Filter>ModelViews</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
