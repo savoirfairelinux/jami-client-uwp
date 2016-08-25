@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,20 +16,44 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+using namespace Platform::Collections;
 
-/* standard system include files. */
-#include <ppltasks.h>
-#include <iomanip>
+namespace RingClientUWP
+{
 
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
-#include "Call.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
 
-/* ensure to be accessed from anywhere */
-#include "RingD.h"
-#include "RingDebug.h"
-#include "Utils.h"
+namespace ViewModel {
+public ref class CallsViewModel sealed
+{
+internal:
+    /* singleton */
+    static property CallsViewModel^ instance
+    {
+        CallsViewModel^ get()
+        {
+            static CallsViewModel^ instance_ = ref new CallsViewModel();
+            return instance_;
+        }
+    }
+
+    /* functions */
+    Call^ addNewCall(String^ accountId, String^ callId, String^ from);
+
+    /* properties */
+    property Vector<Call^>^ CallsList
+    {
+        Vector<Call^>^ get()
+        {
+            return CallsList_;
+        }
+    }
+
+    /* events */
+
+private:
+    CallsViewModel(); // singleton
+    Vector<Call^>^ CallsList_;
+
+};
+}
+}

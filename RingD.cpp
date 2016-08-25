@@ -32,6 +32,7 @@ using namespace Windows::Storage;
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
+using namespace RingClientUWP::Utils;
 
 void
 DebugOutputWrapper(const std::string& str)
@@ -58,6 +59,13 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("accountId = " + accountId);
                 MSG_("callId = " + callId);
                 MSG_("from = " + from);
+
+                auto accountId2 = toPlatformString(accountId);
+                auto callId2 = toPlatformString(callId);
+                auto from2 = toPlatformString(from);
+
+                incomingCall(accountId2, callId2, from2);
+
             }),
             DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
                 const std::string& callId,
@@ -68,6 +76,12 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("callId = " + callId);
                 MSG_("state = " + state);
                 MSG_("code = " + std::to_string(code));
+
+                auto callId2 = toPlatformString(callId);
+                auto state2 = toPlatformString(state);
+
+                stateChange(callId2, state2, code);
+
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
                 const std::string& accountId,
@@ -89,21 +103,21 @@ RingClientUWP::RingD::startDaemon()
 
         std::map<std::string, SharedCallback> dringDebugOutHandler;
         dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                             (std::bind(&DebugOutputWrapper, _1)));
+                                    (std::bind(&DebugOutputWrapper, _1)));
         registerCallHandlers(dringDebugOutHandler);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
         {
             DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
-            ([this](std::vector<std::string>* paths){
+            ([this](std::vector<std::string>* paths) {
                 paths->emplace_back(localFolder_);
             })
         };
         registerCallHandlers(getAppPathHandler);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-            DRing::DRING_FLAG_DEBUG |
-            DRing::DRING_FLAG_AUTOANSWER));
+                    DRing::DRING_FLAG_DEBUG |
+                    DRing::DRING_FLAG_AUTOANSWER));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");

@@ -160,6 +160,8 @@
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="AccountsViewModel.h" />
+    <ClInclude Include="Call.h" />
+    <ClInclude Include="CallsViewModel.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactsViewModel.h" />
     <ClInclude Include="LoadingPage.xaml.h">
@@ -255,6 +257,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <ClCompile Include="Call.cpp" />
+    <ClCompile Include="CallsViewModel.cpp" />
     <ClCompile Include="Contact.cpp" />
     <ClCompile Include="ContactsViewModel.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">

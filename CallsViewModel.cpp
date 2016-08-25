@@ -15,55 +15,41 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#pragma once
+#include "pch.h"
 
-using namespace concurrency;
+#include "CallsViewModel.h"
 
-namespace RingClientUWP
+using namespace RingClientUWP;
+using namespace ViewModel;
+using namespace Windows::UI::Core;
+using namespace Windows::ApplicationModel::Core;
+
+CallsViewModel::CallsViewModel()
 {
+    CallsList_ = ref new Vector<Call^>();
 
-/* delegate */
-delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
-delegate void StateChange(String^ callId, String^ state, int code);
+    /* connect to delegates. */
+    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
+    String^ accountId, String^ callId, String^ from) {
+        addNewCall(accountId, callId, from);
+    });
+    RingD::instance->stateChange += ref new RingClientUWP::StateChange([&](
+    String^ callId, String^ state, int code) {
+        for each (auto call in CallsList_) {
+            if (call->callId == callId) {
+                call->stateChange(state, code);
+                return;
+            }
+        }
+        WNG_("Call not found");
+    });
 
-public ref class RingD sealed
+}
+
+Call^
+RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ callId, String^ from)
 {
-public:
-    /* functions */
-
-    /* properties */
-    static property RingD^ instance
-    {
-        RingD^ get()
-        {
-            static RingD^ instance_ = ref new RingD();
-            return instance_;
-        }
-    }
-
-    property bool daemonRunning
-    {
-        bool get()
-        {
-            return daemonRunning_;
-        }
-    }
-
-internal:
-    /* functions */
-    void startDaemon();
-
-    /* TODO : move members */
-    bool hasConfig;
-    std::string accountName;
-
-    /* events */
-    event IncomingCall^ incomingCall;
-    event StateChange^ stateChange;
-
-private:
-    RingD(); // singleton
-    std::string localFolder_;
-    bool daemonRunning_ = false;
-};
+    auto call = ref new Call(accountId, callId, from);
+    CallsList_->Append(call);
+    return nullptr;
 }
