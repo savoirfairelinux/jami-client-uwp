@@ -143,17 +143,20 @@ RingClientUWP::RingD::startDaemon()
         else {
             if (!hasConfig)
             {
-                std::map<std::string, std::string> test_details;
-                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
-                DRing::addAccount(test_details);
+                std::map<std::string, std::string> ringAccountDetails;
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+                DRing::addAccount(ringAccountDetails);
+
+                std::map<std::string, std::string> sipAccountDetails;
+                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
+                DRing::addAccount(sipAccountDetails);
             }
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
                ref new DispatchedHandler([=]() {
                 reloadAccountList();
             }));
-
-            // if there is no config, create a default RING account
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
