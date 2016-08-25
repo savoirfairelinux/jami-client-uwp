@@ -112,18 +112,39 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60"/>
-                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
                 <Image x:Name="_accountAvatar_"
                        VerticalAlignment="Center"
                        HorizontalAlignment="Center"
                        Grid.Column="0"
+                       Grid.RowSpan="2"
                        Width="55"
                        Height="55"
                        Source="Assets\TESTS\contactAvatar.png"/>
                 <TextBlock x:Name="_accountName_"
                            Grid.Column="1"
+                           Grid.Row="0"
                            Text="{x:Bind name_}"/>
+                <TextBlock x:Name="_accountType_"
+                           Grid.Column="2"
+                           Grid.Row="0"
+                           TextAlignment="Right"
+                           Margin="0,0,10,0"
+                           Foreground="ForestGreen"
+                           Text="{x:Bind accountType_}"/>
+                <TextBlock x:Name="_ringID_"
+                           Grid.Column="1"
+                           Grid.ColumnSpan="2"
+                           Grid.Row="1"
+                           Foreground="Crimson"
+                           TextTrimming="CharacterEllipsis"
+                           Text="{x:Bind ringID_}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>

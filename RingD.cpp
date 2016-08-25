@@ -45,11 +45,16 @@ reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
     std::vector<std::string> accountList = DRing::getAccountList();
-    for (std::string i : accountList) {
-        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(i);
+    std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
+    for (; rit != accountList.rend(); ++rit) {
+        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
+        std::string ringID(accountDetails.find(ring::Conf::CONFIG_ACCOUNT_USERNAME)->second);
+        if(!ringID.empty())
+            ringID = ringID.substr(5);
         RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,      //name
+            ringID,                                                             //ringid
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
     }
 }
 
