@@ -23,10 +23,10 @@ using namespace Platform;
 using namespace Windows::UI::Xaml::Data;
 using namespace Windows::Data::Json;
 
-constexpr String^ nameKey         = "name";
-constexpr String^ ringIDKey       = "ringid";
-constexpr String^ contactKey      = "contact";
-constexpr String^ contactListKey  = "contactlist";
+String^ nameKey         = "name";
+String^ ringIDKey       = "ringid";
+String^ contactKey      = "contact";
+String^ contactListKey  = "contactlist";
 
 namespace RingClientUWP
 {
