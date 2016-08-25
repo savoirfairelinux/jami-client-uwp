@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 using namespace Platform::Collections;
 
 namespace RingClientUWP
@@ -36,6 +37,8 @@ internal:
     }
 
     /* functions */
+    void add(std::string& name, std::string& ringid);
+    void clearAccountList();
 
     /* properties */
     property Vector<Account^>^ accountsList
