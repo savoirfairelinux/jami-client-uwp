@@ -180,7 +180,9 @@
     <ClInclude Include="RingConsolePanel.xaml.h">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="RingD.h" />
+    <ClInclude Include="RingD.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="RingDebug.h" />
     <ClInclude Include="SmartPanel.xaml.h">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
@@ -281,7 +283,9 @@
     <ClCompile Include="RingConsolePanel.xaml.cpp">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
     </ClCompile>
-    <ClCompile Include="RingD.cpp" />
+    <ClCompile Include="RingD.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="RingDebug.cpp" />
     <ClCompile Include="SmartPanel.xaml.cpp">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
