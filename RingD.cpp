@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -45,11 +45,16 @@ reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
     std::vector<std::string> accountList = DRing::getAccountList();
-    for (std::string i : accountList) {
-        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(i);
+    std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
+    for (; rit != accountList.rend(); ++rit) {
+        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
+        std::string ringID(accountDetails.find(ring::Conf::CONFIG_ACCOUNT_USERNAME)->second);
+        if(!ringID.empty())
+            ringID = ringID.substr(5);
         RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,      //name
+            ringID,                                                             //ringid
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
     }
 }
 
@@ -143,16 +148,15 @@ RingClientUWP::RingD::startDaemon()
         else {
             if (!hasConfig)
             {
-                std::map<std::string, std::string> test_details;
-                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
-                DRing::addAccount(test_details);
+                std::map<std::string, std::string> ringAccountDetails;
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+                DRing::addAccount(ringAccountDetails);
             }
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
                ref new DispatchedHandler([=]() {
                 reloadAccountList();
             }));
-
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
@@ -163,21 +167,56 @@ RingClientUWP::RingD::startDaemon()
     });
 }
 
-RingD::RingD()
+void RingClientUWP::RingD::dequeueTasks()
+{
+    for (int i = 0; i < tasksList_.size(); i++)
+    {
+        MSG_("push");
+        auto task = tasksList_.front();
+        std::wstring wstr(task->order->Begin());
+        std::string str(wstr.begin(), wstr.end());
+
+        tasksList_.pop();
+
+        if (task->order == "sendMessage") {
+            MSG_("{sendMessage}");
+            std::map<std::string, std::string> payload;
+            auto messageText = dynamic_cast<MessageText^>(task);
+
+            std::wstring accountIdWStr(messageText->accountId->Begin());
+            std::string accountIdStr(accountIdWStr.begin(), accountIdWStr.end());
+
+            std::wstring toWStr(messageText->to->Begin());
+            std::string toStr(toWStr.begin(), toWStr.end());
+
+            std::wstring payloadWStr(messageText->payload->Begin());
+            std::string payloadStr(payloadWStr.begin(), payloadWStr.end());
+
+            payload["Text/plain"] = payloadStr;
+            DRing::sendAccountTextMessage(accountIdStr, toStr, payload);
+            // nb, during a call use :
+            /* void sendTextMessage(const std::string& callID,  const std::map<std::string, std::string>& messages,
+                                                                              const std::string& from, bool isMixed); */
+
+            MSG_("accountId = " + accountIdStr);
+            MSG_("to = " + toStr);
+            MSG_("payload = " + payloadStr);
+        }
+    }
+}
+
+RingClientUWP::RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
 }
 
-void
-RingD::dequeueTasks()
+void RingClientUWP::RingD::sendMessage(String^ accountId, String^ to, String^ payload)
 {
-    for (int i = 0; i < tasksList_.size(); i++) {
-        auto task = tasksList_.front();
-        switch (task->request) {
-        case Request::None:
-        default:
-            break;
-        }
-        tasksList_.pop();
-    }
+    auto messageText = ref new MessageText();
+    messageText->order = "sendMessage";
+    messageText->accountId = accountId;
+    messageText->to = to;
+    messageText->payload = payload;
+
+    tasksList_.push(messageText); //enqueue
 }
