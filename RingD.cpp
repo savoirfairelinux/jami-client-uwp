@@ -35,13 +35,26 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 
 void
-DebugOutputWrapper(const std::string& str)
+debugOutputWrapper(const std::string& str)
 {
     MSG_(str);
 }
 
 void
-RingD::startDaemon()
+reloadAccountList()
+{
+    RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
+    std::vector<std::string> accountList = DRing::getAccountList();
+    for (std::string i : accountList) {
+        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(i);
+        RingClientUWP::ViewModel::AccountsViewModel::instance->add(
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);
+    }
+}
+
+void
+RingClientUWP::RingD::startDaemon()
 {
     create_task([&]()
     {
@@ -96,6 +109,10 @@ RingD::startDaemon()
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
                 }
+            }),
+            DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
+            {
+                reloadAccountList();
             })
         };
 
@@ -103,7 +120,7 @@ RingD::startDaemon()
 
         std::map<std::string, SharedCallback> dringDebugOutHandler;
         dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                                    (std::bind(&DebugOutputWrapper, _1)));
+                                    (std::bind(&debugOutputWrapper, _1)));
         registerCallHandlers(dringDebugOutHandler);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
@@ -131,6 +148,12 @@ RingD::startDaemon()
                 test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
                 DRing::addAccount(test_details);
             }
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+               ref new DispatchedHandler([=]() {
+                reloadAccountList();
+            }));
+
+            // if there is no config, create a default RING account
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);

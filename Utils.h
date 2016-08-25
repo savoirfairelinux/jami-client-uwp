@@ -6,7 +6,8 @@ using namespace Windows::Storage;
 
 namespace RingClientUWP
 {
-namespace Utils {
+namespace Utils
+{
 
 task<bool>
 fileExists(StorageFolder^ folder, String^ fileName)
@@ -72,5 +73,6 @@ Platform::String^ toPlatformString(const std::string& str)
     std::wstring wsstr = makeWString(str);
     return ref new Platform::String(wsstr.c_str(), wsstr.length());
 }
+
 }
 }

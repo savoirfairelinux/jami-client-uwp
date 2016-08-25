@@ -23,10 +23,20 @@ using namespace ViewModel;
 
 AccountsViewModel::AccountsViewModel()
 {
-    /* accountList_ should be filled with accounts saved on the disk */
     accountsList_ = ref new Vector<Account^>();
+}
 
-    accountsList_->Append(ref new Account("Moi","jfdhfshfhsk"));
-    accountsList_->Append(ref new Account("SuperMan", "jfdhfshfhsk"));
-    accountsList_->Append(ref new Account("Travail", "jfdhfshfhsk"));
+void
+AccountsViewModel::add(std::string& name, std::string& ringid)
+{
+    accountsList_->Append(ref new Account(
+        Utils::toPlatformString(name),
+        Utils::toPlatformString(ringid)
+    ));
+}
+
+void
+AccountsViewModel::clearAccountList()
+{
+    accountsList_->Clear();
 }
