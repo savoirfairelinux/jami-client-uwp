@@ -1,4 +1,4 @@
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
@@ -103,7 +103,7 @@ RingClientUWP::RingD::startDaemon()
                 stateChange(callId2, state2, code);
 
             }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
+            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
                 const std::string& accountId,
                 const std::string& from,
                 const std::map<std::string, std::string>& payloads)
@@ -112,9 +112,17 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("accountId = " + accountId);
                 MSG_("from = " + from);
 
+                auto accountId2 = toPlatformString(accountId);
+                auto from2 = toPlatformString(from);
+
                 for (auto i : payloads) {
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                    {
+                        incomingAccountMessage(accountId2, from2, payload);
+                    }));
                 }
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
