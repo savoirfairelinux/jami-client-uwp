@@ -26,6 +26,7 @@ using namespace Windows::Data::Json;
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
+using namespace ViewModel;
 
 Contact::Contact(String^ name,
                  String^ ringID)
@@ -33,6 +34,24 @@ Contact::Contact(String^ name,
     name_ = name;
     ringID_ = ringID;
     conversation_ = ref new Conversation();
+    notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
+    unreadMessages_ = 0; // not saved on disk yet (TO DO)
+
+    /* connect to delegate */
+    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] () {
+        notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
+        unreadMessages_++;
+        PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
+    });
+    ContactsViewModel::instance->newContactSelected += ref new RingClientUWP::NewContactSelected([&]() {
+        if (ContactsViewModel::instance->selectedContact == this) {
+            PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
+            notificationNewMessage = Windows::UI::Xaml::Visibility::Collapsed;
+            unreadMessages_ = 0;
+        }
+    });
+
+
 }
 
 void

@@ -22,8 +22,11 @@ using namespace Platform::Collections;
 namespace RingClientUWP
 {
 
+/* delegates */
 delegate void NewContactSelected();
 delegate void NoContactSelected();
+delegate void ScreenConversationMessage(String^ accountId, String^ from, String^ payload);
+delegate void NotifyNewConversationMessage();
 
 namespace ViewModel {
 public ref class ContactsViewModel sealed
@@ -76,6 +79,8 @@ internal:
     /* events */
     event NewContactSelected^ newContactSelected;
     event NoContactSelected^ noContactSelected;
+    event ScreenConversationMessage^ screenConversationMessage;
+    event NotifyNewConversationMessage^ notifyNewConversationMessage;
 
 private:
     ContactsViewModel(); // singleton
