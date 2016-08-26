@@ -1,7 +1,6 @@
-﻿#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,22 +15,27 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#include "pch.h"
 
-/* standard system include files. */
-#include <ppltasks.h>
-#include <iomanip>
-#include <queue>
-
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountsViewModel.h"
-#include "Call.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
 #include "Conversation.h"
 
-/* ensure to be accessed from anywhere */
-#include "RingD.h"
-#include "RingDebug.h"
-#include "Utils.h"
+using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Windows::UI::Core;
+
+using namespace RingClientUWP;
+
+Conversation::Conversation()
+{
+}
+
+void RingClientUWP::Conversation::addMessage(String^ date, bool fromContact, String^ payload)
+{
+    ConversationMessage^ message = ref new ConversationMessage();
+    message->Date = date;
+    message->FromContact = fromContact;
+    message->Payload = payload;
+    std::string owner((fromContact) ? "from contact" : " from me");
+    MSG_("{Conversation::addMessage}");
+    MSG_("owner = " + owner);
+}

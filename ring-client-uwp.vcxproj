@@ -164,6 +164,7 @@
     <ClInclude Include="CallsViewModel.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactsViewModel.h" />
+    <ClInclude Include="Conversation.h" />
     <ClInclude Include="LoadingPage.xaml.h">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClInclude>
@@ -263,6 +264,7 @@
     <ClCompile Include="CallsViewModel.cpp" />
     <ClCompile Include="Contact.cpp" />
     <ClCompile Include="ContactsViewModel.cpp" />
+    <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClCompile>
