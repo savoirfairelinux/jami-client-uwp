@@ -24,6 +24,7 @@ namespace RingClientUWP
 
 /* delegate */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
+delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void StateChange(String^ callId, String^ state, int code);
 
 public ref class RingD sealed
@@ -59,6 +60,7 @@ internal:
 
     /* events */
     event IncomingCall^ incomingCall;
+    event IncomingAccountMessage^ incomingAccountMessage;
     event StateChange^ stateChange;
 
 private:
