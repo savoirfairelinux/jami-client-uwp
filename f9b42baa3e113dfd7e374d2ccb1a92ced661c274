@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fad0f9df_59aab4d5",
+        "filename": "Conversation.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 3,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2016-08-26T13:57:03Z",
+      "side": 1,
+      "message": "check",
+      "range": {
+        "startLine": 3,
+        "startChar": 2,
+        "endLine": 3,
+        "endChar": 8
+      },
+      "revId": "f9b42baa3e113dfd7e374d2ccb1a92ced661c274",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fad0f9df_b96160d5",
+        "filename": "Conversation.cpp",
+        "patchSetId": 1
+      },
+      "lineNbr": 32,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2016-08-26T13:57:03Z",
+      "side": 1,
+      "message": "check",
+      "range": {
+        "startLine": 32,
+        "startChar": 4,
+        "endLine": 32,
+        "endChar": 5
+      },
+      "revId": "f9b42baa3e113dfd7e374d2ccb1a92ced661c274",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    }
+  ]
+}
