@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -52,6 +52,7 @@ public:
 internal:
     /* functions */
     void startDaemon();
+    void reloadAccountList();
 
     /* TODO : move members */
     bool hasConfig;

@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -43,7 +43,7 @@ debugOutputWrapper(const std::string& str)
 }
 
 void
-reloadAccountList()
+RingClientUWP::RingD::reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
     std::vector<std::string> accountList = DRing::getAccountList();
@@ -58,6 +58,8 @@ reloadAccountList()
             ringID,                                                             //ringid
             accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
     }
+    // load user preferences
+    Configuration::UserPreferences::instance->load();
 }
 
 void
@@ -119,7 +121,10 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
             {
-                reloadAccountList();
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                    ref new DispatchedHandler([=]() {
+                    reloadAccountList();
+                }));
             })
         };
 
@@ -155,10 +160,12 @@ RingClientUWP::RingD::startDaemon()
                 ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
                 DRing::addAccount(ringAccountDetails);
             }
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
-                reloadAccountList();
-            }));
+            else {
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                    ref new DispatchedHandler([=]() {
+                    reloadAccountList();
+                }));
+            }
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);

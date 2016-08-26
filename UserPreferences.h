@@ -17,41 +17,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
 
-/* client */
-#include "pch.h"
+#pragma once
 
-using namespace RingClientUWP;
-
-using namespace Platform;
-using namespace Windows::UI::Core;
-
-void
-RingDebug::print(const std::string& message,
-                 const Type& type)
+namespace RingClientUWP
 {
-    /* get the current time */
-    std::time_t currentTime = std::time(nullptr);
-    char timeBuffer[64];
-    ctime_s(timeBuffer, sizeof timeBuffer, &currentTime);
 
-    /* timestamp */
-    auto messageTimestamped = timeBuffer + message;
-    std::wstring wString = std::wstring(message.begin(), message.end());
+delegate void SelectIndex(int index);
 
-    /* set message type. */
-    switch (type) {
-    case Type::ERR:
-        wString = L"(EE) " + wString;
-        break;
-    case Type::WNG:
-        wString = L"(WW) " + wString;
-        break;
-        /*case Type::message:*/
+namespace Configuration
+{
+
+/* delegates */
+
+public ref class UserPreferences sealed
+{
+public:
+    /* singleton */
+    static property UserPreferences^ instance
+    {
+        UserPreferences^ get()
+        {
+            static UserPreferences^ instance_ = ref new UserPreferences();
+            return instance_;
+        }
     }
 
-    /* screen it into VS debug console */
-    OutputDebugString(wString.c_str());
+    /* properties */
+    property int        PREF_ACCOUNT_INDEX;
 
-    /* fire the event. */
-    messageToScreen(ref new String(wString.c_str(), wString.length()));
+    /* functions */
+    void                save();
+    void                load();
+    String^             Stringify();
+    void                Destringify(String^ data);
+
+internal:
+
+    /* events */
+    event SelectIndex^ selectIndex;
+
+private:
+    UserPreferences() { };
+
+};
+
+}
 }
