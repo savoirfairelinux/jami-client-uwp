@@ -73,9 +73,12 @@
     </ClCompile>
     <ClCompile Include="Conversation.cpp">
       <Filter>Model</Filter>
-	  </ClCompile>
+    </ClCompile>
     <ClCompile Include="CallsViewModel.cpp">
       <Filter>ModelViews</Filter>
+    </ClCompile>
+    <ClCompile Include="UserPreferences.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,9 +118,12 @@
     </ClInclude>
     <ClInclude Include="CallsViewModel.h">
       <Filter>ModelViews</Filter>
-	</ClInclude>
+    </ClInclude>
     <ClInclude Include="Conversation.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPreferences.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
