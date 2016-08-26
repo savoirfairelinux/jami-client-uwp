@@ -1,6 +1,7 @@
 ﻿﻿/***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
  * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+ * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify    *
  * it under the terms of the GNU General Public License as published by    *
@@ -37,6 +38,10 @@ SmartPanel::SmartPanel()
 {
     InitializeComponent();
 
+    Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
+        _accountsList_->SelectedIndex = index;
+    });
+
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
 }
@@ -48,6 +53,8 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     if (!account)
         return;
 
+    Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
+    Configuration::UserPreferences::instance->save();
     _selectedAccountName_->Text = account->name_;
 }
 
@@ -108,21 +115,25 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
+
 void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
+
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
 }
 
+
 void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
 }
+
 
 void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -152,6 +163,7 @@ void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::
     });
 
 }
+
 
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
