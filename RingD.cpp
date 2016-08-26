@@ -43,7 +43,7 @@ debugOutputWrapper(const std::string& str)
 }
 
 void
-reloadAccountList()
+RingClientUWP::RingD::reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
     std::vector<std::string> accountList = DRing::getAccountList();
@@ -58,6 +58,8 @@ reloadAccountList()
             ringID,                                                             //ringid
             accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
     }
+    // load user preferences
+    Configuration::UserPreferences::instance->load();
 }
 
 void
@@ -156,7 +158,7 @@ RingClientUWP::RingD::startDaemon()
                 DRing::addAccount(ringAccountDetails);
             }
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
+               ref new DispatchedHandler([=]() {
                 reloadAccountList();
             }));
             while (true) {
