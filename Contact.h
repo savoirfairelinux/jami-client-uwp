@@ -19,6 +19,7 @@
 **************************************************************************/
 using namespace Platform;
 using namespace Windows::Data::Json;
+using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
 
 /* strings required by Windows::Data::Json. Defined here on puprose */
@@ -36,7 +37,6 @@ public:
     Contact(String^ name, String^ ringID);
     JsonObject^ ToJsonObject();
 
-
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ name_;
@@ -48,12 +48,33 @@ public:
             return conversation_;
         }
     }
+    property Visibility notificationNewMessage
+    {
+        Visibility get()
+        {
+            return notificationNewMessage_;
+        }
+        void set(Visibility visibility)
+        {
+            notificationNewMessage_ = visibility;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("notificationNewMessage"));
+        }
+    }
+    property String^ unreadMessages
+    {
+        String^ get()
+        {
+            return unreadMessages_.ToString();
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     Conversation^ conversation_;
+    Visibility notificationNewMessage_;
+    unsigned int unreadMessages_;
 
 };
 }

@@ -39,6 +39,7 @@ ContactsViewModel::ContactsViewModel()
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ from, String^ payload) {
         auto contact = findContactByName(from);
+        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
 
         if (contact == nullptr)
             contact = addNewContact(from, from); // contact checked inside addNewContact.
@@ -48,6 +49,10 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
 
+        screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+
+        if (contact->ringID_ == from && isNotSelected)
+            notifyNewConversationMessage();
     });
 
 }
