@@ -39,6 +39,7 @@ SmartPanel::SmartPanel()
 
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
+
 }
 
 void
