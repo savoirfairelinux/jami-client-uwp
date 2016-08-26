@@ -46,6 +46,10 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
 
+        screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+
+        if (contact != ContactsViewModel::instance->selectedContact)
+            notifyNewConversationMessage();
     });
 
 }
