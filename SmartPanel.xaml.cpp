@@ -39,16 +39,11 @@ SmartPanel::SmartPanel()
 
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
-}
 
-void
-RingClientUWP::Views::SmartPanel::updatePageContent()
-{
-    auto account = AccountsViewModel::instance->selectedAccount;
-    if (!account)
-        return;
-
-    _selectedAccountName_->Text = account->name_;
+    /* connect delegate */
+    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&]() {
+        //_visualNotificationNewMessage_->Vi
+    });
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -108,21 +103,25 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
+
 void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
+
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
 }
 
+
 void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
 }
+
 
 void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -153,28 +152,11 @@ void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::
 
 }
 
+
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = safe_cast<ListBox^>(sender);
     auto contact = safe_cast<Contact^>(listbox->SelectedItem);
     ContactsViewModel::instance->selectedContact = contact;
-}
-
-void
-SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
-{
-    auto listbox = safe_cast<ListBox^>(sender);
-    auto account = safe_cast<Account^>(listbox->SelectedItem);
-    AccountsViewModel::instance->selectedAccount = account;
-    updatePageContent();
-}
-
-void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
-{
-    /* add contact, test purpose but will be reused later in some way */
-    if (e->Key == Windows::System::VirtualKey::Enter && _ringTxtBx_->Text != "") {
-        ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
-        _ringTxtBx_->Text = "";
-    }
 }
