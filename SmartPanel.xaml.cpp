@@ -41,6 +41,16 @@ SmartPanel::SmartPanel()
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
 }
 
+void
+RingClientUWP::Views::SmartPanel::updatePageContent()
+{
+    auto account = AccountsViewModel::instance->selectedAccount;
+    if (!account)
+        return;
+
+    _selectedAccountName_->Text = account->name_;
+}
+
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
 {
     _shareMenuButton_->IsChecked = false;
@@ -156,6 +166,14 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
     ContactsViewModel::instance->selectedContact = contact;
 }
 
+void
+SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+    auto listbox = safe_cast<ListBox^>(sender);
+    auto account = safe_cast<Account^>(listbox->SelectedItem);
+    AccountsViewModel::instance->selectedAccount = account;
+    updatePageContent();
+}
 
 void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {

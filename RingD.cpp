@@ -27,6 +27,8 @@
 
 #include "account_schema.h"
 
+#include "SmartPanel.xaml.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
