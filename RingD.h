@@ -1,6 +1,8 @@
-/***************************************************************************
+#pragma once
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -15,7 +17,6 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#pragma once
 
 using namespace concurrency;
 
@@ -25,6 +26,8 @@ namespace RingClientUWP
 /* delegate */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, String^ state, int code);
+delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
+
 
 public ref class RingD sealed
 {
@@ -60,6 +63,7 @@ internal:
     /* events */
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
+    event IncomingAccountMessage^ incomingAccountMessage;
 
 private:
     /* sub classes */
