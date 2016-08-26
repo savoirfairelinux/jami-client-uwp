@@ -58,9 +58,9 @@
                         </Border.RenderTransform>
                     </Border>
                     <Border x:Name="_visualNotificationNewMessage_"
-                            Visibility="Collapsed"
+                            Visibility="{x:Bind notificationNewMessage, Mode=OneWay}"
                             Style="{StaticResource BorderStyle2}">
-                        <TextBlock Text="0"
+                        <TextBlock Text="{x:Bind unreadMessages, Mode=OneWay}"
                                    Style="{StaticResource TextStyle3}"/>
                         <Border.RenderTransform>
                             <TranslateTransform X="-17" Y="-14"/>
