@@ -16,12 +16,16 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #include "pch.h"
+
 #include "ContactsViewModel.h"
 
+using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+using namespace Windows::UI::Core;
+
 
 using namespace RingClientUWP;
 using namespace ViewModel;
@@ -30,10 +34,26 @@ ContactsViewModel::ContactsViewModel()
 {
     contactsList_ = ref new Vector<Contact^>();
     openContactsFromFile();
+
+    /* connect delegates. */
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
+    String^ from, String^ payload) {
+        auto contact = findContactByName(from);
+
+        if (contact == nullptr)
+            contact = addNewContact(from, from); // contact checked inside addNewContact.
+
+        if (contact == nullptr) {
+            ERR_("contact not handled!");
+            return;
+        }
+
+    });
+
 }
 
 Contact^
-ContactsViewModel::findContactByName(String ^ name)
+ContactsViewModel::findContactByName(String^ name)
 {
     for each (Contact^ contact in contactsList_)
         if (contact->name_ == name)
@@ -46,7 +66,7 @@ Contact^
 ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     if (contactsList_ && !findContactByName(name)) {
-        Contact^ contact = ref new Contact(name, ringId);
+        Contact^ contact = ref new Contact(name, name);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;
@@ -84,16 +104,16 @@ ContactsViewModel::openContactsFromFile()
     String^ contactsFile = ".profile\\contacts.json";
 
     Utils::fileExists(ApplicationData::Current->LocalFolder,
-        contactsFile)
-        .then([this,contactsFile](bool contacts_file_exists)
+                      contactsFile)
+    .then([this,contactsFile](bool contacts_file_exists)
     {
         if (contacts_file_exists) {
             try {
                 create_task(ApplicationData::Current->LocalFolder->GetFileAsync(contactsFile))
-                    .then([this](StorageFile^ file)
+                .then([this](StorageFile^ file)
                 {
                     create_task(FileIO::ReadTextAsync(file))
-                        .then([this](String^ fileContents){
+                    .then([this](String^ fileContents) {
                         if (fileContents != nullptr)
                             Destringify(fileContents);
                     });
