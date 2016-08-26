@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+using namespace Concurrency;
 using namespace Platform::Collections;
 
 namespace RingClientUWP
@@ -39,9 +40,12 @@ internal:
     }
 
     /* functions */
-    Contact^ findContactByName(String^ name);
-
-    Contact^ addNewContact(String^ name, String^ ringId);
+    Contact^    findContactByName(String^ name);
+    Contact^    addNewContact(String^ name, String^ ringId);
+    void        saveContactsToFile();
+    void        openContactsFromFile();
+    String^     ContactsViewModel::Stringify();
+    void        ContactsViewModel::Destringify(String^ data);
 
     /* properties */
     property Contact^ selectedContact

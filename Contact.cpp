@@ -22,6 +22,7 @@
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
+using namespace Windows::Data::Json;
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
@@ -45,4 +46,17 @@ Contact::NotifyPropertyChanged(String^ propertyName)
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
 
     }));
+}
+
+JsonObject^
+Contact::ToJsonObject()
+{
+    JsonObject^ contactObject = ref new JsonObject();
+    contactObject->SetNamedValue(nameKey, JsonValue::CreateStringValue(name_));
+    contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
+
+    JsonObject^ jsonObject = ref new JsonObject();
+    jsonObject->SetNamedValue(contactKey, contactObject);
+
+    return jsonObject;
 }
