@@ -40,6 +40,8 @@ DebugOutputWrapper(const std::string& str)
     MSG_(str);
 }
 
+Windows::UI::Core::CoreDispatcher^ dispatcher;
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -83,7 +85,7 @@ RingClientUWP::RingD::startDaemon()
                 stateChange(callId2, state2, code);
 
             }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
+            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
                 const std::string& accountId,
                 const std::string& from,
                 const std::map<std::string, std::string>& payloads)
@@ -92,9 +94,17 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("accountId = " + accountId);
                 MSG_("from = " + from);
 
+                auto accountId2 = toPlatformString(accountId);
+                auto from2 = toPlatformString(from);
+
                 for (auto i : payloads) {
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                    {
+                        incomingAccountMessage(accountId2, from2, payload);
+                    }));
                 }
             })
         };
@@ -183,6 +193,7 @@ void RingClientUWP::RingD::dequeueTasks()
 RingClientUWP::RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+    dispatcher = Windows::UI::Core::CoreWindow::GetForCurrentThread()->Dispatcher;
 }
 
 void RingClientUWP::RingD::sendMessage(String^ accountId, String^ to, String^ payload)
