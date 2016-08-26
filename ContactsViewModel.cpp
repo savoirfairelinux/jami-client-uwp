@@ -43,11 +43,17 @@ ContactsViewModel::ContactsViewModel()
         if (contact == nullptr)
             contact = addNewContact(from, from); // contact checked inside addNewContact.
 
+        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+
         if (contact == nullptr) {
             ERR_("contact not handled!");
             return;
         }
 
+        screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+
+        if (contact->ringID_ == from && isNotSelected)
+            notifyNewConversationMessage();
     });
 
 }
