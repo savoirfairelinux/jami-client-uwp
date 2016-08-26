@@ -181,7 +181,8 @@
                        Height="80"/>
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
-                    <TextBlock Text="TOT fdsfds fdsO"
+                    <TextBlock x:Name="_selectedAccountName_"
+                               Text="default name"
                                Margin="10"
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">
@@ -224,6 +225,7 @@
                 </Grid.RowDefinitions>
                 <ListBox x:Name="_accountsList_"
                          Grid.Row="0"
+                         SelectionChanged="_accountList__SelectionChanged"
                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                          ScrollViewer.HorizontalScrollMode="Enabled"
                          Width="320"

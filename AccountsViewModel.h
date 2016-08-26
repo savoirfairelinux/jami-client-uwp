@@ -24,6 +24,9 @@ using namespace Platform::Collections;
 namespace RingClientUWP
 {
 
+delegate void NewAccountSelected();
+delegate void NoAccountSelected();
+
 namespace ViewModel {
 public ref class AccountsViewModel sealed
 {
@@ -43,6 +46,23 @@ internal:
     void clearAccountList();
 
     /* properties */
+    property Account^ selectedAccount
+    {
+        Account^ get()
+        {
+            return currentItem_;
+        }
+        void set(Account^ value)
+        {
+            oldItem_ = currentItem_;
+            currentItem_ = value;
+            if (value)
+                newAccountSelected();
+            else
+                noAccountSelected();
+        }
+    }
+
     property Vector<Account^>^ accountsList
     {
         Vector<Account^>^ get()
@@ -52,10 +72,15 @@ internal:
     }
 
     /* events */
+    event NewAccountSelected^ newAccountSelected;
+    event NoAccountSelected^ noAccountSelected;
 
 private:
     AccountsViewModel(); // singleton
     Vector<Account^>^ accountsList_;
+    Account^ currentItem_;
+    Account^ oldItem_;
+
 };
 }
 }

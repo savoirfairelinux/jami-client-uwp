@@ -1,6 +1,6 @@
 /***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -26,6 +26,8 @@
 #include "fileutils.h"
 
 #include "account_schema.h"
+
+#include "SmartPanel.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
