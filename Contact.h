@@ -1,7 +1,7 @@
 #pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -18,7 +18,14 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 using namespace Platform;
+using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml::Data;
+
+/* strings required by Windows::Data::Json. Defined here on puprose */
+String^ nameKey = "name";
+String^ ringIDKey = "ringid";
+String^ contactKey = "contact";
+String^ contactListKey = "contactlist";
 
 namespace RingClientUWP
 {
@@ -27,6 +34,7 @@ public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
     Contact(String^ name, String^ ringID);
+    JsonObject^ ToJsonObject();
 
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
