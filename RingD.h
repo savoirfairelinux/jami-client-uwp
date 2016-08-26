@@ -62,8 +62,21 @@ internal:
     event StateChange^ stateChange;
 
 private:
+    /* sub classes */
+    enum class Request { None };
+    ref class Task
+    {
+    public:
+        property Request request;
+    };
+
+    /* functions */
     RingD(); // singleton
+    void dequeueTasks();
+
+    /* members */
     std::string localFolder_;
     bool daemonRunning_ = false;
+    std::queue<Task^> tasksList_;
 };
 }

@@ -41,7 +41,7 @@ DebugOutputWrapper(const std::string& str)
 }
 
 void
-RingClientUWP::RingD::startDaemon()
+RingD::startDaemon()
 {
     create_task([&]()
     {
@@ -131,17 +131,31 @@ RingClientUWP::RingD::startDaemon()
                 test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
                 DRing::addAccount(test_details);
             }
-            // if there is no config, create a default RING account
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
+                dequeueTasks();
             }
             DRing::fini();
         }
     });
 }
 
-RingClientUWP::RingD::RingD()
+RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+}
+
+void
+RingD::dequeueTasks()
+{
+    for (int i = 0; i < tasksList_.size(); i++) {
+        auto task = tasksList_.front();
+        switch (task->request) {
+        case Request::None:
+        default:
+            break;
+        }
+        tasksList_.pop();
+    }
 }
