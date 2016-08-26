@@ -71,6 +71,9 @@
     <ClCompile Include="Call.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Conversation.cpp">
+      <Filter>Model</Filter>
+	  </ClCompile>
     <ClCompile Include="CallsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
@@ -112,6 +115,9 @@
     </ClInclude>
     <ClInclude Include="CallsViewModel.h">
       <Filter>ModelViews</Filter>
+	</ClInclude>
+    <ClInclude Include="Conversation.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

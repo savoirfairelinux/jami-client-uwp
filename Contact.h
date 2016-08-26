@@ -2,6 +2,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -21,6 +22,7 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
+ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
@@ -31,10 +33,19 @@ public:
 
     property String^ name_;
     property String^ ringID_;
+    property Conversation^ _conversation
+    {
+        Conversation^ get()
+        {
+            return conversation_;
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
+private:
+    Conversation^ conversation_;
 
 };
 }
