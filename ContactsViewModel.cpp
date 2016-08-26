@@ -32,6 +32,18 @@ ContactsViewModel::ContactsViewModel()
 {
     contactsList_ = ref new Vector<Contact^>();
     openContactsFromFile();
+
+    /* connect delegates. */
+    RingD::instance->incomingAccountMessage += ref new RingClientUWP::IncomingAccountMessage([&](String^ accountId,
+    String^ from, String^ payload) {
+        auto contact = addNewContact(from, from); // contact checked inside addNewContact.
+
+        if (contact == nullptr)
+            contact = findContactByName(from);
+
+
+    });
+
 }
 
 Contact^
@@ -48,7 +60,7 @@ Contact^
 ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     if (contactsList_ && !findContactByName(name)) {
-        Contact^ contact = ref new Contact(name, ringId);
+        Contact^ contact = ref new Contact(name, name);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;
@@ -65,8 +77,8 @@ ContactsViewModel::saveContactsToFile()
 
     try {
         create_task(localfolder->CreateFileAsync(contactsFile
-            ,Windows::Storage::CreationCollisionOption::ReplaceExisting))
-            .then([&](StorageFile^ newFile){
+                    ,Windows::Storage::CreationCollisionOption::ReplaceExisting))
+        .then([&](StorageFile^ newFile) {
             try {
                 FileIO::WriteTextAsync(newFile,Stringify());
             }
@@ -86,16 +98,16 @@ ContactsViewModel::openContactsFromFile()
     String^ contactsFile = ".profile\\contacts.json";
 
     Utils::fileExists(ApplicationData::Current->LocalFolder,
-        contactsFile)
-        .then([this,contactsFile](bool contacts_file_exists)
+                      contactsFile)
+    .then([this,contactsFile](bool contacts_file_exists)
     {
         if (contacts_file_exists) {
             try {
                 create_task(ApplicationData::Current->LocalFolder->GetFileAsync(contactsFile))
-                    .then([this](StorageFile^ file)
+                .then([this](StorageFile^ file)
                 {
                     create_task(FileIO::ReadTextAsync(file))
-                        .then([this](String^ fileContents){
+                    .then([this](String^ fileContents) {
                         if (fileContents != nullptr)
                             Destringify(fileContents);
                     });
