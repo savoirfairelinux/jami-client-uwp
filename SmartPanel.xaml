@@ -69,7 +69,6 @@
                     <!-- name of the contact. -->
                     <TextBlock x:Name="_contactName_"
                                Grid.Column="1"
-                               FontSize="20"
                                Text="{x:Bind name_}">
                         <TextBlock.RenderTransform>
                             <TranslateTransform X="8" Y="3"/>
