@@ -1,4 +1,4 @@
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
@@ -27,8 +27,6 @@
 
 #include "account_schema.h"
 
-#include "SmartPanel.xaml.h"
-
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
@@ -37,31 +35,13 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 
 void
-debugOutputWrapper(const std::string& str)
+DebugOutputWrapper(const std::string& str)
 {
     MSG_(str);
 }
 
 void
-reloadAccountList()
-{
-    RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
-    std::vector<std::string> accountList = DRing::getAccountList();
-    std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
-    for (; rit != accountList.rend(); ++rit) {
-        std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
-        std::string ringID(accountDetails.find(ring::Conf::CONFIG_ACCOUNT_USERNAME)->second);
-        if(!ringID.empty())
-            ringID = ringID.substr(5);
-        RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,      //name
-            ringID,                                                             //ringid
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
-    }
-}
-
-void
-RingClientUWP::RingD::startDaemon()
+RingD::startDaemon()
 {
     create_task([&]()
     {
@@ -103,7 +83,7 @@ RingClientUWP::RingD::startDaemon()
                 stateChange(callId2, state2, code);
 
             }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([this](
+            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
                 const std::string& accountId,
                 const std::string& from,
                 const std::map<std::string, std::string>& payloads)
@@ -112,14 +92,18 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("accountId = " + accountId);
                 MSG_("from = " + from);
 
+                auto accountId2 = toPlatformString(accountId);
+                auto from2 = toPlatformString(from);
+
                 for (auto i : payloads) {
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                    {
+                        incomingAccountMessage(accountId2, from2, payload);
+                    }));
                 }
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
-            {
-                reloadAccountList();
             })
         };
 
@@ -127,7 +111,7 @@ RingClientUWP::RingD::startDaemon()
 
         std::map<std::string, SharedCallback> dringDebugOutHandler;
         dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                                    (std::bind(&debugOutputWrapper, _1)));
+                                    (std::bind(&DebugOutputWrapper, _1)));
         registerCallHandlers(dringDebugOutHandler);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
@@ -150,15 +134,11 @@ RingClientUWP::RingD::startDaemon()
         else {
             if (!hasConfig)
             {
-                std::map<std::string, std::string> ringAccountDetails;
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
-                DRing::addAccount(ringAccountDetails);
+                std::map<std::string, std::string> test_details;
+                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+                test_details.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+                DRing::addAccount(test_details);
             }
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-               ref new DispatchedHandler([=]() {
-                reloadAccountList();
-            }));
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
