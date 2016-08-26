@@ -1,6 +1,7 @@
-/***************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -20,6 +21,7 @@
 
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
 
 using namespace RingClientUWP;
 using namespace ViewModel;
@@ -28,10 +30,22 @@ ContactsViewModel::ContactsViewModel()
 {
     contactsList_ = ref new Vector<Contact^>();
     openContactsFromFile();
+
+    /* connect delegates. */
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
+    String^ from, String^ payload) {
+        auto contact = addNewContact(from, from); // contact checked inside addNewContact.
+
+        if (contact == nullptr)
+            contact = findContactByName(from);
+
+
+    });
+
 }
 
 Contact^
-RingClientUWP::ViewModel::ContactsViewModel::findContactByName(String ^ name)
+ContactsViewModel::findContactByName(String^ name)
 {
     for each (Contact^ contact in contactsList_)
         if (contact->name_ == name)
@@ -41,10 +55,10 @@ RingClientUWP::ViewModel::ContactsViewModel::findContactByName(String ^ name)
 }
 
 Contact^
-RingClientUWP::ViewModel::ContactsViewModel::addNewContact(String^ name, String^ ringId)
+ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     if (contactsList_ && !findContactByName(name)) {
-        Contact^ contact = ref new Contact(name, ringId);
+        Contact^ contact = ref new Contact(name, name);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;
