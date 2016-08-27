@@ -79,6 +79,9 @@ UserPreferences::load()
                 RingDebug::instance->print("Exception while opening preferences file");
             }
         }
+        else {
+            selectIndex(0);
+        }
     });
 }
 
