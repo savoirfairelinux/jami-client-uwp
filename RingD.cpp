@@ -121,7 +121,10 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
             {
-                reloadAccountList();
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                    ref new DispatchedHandler([=]() {
+                    reloadAccountList();
+                }));
             })
         };
 
@@ -162,10 +165,12 @@ RingClientUWP::RingD::startDaemon()
                 sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
                 DRing::addAccount(sipAccountDetails);
             }
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-               ref new DispatchedHandler([=]() {
-                reloadAccountList();
-            }));
+            else {
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                    ref new DispatchedHandler([=]() {
+                    reloadAccountList();
+                }));
+            }
             while (true) {
                 DRing::pollEvents();
                 Sleep(1000);
