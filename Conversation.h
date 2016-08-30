@@ -36,11 +36,23 @@ private:
 
 
 public:
+    /* functions */
     Conversation();
     void addMessage(String^ date, bool fromContact, String^ payload);
 
+internal:
+    /* properties */
+    property Vector<ConversationMessage^>^ _messages
+    {
+        Vector<ConversationMessage^>^ get()
+        {
+            return messagesList_;
+        }
+    }
+
 private:
-    Vector<ConversationMessage^> messages;
+    /* members */
+    Vector<ConversationMessage^>^ messagesList_;
 
 };
 #define MSG_FROM_CONTACT true
