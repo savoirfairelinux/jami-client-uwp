@@ -156,7 +156,7 @@ RingClientUWP::RingD::startDaemon()
                 DRing::addAccount(ringAccountDetails);
             }
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-               ref new DispatchedHandler([=]() {
+            ref new DispatchedHandler([=]() {
                 reloadAccountList();
             }));
             while (true) {

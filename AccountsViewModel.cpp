@@ -32,10 +32,10 @@ void
 AccountsViewModel::add(std::string& name, std::string& ringID, std::string& accountType)
 {
     accountsList_->Append(ref new Account(
-        Utils::toPlatformString(name),
-        Utils::toPlatformString(ringID),
-        Utils::toPlatformString(accountType)
-    ));
+                              Utils::toPlatformString(name),
+                              Utils::toPlatformString(ringID),
+                              Utils::toPlatformString(accountType)
+                          ));
 }
 
 void

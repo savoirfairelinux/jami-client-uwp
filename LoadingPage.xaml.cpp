@@ -49,7 +49,7 @@ LoadingPage::LoadingPage()
     InitializeComponent();
 
     Utils::fileExists(ApplicationData::Current->LocalFolder, ".config\\dring.yml")
-        .then([this](bool config_exists)
+    .then([this](bool config_exists)
     {
         if (config_exists) {
             RingD::instance->hasConfig = true;
