@@ -9,20 +9,11 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <!--<DataTemplate x:Key="MessageTemplate" x:DataType="local:RingInstantMessage">
+        <DataTemplate x:Key="ConversationMessageTemplate" x:DataType="local:ConversationMessage">
             <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="70" />
-                    <ColumnDefinition />
-                </Grid.ColumnDefinitions>
-                <Image x:Name="_contactAvatar_"
-                       Margin="2,2"
-                       Source="ms-appx:///contact-avatar-test.png"
-                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                <TextBlock x:Name="_msgContent_" Text="{x:Bind msg_}"/>
+                <TextBlock x:Name="_msgContent_" Text="{x:Bind Payload}"/>
             </Grid>
-        </DataTemplate>-->
-
+        </DataTemplate>
 
         <!-- barre d'envoi de message -->
     <Style TargetType="TextBox">
@@ -121,7 +112,10 @@
                        Grid.Row="1">
             <StackPanel x:Name="_messagesWindowOutput_"
                         Background="#FFF2F2F2">
-
+                    <ListBox x:Name="_messagesList_"
+                             Margin="0"
+                             Padding="0"
+                             ItemTemplate="{StaticResource ConversationMessageTemplate}"/>
             </StackPanel>
         </ScrollViewer>
         <Grid Height="50"
