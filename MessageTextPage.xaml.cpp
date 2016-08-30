@@ -40,6 +40,12 @@ using namespace Windows::UI::Xaml::Navigation;
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
+
+    /* connect delegates. */ // may be useless
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
+    String^ from, String^ payload) {
+    });
+
 }
 
 void
@@ -57,7 +63,8 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
 
     _title_->Text = contact->name_;
 
-    _messagesWindowOutput_->Children->Clear();
+    _messagesList_->ItemsSource = contact->_conversation->_messages;
+
 }
 
 void

@@ -46,8 +46,12 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
 
-        screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
+        /* fire event to print the message on the text page */ // check if this event is really used!!!
+        ///screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+
+        /* fire the event for the red bubble*/
         if (contact != ContactsViewModel::instance->selectedContact)
             notifyNewConversationMessage();
     });

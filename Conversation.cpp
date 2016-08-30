@@ -28,6 +28,7 @@ using namespace RingClientUWP;
 
 Conversation::Conversation()
 {
+    messagesList_ = ref new  Vector<ConversationMessage^>();
 }
 
 void
@@ -40,4 +41,9 @@ Conversation::addMessage(String^ date, bool fromContact, String^ payload)
     std::string owner((fromContact) ? "from contact" : " from me");
     MSG_("{Conversation::addMessage}");
     MSG_("owner = " + owner);
+
+    /* add message to _messagesList_ */
+    messagesList_->Append(message);
+
+    // TODO store message on the disk
 }
