@@ -50,7 +50,7 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
 
-        screenConversationMessage("" /* accountId not used yet at this stage */, from, payload);
+        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
         if (contact->ringID_ == from && isNotSelected)
             notifyNewConversationMessage();
