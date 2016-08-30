@@ -24,7 +24,7 @@ namespace RingClientUWP
 ref class RingDebug;
 
 /* delegate */
-delegate void debugMessageToScreen(Platform::String^ message);
+delegate void debugMessageToScreen(Platform::String^ message)
 
 /* this is how to implement a singleton class*/
 public ref class RingDebug sealed

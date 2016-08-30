@@ -13,7 +13,7 @@ task<bool>
 fileExists(StorageFolder^ folder, String^ fileName)
 {
     return create_task(folder->GetFileAsync(fileName))
-        .then([](task<StorageFile^> taskResult)
+           .then([](task<StorageFile^> taskResult)
     {
         bool exists;
         try {
