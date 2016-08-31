@@ -42,7 +42,7 @@ internal:
     }
 
     /* functions */
-    void add(std::string& name, std::string& ringID, std::string& accountType);
+    void add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID);
     void clearAccountList();
 
     /* properties */
