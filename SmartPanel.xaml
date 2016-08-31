@@ -32,7 +32,7 @@
                     <RowDefinition Height="60"/>
                     <!-- use the height of _contactBar_ to make it visible or collapsed. -->
                     <RowDefinition x:Name="_contactBar_"
-                                   Height="0"/>
+                                   Height="{x:Bind contactBarHeight, Mode=OneWay}"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>

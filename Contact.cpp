@@ -72,6 +72,7 @@ Contact::Contact(String^ name,
 
     notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
     unreadMessages_ = 0; // not saved on disk yet (TO DO)
+    contactBarHeight_ = 0;
 
     /* connect to delegate */
     ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] () {
