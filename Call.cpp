@@ -25,19 +25,20 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 
-Call::Call(String^ accountId, String^ callId, String^ from)
+Call::Call(String^ accountIdz, String^ callIdz, String^ fromz)
 {
-    this->accountId = accountId;
-    this->callId = callId;
-    this->from = from;
+    this->accountId = accountIdz;
+    this->callId = callIdz;
+    this->from = fromz;
 
-    this->state = "";
+    this->state = "incoming call";
     this->code = -1;
 }
 
 void RingClientUWP::Call::stateChange(String ^ state, int code)
 {
     this->state = state;
+    PropertyChanged(this, ref new PropertyChangedEventArgs("state"));
     this->code = code;
 }
 

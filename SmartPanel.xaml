@@ -66,42 +66,48 @@
                             <TranslateTransform X="-17" Y="-14"/>
                         </Border.RenderTransform>
                     </Border>
-                    <!-- name of the contact. -->
-                    <TextBlock x:Name="_contactName_"
-                               Grid.Column="1"
+                    <Grid Grid.Column="1">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="30"/>
+                        </Grid.RowDefinitions>
+                        <!-- name of the contact. -->
+                        <TextBlock x:Name="_contactName_"
+                                   Grid.Row="0"
                                Text="{x:Bind name_}">
-                        <TextBlock.RenderTransform>
-                            <TranslateTransform X="8" Y="3"/>
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
+                        </TextBlock>
+                        <!-- call status. -->
+                        <StackPanel MaxWidth="240"
+                                    MinWidth="240"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Left">
+                            <TextBlock x:Name="_contactCallStatus_"
+                                       Foreground="DarkGray"
+                                       Text="{x:Bind _call.state, Mode=OneWay}"
+                                       Visibility="Visible"
+                                       HorizontalAlignment="Center">
+                            </TextBlock>
+                        </StackPanel>
+                    </Grid>
                 </Grid>
                 <!-- button bar for accept/reject or cancel call. -->
                 <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
                 <Grid Width="320"
                       HorizontalAlignment="Left"
-                      Grid.Row="1"
+                      Grid.Row="2"
                       Background="DarkGray">
                     <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_acceptIncomingCallBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Style="{StaticResource ButtonStyle2}"
-                            Content="&#xE10B;"/>
+                            Content="Accept"/>
                         <Button x:Name="_rejectIncomingCallBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Style="{StaticResource ButtonStyle2}"
-                            Content="&#xE106;"/>
+                            Content="Reject"/>
                     </StackPanel>
-                    <TextBlock x:Name="_contactCallStatus_"
-                               Foreground="DarkGray"
-                               Text="Incoming call"
-                               HorizontalAlignment="Center">
-                        <TextBlock.RenderTransform>
-                            <TranslateTransform Y="-30"/>
-                        </TextBlock.RenderTransform>
-                    </TextBlock>
                 </Grid>
             </Grid>
         </DataTemplate>
