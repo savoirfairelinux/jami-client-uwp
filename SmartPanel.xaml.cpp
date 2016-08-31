@@ -46,9 +46,9 @@ SmartPanel::SmartPanel()
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
 
     /* connect delegate */
-    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&]() {
+    //ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&]() {
         //_visualNotificationNewMessage_->Vi
-    });
+    //});
 }
 
 void

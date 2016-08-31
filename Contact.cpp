@@ -75,8 +75,6 @@ Contact::Contact(String^ name,
 
     /* connect to delegate */
     ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] () {
-        notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
-        unreadMessages_++;
         PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
     });
     ContactsViewModel::instance->newContactSelected += ref new RingClientUWP::NewContactSelected([&]() {
@@ -86,6 +84,14 @@ Contact::Contact(String^ name,
             unreadMessages_ = 0;
         }
     });
+}
+
+void
+Contact::addNotifyNewConversationMessage()
+{
+    notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
+    unreadMessages_++;
+    RingDebug::instance->print(Utils::toString(unreadMessages_.ToString()));
 }
 
 void

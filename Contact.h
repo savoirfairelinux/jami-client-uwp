@@ -75,6 +75,7 @@ internal:
     void        saveConversationToFile();
     String^     StringifyConversation();
     void        DestringifyConversation(String^ data);
+    void        addNotifyNewConversationMessage();
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
