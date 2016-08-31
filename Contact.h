@@ -71,6 +71,21 @@ public:
             return unreadMessages_.ToString();
         }
     }
+    property Windows::UI::Xaml::GridLength contactBarHeight // refactoring : use prefix underscore, don't forget xaml part...
+    {
+        Windows::UI::Xaml::GridLength get()
+        {
+            return contactBarHeight_;
+        }
+        void set(Windows::UI::Xaml::GridLength i)
+        {
+            contactBarHeight_ = i;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("contactBarHeight"));
+        }
+    }
+    property Call^ _call;
+    // data used by ui.
+    property String^ callStatus;
 
 internal:
     void        saveConversationToFile();
@@ -85,6 +100,9 @@ private:
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;
+    Windows::UI::Xaml::GridLength contactBarHeight_;
+
+
 
 };
 }

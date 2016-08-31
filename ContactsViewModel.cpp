@@ -64,6 +64,29 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
+    CallsViewModel::instance->callRecieved += ref new RingClientUWP::CallRecieved([&](
+    Call^ call) {
+        auto from = call->from;
+        auto contact = findContactByName(from);
+
+        if (contact == nullptr)
+            contact = addNewContact(from, from); // contact checked inside addNewContact.
+
+        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+
+
+        if (contact == nullptr) {
+            ERR_("contact not handled!");
+            return;
+        }
+
+        ///contact->_call = call;
+        //showContactBar();
+        contact->contactBarHeight = 50;
+        contact->_call = call;
+        contact->callStatus = "yo";
+
+    });
 
 }
 

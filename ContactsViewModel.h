@@ -30,6 +30,7 @@ delegate void NewContactSelected();
 delegate void NoContactSelected();
 delegate void ScreenConversationMessage(String^ accountId, String^ from, String^ payload);
 delegate void NotifyNewConversationMessage();
+delegate void ShowContactBar();
 
 namespace ViewModel {
 public ref class ContactsViewModel sealed
@@ -84,6 +85,7 @@ internal:
     event NoContactSelected^ noContactSelected;
     event ScreenConversationMessage^ screenConversationMessage;
     event NotifyNewConversationMessage^ notifyNewConversationMessage;
+    event ShowContactBar^ showContactBar;
 
 private:
     ContactsViewModel(); // singleton
