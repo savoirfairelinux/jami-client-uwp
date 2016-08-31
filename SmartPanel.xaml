@@ -32,7 +32,7 @@
                     <RowDefinition Height="60"/>
                     <!-- use the height of _contactBar_ to make it visible or collapsed. -->
                     <RowDefinition x:Name="_contactBar_"
-                                   Height="0"/>
+                                   Height="{x:Bind contactBarHeight, Mode=OneWay}"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -79,24 +79,25 @@
                 <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
                 <Grid Width="320"
                       HorizontalAlignment="Left"
-                      Grid.Row="1"
+                      Grid.Row="2"
                       Background="DarkGray">
                     <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_acceptIncomingCallBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Style="{StaticResource ButtonStyle2}"
-                            Content="&#xE10B;"/>
+                            Content="Accept"/>
                         <Button x:Name="_rejectIncomingCallBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
-                            Style="{StaticResource ButtonStyle2}"
-                            Content="&#xE106;"/>
+                            Content="Reject"/>
                     </StackPanel>
                     <TextBlock x:Name="_contactCallStatus_"
+                               Grid.Row="0"
                                Foreground="DarkGray"
-                               Text="Incoming call"
+                               Text="{x:Bind _call.state, Mode=OneWay}"
+                               Visibility="Visible"
                                HorizontalAlignment="Center">
                         <TextBlock.RenderTransform>
                             <TranslateTransform Y="-30"/>

@@ -38,6 +38,10 @@ Contact::Contact(String^ name,
     name_   = name;
     ringID_ = ringID;
     GUID_   = GUID;
+    _callStatus = "XX";
+
+
+    contactBarHeight_ = 0; // bad
 
     if (GUID_ == nullptr)
         GUID_ = Utils::GetNewGUID();

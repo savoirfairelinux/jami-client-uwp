@@ -68,9 +68,6 @@
     </ClCompile>
     <ClCompile Include="LoadingPage.xaml.cpp" />
     <ClCompile Include="Wizard.xaml.cpp" />
-    <ClCompile Include="Call.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Conversation.cpp">
       <Filter>Model</Filter>
     </ClCompile>
@@ -79,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Call.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -113,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="LoadingPage.xaml.h" />
     <ClInclude Include="Wizard.xaml.h" />
-    <ClInclude Include="Call.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="CallsViewModel.h">
       <Filter>ModelViews</Filter>
     </ClInclude>
@@ -124,6 +121,9 @@
     </ClInclude>
     <ClInclude Include="UserPreferences.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Call.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
