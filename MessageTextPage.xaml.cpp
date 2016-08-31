@@ -93,4 +93,6 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     if (!contact || txt->IsEmpty())
         return;
 
+    RingD::instance->sendAccountTextMessage(txt);
+
 }
