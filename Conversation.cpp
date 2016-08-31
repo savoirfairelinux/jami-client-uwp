@@ -47,3 +47,17 @@ Conversation::addMessage(String^ date, bool fromContact, String^ payload)
 
     // TODO store message on the disk
 }
+
+JsonObject^
+ConversationMessage::ToJsonObject()
+{
+    JsonObject^ messageObject = ref new JsonObject();
+    messageObject->SetNamedValue(dateKey, JsonValue::CreateStringValue(Date));
+    messageObject->SetNamedValue(fromContactKey, JsonValue::CreateBooleanValue(FromContact));
+    messageObject->SetNamedValue(payloadKey, JsonValue::CreateStringValue(Payload));
+
+    JsonObject^ jsonObject = ref new JsonObject();
+    jsonObject->SetNamedValue(messageKey, messageObject);
+
+    return jsonObject;
+}

@@ -25,6 +25,7 @@ using namespace Windows::UI::Xaml::Data;
 /* strings required by Windows::Data::Json. Defined here on puprose */
 String^ nameKey = "name";
 String^ ringIDKey = "ringid";
+String^ GUIDKey = "guid";
 String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
 
@@ -34,13 +35,15 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ name, String^ ringID);
+    Contact(String^ name, String^ ringID, String^ GUID);
     JsonObject^ ToJsonObject();
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ name_;
     property String^ ringID_;
+    property String^ GUID_;
+
     property Conversation^ _conversation
     {
         Conversation^ get()
@@ -67,6 +70,11 @@ public:
             return unreadMessages_.ToString();
         }
     }
+
+internal:
+    void        saveConversationToFile();
+    String^     StringifyConversation();
+    void        DestringifyConversation(String^ data);
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

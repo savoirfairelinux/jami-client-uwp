@@ -52,6 +52,9 @@ ContactsViewModel::ContactsViewModel()
 
         contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
+        /* save contacts conversation to disk */
+        contact->saveConversationToFile();
+
         if (contact->ringID_ == from && isNotSelected)
             notifyNewConversationMessage();
     });
@@ -73,7 +76,7 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     auto trimedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimedName)) {
-        Contact^ contact = ref new Contact(trimedName, trimedName);
+        Contact^ contact = ref new Contact(trimedName, trimedName, nullptr);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;
@@ -154,6 +157,7 @@ ContactsViewModel::Destringify(String^ data)
     JsonObject^ jsonObject = JsonObject::Parse(data);
     String^     name;
     String^     ringid;
+    String^     guid;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (unsigned int i = 0; i < contactlist->Size; i++) {
@@ -164,8 +168,9 @@ ContactsViewModel::Destringify(String^ data)
             if (contactObject != nullptr) {
                 name = contactObject->GetNamedString(nameKey, "");
                 ringid = contactObject->GetNamedString(ringIDKey, "");
+                guid = contactObject->GetNamedString(GUIDKey, "");
             }
-            contactsList_->Append(ref new Contact(name, ringid));
+            contactsList_->Append(ref new Contact(name, ringid, guid));
         }
     }
 }

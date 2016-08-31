@@ -20,6 +20,13 @@
 using namespace Platform;
 using namespace Windows::UI::Xaml::Data;
 
+/* strings required by Windows::Data::Json. Defined here on puprose */
+String^ conversationKey = "conversation";
+String^ messageKey      = "message";
+String^ dateKey         = "date";
+String^ fromContactKey  = "fromContact";
+String^ payloadKey      = "payload";
+
 namespace RingClientUWP
 {
 public ref class ConversationMessage sealed
@@ -28,6 +35,9 @@ public:
     property String^ Date;
     property bool FromContact;
     property String^ Payload;
+
+    /* functions */
+    JsonObject^ ToJsonObject();
 };
 
 public ref class Conversation sealed
