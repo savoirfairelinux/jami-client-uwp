@@ -42,8 +42,6 @@ Contact::Contact(String^ name,
     if (GUID_ == nullptr)
         GUID_ = Utils::GetNewGUID();
 
-    //RingDebug::instance->print(Utils::toString(GUID_).c_str());
-
     // load conversation from disk
     conversation_ = ref new Conversation();
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
@@ -71,7 +69,7 @@ Contact::Contact(String^ name,
     });
 
     notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
-    unreadMessages_ = unreadmessages; // not saved on disk yet (TO DO)
+    unreadMessages_ = unreadmessages;
 
     if(unreadMessages_) {
         notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;

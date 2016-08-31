@@ -102,6 +102,10 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
 void
 RingClientUWP::RingD::startDaemon()
 {
+    // TODO (during refactoring) : use namespace
+    /* clear the calls list and instantiate the singleton (required)  */
+    RingClientUWP::ViewModel::CallsViewModel::instance->clearCallsList();
+
     create_task([&]()
     {
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
@@ -123,13 +127,17 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto from2 = toPlatformString(from);
 
-                incomingCall(accountId2, callId2, from2);
-
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                    CoreDispatcherPriority::Normal, ref new DispatchedHandler([=]()
+                {
+                    incomingCall(accountId2, callId2, from2);
+                    stateChange(callId2, "incoming call", 0);
+                }));
             }),
             DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
-                const std::string& callId,
-                const std::string& state,
-                int code)
+                        const std::string& callId,
+                        const std::string& state,
+                        int code)
             {
                 MSG_("<StateChange>");
                 MSG_("callId = " + callId);
@@ -139,13 +147,17 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto state2 = toPlatformString(state);
 
-                stateChange(callId2, state2, code);
 
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                    CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                {
+                    stateChange(callId2, state2, code);
+                }));
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
-                const std::string& accountId,
-                const std::string& from,
-                const std::map<std::string, std::string>& payloads)
+                        const std::string& accountId,
+                        const std::string& from,
+                        const std::map<std::string, std::string>& payloads)
             {
                 MSG_("<IncomingAccountMessage>");
                 MSG_("accountId = " + accountId);
@@ -189,9 +201,9 @@ RingClientUWP::RingD::startDaemon()
         };
         registerCallHandlers(getAppPathHandler);
 
-        DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-                    DRing::DRING_FLAG_DEBUG |
-                    DRing::DRING_FLAG_AUTOANSWER));
+        DRing::init(static_cast<DRing::InitFlag>(/*DRing::DRING_FLAG_CONSOLE_LOG |
+                    DRing::DRING_FLAG_DEBUG |*/
+                        !DRing::DRING_FLAG_AUTOANSWER));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
@@ -233,21 +245,21 @@ RingD::dequeueTasks()
         case Request::None:
             break;
         case Request::AddRingAccount:
-            {
-                std::map<std::string, std::string> ringAccountDetails;
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
-                DRing::addAccount(ringAccountDetails);
-            }
-            break;
+        {
+            std::map<std::string, std::string> ringAccountDetails;
+            ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+            ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+            DRing::addAccount(ringAccountDetails);
+        }
+        break;
         case Request::AddSIPAccount:
-            {
-                std::map<std::string, std::string> sipAccountDetails;
-                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName + " (SIP)"));
-                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
-                DRing::addAccount(sipAccountDetails);
-            }
-            break;
+        {
+            std::map<std::string, std::string> sipAccountDetails;
+            sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName + " (SIP)"));
+            sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
+            DRing::addAccount(sipAccountDetails);
+        }
+        break;
         default:
             break;
         }

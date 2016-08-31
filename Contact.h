@@ -71,6 +71,18 @@ public:
             return unreadMessages_.ToString();
         }
     }
+    property Call^ _call
+    {
+        Call^ get()
+        {
+            return call_;
+        }
+        void set(Call^ call)
+        {
+            call_ = call;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
+        }
+    }
 
 internal:
     void        saveConversationToFile();
@@ -85,7 +97,8 @@ private:
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;
-
+    Windows::UI::Xaml::GridLength contactBarHeight_;
+    Call^ call_;
 };
 }
 

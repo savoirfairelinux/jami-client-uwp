@@ -29,21 +29,30 @@ CallsViewModel::CallsViewModel()
     CallsList_ = ref new Vector<Call^>();
 
     /* connect to delegates. */
+
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
-        addNewCall(accountId, callId, from);
+        auto call = addNewCall(accountId, callId, from);
+        callRecieved(call);
     });
+
     RingD::instance->stateChange += ref new RingClientUWP::StateChange([&](
     String^ callId, String^ state, int code) {
         for each (auto call in CallsList_) {
             if (call->callId == callId) {
+                if (state == "OVER") {
+                    delete call;
+                    call->stateChange("", code);
+                    callStatusUpdated(call);
+                    return;
+                }
                 call->stateChange(state, code);
+                callStatusUpdated(call);
                 return;
             }
         }
         WNG_("Call not found");
     });
-
 }
 
 Call^
@@ -51,5 +60,10 @@ RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ 
 {
     auto call = ref new Call(accountId, callId, from);
     CallsList_->Append(call);
-    return nullptr;
+    return call;
+}
+
+void RingClientUWP::ViewModel::CallsViewModel::clearCallsList()
+{
+    CallsList_->Clear();
 }
