@@ -64,6 +64,26 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
+    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
+    String^ accountId, String^ callId, String^ from) {
+        auto contact = findContactByName(from);
+
+        if (contact == nullptr)
+            contact = addNewContact(from, from); // contact checked inside addNewContact.
+
+        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+
+        if (contact == nullptr) {
+            ERR_("contact not handled!");
+            return;
+        }
+
+        auto call = ref new Call(accountId, callId, from /* not sure about the need of */);
+        contact->_call = call;
+        //showContactBar();
+        contact->contactBarHeight = 50;
+
+    });
 
 }
 

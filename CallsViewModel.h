@@ -20,8 +20,6 @@ using namespace Platform::Collections;
 
 namespace RingClientUWP
 {
-
-
 namespace ViewModel {
 public ref class CallsViewModel sealed
 {
@@ -38,6 +36,7 @@ internal:
 
     /* functions */
     Call^ addNewCall(String^ accountId, String^ callId, String^ from);
+    void clearCallsList();
 
     /* properties */
     property Vector<Call^>^ CallsList
