@@ -29,10 +29,13 @@ CallsViewModel::CallsViewModel()
     CallsList_ = ref new Vector<Call^>();
 
     /* connect to delegates. */
+
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
-        addNewCall(accountId, callId, from);
+        auto call = addNewCall(accountId, callId, from);
+        callRecieved(call);
     });
+
     RingD::instance->stateChange += ref new RingClientUWP::StateChange([&](
     String^ callId, String^ state, int code) {
         for each (auto call in CallsList_) {
@@ -43,7 +46,6 @@ CallsViewModel::CallsViewModel()
         }
         WNG_("Call not found");
     });
-
 }
 
 Call^
@@ -51,5 +53,29 @@ RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ 
 {
     auto call = ref new Call(accountId, callId, from);
     CallsList_->Append(call);
-    return nullptr;
+    return call;
+}
+
+void RingClientUWP::ViewModel::CallsViewModel::clearCallsList()
+{
+    CallsList_->Clear();
+}
+
+void RingClientUWP::ViewModel::CallsViewModel::setState(String^ callId, String^ state, int code)
+{
+    1;
+    auto jj = CallsList_->Size;
+    auto kk = jj.ToString();
+    auto nn = Utils::toString(kk);
+    MSG_("is ="+nn);
+    MSG_("aim = "+Utils::toString(callId));
+    for each (auto call in CallsList_) {
+        MSG_("x = "+Utils::toString(call->callId));
+        if (call->callId == callId) {
+            call->stateChange(state, code);
+            // do something about the ui with the state
+            return;
+        }
+    }
+    WNG_("Call not found");
 }

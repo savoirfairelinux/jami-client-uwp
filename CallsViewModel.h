@@ -20,7 +20,8 @@ using namespace Platform::Collections;
 
 namespace RingClientUWP
 {
-
+/* delegate */
+delegate void CallRecieved(Call^ call);
 
 namespace ViewModel {
 public ref class CallsViewModel sealed
@@ -38,6 +39,8 @@ internal:
 
     /* functions */
     Call^ addNewCall(String^ accountId, String^ callId, String^ from);
+    void clearCallsList();
+    void setState(String^ callId, String^ state, int code);
 
     /* properties */
     property Vector<Call^>^ CallsList
@@ -49,6 +52,7 @@ internal:
     }
 
     /* events */
+    event CallRecieved^ callRecieved;
 
 private:
     CallsViewModel(); // singleton
