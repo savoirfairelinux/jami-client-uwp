@@ -50,7 +50,7 @@ RingDebug::print(const std::string& message,
     }
 
     /* screen it into VS debug console */
-    OutputDebugString(wString.c_str());
+    OutputDebugString((wString + L"\n").c_str());
 
     /* fire the event. */
     messageToScreen(ref new String(wString.c_str(), wString.length()));
