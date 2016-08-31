@@ -35,6 +35,7 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
+using namespace RingClientUWP::ViewModel;
 
 void
 debugOutputWrapper(const std::string& str)
@@ -61,6 +62,37 @@ RingClientUWP::RingD::reloadAccountList()
     }
     // load user preferences
     Configuration::UserPreferences::instance->load();
+}
+
+/* nb: send message during conversation not chat video message */
+void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
+{
+    /* account id */
+    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    std::wstring accountId2(accountId->Begin());
+    std::string accountId3(accountId2.begin(), accountId2.end());
+
+    /* recipient */
+    auto contact = ContactsViewModel::instance->selectedContact;
+    auto toRingId = contact->ringID_;
+    std::wstring toRingId2(toRingId->Begin());
+    std::string toRingId3(toRingId2.begin(), toRingId2.end());
+
+    /* payload(s) */
+    std::wstring message2(message->Begin());
+    std::string message3(message2.begin(), message2.end());
+    std::map<std::string, std::string> payloads;
+    payloads["text/plain"] = message3;
+
+    /* daemon */
+    auto sent = DRing::sendAccountTextMessage(accountId3, toRingId3, payloads);
+
+    /* conversation */
+    if (sent) {
+        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_ME, message);
+    } else {
+        WNG_("message not sent, see daemon outputs");
+    }
 }
 
 void
@@ -131,7 +163,7 @@ RingClientUWP::RingD::startDaemon()
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
             {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-                    ref new DispatchedHandler([=]() {
+                ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
             })
@@ -171,7 +203,7 @@ RingClientUWP::RingD::startDaemon()
             }
             else {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-                    ref new DispatchedHandler([=]() {
+                ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
             }
