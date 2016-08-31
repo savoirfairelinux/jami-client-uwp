@@ -71,8 +71,9 @@ ContactsViewModel::findContactByName(String^ name)
 Contact^
 ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
-    if (contactsList_ && !findContactByName(name)) {
-        Contact^ contact = ref new Contact(name, name);
+    auto trimedName = Utils::Trim(name);
+    if (contactsList_ && !findContactByName(trimedName)) {
+        Contact^ contact = ref new Contact(trimedName, trimedName);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;

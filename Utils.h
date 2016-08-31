@@ -74,5 +74,19 @@ Platform::String^ toPlatformString(const std::string& str)
     return ref new Platform::String(wsstr.c_str(), wsstr.length());
 }
 
+Platform::String^ Trim(Platform::String^ s)
+{
+    const WCHAR* first = s->Begin();
+    const WCHAR* last = s->End();
+
+    while (first != last && iswspace(*first))
+        ++first;
+
+    while (first != last && iswspace(last[-1]))
+        --last;
+
+    return ref new Platform::String(first, static_cast<unsigned int>(last - first));
+}
+
 }
 }
