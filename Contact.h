@@ -26,6 +26,7 @@ using namespace Windows::UI::Xaml::Data;
 String^ nameKey = "name";
 String^ ringIDKey = "ringid";
 String^ GUIDKey = "guid";
+String^ unreadMessagesKey = "unreadmessages";
 String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
 
@@ -35,7 +36,7 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ name, String^ ringID, String^ GUID);
+    Contact(String^ name, String^ ringID, String^ GUID, unsigned int unreadmessages);
     JsonObject^ ToJsonObject();
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
