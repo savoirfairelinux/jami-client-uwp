@@ -55,6 +55,7 @@ internal:
     /* functions */
     void startDaemon();
     void reloadAccountList();
+    void sendAccountTextMessage(String^ message);
 
     /* TODO : move members */
     bool hasConfig;
