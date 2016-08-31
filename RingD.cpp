@@ -56,7 +56,8 @@ RingClientUWP::RingD::reloadAccountList()
         RingClientUWP::ViewModel::AccountsViewModel::instance->add(
             accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,      //name
             ringID,                                                             //ringid
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second);      //type
+            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second,       //type
+            *rit);
     }
     // load user preferences
     Configuration::UserPreferences::instance->load();

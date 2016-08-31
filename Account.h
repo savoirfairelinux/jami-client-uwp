@@ -27,13 +27,14 @@ namespace RingClientUWP
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType);
+    Account(String^ name, String^ ringID, String^ accountType, String^ accountID);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ name_;
     property String^ ringID_;
     property String^ accountType_;
+    property String^ accountID_;
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
