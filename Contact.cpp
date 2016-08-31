@@ -32,7 +32,8 @@ using namespace ViewModel;
 
 Contact::Contact(String^ name,
                  String^ ringID,
-                 String^ GUID)
+                 String^ GUID,
+                 unsigned int unreadmessages)
 {
     name_   = name;
     ringID_ = ringID;
@@ -68,10 +69,14 @@ Contact::Contact(String^ name,
             }
         }
     });
-    //conversation_ = ref new Conversation();
 
     notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
-    unreadMessages_ = 0; // not saved on disk yet (TO DO)
+    unreadMessages_ = unreadmessages; // not saved on disk yet (TO DO)
+
+    if(unreadMessages_) {
+        notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
+        PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
+    }
 
     /* connect to delegate */
     ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] () {
@@ -82,6 +87,7 @@ Contact::Contact(String^ name,
             PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
             notificationNewMessage = Windows::UI::Xaml::Visibility::Collapsed;
             unreadMessages_ = 0;
+            ContactsViewModel::instance->saveContactsToFile();
         }
     });
 }
@@ -91,7 +97,6 @@ Contact::addNotifyNewConversationMessage()
 {
     notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
     unreadMessages_++;
-    RingDebug::instance->print(Utils::toString(unreadMessages_.ToString()));
 }
 
 void
@@ -113,6 +118,7 @@ Contact::ToJsonObject()
     contactObject->SetNamedValue(nameKey, JsonValue::CreateStringValue(name_));
     contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
     contactObject->SetNamedValue(GUIDKey, JsonValue::CreateStringValue(GUID_));
+    contactObject->SetNamedValue(unreadMessagesKey, JsonValue::CreateNumberValue(unreadMessages_));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);

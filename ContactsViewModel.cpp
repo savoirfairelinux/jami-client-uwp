@@ -58,8 +58,10 @@ ContactsViewModel::ContactsViewModel()
         if (contact->ringID_ == from && isNotSelected) {
             // increment contact's unread message count
             contact->addNotifyNewConversationMessage();
-            // update the xaml for all
+            // update the xaml for all contacts
             notifyNewConversationMessage();
+            // save to disk
+            saveContactsToFile();
         }
     });
 
@@ -80,7 +82,7 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     auto trimedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimedName)) {
-        Contact^ contact = ref new Contact(trimedName, trimedName, nullptr);
+        Contact^ contact = ref new Contact(trimedName, trimedName, nullptr, 0);
         contactsList_->Append(contact);
         saveContactsToFile();
         return contact;
@@ -158,10 +160,11 @@ ContactsViewModel::Stringify()
 void
 ContactsViewModel::Destringify(String^ data)
 {
-    JsonObject^ jsonObject = JsonObject::Parse(data);
-    String^     name;
-    String^     ringid;
-    String^     guid;
+    JsonObject^     jsonObject = JsonObject::Parse(data);
+    String^         name;
+    String^         ringid;
+    String^         guid;
+    unsigned int    unreadmessages;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (unsigned int i = 0; i < contactlist->Size; i++) {
@@ -170,11 +173,12 @@ ContactsViewModel::Destringify(String^ data)
             JsonObject^ jsonContactObject = contact->GetObject();
             JsonObject^ contactObject = jsonContactObject->GetNamedObject(contactKey, nullptr);
             if (contactObject != nullptr) {
-                name = contactObject->GetNamedString(nameKey, "");
-                ringid = contactObject->GetNamedString(ringIDKey, "");
-                guid = contactObject->GetNamedString(GUIDKey, "");
+                name = contactObject->GetNamedString(nameKey);
+                ringid = contactObject->GetNamedString(ringIDKey);
+                guid = contactObject->GetNamedString(GUIDKey);
+                unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
             }
-            contactsList_->Append(ref new Contact(name, ringid, guid));
+            contactsList_->Append(ref new Contact(name, ringid, guid, unreadmessages));
         }
     }
 }
