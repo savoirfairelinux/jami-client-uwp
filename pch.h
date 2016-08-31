@@ -27,6 +27,7 @@
 #include "Account.h"
 #include "AccountsViewModel.h"
 #include "Call.h"
+#include "CallsViewModel.h"
 #include "Contact.h"
 #include "ContactsViewModel.h"
 #include "Conversation.h"
