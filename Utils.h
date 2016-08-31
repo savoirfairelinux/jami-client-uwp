@@ -74,5 +74,16 @@ Platform::String^ toPlatformString(const std::string& str)
     return ref new Platform::String(wsstr.c_str(), wsstr.length());
 }
 
+Platform::String^ GetNewGUID()
+{
+    GUID result;
+    HRESULT hr = CoCreateGuid(&result);
+    if (SUCCEEDED(hr)) {
+        Guid guid(result);
+        return guid.ToString();
+    }
+    throw Exception::CreateException(hr);
+}
+
 }
 }

@@ -20,6 +20,8 @@
 
 #include "Contact.h"
 
+#include "ObjBase.h" // for CoCreateGuid
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
 using namespace Windows::Data::Json;
@@ -29,11 +31,45 @@ using namespace RingClientUWP;
 using namespace ViewModel;
 
 Contact::Contact(String^ name,
-                 String^ ringID)
+                 String^ ringID,
+                 String^ GUID)
 {
-    name_ = name;
+    name_   = name;
     ringID_ = ringID;
+    GUID_   = GUID;
+
+    if (GUID_ == nullptr)
+        GUID_ = Utils::GetNewGUID();
+
+    //RingDebug::instance->print(Utils::toString(GUID_).c_str());
+
+    // load conversation from disk
     conversation_ = ref new Conversation();
+    StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+    String^ messagesFile = ".messages\\" + GUID_ + ".json";
+    Utils::fileExists(ApplicationData::Current->LocalFolder,
+                      messagesFile)
+    .then([this,messagesFile](bool messages_file_exists)
+    {
+        if (messages_file_exists) {
+            try {
+                create_task(ApplicationData::Current->LocalFolder->GetFileAsync(messagesFile))
+                .then([this](StorageFile^ file)
+                {
+                    create_task(FileIO::ReadTextAsync(file))
+                    .then([this](String^ fileContents) {
+                        if (fileContents != nullptr)
+                            DestringifyConversation(fileContents);
+                    });
+                });
+            }
+            catch (Exception^ e) {
+                RingDebug::instance->print("Exception while opening messages file");
+            }
+        }
+    });
+    //conversation_ = ref new Conversation();
+
     notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
     unreadMessages_ = 0; // not saved on disk yet (TO DO)
 
@@ -50,8 +86,6 @@ Contact::Contact(String^ name,
             unreadMessages_ = 0;
         }
     });
-
-
 }
 
 void
@@ -63,7 +97,6 @@ Contact::NotifyPropertyChanged(String^ propertyName)
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-
     }));
 }
 
@@ -73,9 +106,72 @@ Contact::ToJsonObject()
     JsonObject^ contactObject = ref new JsonObject();
     contactObject->SetNamedValue(nameKey, JsonValue::CreateStringValue(name_));
     contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
+    contactObject->SetNamedValue(GUIDKey, JsonValue::CreateStringValue(GUID_));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);
 
     return jsonObject;
+}
+
+String^
+Contact::StringifyConversation()
+{
+    JsonArray^ jsonArray = ref new JsonArray();
+
+    for (unsigned int i = 0; i < conversation_->_messages->Size; i++) {
+        jsonArray->Append(conversation_->_messages->GetAt(i)->ToJsonObject());
+    }
+
+    JsonObject^ jsonObject = ref new JsonObject();
+    jsonObject->SetNamedValue(conversationKey, jsonArray);
+
+    return jsonObject->Stringify();
+}
+
+void
+Contact::DestringifyConversation(String^ data)
+{
+    JsonObject^ jsonObject = JsonObject::Parse(data);
+    String^     date;
+    bool        fromContact;
+    String^     payload;
+
+    JsonArray^ messageList = jsonObject->GetNamedArray(conversationKey, ref new JsonArray());
+    for (unsigned int i = 0; i < messageList->Size; i++) {
+        IJsonValue^ message = messageList->GetAt(i);
+        if (message->ValueType == JsonValueType::Object) {
+            JsonObject^ jsonMessageObject = message->GetObject();
+            JsonObject^ messageObject = jsonMessageObject->GetNamedObject(messageKey, nullptr);
+            if (messageObject != nullptr) {
+                date = messageObject->GetNamedString(dateKey, "");
+                fromContact = messageObject->GetNamedBoolean(fromContactKey, "");
+                payload = messageObject->GetNamedString(payloadKey, "");
+            }
+            conversation_->addMessage(date, fromContact, payload);
+        }
+    }
+}
+
+void
+Contact::saveConversationToFile()
+{
+    StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+    String^ messagesFile = ".messages\\" + GUID_ + ".json";
+
+    try {
+        create_task(localfolder->CreateFileAsync(messagesFile
+                    , Windows::Storage::CreationCollisionOption::ReplaceExisting))
+        .then([&](StorageFile^ file) {
+            try {
+                FileIO::WriteTextAsync(file, StringifyConversation());
+            }
+            catch (Exception^ e) {
+                RingDebug::instance->print("Exception while writing to conversation file");
+            }
+        });
+    }
+    catch (Exception^ e) {
+        RingDebug::instance->print("Exception while opening conversation file");
+    }
 }

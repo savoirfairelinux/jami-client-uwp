@@ -90,6 +90,10 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
     /* conversation */
     if (sent) {
         contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_ME, message);
+
+        /* save contacts conversation to disk */
+        contact->saveConversationToFile();
+
     } else {
         WNG_("message not sent, see daemon outputs");
     }
