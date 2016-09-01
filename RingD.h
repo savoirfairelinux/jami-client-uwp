@@ -68,9 +68,15 @@ internal:
 
 private:
     /* sub classes */
-    enum class Request { None };
+    enum class Request {
+        None,
+        AddRingAccount,
+        AddSIPAccount
+    };
     ref class Task
     {
+    internal:
+        Task(Request r) { request = r; }
     public:
         property Request request;
     };
