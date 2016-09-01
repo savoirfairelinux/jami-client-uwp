@@ -71,6 +71,8 @@ UserPreferences::load()
                             Destringify(fileContents);
                             // select account index after loading preferences
                             selectIndex(PREF_ACCOUNT_INDEX);
+                            if (PREF_PROFILE_PHOTO)
+                                loadProfileImage();
                         }
                     });
                 });
@@ -89,7 +91,10 @@ String^
 UserPreferences::Stringify()
 {
     JsonObject^ preferencesObject = ref new JsonObject();
-    preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(PREF_ACCOUNT_INDEX));
+
+    preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(    PREF_ACCOUNT_INDEX));
+    preferencesObject->SetNamedValue("PREF_PROFILE_PHOTO", JsonValue::CreateBooleanValue(   PREF_PROFILE_PHOTO));
+
     return preferencesObject->Stringify();
 }
 
@@ -97,6 +102,9 @@ void
 UserPreferences::Destringify(String^ data)
 {
     JsonObject^ jsonObject = JsonObject::Parse(data);
-    PREF_ACCOUNT_INDEX = static_cast<int>(jsonObject->GetNamedNumber("PREF_ACCOUNT_INDEX"));
+
+    PREF_ACCOUNT_INDEX = static_cast<int>(jsonObject->GetNamedNumber(   "PREF_ACCOUNT_INDEX"    ));
+    PREF_PROFILE_PHOTO = jsonObject->GetNamedBoolean(                   "PREF_PROFILE_PHOTO"    );
+
     JsonArray^ preferencesList = jsonObject->GetNamedArray("Account.index", ref new JsonArray());
 }

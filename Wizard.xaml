@@ -44,6 +44,7 @@
                                  Margin="0,10,0,0"
                                  VerticalAlignment="Center"
                                  Content="&#xE8B8;"
+                                 Click="_avatarWebcamCaptureBtn__Click"
                                  Style="{StaticResource ButtonStyle3}"
                                  HorizontalAlignment="Center"/>
                         <!-- RING account. -->
