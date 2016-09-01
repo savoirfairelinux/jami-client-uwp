@@ -19,6 +19,9 @@ using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Media::Capture;
+using namespace Windows::Storage;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Shapes;
 
 Wizard::Wizard()
 {
@@ -62,4 +65,53 @@ Wizard::_showAddAccountMenuBtn__Click(Object^ sender, RoutedEventArgs^ e)
     _accountAddMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _showAddAccountMenuTitle_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _showAddAccountMenuBtn_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void
+Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+
+    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
+        .then([this](StorageFile^ photoFile)
+    {
+        if (photoFile != nullptr) {
+            // maybe it would be possible to move some logics to the style sheet
+            auto brush = ref new ImageBrush();
+
+            auto circle = ref new Ellipse();
+            circle->Height = 80; // TODO : use some global constant when ready
+            circle->Width = 80;
+            auto path = photoFile->Path;
+            auto uri = ref new Windows::Foundation::Uri(path);
+            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+            bitmapImage->UriSource = uri;
+
+            StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+            String^ profilefolder = ".profile";
+            create_task(localfolder->CreateFolderAsync(profilefolder,
+                Windows::Storage::CreationCollisionOption::OpenIfExists))
+                .then([=](StorageFolder^ copytofolder){
+                try {
+                    create_task(photoFile->CopyAsync(copytofolder))
+                        .then([=](StorageFile^ copiedfile){
+                        copiedfile->RenameAsync("profile_image.png",
+                            Windows::Storage::NameCollisionOption::ReplaceExisting);
+                    });
+                }
+                catch (Exception^ e) {
+                    RingDebug::instance->print("Exception while saving profile image");
+                }
+            });
+
+            Configuration::UserPreferences::instance->PREF_PROFILE_PHOTO = true;
+
+            brush->ImageSource = bitmapImage;
+            circle->Fill = brush;
+            _avatarWebcamCaptureBtn_->Content = circle;
+        }
+    });
+
 }
