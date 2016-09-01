@@ -200,10 +200,8 @@ RingClientUWP::RingD::startDaemon()
         else {
             if (!hasConfig)
             {
-                std::map<std::string, std::string> ringAccountDetails;
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
-                DRing::addAccount(ringAccountDetails);
+                tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
+                tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
             }
             else {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
@@ -233,6 +231,23 @@ RingD::dequeueTasks()
         auto task = tasksList_.front();
         switch (task->request) {
         case Request::None:
+            break;
+        case Request::AddRingAccount:
+            {
+                std::map<std::string, std::string> ringAccountDetails;
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
+                ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+                DRing::addAccount(ringAccountDetails);
+            }
+            break;
+        case Request::AddSIPAccount:
+            {
+                std::map<std::string, std::string> sipAccountDetails;
+                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName + " (SIP)"));
+                sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
+                DRing::addAccount(sipAccountDetails);
+            }
+            break;
         default:
             break;
         }
