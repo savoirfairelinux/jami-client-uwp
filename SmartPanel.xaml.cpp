@@ -38,8 +38,15 @@ SmartPanel::SmartPanel()
 {
     InitializeComponent();
 
+    /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
         _accountsList_->SelectedIndex = index;
+    });
+    Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
+        StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+        String^ image_path = localfolder->Path + "\\.profile\\profile_image.png";
+        auto uri = ref new Windows::Foundation::Uri(image_path);
+        _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
 
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
@@ -87,18 +94,18 @@ void RingClientUWP::Views::SmartPanel::setMode(RingClientUWP::Views::SmartPanel:
 {
     if (mode == RingClientUWP::Views::SmartPanel::Mode::Normal) {
         _rowRingTxtBx_->Height = 40;
-        _selectedAccountAvatar_->Height = 80;
+        _selectedAccountAvatarContainer_->Height = 80;
         _selectedAccountAvatarColumn_->Width = 90;
         _selectedAccountRow_->Height = 90;
     }
     else {
         _rowRingTxtBx_->Height = 0;
-        _selectedAccountAvatar_->Height = 50;
+        _selectedAccountAvatarContainer_->Height = 50;
         _selectedAccountAvatarColumn_->Width = 60;
         _selectedAccountRow_->Height = 60;
     }
 
-    _selectedAccountAvatar_->Width = _selectedAccountAvatar_->Height;
+    _selectedAccountAvatarContainer_->Width = _selectedAccountAvatarContainer_->Height;
     _settingsTBtn_->IsChecked = false;
     _accountsMenuButton_->IsChecked = false;
     _shareMenuButton_->IsChecked = false;
@@ -133,37 +140,6 @@ void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^
 {
 
 }
-
-
-void RingClientUWP::Views::SmartPanel::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
-    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
-
-
-    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo)).then([this](StorageFile^ photo)
-    {
-        if (photo != nullptr) {
-            // maybe it would be possible to move some logics to the style sheet
-            auto brush = ref new ImageBrush();
-
-            auto circle = ref new Ellipse();
-            circle->Height = 80; // TODO : use some global constant when ready
-            circle->Width = 80;
-            auto path = photo->Path;
-            auto uri = ref new Windows::Foundation::Uri(path);
-            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
-            bitmapImage->UriSource = uri;
-
-            brush->ImageSource = bitmapImage;
-            circle->Fill = brush;
-            _avatarWebcamCaptureBtn_->Content = circle;
-        }
-    });
-
-}
-
 
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
