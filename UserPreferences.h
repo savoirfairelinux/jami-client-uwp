@@ -23,6 +23,7 @@ namespace RingClientUWP
 {
 
 delegate void SelectIndex(int index);
+delegate void LoadProfileImage();
 
 namespace Configuration
 {
@@ -44,6 +45,7 @@ public:
 
     /* properties */
     property int        PREF_ACCOUNT_INDEX;
+    property bool       PREF_PROFILE_PHOTO;
 
     /* functions */
     void                save();
@@ -55,9 +57,9 @@ internal:
 
     /* events */
     event SelectIndex^ selectIndex;
-
+    event LoadProfileImage^ loadProfileImage;
 private:
-    UserPreferences() { };
+    UserPreferences() { PREF_PROFILE_PHOTO = false; };
 
 };
 

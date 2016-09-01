@@ -21,6 +21,10 @@
 
 using namespace Platform;
 using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Shapes;
+using namespace Windows::UI::Xaml::Media;
 
 namespace RingClientUWP
 {
@@ -118,6 +122,18 @@ Platform::String^ GetNewGUID()
 
     throw Exception::CreateException(hr);
 }
+
+//task<BitmapImage>
+//LoadImage(StorageFile^ file)
+//{
+//    BitmapImage^ bitmapImage = ref new BitmapImage();
+//    IRandomAccessStream stream = file->OpenAsync(FileAccessMode::Read);
+//
+//    bitmapImage->SetSource(stream);
+//
+//    return bitmapImage;
+//
+//    }
 
 }
 }

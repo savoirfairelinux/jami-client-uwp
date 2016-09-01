@@ -110,38 +110,32 @@
                       x:DataType="local:Account">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60"/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="260"/>
                     <ColumnDefinition Width="60"/>
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Image x:Name="_accountAvatar_"
-                       VerticalAlignment="Center"
-                       HorizontalAlignment="Center"
-                       Grid.Column="0"
-                       Grid.RowSpan="2"
-                       Width="55"
-                       Height="55"
-                       Source="Assets\TESTS\contactAvatar.png"/>
                 <TextBlock x:Name="_accountName_"
-                           Grid.Column="1"
+                           Grid.Column="0"
                            Grid.Row="0"
+                           Margin="10,5,10,0"
                            Text="{x:Bind name_}"/>
                 <TextBlock x:Name="_accountType_"
-                           Grid.Column="2"
+                           Grid.Column="1"
                            Grid.Row="0"
                            TextAlignment="Right"
-                           Margin="0,0,10,0"
+                           Margin="0,5,10,0"
                            Foreground="ForestGreen"
                            Text="{x:Bind accountType_}"/>
                 <TextBlock x:Name="_ringID_"
-                           Grid.Column="1"
+                           Grid.Column="0"
                            Grid.ColumnSpan="2"
                            Grid.Row="1"
                            Foreground="Crimson"
+                           Margin="10,5,10,0"
+                           FontSize="14"
                            TextTrimming="CharacterEllipsis"
                            Text="{x:Bind ringID_}"/>
             </Grid>
@@ -172,12 +166,18 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
-                <Image x:Name="_selectedAccountAvatar_"
-                       Source="Assets\TESTS\contactAvatar.png"
-                       Width="80"
-                       Margin="5"
-                       Grid.Column="0"
-                       Height="80"/>
+                <Ellipse
+                    x:Name="_selectedAccountAvatarContainer_"
+                    Height="80"
+                    Width="80"
+                    Grid.Column="0"
+                    Margin="5">
+                    <Ellipse.Fill>
+                        <ImageBrush
+                            x:Name="_selectedAccountAvatar_"
+                            ImageSource="Assets\TESTS\contactAvatar.png"/>
+                    </Ellipse.Fill>
+                </Ellipse>
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
@@ -263,12 +263,6 @@
                             <ComboBoxItem Content="Sip"/>
                         </ComboBox>
                     </StackPanel>
-                    <Button  x:Name="_avatarWebcamCaptureBtn_"
-                             VerticalAlignment="Center"
-                             Content="&#xE8B8;"
-                             Style="{StaticResource ButtonStyle3}"
-                             Click="_avatarWebcamCaptureBtn__Click"
-                             HorizontalAlignment="Center"/>
                     <!-- RING account. -->
                     <StackPanel x:Name="_ringAccountCreationStack_"
                                 Visibility="Visible">
