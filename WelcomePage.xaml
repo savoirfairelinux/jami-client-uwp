@@ -31,6 +31,7 @@
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    TextWrapping="Wrap" />
+        <Image Source=""/>
     </StackPanel>
 
 </Page>
