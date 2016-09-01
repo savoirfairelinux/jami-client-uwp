@@ -154,7 +154,25 @@
     <Image Include="Assets\TESTS\qrcode.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
+    <Image Include="Assets\TESTS\blank.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\logo-ring.scale-100.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-125.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\logo-ring.scale-150.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\logo-ring.scale-200.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\logo-ring.scale-400.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
   </ItemGroup>
