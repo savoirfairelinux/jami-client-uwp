@@ -25,12 +25,13 @@
 
     <StackPanel HorizontalAlignment="Center"
                 VerticalAlignment="Center">
-        <TextBlock x:Uid="_welcomeMsg"
+        <!--<TextBlock x:Uid="_welcomeMsg"
                    x:Name="_welcomeMsg_"
                    Style="{StaticResource TextStyle1}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
-                   TextWrapping="Wrap" />
+                   TextWrapping="Wrap" />-->
+        <Image Source="Assets\TESTS\logo-ring.scale-125.png"/>
     </StackPanel>
 
 </Page>
