@@ -26,6 +26,7 @@ namespace RingClientUWP
 
 delegate void NewAccountSelected();
 delegate void NoAccountSelected();
+delegate void UpdateScrollView();
 
 namespace ViewModel {
 public ref class AccountsViewModel sealed
@@ -74,6 +75,7 @@ internal:
     /* events */
     event NewAccountSelected^ newAccountSelected;
     event NoAccountSelected^ noAccountSelected;
+    event UpdateScrollView^ updateScrollView;
 
 private:
     AccountsViewModel(); // singleton
