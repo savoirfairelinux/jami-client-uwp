@@ -48,6 +48,10 @@ SmartPanel::SmartPanel()
         auto uri = ref new Windows::Foundation::Uri(image_path);
         _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
+    AccountsViewModel::instance->updateScrollView += ref new UpdateScrollView([this]() {
+        _accountsListScrollView_->UpdateLayout();
+        _accountsListScrollView_->ScrollToVerticalOffset(_accountsListScrollView_->ScrollableHeight);
+    });
 
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
     _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
@@ -129,16 +133,35 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+    switch (_accountTypeComboBox_->SelectedIndex)
+    {
+    case 0:
+        {
+            RingD::instance->createRINGAccount(_aliasTextBox_->Text);
+            _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _accountsMenuButton__Checked(nullptr, nullptr);
+            break;
+        }
+        break;
+    case 1:
+        {
+            RingD::instance->createSIPAccount(_aliasTextBox_->Text);
+            _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _accountsMenuButton__Checked(nullptr, nullptr);
+            break;
+        }
+        default:
+            break;
+    }
 }
 
 
 void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
+    _accountsMenuButton_->IsChecked = false;
+    _accountsMenuButton__Unchecked(nullptr,nullptr);
 }
 
 void

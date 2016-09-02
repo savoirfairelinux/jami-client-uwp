@@ -37,6 +37,7 @@ AccountsViewModel::add(std::string& name, std::string& ringID, std::string& acco
                               Utils::toPlatformString(accountType),
                               Utils::toPlatformString(accountID)
                           ));
+    updateScrollView();
 }
 
 void
