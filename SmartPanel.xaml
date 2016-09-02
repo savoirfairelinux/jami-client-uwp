@@ -1,4 +1,4 @@
-﻿<!-- **********************************************************************
+﻿ ﻿<!-- **********************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
 *                                                                         *
@@ -126,7 +126,7 @@
                            Grid.Column="1"
                            Grid.Row="0"
                            TextAlignment="Right"
-                           Margin="0,5,10,0"
+                           Margin="0,5,18,0"
                            Foreground="ForestGreen"
                            Text="{x:Bind accountType_}"/>
                 <TextBlock x:Name="_ringID_"
@@ -222,15 +222,17 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ListBox x:Name="_accountsList_"
+                <ScrollViewer x:Name="_accountsListScrollView_"
+                ScrollViewer.VerticalScrollBarVisibility="Auto"
+                         ScrollViewer.VerticalScrollMode="Enabled">
+                    <ListBox x:Name="_accountsList_"
                          Grid.Row="0"
                          SelectionChanged="_accountList__SelectionChanged"
-                         ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                         ScrollViewer.HorizontalScrollMode="Enabled"
                          Width="320"
                          ItemContainerStyle="{StaticResource contactsListBoxStyle}"
                          Background="#FFE4F1F9"
                          ItemTemplate="{StaticResource AccountTemplate}"/>
+                </ScrollViewer>
                 <Button x:Name="_addAccountBtn_"
                         Grid.Row="1"
                         VerticalAlignment="Center"
@@ -255,7 +257,8 @@
                         <TextBlock VerticalAlignment="Center"
                                    Text="Account type : "
                                    Margin="10,10,0,10"/>
-                        <ComboBox SelectedIndex="0"
+                        <ComboBox x:Name="_accountTypeComboBox_"
+                                  SelectedIndex="0"
                                   Margin="10"
                                   VerticalAlignment="Center"
                                   Width="195">
@@ -266,24 +269,13 @@
                     <!-- RING account. -->
                     <StackPanel x:Name="_ringAccountCreationStack_"
                                 Visibility="Visible">
-                        <TextBox  Margin="10"
+                        <TextBox  x:Name="_aliasTextBox_"
+                                  Margin="10"
                                   PlaceholderText="Enter your username"/>
                         <PasswordBox Margin="10"
                                      PlaceholderText="Enter your password"/>
                         <PasswordBox  Margin="10"
                                       PlaceholderText="Repeat your Password"/>
-                    </StackPanel>
-                    <!-- SIP account. -->
-                    <StackPanel x:Name="_sipAccountCreationStack_"
-                                Visibility="Collapsed">
-                        <TextBox Margin="10"
-                                 PlaceholderText="Enter hostname"/>
-                        <TextBox Margin="10"
-                                 PlaceholderText="Enter your username"/>
-                        <PasswordBox Margin="10"
-                                     PlaceholderText="Enter your password"/>
-                        <PasswordBox Margin="10"
-                                     PlaceholderText="Repeat your Password"/>
                     </StackPanel>
                 </StackPanel>
                 <!-- buttons yes/no to create the new account. -->
@@ -296,14 +288,14 @@
                                 HorizontalAlignment="Center"
                                 Content="&#xE081;"
                                 Click="_createAccountYes__Click"
-                                Style="{StaticResource ButtonStyle2}"/>
+                                Style="{StaticResource ButtonStyle5}"/>
                         <Button x:Name="_createAccountNo_"
                                 Grid.Row="1"
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Content="&#xE106;"
                                 Click="_createAccountNo__Click"
-                                Style="{StaticResource ButtonStyle2}"/>
+                                Style="{StaticResource ButtonStyle5}"/>
                     </StackPanel>
                 </Grid>
             </Grid>
