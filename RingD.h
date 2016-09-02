@@ -56,6 +56,8 @@ internal:
     void startDaemon();
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
+    void createRINGAccount(String^ alias);
+    void createSIPAccount(String^ alias);
 
     /* TODO : move members */
     bool hasConfig;
