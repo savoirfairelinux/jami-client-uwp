@@ -24,8 +24,8 @@
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
 #include "fileutils.h"
-
 #include "account_schema.h"
+#include "account_const.h"
 
 #include "SmartPanel.xaml.h"
 
@@ -97,6 +97,20 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
     } else {
         WNG_("message not sent, see daemon outputs");
     }
+}
+
+void
+RingD::createRINGAccount(String^ alias)
+{
+    accountName = Utils::toString(alias);
+    tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
+}
+
+void
+RingD::createSIPAccount(String^ alias)
+{
+    accountName = Utils::toString(alias);
+    tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
 }
 
 void
@@ -173,6 +187,18 @@ RingClientUWP::RingD::startDaemon()
                         CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
                     {
                         incomingAccountMessage(accountId2, from2, payload);
+                    }));
+                }
+            }),
+            DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
+            const std::string& account_id, const std::string& state,
+            int detailsCode, const std::string& detailsStr)
+            {
+                MSG_("<RegistrationStateChanged>: ID = " + account_id + "state = " + state);
+                if (state == DRing::Account::States::UNREGISTERED) {
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                        ref new DispatchedHandler([=]() {
+                        reloadAccountList();
                     }));
                 }
             }),
