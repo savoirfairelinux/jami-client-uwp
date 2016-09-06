@@ -180,6 +180,20 @@ void
 SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = safe_cast<ListBox^>(sender);
+    // disable deselction from listbox
+    if (listbox->SelectedItem == nullptr)
+    {
+        if (e->RemovedItems->Size > 0)
+        {
+            Object^ itemToReselect = e->RemovedItems->GetAt(0);
+            for each (auto item in listbox->Items) {
+                if (item == itemToReselect) {
+                    listbox->SelectedItem = itemToReselect;
+                    continue;
+                }
+            }
+        }
+    }
     auto account = safe_cast<Account^>(listbox->SelectedItem);
     AccountsViewModel::instance->selectedAccount = account;
     updatePageContent();
