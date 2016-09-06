@@ -43,11 +43,11 @@ CallsViewModel::CallsViewModel()
                 if (state == "OVER") {
                     delete call;
                     call->stateChange("", code);
-                    callStatusUpdated(call);
+                    callStatusUpdated(call); // used ?
                     return;
                 }
                 call->stateChange(state, code);
-                callStatusUpdated(call);
+                callStatusUpdated(call); // same...
                 return;
             }
         }
