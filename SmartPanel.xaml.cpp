@@ -19,6 +19,7 @@
 #include "pch.h"
 
 #include "SmartPanel.xaml.h"
+#include "MainPage.xaml.h"
 
 using namespace Platform;
 

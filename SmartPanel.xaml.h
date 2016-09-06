@@ -25,7 +25,6 @@ delegate void ToggleSmartPan();
 delegate void SumonMessageTextPage();
 delegate void SumonVideoPage();
 
-
 namespace Views
 {
 public ref class SmartPanel sealed

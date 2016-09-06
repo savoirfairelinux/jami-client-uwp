@@ -53,9 +53,10 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     } else
         rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
 
-    CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = true;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::LightBlue;
+    ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
+    ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }

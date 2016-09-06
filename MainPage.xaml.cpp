@@ -51,8 +51,6 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
-    Window::Current->SetTitleBar(_titleBar_);
-
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
@@ -80,6 +78,14 @@ MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
 void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _innerSplitView_->IsPaneOpen = !_innerSplitView_->IsPaneOpen;
+    if (_innerSplitView_->IsPaneOpen) {
+        dynamic_cast<SmartPanel^>(_smartPanel_->Content)->setMode(Views::SmartPanel::Mode::Normal);
+        _hamburgerButtonBar_->Width = 320;
+    }
+    else {
+        dynamic_cast<SmartPanel^>(_smartPanel_->Content)->setMode(Views::SmartPanel::Mode::Minimized);
+        _hamburgerButtonBar_->Width = 60;
+    }
 }
 
 void
