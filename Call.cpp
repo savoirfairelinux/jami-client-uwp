@@ -54,3 +54,13 @@ Call::NotifyPropertyChanged(String^ propertyName)
 
     }));
 }
+
+void RingClientUWP::Call::refuse()
+{
+    RingD::instance->refuseIncommingCall(this);
+}
+
+void RingClientUWP::Call::accept()
+{
+    RingD::instance->acceptIncommingCall(this);
+}

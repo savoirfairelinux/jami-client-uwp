@@ -58,6 +58,8 @@ internal:
     void sendAccountTextMessage(String^ message);
     void createRINGAccount(String^ alias);
     void createSIPAccount(String^ alias);
+    void refuseIncommingCall(Call^ call);
+    void acceptIncommingCall(Call^ call);
 
     /* TODO : move members */
     bool hasConfig;
@@ -73,14 +75,23 @@ private:
     enum class Request {
         None,
         AddRingAccount,
-        AddSIPAccount
+        AddSIPAccount,
+        RefuseIncommingCall,
+        AcceptIncommingCall
     };
     ref class Task
     {
     internal:
-        Task(Request r) { request = r; }
+        Task(Request r) {
+            request = r;
+        }
+        Task(Request r, Call^ c) {
+            request = r;
+            _call = c;
+        }
     public:
         property Request request;
+        property Call^ _call;
     };
 
     /* functions */

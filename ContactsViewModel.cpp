@@ -79,6 +79,8 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
         contact->_call = call;
+        contact->_contactBarHeight = 50;
+
     });
 
 }

@@ -102,6 +102,7 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
 void
 RingD::createRINGAccount(String^ alias)
 {
+    // refactoring : create a dedicated class constructor task and removes accountName from RingD
     accountName = Utils::toString(alias);
     tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
 }
@@ -109,8 +110,19 @@ RingD::createRINGAccount(String^ alias)
 void
 RingD::createSIPAccount(String^ alias)
 {
+    // refactoring : create a dedicated class constructor task and removes accountName from RingD
     accountName = Utils::toString(alias);
     tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
+}
+
+void RingClientUWP::RingD::refuseIncommingCall(Call^ call)
+{
+    tasksList_.push(ref new RingD::Task(Request::RefuseIncommingCall, call));
+}
+
+void RingClientUWP::RingD::acceptIncommingCall(Call^ call)
+{
+    tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, call));
 }
 
 void
@@ -191,13 +203,13 @@ RingClientUWP::RingD::startDaemon()
                 }
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
-            const std::string& account_id, const std::string& state,
-            int detailsCode, const std::string& detailsStr)
+                        const std::string& account_id, const std::string& state,
+                        int detailsCode, const std::string& detailsStr)
             {
                 MSG_("<RegistrationStateChanged>: ID = " + account_id + "state = " + state);
                 if (state == DRing::Account::States::UNREGISTERED) {
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-                        ref new DispatchedHandler([=]() {
+                    ref new DispatchedHandler([=]() {
                         reloadAccountList();
                     }));
                 }
@@ -228,8 +240,7 @@ RingClientUWP::RingD::startDaemon()
         registerCallHandlers(getAppPathHandler);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-                    DRing::DRING_FLAG_DEBUG |
-                    DRing::DRING_FLAG_AUTOANSWER));
+                    DRing::DRING_FLAG_DEBUG));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
@@ -267,7 +278,8 @@ RingD::dequeueTasks()
 {
     for (int i = 0; i < tasksList_.size(); i++) {
         auto task = tasksList_.front();
-        switch (task->request) {
+        auto request = dynamic_cast<Task^>(task)->request;
+        switch (request) {
         case Request::None:
             break;
         case Request::AddRingAccount:
@@ -284,6 +296,20 @@ RingD::dequeueTasks()
             sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName + " (SIP)"));
             sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
             DRing::addAccount(sipAccountDetails);
+        }
+        break;
+        case Request::RefuseIncommingCall:
+        {
+            auto callId = task->_call->callId;
+            auto callId2 = Utils::toString(callId);
+            DRing::refuse(callId2);
+        }
+        break;
+        case Request::AcceptIncommingCall:
+        {
+            auto callId = task->_call->callId;
+            auto callId2 = Utils::toString(callId);
+            DRing::accept(callId2);
         }
         break;
         default:

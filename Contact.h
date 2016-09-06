@@ -83,6 +83,18 @@ public:
             PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
         }
     }
+    property Windows::UI::Xaml::GridLength _contactBarHeight
+    {
+        Windows::UI::Xaml::GridLength get()
+        {
+            return contactBarHeight_;
+        }
+        void set(Windows::UI::Xaml::GridLength value)
+        {
+            contactBarHeight_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_contactBarHeight"));
+        }
+    }
 
 internal:
     void        saveConversationToFile();
@@ -97,7 +109,7 @@ private:
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;
-    Windows::UI::Xaml::GridLength contactBarHeight_;
+    Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
     Call^ call_;
 };
 }

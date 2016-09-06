@@ -32,7 +32,7 @@
                     <RowDefinition Height="60"/>
                     <!-- use the height of _contactBar_ to make it visible or collapsed. -->
                     <RowDefinition x:Name="_contactBar_"
-                                   Height="0"/>
+                                   Height="{x:Bind _contactBarHeight, Mode=OneWay}"/>
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -100,10 +100,12 @@
                                 Grid.Row="0"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_acceptIncomingCallBtn_"
+                                Click="_acceptIncomingCallBtn__Click"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="Accept"/>
                         <Button x:Name="_rejectIncomingCallBtn_"
+                                Click="_rejectIncomingCallBtn__Click"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="Reject"/>
