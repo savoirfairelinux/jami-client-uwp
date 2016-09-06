@@ -201,9 +201,9 @@ RingClientUWP::RingD::startDaemon()
         };
         registerCallHandlers(getAppPathHandler);
 
-        DRing::init(static_cast<DRing::InitFlag>(/*DRing::DRING_FLAG_CONSOLE_LOG |
-                    DRing::DRING_FLAG_DEBUG |*/
-                        !DRing::DRING_FLAG_AUTOANSWER));
+        DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
+                    DRing::DRING_FLAG_DEBUG |
+                    DRing::DRING_FLAG_AUTOANSWER));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
