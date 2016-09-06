@@ -43,6 +43,9 @@ protected:
     /* properties */
     void NotifyPropertyChanged(String^ propertyName);
 
+internal:
+    void refuse();
+    void accept();
 
 };
 }

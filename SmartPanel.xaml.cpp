@@ -34,6 +34,10 @@ using namespace Windows::UI::Xaml::Media;
 using namespace Concurrency;
 using namespace Windows::Foundation;
 
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Storage;
+using namespace Windows::UI::Core;
+
 SmartPanel::SmartPanel()
 {
     InitializeComponent();
@@ -138,22 +142,22 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     switch (_accountTypeComboBox_->SelectedIndex)
     {
     case 0:
-        {
-            RingD::instance->createRINGAccount(_aliasTextBox_->Text);
-            _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _accountsMenuButton__Checked(nullptr, nullptr);
-            break;
-        }
+    {
+        RingD::instance->createRINGAccount(_aliasTextBox_->Text);
+        _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _accountsMenuButton__Checked(nullptr, nullptr);
         break;
+    }
+    break;
     case 1:
-        {
-            RingD::instance->createSIPAccount(_aliasTextBox_->Text);
-            _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _accountsMenuButton__Checked(nullptr, nullptr);
-            break;
-        }
-        default:
-            break;
+    {
+        RingD::instance->createSIPAccount(_aliasTextBox_->Text);
+        _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _accountsMenuButton__Checked(nullptr, nullptr);
+        break;
+    }
+    default:
+        break;
     }
 }
 
@@ -188,4 +192,26 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
         ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
         _ringTxtBx_->Text = "";
     }
+}
+
+
+void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    auto contact = dynamic_cast<Contact^>(button->DataContext);
+    auto call = contact->_call;
+
+    call->refuse();
+    contact->_contactBarHeight = 0;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    auto contact = dynamic_cast<Contact^>(button->DataContext);
+    auto call = contact->_call;
+
+    call->accept();
+    contact->_contactBarHeight = 0;
 }
