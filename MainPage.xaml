@@ -24,29 +24,7 @@
       mc:Ignorable="d">
 
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="32"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-        <Grid x:Name="_hamburgerButtonBar_"
-              Canvas.ZIndex="2"
-              Grid.Row="0"
-              Background="LightBlue"
-              Width="320"
-              HorizontalAlignment="Left">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
-            </Grid.ColumnDefinitions>
-            <!-- hamburger button. -->
-            <Button x:Name="_toggleSmartBoxButton_"
-                        Grid.Row="0"
-                        Content="&#xE700;"
-                        Click="_toggleSmartBoxButton__Click"
-                        HorizontalAlignment="Center"
-                        Style="{StaticResource HamburgerButtonStyle}"/>
-        </Grid>
         <SplitView x:Name="_outerSplitView_"
-                   Grid.Row="1"
                    IsPaneOpen="False">
         <SplitView.Pane>
             <Frame x:Name="_consolePanel_"/>
@@ -57,8 +35,33 @@
                        CompactPaneLength="60"
                        DisplayMode="CompactInline">
                 <SplitView.Pane>
-                    <Frame x:Name="_smartPanel_"/>
-                </SplitView.Pane>
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="32"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <Grid   x:Name="_hamburgerButtonBar_"
+                                    Canvas.ZIndex="0"
+                                    Grid.Row="0"
+                                    Background="LightBlue"
+                                    Width="320"
+                                    HorizontalAlignment="Left">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60"/>
+                                </Grid.ColumnDefinitions>
+                                <!-- hamburger button. -->
+                                <Button x:Name="_toggleSmartBoxButton_"
+                                        Grid.Row="0"
+                                        Content="&#xE700;"
+                                        Click="_toggleSmartBoxButton__Click"
+                                        HorizontalAlignment="Center"
+                                        Style="{StaticResource HamburgerButtonStyle}"/>
+                            </Grid>
+                            <Frame x:Name="_smartPanel_"
+                                   Grid.Row="1">
+                            </Frame>
+                        </Grid>
+                    </SplitView.Pane>
                 <SplitView.Content>
                         <Grid x:Name="_navGrid_">
                             <Grid.RowDefinitions>
