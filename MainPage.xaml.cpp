@@ -51,6 +51,8 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
+    Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
+
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
@@ -64,6 +66,10 @@ MainPage::MainPage()
     ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
         showFrame(_welcomeFrame_);
     });
+
+    DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
+    dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
+        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 }
 
 void
@@ -109,4 +115,91 @@ void
 RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
     RingD::instance->startDaemon();
+    showLoadingOverlay(true, false);
+}
+
+void
+RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
+{
+    if (!isLoading && load) {
+        isLoading = true;
+        _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        if (modal) {
+            _fadeInModalStoryboard_->Begin();
+            auto blackBrush = ref new Windows::UI::Xaml::Media::SolidColorBrush(Windows::UI::Colors::Black);
+            _loadingOverlayRect_->Fill = blackBrush;
+        }
+        else {
+            auto whiteBrush = ref new Windows::UI::Xaml::Media::SolidColorBrush(Windows::UI::Colors::White);
+            _loadingOverlayRect_->Fill = whiteBrush;
+            _loadingOverlayRect_->Opacity = 1.0;
+        }
+        OnResize(nullptr, nullptr);
+    }
+    else if (!load) {
+        isLoading = false;
+        _fadeOutStoryboard_->Begin();
+    }
+}
+
+void
+RingClientUWP::MainPage::PositionImage()
+{
+    bounds = ApplicationView::GetForCurrentView()->VisibleBounds;
+
+    auto img = ref new Image();
+    auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+    Windows::Foundation::Uri^ uri;
+
+    if (bounds.Width < 1200)
+        uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/logo-ring.scale-200.png");
+    else
+        uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/logo-ring.scale-150.png");
+
+    bitmapImage->UriSource = uri;
+    img->Source = bitmapImage;
+    _loadingImage_->Source = img->Source;
+
+    _loadingImage_->SetValue(Canvas::LeftProperty, bounds.Width * 0.5 - _loadingImage_->Width * 0.5);
+    _loadingImage_->SetValue(Canvas::TopProperty, bounds.Height * 0.5 - _loadingImage_->Height * 0.5);
+}
+
+void
+RingClientUWP::MainPage::PositionRing()
+{
+    double left;
+    double top;
+    if (bounds.Width < 1200) {
+        _splashProgressRing_->Width = 118;
+        _splashProgressRing_->Height = 118;
+        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 145;
+        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 60;
+    }
+    else {
+        _splashProgressRing_->Width = 162;
+        _splashProgressRing_->Height = 162;
+        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 195;
+        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 84;
+    }
+    _splashProgressRing_->SetValue(Canvas::LeftProperty, left + _loadingImage_->Width * 0.5);
+    _splashProgressRing_->SetValue(Canvas::TopProperty, top + _loadingImage_->Height * 0.5);
+}
+
+void
+RingClientUWP::MainPage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
+{
+    PositionImage();
+    PositionRing();
+}
+
+void
+RingClientUWP::MainPage::DisplayProperties_DpiChanged(DisplayInformation^ sender, Platform::Object^ args)
+{
+    OnResize(nullptr, nullptr);
+}
+
+void
+RingClientUWP::MainPage::hideLoadingOverlay()
+{
+    _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }

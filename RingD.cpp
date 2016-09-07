@@ -207,10 +207,11 @@ RingClientUWP::RingD::startDaemon()
                         int detailsCode, const std::string& detailsStr)
             {
                 MSG_("<RegistrationStateChanged>: ID = " + account_id + "state = " + state);
-                if (state == DRing::Account::States::UNREGISTERED) {
+                if (state == DRing::Account::States::REGISTERED) {
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
                     ref new DispatchedHandler([=]() {
-                        reloadAccountList();
+                        auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                        dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
                     }));
                 }
             }),

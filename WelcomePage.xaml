@@ -23,15 +23,18 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
-    <StackPanel HorizontalAlignment="Center"
-                VerticalAlignment="Center">
+    <Grid x:Name="_welcomePage_"
+        >
         <!--<TextBlock x:Uid="_welcomeMsg"
                    x:Name="_welcomeMsg_"
                    Style="{StaticResource TextStyle1}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    TextWrapping="Wrap" />-->
-        <Image Source="Assets\TESTS\logo-ring.scale-125.png"/>
-    </StackPanel>
+        <Image x:Name="_welcomeImage_"
+            Source="Assets\TESTS\logo-ring.square-100.png"
+               Width="310"
+               Height="310"/>
+    </Grid>
 
 </Page>

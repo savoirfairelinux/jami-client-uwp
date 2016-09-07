@@ -25,4 +25,23 @@ using namespace RingClientUWP::Views;
 WelcomePage::WelcomePage()
 {
     InitializeComponent();
+    Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &WelcomePage::OnResize);
+    OnResize(nullptr, nullptr);
 };
+
+void
+WelcomePage::PositionImage()
+{
+    Rect imageBounds;
+    imageBounds.Width = _welcomePage_->ActualWidth;
+    imageBounds.Height = _welcomePage_->ActualWidth;
+
+    _welcomeImage_->SetValue(Canvas::LeftProperty, imageBounds.Width * 0.5 - _welcomeImage_->Width * 0.5);
+    _welcomeImage_->SetValue(Canvas::TopProperty, imageBounds.Height * 0.5 - _welcomeImage_->Height * 0.5);
+}
+
+void
+WelcomePage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
+{
+    PositionImage();
+}

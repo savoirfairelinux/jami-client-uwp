@@ -1,6 +1,7 @@
 ﻿<!-- **********************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
+* Author: Traczyk Andreas<andreas.traczyk@savoirfairelinux.com>           *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -23,18 +24,57 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
+    <Page.Resources>
+        <Storyboard x:Name="_fadeOutStoryboard_">
+            <DoubleAnimation
+            Storyboard.TargetName="_loadingOverlay_"
+            Storyboard.TargetProperty="Opacity"
+            From="1.0" To="0.0" Duration="0:0:1" Completed="hideLoadingOverlay"/>
+        </Storyboard>
+        <Storyboard x:Name="_fadeInModalStoryboard_">
+            <DoubleAnimation
+            Storyboard.TargetName="_loadingOverlay_"
+            Storyboard.TargetProperty="Opacity"
+            From="0.0" To="0.85" Duration="0:0:0.25"/>
+        </Storyboard>
+    </Page.Resources>
+
     <Grid>
+        <Grid   x:Name="_loadingOverlay_"
+                Canvas.ZIndex="4"
+                Visibility="Collapsed">
+            <Rectangle  x:Name="_loadingOverlayRect_"
+                        Canvas.ZIndex="5"
+                        Fill="Black"
+                        Opacity="0.85"
+                        Width="auto"
+                        Height="auto">
+            </Rectangle>
+            <Canvas  Canvas.ZIndex="6">
+                <Image  x:Name="_loadingImage_"
+                        Source="Assets/Tests/logo-ring.scale-100.png"
+                        Width="620"
+                        Height="300"/>
+                <ProgressRing   Foreground="#19a0b7"
+                                Name="_splashProgressRing_"
+                                IsActive="True"
+                                MaxWidth="200"
+                                MaxHeight="200"
+                                Width="118"
+                                Height="118"/>
+            </Canvas>
+        </Grid>
         <SplitView x:Name="_outerSplitView_"
                    IsPaneOpen="False">
-        <SplitView.Pane>
-            <Frame x:Name="_consolePanel_"/>
-        </SplitView.Pane>
-        <SplitView.Content>
-            <SplitView x:Name="_innerSplitView_"
+            <SplitView.Pane>
+                <Frame x:Name="_consolePanel_"/>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <SplitView x:Name="_innerSplitView_"
                        IsPaneOpen="True"
                        CompactPaneLength="60"
                        DisplayMode="CompactInline">
-                <SplitView.Pane>
+                    <SplitView.Pane>
                         <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="32"/>
@@ -62,7 +102,7 @@
                             </Frame>
                         </Grid>
                     </SplitView.Pane>
-                <SplitView.Content>
+                    <SplitView.Content>
                         <Grid x:Name="_navGrid_">
                             <Grid.RowDefinitions>
                                 <!-- stores the hidden frames. -->
@@ -81,8 +121,8 @@
                                    Visibility="Visible"/>
                         </Grid>
                     </SplitView.Content>
-            </SplitView>
-        </SplitView.Content>
-    </SplitView>
+                </SplitView>
+            </SplitView.Content>
+        </SplitView>
     </Grid>
 </Page>

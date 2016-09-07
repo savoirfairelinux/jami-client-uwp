@@ -18,8 +18,8 @@
 **************************************************************************/
 
 /* standard system include files. */
-#include <ppltasks.h>
 #include <iomanip>
+#include <ppltasks.h>
 #include <queue>
 
 /* required by generated headers. */
@@ -31,6 +31,7 @@
 #include "Contact.h"
 #include "ContactsViewModel.h"
 #include "Conversation.h"
+#include "MainPage.xaml.h"
 
 /* ensure to be accessed from anywhere */
 #include "RingD.h"
