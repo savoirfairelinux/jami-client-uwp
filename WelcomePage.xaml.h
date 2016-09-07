@@ -26,6 +26,9 @@ public ref class WelcomePage sealed
 {
 public:
     WelcomePage();
+protected:
+    void PositionImage();
+    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 };
 }
 }

@@ -130,7 +130,6 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
-
 void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -143,6 +142,11 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     {
     case 0:
     {
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+        ref new DispatchedHandler([=]() {
+            auto frame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
+            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+        }));
         RingD::instance->createRINGAccount(_aliasTextBox_->Text);
         _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _accountsMenuButton__Checked(nullptr, nullptr);
@@ -159,6 +163,7 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     default:
         break;
     }
+    _aliasTextBox_->Text = "";
 }
 
 
