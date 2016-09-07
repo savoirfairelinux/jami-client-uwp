@@ -20,6 +20,7 @@
 
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Input;
+using namespace Windows::Foundation;
 
 namespace RingClientUWP
 {
@@ -29,11 +30,25 @@ public ref class MainPage sealed
 {
 public:
     MainPage();
+    void showLoadingOverlay(bool load, bool modal);
+    void hideLoadingOverlay();
+
+    property bool isLoading;
 
 protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
     virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
+
+    void PositionImage();
+    void PositionRing();
+    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
+
 private:
+    // Multi-monitor, DPI, scale factor change, and window resize detection
+    void DisplayProperties_DpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
+    Windows::Foundation::EventRegistrationToken dpiChangedtoken;
+    Rect bounds;
+
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
 };

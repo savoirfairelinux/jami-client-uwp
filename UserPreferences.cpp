@@ -59,22 +59,25 @@ UserPreferences::load()
         .then([this,preferencesFile](bool contacts_file_exists)
     {
         if (contacts_file_exists) {
-            RingDebug::instance->print("opened preferences file");
             try {
                 create_task(ApplicationData::Current->LocalFolder->GetFileAsync(preferencesFile))
                     .then([this](StorageFile^ file)
                 {
-                    create_task(FileIO::ReadTextAsync(file))
-                        .then([this](String^ fileContents){
-                        RingDebug::instance->print("reading preferences file");
-                        if (fileContents != nullptr) {
-                            Destringify(fileContents);
-                            // select account index after loading preferences
-                            selectIndex(PREF_ACCOUNT_INDEX);
-                            if (PREF_PROFILE_PHOTO)
-                                loadProfileImage();
-                        }
-                    });
+                    try {
+                        create_task(FileIO::ReadTextAsync(file))
+                            .then([this](String^ fileContents){
+                            if (fileContents != nullptr) {
+                                Destringify(fileContents);
+                                // select account index after loading preferences
+                                selectIndex(PREF_ACCOUNT_INDEX);
+                                if (PREF_PROFILE_PHOTO)
+                                    loadProfileImage();
+                            }
+                        });
+                    }
+                    catch (Exception^ e) {
+                        RingDebug::instance->print("Exception while reading preferences file");
+                    }
                 });
             }
             catch (Exception^ e) {
