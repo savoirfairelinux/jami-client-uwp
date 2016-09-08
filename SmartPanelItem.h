@@ -1,7 +1,8 @@
 #pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,51 +17,54 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-using namespace Platform::Collections;
+using namespace Platform;
+using namespace Windows::Data::Json;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-/* delegate */
-delegate void CallRecieved(Call^ call);
-delegate void CallStatusUpdated(Call^ call);
-
-namespace ViewModel {
-public ref class CallsViewModel sealed
+namespace Controls {
+public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 {
-internal:
-    /* singleton */
-    static property CallsViewModel^ instance
+public:
+    SmartPanelItem();
+
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    property Contact^ _contact;
+    property Visibility _callBar
     {
-        CallsViewModel^ get()
+        Visibility get()
         {
-            static CallsViewModel^ instance_ = ref new CallsViewModel();
-            return instance_;
+            return callBar_;
+        }
+        void set(Visibility value)
+        {
+            callBar_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_callBar"));
+        }
+    }
+    property Call^ _call
+    {
+        Call^ get()
+        {
+            return call_;
+        }
+        void set(Call^ value)
+        {
+            call_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
         }
     }
 
-    /* functions */
-    Call^ addNewCall(String^ accountId, String^ callId, String^ from);
-    void clearCallsList();
-    void setState(String^ callId, String^ state, int code); // used ?
-    Call^ findCall(String^ callId);
-
-    /* properties */
-    property Vector<Call^>^ CallsList
-    {
-        Vector<Call^>^ get()
-        {
-            return CallsList_;
-        }
-    }
-
-    /* events */
-    event CallRecieved^ callRecieved;
-    event CallStatusUpdated^ callStatusUpdated;
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    CallsViewModel(); // singleton
-    Vector<Call^>^ CallsList_; // refacto : change C to c
-
+    Visibility callBar_ = Visibility::Collapsed;
+    Call^ call_;
 };
 }
 }
+
