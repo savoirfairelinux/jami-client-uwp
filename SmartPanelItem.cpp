@@ -1,7 +1,7 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,51 +16,31 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-using namespace Platform::Collections;
+#include "pch.h"
 
-namespace RingClientUWP
+#include "SmartPanelItem.h"
+
+using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Windows::Data::Json;
+using namespace Windows::UI::Core;
+
+using namespace RingClientUWP;
+using namespace RingClientUWP::Controls;
+using namespace ViewModel;
+
+SmartPanelItem::SmartPanelItem()
+{}
+
+void
+SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
 {
-/* delegate */
-delegate void CallRecieved(Call^ call);
-delegate void CallStatusUpdated(Call^ call);
-
-namespace ViewModel {
-public ref class CallsViewModel sealed
-{
-internal:
-    /* singleton */
-    static property CallsViewModel^ instance
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([this, propertyName]()
     {
-        CallsViewModel^ get()
-        {
-            static CallsViewModel^ instance_ = ref new CallsViewModel();
-            return instance_;
-        }
-    }
-
-    /* functions */
-    Call^ addNewCall(String^ accountId, String^ callId, String^ from);
-    void clearCallsList();
-    void setState(String^ callId, String^ state, int code); // used ?
-    Call^ findCall(String^ callId);
-
-    /* properties */
-    property Vector<Call^>^ CallsList
-    {
-        Vector<Call^>^ get()
-        {
-            return CallsList_;
-        }
-    }
-
-    /* events */
-    event CallRecieved^ callRecieved;
-    event CallStatusUpdated^ callStatusUpdated;
-
-private:
-    CallsViewModel(); // singleton
-    Vector<Call^>^ CallsList_; // refacto : change C to c
-
-};
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    }));
 }
-}
+

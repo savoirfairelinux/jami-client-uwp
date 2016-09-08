@@ -19,6 +19,7 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:RingClientUWP"
+      xmlns:controls="using:RingClientUWP.Controls"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
@@ -146,6 +147,63 @@
                            FontSize="14"
                            TextTrimming="CharacterEllipsis"
                            Text="{x:Bind ringID_}"/>
+            </Grid>
+        </DataTemplate>
+        <!-- template for calls. -->
+        <DataTemplate x:Key="CallTemplate" x:DataType="local:Call">
+            <Grid Width="320"
+                      HorizontalAlignment="Left"
+
+                      Background="DarkGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="_contactCallStatus_"
+                           Grid.Row="0"
+                           Foreground="White"
+                           Text="{x:Bind state, Mode=OneWay}"
+                           Visibility="Visible"
+                           HorizontalAlignment="Center">
+                </TextBlock>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            HorizontalAlignment="Center">
+                    <Button x:Name="_acceptIncomingCallBtn_"
+                            Click="_acceptIncomingCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Accept"/>
+                    <Button x:Name="_rejectIncomingCallBtn_"
+                            Click="_rejectIncomingCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Reject"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+        <!-- template for smartpanelitems. -->
+        <DataTemplate x:Key="SmartPanelItemsTemplate"
+                      x:DataType="controls:SmartPanelItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <ListBoxItem x:Name="_contactItem_"
+                             Padding="0"
+                             Margin="0"
+                             IsHitTestVisible="False"
+                             Grid.Row="0"
+                             ContentTemplate="{StaticResource ContactTemplate}"
+                             Content="{x:Bind _contact, Mode=OneWay}"/>
+                <ListBoxItem x:Name="_callItem_"
+                             Grid.Row="1"
+                             Visibility="{x:Bind _callBar, Mode=OneWay}"
+                             Padding="0"
+                             Margin="0"
+                             ContentTemplate="{StaticResource CallTemplate}"
+                             Content="{x:Bind _call, Mode=OneWay}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -338,9 +396,9 @@
                 </Grid>
             </Grid>
         </Grid>
-        <!-- contact list and settings. -->
+        <!-- smartList and settings. -->
         <Grid Grid.Row="1">
-            <!-- contacts list. -->
+            <!-- contacts + calls => smartpanelitems. -->
             <Grid x:Name="_smartGrid_"
                   Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -364,7 +422,7 @@
                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                          ScrollViewer.HorizontalScrollMode="Enabled"
                          ItemContainerStyle="{StaticResource contactsListBoxStyle}"
-                         ItemTemplate="{StaticResource ContactTemplate}"/>
+                         ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
             </Grid>
             <!-- settings. -->
             <Grid x:Name="_settings_"

@@ -35,6 +35,9 @@
     <Filter Include="Model">
       <UniqueIdentifier>{8ea3251c-a70e-4de5-9f26-8db3df45c2c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{2cffcd5e-0546-4629-a152-37efd9c1128f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -80,6 +83,9 @@
     <ClCompile Include="Call.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="SmartPanelItem.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -124,6 +130,9 @@
     </ClInclude>
     <ClInclude Include="Call.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPanelItem.h">
+      <Filter>Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
