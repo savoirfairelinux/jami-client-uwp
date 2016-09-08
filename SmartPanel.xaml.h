@@ -32,6 +32,8 @@ public ref class SmartPanel sealed
 public:
     SmartPanel();
     void updatePageContent();
+    SmartPanelItem^ SmartPanel::findItem(Contact^ contact);
+    SmartPanelItem^ SmartPanel::findItem(Call^ call);
 
 internal:
     enum class Mode { Minimized, Normal };
@@ -41,6 +43,7 @@ internal:
     void setMode(RingClientUWP::Views::SmartPanel::Mode mode);
 
 private:
+    /* functions */
     void _accountsMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _accountsMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _settings__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -55,6 +58,10 @@ private:
     void _ringTxtBx__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
+    /* members */
+    Vector<SmartPanelItem^>^ smartPanelItemsList_;
+
 };
 }
 }

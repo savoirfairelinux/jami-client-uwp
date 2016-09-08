@@ -80,6 +80,9 @@
     <ClCompile Include="Call.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="SmartPanelItem.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -123,6 +126,9 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Call.h">
+      <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPanelItem.h">
       <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
