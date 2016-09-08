@@ -64,28 +64,9 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
-    CallsViewModel::instance->callRecieved += ref new RingClientUWP::CallRecieved([&](
-    Call^ call) {
-        auto from = call->from;
-        auto contact = findContactByName(from);
-
-        if (contact == nullptr)
-            contact = addNewContact(from, from); // contact checked inside addNewContact.
-
-        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
-
-        if (contact == nullptr) {
-            ERR_("contact not handled!");
-            return;
-        }
-        contact->_call = call;
-        contact->_contactBarHeight = 50;
-
-    });
-
 }
 
-Contact^
+Contact^ // refacto : remove "byName"
 ContactsViewModel::findContactByName(String^ name)
 {
     for each (Contact^ contact in contactsList_)
@@ -103,6 +84,7 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId)
         Contact^ contact = ref new Contact(trimedName, trimedName, nullptr, 0);
         contactsList_->Append(contact);
         saveContactsToFile();
+        contactAdded(contact);
         return contact;
     }
 
@@ -196,7 +178,9 @@ ContactsViewModel::Destringify(String^ data)
                 guid = contactObject->GetNamedString(GUIDKey);
                 unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
             }
-            contactsList_->Append(ref new Contact(name, ringid, guid, unreadmessages));
+            auto contact = ref new Contact(name, ringid, guid, unreadmessages);
+            contactsList_->Append(contact);
+            contactAdded(contact);
         }
     }
 }
