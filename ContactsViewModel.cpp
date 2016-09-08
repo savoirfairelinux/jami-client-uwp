@@ -103,6 +103,7 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId)
         Contact^ contact = ref new Contact(trimedName, trimedName, nullptr, 0);
         contactsList_->Append(contact);
         saveContactsToFile();
+        contactAdded(contact);
         return contact;
     }
 
@@ -196,7 +197,9 @@ ContactsViewModel::Destringify(String^ data)
                 guid = contactObject->GetNamedString(GUIDKey);
                 unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
             }
-            contactsList_->Append(ref new Contact(name, ringid, guid, unreadmessages));
+            auto contact = ref new Contact(name, ringid, guid, unreadmessages);
+            contactsList_->Append(contact);
+            contactAdded(contact);
         }
     }
 }

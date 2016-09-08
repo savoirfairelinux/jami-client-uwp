@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
 #include "pch.h"
-
+#include <string> // move it
 #include "SmartPanel.xaml.h"
 
 using namespace Platform;
@@ -42,6 +42,21 @@ SmartPanel::SmartPanel()
 {
     InitializeComponent();
 
+    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
+    //_smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
+
+
+    /* populate the smartlist */
+    smartPanelItemsList_ = ref new Vector<SmartPanelItem^>();
+    _smartList_->ItemsSource = smartPanelItemsList_;
+    // has no effect at this stage ecause there is no contact yet in the contacts list
+    /* auto contactsList = ContactsViewModel::instance->contactsList;
+     for each (auto contact in contactsList) {
+         auto smartPanelItem = ref new SmartPanelItem();
+         smartPanelItem->_contact = contact;
+         smartPanelItemsList_->Append(ref new SmartPanelItem());
+     }*/
+
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
         _accountsList_->SelectedIndex = index;
@@ -56,9 +71,13 @@ SmartPanel::SmartPanel()
         _accountsListScrollView_->UpdateLayout();
         _accountsListScrollView_->ScrollToVerticalOffset(_accountsListScrollView_->ScrollableHeight);
     });
+    ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
+        auto smartPanelItem = ref new SmartPanelItem();
+        smartPanelItem->_contact = contact;
+        smartPanelItemsList_->Append(smartPanelItem);
+        MSG_("contact : "+Utils::toString(contact->name_)+", size = "+std::to_string(smartPanelItemsList_->Size));
+    });
 
-    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
-    _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
 }
 
 void
@@ -172,7 +191,8 @@ void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = safe_cast<ListBox^>(sender);
-    auto contact = safe_cast<Contact^>(listbox->SelectedItem);
+    auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
+    auto contact = safe_cast<Contact^>(item->_contact);
     ContactsViewModel::instance->selectedContact = contact;
 }
 
@@ -228,4 +248,14 @@ void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::O
 
     call->accept();
     contact->_contactBarHeight = 0;
+}
+
+SmartPanelItem^
+SmartPanel::findItem(Contact^ contact)
+{
+    for each (SmartPanelItem^ item in smartPanelItemsList_)
+        if (item->_contact == contact)
+            return item;
+
+    return nullptr;
 }

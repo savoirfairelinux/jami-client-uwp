@@ -24,13 +24,25 @@
       mc:Ignorable="d">
 
     <Page.Resources>
+        <!-- template for smartpanelitems. -->
+        <DataTemplate x:Key="SmartPanelItemsTemplate"
+                      x:DataType="local:SmartPanelItem">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="60"/>
+                    <RowDefinition Height="60"/>
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Text="{x:Bind _contact.name_, Mode=OneWay}"/>
+                <TextBlock Grid.Row="1" Text="{x:Bind _call.state, Mode=OneWay}"/>
+            </Grid>
+        </DataTemplate>
         <!-- template for contacts. -->
-        <DataTemplate x:Key="ContactTemplate"
+        <!--<DataTemplate x:Key="ContactTemplate"
                       x:DataType="local:Contact">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="60"/>
-                    <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                    --><!-- use the height of _contactBar_ to make it visible or collapsed. --><!--
                     <RowDefinition x:Name="_contactBar_"
                                    Height="{x:Bind _contactBarHeight, Mode=OneWay}"/>
                 </Grid.RowDefinitions>
@@ -47,7 +59,7 @@
                            Width="55"
                            Height="55"
                            Source="Assets\TESTS\contactAvatar.png"/>
-                    <!-- visual notifications. -->
+                    --><!-- visual notifications. --><!--
                     <Border x:Name="_visualNotificationVideoChat_"
                             Visibility="Collapsed"
                             Style="{StaticResource BorderStyle1}">
@@ -71,12 +83,12 @@
                             <RowDefinition Height="30"/>
                             <RowDefinition Height="30"/>
                         </Grid.RowDefinitions>
-                        <!-- name of the contact. -->
+                        --><!-- name of the contact. --><!--
                         <TextBlock x:Name="_contactName_"
                                    Grid.Row="0"
                                Text="{x:Bind name_}">
                         </TextBlock>
-                        <!-- call status. -->
+                        --><!-- call status. --><!--
                         <StackPanel MaxWidth="240"
                                     MinWidth="240"
                                     Grid.Row="1"
@@ -90,8 +102,8 @@
                         </StackPanel>
                     </Grid>
                 </Grid>
-                <!-- button bar for accept/reject or cancel call. -->
-                <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
+                --><!-- button bar for accept/reject or cancel call. -->
+                <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). --><!--
                 <Grid Width="320"
                       HorizontalAlignment="Left"
                       Grid.Row="2"
@@ -112,7 +124,7 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-        </DataTemplate>
+        </DataTemplate>-->
         <!-- template for accounts. -->
         <DataTemplate x:Key="AccountTemplate"
                       x:DataType="local:Account">
@@ -340,7 +352,7 @@
         </Grid>
         <!-- contact list and settings. -->
         <Grid Grid.Row="1">
-            <!-- contacts list. -->
+            <!-- contacts list. // smartpanelitems -->
             <Grid x:Name="_smartGrid_"
                   Grid.Row="0">
                 <Grid.RowDefinitions>
@@ -364,7 +376,7 @@
                          ScrollViewer.HorizontalScrollBarVisibility="Auto"
                          ScrollViewer.HorizontalScrollMode="Enabled"
                          ItemContainerStyle="{StaticResource contactsListBoxStyle}"
-                         ItemTemplate="{StaticResource ContactTemplate}"/>
+                         ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
             </Grid>
             <!-- settings. -->
             <Grid x:Name="_settings_"
