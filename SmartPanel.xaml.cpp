@@ -17,7 +17,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
 #include "pch.h"
-
+#include <string> // move it
 #include "SmartPanel.xaml.h"
 
 using namespace Platform;
@@ -42,6 +42,12 @@ SmartPanel::SmartPanel()
 {
     InitializeComponent();
 
+    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
+
+    /* populate the smartlist */
+    smartPanelItemsList_ = ref new Vector<SmartPanelItem^>();
+    _smartList_->ItemsSource = smartPanelItemsList_;
+
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
         _accountsList_->SelectedIndex = index;
@@ -56,9 +62,52 @@ SmartPanel::SmartPanel()
         _accountsListScrollView_->UpdateLayout();
         _accountsListScrollView_->ScrollToVerticalOffset(_accountsListScrollView_->ScrollableHeight);
     });
+    CallsViewModel::instance->callRecieved += ref new RingClientUWP::CallRecieved([&](
+    Call^ call) {
+        auto from = call->from;
+        auto contact = ContactsViewModel::instance->findContactByName(from);
 
-    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
-    _smartList_->ItemsSource = ContactsViewModel::instance->contactsList;
+        if (contact == nullptr)
+            contact = ContactsViewModel::instance->addNewContact(from, from); // contact checked inside addNewContact.
+
+        if (contact == nullptr) {
+            ERR_("contact not handled!");
+            return;
+        }
+
+        auto item = findItem(contact);
+        item->_call = call;
+    });
+    RingD::instance->stateChange += ref new StateChange([this](String^ callId, String^ state, int code) {
+        auto call = CallsViewModel::instance->findCall(callId);
+
+        if (call == nullptr)
+            return;
+
+        auto item = findItem(call);
+
+        if (!item) {
+            WNG_("item not found");
+            return;
+        }
+
+        if (call->state == "incoming call")
+            item->_callBar = Windows::UI::Xaml::Visibility::Visible;
+
+        if (call->state == "CURRENT")
+            item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+
+        if (call->state == "")
+            item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+    });
+
+
+    ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
+        auto smartPanelItem = ref new SmartPanelItem();
+        smartPanelItem->_contact = contact;
+        smartPanelItemsList_->Append(smartPanelItem);
+    });
+
 }
 
 void
@@ -172,7 +221,8 @@ void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = safe_cast<ListBox^>(sender);
-    auto contact = safe_cast<Contact^>(listbox->SelectedItem);
+    auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
+    auto contact = safe_cast<Contact^>(item->_contact);
     ContactsViewModel::instance->selectedContact = contact;
 }
 
@@ -212,20 +262,36 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
 void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto contact = dynamic_cast<Contact^>(button->DataContext);
-    auto call = contact->_call;
+    auto call = dynamic_cast<Call^>(button->DataContext);
 
     call->refuse();
-    contact->_contactBarHeight = 0;
 }
 
 
 void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto contact = dynamic_cast<Contact^>(button->DataContext);
-    auto call = contact->_call;
+    auto call = dynamic_cast<Call^>(button->DataContext);
 
     call->accept();
-    contact->_contactBarHeight = 0;
+}
+
+SmartPanelItem^
+SmartPanel::findItem(Contact^ contact)
+{
+    for each (SmartPanelItem^ item in smartPanelItemsList_)
+        if (item->_contact == contact)
+            return item;
+
+    return nullptr;
+}
+
+SmartPanelItem^
+SmartPanel::findItem(Call^ call)
+{
+    for each (SmartPanelItem^ item in smartPanelItemsList_)
+        if (item->_call == call)
+            return item;
+
+    return nullptr;
 }

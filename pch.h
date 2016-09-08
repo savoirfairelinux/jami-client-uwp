@@ -31,6 +31,7 @@
 #include "Contact.h"
 #include "ContactsViewModel.h"
 #include "Conversation.h"
+#include "SmartPanelItem.h"
 
 /* ensure to be accessed from anywhere */
 #include "RingD.h"
