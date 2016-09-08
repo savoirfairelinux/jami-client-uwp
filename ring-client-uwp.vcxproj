@@ -189,6 +189,7 @@
     <ClInclude Include="SmartPanel.xaml.h">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="SmartPanelItem.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VideoPage.xaml.h">
@@ -301,6 +302,7 @@
     <ClCompile Include="SmartPanel.xaml.cpp">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="SmartPanelItem.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClCompile Include="VideoPage.xaml.cpp">
       <DependentUpon>VideoPage.xaml</DependentUpon>

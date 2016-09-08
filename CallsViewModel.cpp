@@ -67,3 +67,13 @@ void RingClientUWP::ViewModel::CallsViewModel::clearCallsList()
 {
     CallsList_->Clear();
 }
+
+Call^
+CallsViewModel::findCall(String^ callId)
+{
+    for each (Call^ call in CallsList_)
+        if (call->callId == callId)
+            return call;
+
+    return nullptr;
+}
