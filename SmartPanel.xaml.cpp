@@ -228,8 +228,13 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
 {
     auto listbox = safe_cast<ListBox^>(sender);
     auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
-    auto contact = safe_cast<Contact^>(item->_contact);
-    ContactsViewModel::instance->selectedContact = contact;
+    if (item != nullptr) {
+        auto contact = safe_cast<Contact^>(item->_contact);
+        ContactsViewModel::instance->selectedContact = contact;
+    }
+    else {
+        ContactsViewModel::instance->selectedContact = nullptr;
+    }
 }
 
 void
