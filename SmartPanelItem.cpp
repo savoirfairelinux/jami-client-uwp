@@ -43,4 +43,3 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
 }
-

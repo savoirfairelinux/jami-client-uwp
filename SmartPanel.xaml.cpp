@@ -93,13 +93,17 @@ SmartPanel::SmartPanel()
         }
 
         if (call->state == "incoming call")
-            item->_callBar = Windows::UI::Xaml::Visibility::Visible;
+            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Visible;
 
-        if (call->state == "CURRENT")
-            item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+        if (call->state == "CURRENT") {
+            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        }
 
-        if (call->state == "")
-            item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+        if (call->state == "") {
+            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        }
     });
 
 
@@ -107,6 +111,30 @@ SmartPanel::SmartPanel()
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
         smartPanelItemsList_->Append(smartPanelItem);
+    });
+
+    RingD::instance->calling += ref new RingClientUWP::Calling([&](
+    Call^ call) {
+        auto from = call->from;
+        auto contact = ContactsViewModel::instance->findContactByName(from);
+
+        if (contact == nullptr) {
+            WNG_("cannot call the peer, contact not found!");
+            return;
+        }
+
+        auto item = findItem(contact);
+
+        if (item == nullptr) {
+            WNG_("cannot call the peer, smart panel item not found!");
+            return;
+        }
+
+        /* use underscore to differentiate states from UI, we need to think more about states management */
+        call->state = "_calling_";
+
+        item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Visible;
+        item->_call = call;
     });
 
 }
@@ -228,13 +256,10 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
 {
     auto listbox = safe_cast<ListBox^>(sender);
     auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
-    if (item != nullptr) {
-        auto contact = safe_cast<Contact^>(item->_contact);
-        ContactsViewModel::instance->selectedContact = contact;
-    }
-    else {
-        ContactsViewModel::instance->selectedContact = nullptr;
-    }
+
+    Contact^ contact = (item) ? safe_cast<Contact^>(item->_contact) : nullptr;
+
+    ContactsViewModel::instance->selectedContact = contact;
 }
 
 void
@@ -269,7 +294,7 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
     }
 }
 
-
+// REFACTO : change the name IncomingCall if used with OutGoingCall too.
 void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
@@ -306,4 +331,56 @@ SmartPanel::findItem(Call^ call)
             return item;
 
     return nullptr;
+}
+
+void
+SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+    auto contact = item->_contact;
+
+    RingD::instance->placeCall(contact);
+}
+
+
+void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    auto call = dynamic_cast<Call^>(button->DataContext);
+
+    call->cancel();
+}
+
+
+void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    auto grid = dynamic_cast<Grid^>(sender);
+    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+
+    item->_callBar = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
+    auto grid = dynamic_cast<Grid^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+
+    item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
+    auto smartPanelItem = dynamic_cast<SmartPanelItem^>(listBoxItem->DataContext);
+
+    if (_smartList_->SelectedItem != smartPanelItem)
+        _smartList_->SelectedItem = smartPanelItem;
+    else
+        _smartList_->SelectedItem = nullptr;
+
 }
