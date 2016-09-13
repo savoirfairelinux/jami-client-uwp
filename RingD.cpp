@@ -161,6 +161,12 @@ RingClientUWP::RingD::cancelOutGoingCall(Call^ call)
 }
 
 void
+RingClientUWP::RingD::hangUpCall(Call^ call)
+{
+    tasksList_.push(ref new RingD::Task(Request::HangUpCall, call));
+}
+
+void
 RingClientUWP::RingD::startDaemon()
 {
     // TODO (during refactoring) : use namespace
@@ -355,6 +361,7 @@ RingD::dequeueTasks()
         }
         break;
         case Request::CancelOutGoingCall:
+        case Request::HangUpCall:
         {
             auto callId = task->_call->callId;
             auto callId2 = Utils::toString(callId);

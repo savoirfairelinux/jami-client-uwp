@@ -45,6 +45,7 @@ CallsViewModel::CallsViewModel()
                     delete call;
                     call->stateChange("", code);
                     callStatusUpdated(call); // used ?
+                    RingD::instance->hangUpCall(call);
                     return;
                 }
                 call->stateChange(state, code);

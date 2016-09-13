@@ -63,6 +63,7 @@ internal:
     void acceptIncommingCall(Call^ call);
     void placeCall(Contact^ contact);
     void cancelOutGoingCall(Call^ call);
+    void hangUpCall(Call^ call);
 
     /* TODO : move members */
     bool hasConfig;
@@ -82,7 +83,8 @@ private:
         AddSIPAccount,
         RefuseIncommingCall,
         AcceptIncommingCall,
-        CancelOutGoingCall
+        CancelOutGoingCall,
+        HangUpCall
     };
     ref class Task
     {
