@@ -125,6 +125,42 @@ void RingClientUWP::RingD::acceptIncommingCall(Call^ call)
     tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, call));
 }
 
+void RingClientUWP::RingD::placeCall(Contact^ contact)
+{
+    MSG_("placeCall C");
+    auto to = contact->ringID_;
+    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+
+    auto to2 = Utils::toString(to);
+    auto accountId2 = Utils::toString(accountId);
+
+    auto callId2 = DRing::placeCall(accountId2, to2);
+
+    if (callId2 == "") {
+        WNG_("call not created, the daemon didn't return a call Id");
+        return;
+    }
+
+    auto callId = Utils::toPlatformString(callId2);
+
+    auto call = CallsViewModel::instance->addNewCall(accountId, callId, to);
+    call->isOutGoing = true;
+
+    if (call == nullptr) {
+        WNG_("call not created, nullptr reason");
+        return;
+    }
+
+    calling(call);
+
+}
+
+void
+RingClientUWP::RingD::cancelOutGoingCall(Call^ call)
+{
+    tasksList_.push(ref new RingD::Task(Request::CancelOutGoingCall, call));
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -221,7 +257,33 @@ RingClientUWP::RingD::startDaemon()
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
+            }),
+            /* to remove from daemon */
+            DRing::exportable_callback<DRing::CallSignal::NewCallCreated>([&](
+                        const std::string& accountId,
+                        const std::string& callId,
+                        const std::string& to)
+            {
+                /* is this ever used ??  answer : no*/
+                MSG_("<NewCallCreated>");
+                MSG_("accountId = " + accountId);
+                MSG_("callId = " + callId);
+                MSG_("to = " + to);
+
+                auto accountId2 = toPlatformString(accountId);
+                auto callId2 = toPlatformString(callId);
+                auto to2 = toPlatformString(to);
+
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                    CoreDispatcherPriority::Normal, ref new DispatchedHandler([=]()
+                {
+                    // calling(accountId2, callId2, to2);
+                    MSG_("Yo");
+                    //stateChange(callId2, "incoming call", 0);
+                }));
+
             })
+
         };
 
         registerCallHandlers(callHandlers);
@@ -240,8 +302,8 @@ RingClientUWP::RingD::startDaemon()
         };
         registerCallHandlers(getAppPathHandler);
 
-        DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-                    DRing::DRING_FLAG_DEBUG));
+        DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG /*|
+                    DRing::DRING_FLAG_DEBUG*/));
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
@@ -311,6 +373,14 @@ RingD::dequeueTasks()
             auto callId = task->_call->callId;
             auto callId2 = Utils::toString(callId);
             DRing::accept(callId2);
+        }
+        break;
+        case Request::CancelOutGoingCall:
+        {
+            MSG_("FFF");
+            auto callId = task->_call->callId;
+            auto callId2 = Utils::toString(callId);
+            DRing::hangUp(callId2);
         }
         break;
         default:

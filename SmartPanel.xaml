@@ -77,8 +77,8 @@
                                    Grid.Row="0"
                                Text="{x:Bind name_}">
                         </TextBlock>
-                        <!-- call status. -->
-                        <StackPanel MaxWidth="240"
+                        <!-- call status. REFACTO : REMOVE CODE BELOW -->
+                        <!--<StackPanel MaxWidth="240"
                                     MinWidth="240"
                                     Grid.Row="1"
                                     HorizontalAlignment="Left">
@@ -88,12 +88,13 @@
                                        Visibility="Visible"
                                        HorizontalAlignment="Center">
                             </TextBlock>
-                        </StackPanel>
+                        </StackPanel>-->
                     </Grid>
                 </Grid>
+                <!-- REFACTO : REMOVE CODE BELOW -->
                 <!-- button bar for accept/reject or cancel call. -->
                 <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
-                <Grid Width="320"
+                <!--<Grid Width="320"
                       HorizontalAlignment="Left"
                       Grid.Row="2"
                       Background="DarkGray">
@@ -111,7 +112,7 @@
                             HorizontalAlignment="Center"
                             Content="Reject"/>
                     </StackPanel>
-                </Grid>
+                </Grid>-->
             </Grid>
         </DataTemplate>
         <!-- template for accounts. -->
@@ -149,11 +150,10 @@
                            Text="{x:Bind ringID_}"/>
             </Grid>
         </DataTemplate>
-        <!-- template for calls. -->
-        <DataTemplate x:Key="CallTemplate" x:DataType="local:Call">
+        <!-- template for incoming calls. -->
+        <DataTemplate x:Key="IncomingCallTemplate" x:DataType="local:Call">
             <Grid Width="320"
                       HorizontalAlignment="Left"
-
                       Background="DarkGray">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"/>
@@ -182,27 +182,73 @@
                 </StackPanel>
             </Grid>
         </DataTemplate>
+        <!-- template for outgoing calls. -->
+        <DataTemplate x:Key="OutGoingCallTemplate" x:DataType="local:Call">
+            <Grid Width="320"
+                      HorizontalAlignment="Left"
+                      Background="DarkGray">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <TextBlock x:Name="_contactCallStatus_"
+                           Grid.Row="0"
+                           Foreground="White"
+                           Text="{x:Bind state, Mode=OneWay}"
+                           Visibility="Visible"
+                           HorizontalAlignment="Center">
+                </TextBlock>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            HorizontalAlignment="Center">
+                    <Button x:Name="_cancelCallBtn_"
+                            Click="_cancelCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Cancel"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <Grid>
+            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
+                <!--IsHitTestVisible="False"-->
                 <ListBoxItem x:Name="_contactItem_"
                              Padding="0"
                              Margin="0"
-                             IsHitTestVisible="False"
                              Grid.Row="0"
+PointerReleased="_contactItem__PointerReleased"
+
                              ContentTemplate="{StaticResource ContactTemplate}"
                              Content="{x:Bind _contact, Mode=OneWay}"/>
-                <ListBoxItem x:Name="_callItem_"
-                             Grid.Row="1"
-                             Visibility="{x:Bind _callBar, Mode=OneWay}"
+                <ListBoxItem Grid.Row="1"
+                             Visibility="{x:Bind _IncomingCallBar, Mode=OneWay}"
                              Padding="0"
                              Margin="0"
-                             ContentTemplate="{StaticResource CallTemplate}"
+                             ContentTemplate="{StaticResource IncomingCallTemplate}"
+                             Content="{x:Bind _call, Mode=OneWay}"/>
+                <Button Grid.Row="0"
+                        HorizontalAlignment="Left"
+                        Visibility="{x:Bind _callBar, Mode=OneWay}"
+                        Content="call"
+                        Padding="0"
+                        Click="_callContact__Click"
+                        VerticalAlignment="Bottom"
+                        Margin="10">
+                    <Button.RenderTransform>
+                        <TranslateTransform X="160"/>
+                    </Button.RenderTransform>
+                </Button>
+                <ListBoxItem Grid.Row="1"
+                             Visibility="{x:Bind _OutGoingCallBar, Mode=OneWay}"
+                             Padding="0"
+                             Margin="0"
+                             ContentTemplate="{StaticResource OutGoingCallTemplate}"
                              Content="{x:Bind _call, Mode=OneWay}"/>
             </Grid>
         </DataTemplate>
