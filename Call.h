@@ -35,6 +35,7 @@ public:
     property String^ callId;
     property String^ from;
     property String^ state;
+    property bool isOutGoing;
     property int code;
 
     /* events */
@@ -46,6 +47,7 @@ protected:
 internal:
     void refuse();
     void accept();
+    void cancel();
 
 };
 }

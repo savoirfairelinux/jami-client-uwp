@@ -33,6 +33,7 @@ CallsViewModel::CallsViewModel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
         auto call = addNewCall(accountId, callId, from);
+        // REFACTO : add if call == nullptr
         callRecieved(call);
     });
 
@@ -56,9 +57,12 @@ CallsViewModel::CallsViewModel()
 }
 
 Call^
-RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ callId, String^ from)
+RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ callId, String^ peer)
 {
-    auto call = ref new Call(accountId, callId, from);
+    if (accountId == "" | callId == "" | peer == "") {
+        WNG_("call can't be created");
+    }
+    auto call = ref new Call(accountId, callId, peer);
     CallsList_->Append(call);
     return call;
 }
@@ -66,4 +70,14 @@ RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ 
 void RingClientUWP::ViewModel::CallsViewModel::clearCallsList()
 {
     CallsList_->Clear();
+}
+
+Call^
+CallsViewModel::findCall(String^ callId)
+{
+    for each (Call^ call in CallsList_)
+        if (call->callId == callId)
+            return call;
+
+    return nullptr;
 }
