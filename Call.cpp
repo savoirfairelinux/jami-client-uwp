@@ -25,11 +25,15 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 
+// REFACTORING : for the whole Call class, change "from" to "peer"
+
 Call::Call(String^ accountIdz, String^ callIdz, String^ fromz)
 {
     this->accountId = accountIdz;
     this->callId = callIdz;
     this->from = fromz;
+
+    isOutGoing = false; // by default, we consider the call incomming, REFACTO : add this to the constructor params...
 
     this->state = "incoming call";
     this->code = -1;
@@ -63,4 +67,9 @@ void RingClientUWP::Call::refuse()
 void RingClientUWP::Call::accept()
 {
     RingD::instance->acceptIncommingCall(this);
+}
+
+void RingClientUWP::Call::cancel()
+{
+    RingD::instance->cancelOutGoingCall(this);
 }

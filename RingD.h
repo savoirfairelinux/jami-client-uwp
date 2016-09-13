@@ -26,6 +26,8 @@ namespace RingClientUWP
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, String^ state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
+// void Calling(String^ accountId, String^ callId, String^ to);
+delegate void Calling(Call^ call);
 
 
 public ref class RingD sealed
@@ -60,6 +62,8 @@ internal:
     void createSIPAccount(String^ alias);
     void refuseIncommingCall(Call^ call);
     void acceptIncommingCall(Call^ call);
+    void placeCall(Contact^ contact);
+    void cancelOutGoingCall(Call^ call);
 
     /* TODO : move members */
     bool hasConfig;
@@ -69,6 +73,7 @@ internal:
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
     event IncomingAccountMessage^ incomingAccountMessage;
+    event Calling^ calling;
 
 private:
     /* sub classes */
@@ -77,7 +82,8 @@ private:
         AddRingAccount,
         AddSIPAccount,
         RefuseIncommingCall,
-        AcceptIncommingCall
+        AcceptIncommingCall,
+        CancelOutGoingCall
     };
     ref class Task
     {

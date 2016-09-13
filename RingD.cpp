@@ -125,6 +125,41 @@ void RingClientUWP::RingD::acceptIncommingCall(Call^ call)
     tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, call));
 }
 
+void RingClientUWP::RingD::placeCall(Contact^ contact)
+{
+    auto to = contact->ringID_;
+    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+
+    auto to2 = Utils::toString(to);
+    auto accountId2 = Utils::toString(accountId);
+
+    auto callId2 = DRing::placeCall(accountId2, to2);
+
+    if (callId2 == "") {
+        WNG_("call not created, the daemon didn't return a call Id");
+        return;
+    }
+
+    auto callId = Utils::toPlatformString(callId2);
+
+    auto call = CallsViewModel::instance->addNewCall(accountId, callId, to);
+    call->isOutGoing = true;
+
+    if (call == nullptr) {
+        WNG_("call not created, nullptr reason");
+        return;
+    }
+
+    calling(call);
+
+}
+
+void
+RingClientUWP::RingD::cancelOutGoingCall(Call^ call)
+{
+    tasksList_.push(ref new RingD::Task(Request::CancelOutGoingCall, call));
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -221,7 +256,13 @@ RingClientUWP::RingD::startDaemon()
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
-            })
+            }),
+            /* to remove from daemon API, this callback is never used */
+            //DRing::exportable_callback<DRing::CallSignal::NewCallCreated>([&](
+            //            const std::string& accountId,
+            //            const std::string& callId,
+            //            const std::string& to)
+            //{ /*...*/ })
         };
 
         registerCallHandlers(callHandlers);
@@ -311,6 +352,13 @@ RingD::dequeueTasks()
             auto callId = task->_call->callId;
             auto callId2 = Utils::toString(callId);
             DRing::accept(callId2);
+        }
+        break;
+        case Request::CancelOutGoingCall:
+        {
+            auto callId = task->_call->callId;
+            auto callId2 = Utils::toString(callId);
+            DRing::hangUp(callId2);
         }
         break;
         default:
