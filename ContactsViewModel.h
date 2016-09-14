@@ -29,7 +29,7 @@ namespace RingClientUWP
 delegate void NewContactSelected();
 delegate void NoContactSelected();
 delegate void ScreenConversationMessage(String^ accountId, String^ from, String^ payload);
-delegate void NotifyNewConversationMessage();
+delegate void NotifyNewConversationMessage(bool isContactNotSelected);
 delegate void ShowContactBar();
 delegate void ContactAdded(Contact^);
 
