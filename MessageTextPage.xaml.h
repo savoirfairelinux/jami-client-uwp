@@ -23,14 +23,30 @@ namespace RingClientUWP
 {
 namespace Views
 {
+
+public ref class BubbleBackground sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    BubbleBackground();
+};
+
+public ref class BubbleHorizontalAlignement sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    BubbleHorizontalAlignement();
+};
+
 public ref class MessageTextPage sealed
 {
 public:
     MessageTextPage();
     void updatePageContent();
+    void scrollDown();
 
-protected:
-    virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+//protected:
+//    virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
 private:
     void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

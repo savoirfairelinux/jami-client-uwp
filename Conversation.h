@@ -29,6 +29,7 @@ String^ payloadKey      = "payload";
 
 namespace RingClientUWP
 {
+
 public ref class ConversationMessage sealed
 {
 public:
