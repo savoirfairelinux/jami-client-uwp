@@ -96,3 +96,31 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     RingD::instance->sendAccountTextMessage(txt);
 
 }
+
+Object ^ RingClientUWP::Views::BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    return ((bool)value) ? ref new SolidColorBrush(Windows::UI::Colors::LightPink) : ref new SolidColorBrush(Windows::UI::Colors::LightBlue);
+}
+
+// we only do OneWay so the next function is not used
+Object ^ RingClientUWP::Views::BubbleBackground::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::BubbleBackground::BubbleBackground()
+{}
+
+Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    return ((bool)value) ? Windows::UI::Xaml::HorizontalAlignment::Left : Windows::UI::Xaml::HorizontalAlignment::Right;
+}
+
+// we only do OneWay so the next function is not used
+Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
+{}
