@@ -77,8 +77,10 @@ Contact::Contact(String^ name,
     }
 
     /* connect to delegate */
-    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] () {
-        PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
+    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] (
+    bool isContactNotSelected) {
+        if (isContactNotSelected)
+            PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
     });
     ContactsViewModel::instance->newContactSelected += ref new RingClientUWP::NewContactSelected([&]() {
         if (ContactsViewModel::instance->selectedContact == this) {

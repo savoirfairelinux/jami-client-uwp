@@ -69,7 +69,7 @@ MainPage::MainPage()
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
     dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
-        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
+                       Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 }
 
 void

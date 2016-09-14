@@ -36,22 +36,27 @@ using namespace Windows::UI::Xaml::Documents;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::Xaml::Navigation;
+using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Windows::UI::Core;
 
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
 
-    /* connect delegates. */ // may be useless
+    /* connect delegates. */
+    // REFACTO : useless ?
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ from, String^ payload) {
     });
+    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&](
+    bool isContactNotSelected) {
+        if (!isContactNotSelected) {
+            /* if the contact is selected that means we should scroll down */
+            scrollDown();
+        }
 
-}
-
-void
-RingClientUWP::Views::MessageTextPage::OnNavigatedTo(NavigationEventArgs ^ e)
-{
-    updatePageContent();
+    });
 }
 
 void
@@ -65,6 +70,13 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
 
     _messagesList_->ItemsSource = contact->_conversation->_messages;
 
+    scrollDown();
+}
+
+void RingClientUWP::Views::MessageTextPage::scrollDown()
+{
+    _scrollView_->UpdateLayout();
+    _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
 }
 
 void
@@ -94,5 +106,36 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
         return;
 
     RingD::instance->sendAccountTextMessage(txt);
-
+    scrollDown();
 }
+
+Object ^ RingClientUWP::Views::BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto settings = ref new Windows::UI::ViewManagement::UISettings();
+    auto color = settings->GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent);
+
+    return ((bool)value) ? ref new SolidColorBrush(color) : ref new SolidColorBrush(Windows::UI::Colors::LightBlue);
+}
+
+// we only do OneWay so the next function is not used
+Object ^ RingClientUWP::Views::BubbleBackground::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::BubbleBackground::BubbleBackground()
+{}
+
+Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    return ((bool)value) ? Windows::UI::Xaml::HorizontalAlignment::Left : Windows::UI::Xaml::HorizontalAlignment::Right;
+}
+
+// we only do OneWay so the next function is not used
+Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
+{}
