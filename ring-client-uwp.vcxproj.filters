@@ -86,6 +86,9 @@
     <ClCompile Include="SmartPanelItem.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="SmartPanelItemsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -133,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h">
       <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPanelItemsViewModel.h">
+      <Filter>ModelViews</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

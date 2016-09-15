@@ -32,8 +32,6 @@ public ref class SmartPanel sealed
 public:
     SmartPanel();
     void updatePageContent();
-    Controls::SmartPanelItem^ findItem(Contact^ contact);
-    Controls::SmartPanelItem^ findItem(Call^ call);
 
 internal:
     enum class Mode { Minimized, Normal };
@@ -65,7 +63,6 @@ private:
     void _contactItem__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 
     /* members */
-    Vector<Controls::SmartPanelItem^>^ smartPanelItemsList_;
 };
 }
 }
