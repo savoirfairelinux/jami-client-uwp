@@ -33,6 +33,7 @@
 #include "Conversation.h"
 #include "MainPage.xaml.h"
 #include "SmartPanelItem.h"
+#include "SmartPanelItemsViewModel.h"
 
 /* ensure to be accessed from anywhere */
 #include "RingD.h"

@@ -46,8 +46,7 @@ SmartPanel::SmartPanel()
     _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
 
     /* populate the smartlist */
-    smartPanelItemsList_ = ref new Vector<SmartPanelItem^>();
-    _smartList_->ItemsSource = smartPanelItemsList_;
+    _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsList;
 
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
@@ -76,7 +75,7 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        auto item = findItem(contact);
+        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_call = call;
     });
     RingD::instance->stateChange += ref new StateChange([this](String^ callId, String^ state, int code) {
@@ -85,7 +84,7 @@ SmartPanel::SmartPanel()
         if (call == nullptr)
             return;
 
-        auto item = findItem(call);
+        auto item = SmartPanelItemsViewModel::instance->findItem(call);
 
         if (!item) {
             WNG_("item not found");
@@ -110,7 +109,7 @@ SmartPanel::SmartPanel()
     ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
-        smartPanelItemsList_->Append(smartPanelItem);
+        SmartPanelItemsViewModel::instance->itemsList->Append(smartPanelItem);
     });
 
     RingD::instance->calling += ref new RingClientUWP::Calling([&](
@@ -123,7 +122,7 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        auto item = findItem(contact);
+        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
 
         if (item == nullptr) {
             WNG_("cannot call the peer, smart panel item not found!");
@@ -300,6 +299,8 @@ void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::O
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     auto call = dynamic_cast<Call^>(button->DataContext);
 
+    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(call);
+
     call->refuse();
 }
 
@@ -309,28 +310,9 @@ void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::O
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     auto call = dynamic_cast<Call^>(button->DataContext);
 
+    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(call);
+
     call->accept();
-}
-
-SmartPanelItem^
-SmartPanel::findItem(Contact^ contact)
-{
-    for each (SmartPanelItem^ item in smartPanelItemsList_)
-        if (item->_contact == contact)
-            return item;
-
-    return nullptr;
-}
-
-
-SmartPanelItem^
-SmartPanel::findItem(Call^ call)
-{
-    for each (SmartPanelItem^ item in smartPanelItemsList_)
-        if (item->_call == call)
-            return item;
-
-    return nullptr;
 }
 
 void
@@ -339,6 +321,8 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
     auto contact = item->_contact;
+
+    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(contact);
 
     RingD::instance->placeCall(contact);
 }
