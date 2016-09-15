@@ -61,10 +61,28 @@ MainPage::MainPage()
 
     /* connect to delegates */
     ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
-        showFrame(_messageTextFrame_);
+        Contact^ selectedContact = ContactsViewModel::instance->selectedContact;
+        auto call = selectedContact?
+            SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
+            nullptr;
+        if (call != nullptr) {
+            if (call->state == "CURRENT")
+                showFrame(_videoFrame_);
+            else
+                showFrame(_messageTextFrame_);
+        }
+        else {
+            showFrame(_messageTextFrame_);
+        }
     });
     ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
         showFrame(_welcomeFrame_);
+        });
+    CallsViewModel::instance->callStarted += ref new CallStarted([&]() {
+        showFrame(_videoFrame_);
+    });
+    CallsViewModel::instance->callEnded += ref new CallEnded([&]() {
+        showFrame(_messageTextFrame_);
     });
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
@@ -105,6 +123,7 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
         _navGrid_->SetRow(_welcomeFrame_, 1);
     } else if (frame == _videoFrame_) {
         _navGrid_->SetRow(_videoFrame_, 1);
+        dynamic_cast<VideoPage^>(_videoFrame_->Content)->updatePageContent();
     } else if (frame == _messageTextFrame_) {
         _navGrid_->SetRow(_messageTextFrame_, 1);
         dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
