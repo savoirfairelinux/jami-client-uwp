@@ -70,8 +70,9 @@ ContactsViewModel::ContactsViewModel()
 Contact^ // refacto : remove "byName"
 ContactsViewModel::findContactByName(String^ name)
 {
+    auto trimmedName = Utils::Trim(name);
     for each (Contact^ contact in contactsList_)
-        if (contact->name_ == name)
+        if (contact->name_ == trimmedName)
             return contact;
 
     return nullptr;
@@ -80,9 +81,9 @@ ContactsViewModel::findContactByName(String^ name)
 Contact^
 ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
-    auto trimedName = Utils::Trim(name);
-    if (contactsList_ && !findContactByName(trimedName)) {
-        Contact^ contact = ref new Contact(trimedName, trimedName, nullptr, 0);
+    auto trimmedName = Utils::Trim(name);
+    if (contactsList_ && !findContactByName(trimmedName)) {
+        Contact^ contact = ref new Contact(trimmedName, trimmedName, nullptr, 0);
         contactsList_->Append(contact);
         saveContactsToFile();
         contactAdded(contact);
