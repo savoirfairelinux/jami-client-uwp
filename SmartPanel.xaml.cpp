@@ -299,8 +299,6 @@ void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::O
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     auto call = dynamic_cast<Call^>(button->DataContext);
 
-    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(call);
-
     call->refuse();
 }
 
