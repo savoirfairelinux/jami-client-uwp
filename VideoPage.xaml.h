@@ -1,5 +1,22 @@
 #pragma once
-
+/**************************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+**************************************************************************/
 #include "VideoPage.g.h"
 
 using namespace Windows::Media::Capture;
@@ -25,6 +42,8 @@ public ref class VideoPage sealed
 {
 public:
     VideoPage();
+    void updatePageContent();
+
     property bool barFading
     {
         bool get()
@@ -38,10 +57,7 @@ public:
     }
 
 protected:
-    // Template Support
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
-    /*virtual void OnNavigatedFrom(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;*/
-
 
 internal:
     /* events */
@@ -57,10 +73,6 @@ internal:
 
 private:
     bool barFading_;
-
-    void updatePageContent();
-
-    //void OnNavigatedToPage(Object^ sender, NavigationEventArgs^ e);
 
     void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _btnCancel__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

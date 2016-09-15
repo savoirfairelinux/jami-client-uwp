@@ -2,6 +2,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -23,6 +24,8 @@ namespace RingClientUWP
 /* delegate */
 delegate void CallRecieved(Call^ call);
 delegate void CallStatusUpdated(Call^ call);
+delegate void CallStarted();
+delegate void CallEnded();
 
 namespace ViewModel {
 public ref class CallsViewModel sealed
@@ -56,6 +59,8 @@ internal:
     /* events */
     event CallRecieved^ callRecieved;
     event CallStatusUpdated^ callStatusUpdated;
+    event CallStarted^ callStarted;
+    event CallEnded^ callEnded;
 
 private:
     CallsViewModel(); // singleton
