@@ -140,7 +140,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)..\ring-daemon\contrib\boost\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
