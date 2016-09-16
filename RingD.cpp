@@ -194,6 +194,9 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto from2 = toPlatformString(from);
 
+                /* fix some issue in the daemon --> <...@...> */
+                from2 = Utils::TrimRingId(from2);
+
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::Normal, ref new DispatchedHandler([=]()
                 {

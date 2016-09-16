@@ -106,6 +106,24 @@ Platform::String^ Trim(Platform::String^ s)
     return ref new Platform::String(first, static_cast<unsigned int>(last - first));
 }
 
+/* fix some issue in the daemon --> <...@...> */
+Platform::String^ TrimRingId(Platform::String^ s)
+{
+    const WCHAR* first = s->Begin();
+    const WCHAR* last = s->End();
+
+    while (first != last && *first != '<')
+        ++first;
+
+    while (first != last && last[-1] != '@')
+        --last;
+
+    first++;
+    last--;
+
+    return ref new Platform::String(first, static_cast<unsigned int>(last - first));
+}
+
 Platform::String^ GetNewGUID()
 {
     GUID result;
