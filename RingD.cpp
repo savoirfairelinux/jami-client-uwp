@@ -51,13 +51,13 @@ RingClientUWP::RingD::reloadAccountList()
     std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
     for (; rit != accountList.rend(); ++rit) {
         std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
-        std::string ringID(accountDetails.find(ring::Conf::CONFIG_ACCOUNT_USERNAME)->second);
+        std::string ringID(accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second);
         if(!ringID.empty())
             ringID = ringID.substr(5);
         RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_ALIAS)->second,      //name
+            accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second,      //name
             ringID,                                                             //ringid
-            accountDetails.find(ring::Conf::CONFIG_ACCOUNT_TYPE)->second,       //type
+            accountDetails.find(DRing::Account::ConfProperties::TYPE)->second,       //type
             *rit);
     }
     // load user preferences
@@ -210,6 +210,7 @@ RingClientUWP::RingD::startDaemon()
                 if (state == DRing::Account::States::REGISTERED) {
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
                     ref new DispatchedHandler([=]() {
+                        reloadAccountList();
                         auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                         dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
                     }));
@@ -286,16 +287,17 @@ RingD::dequeueTasks()
         case Request::AddRingAccount:
         {
             std::map<std::string, std::string> ringAccountDetails;
-            ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName));
-            ringAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"RING"));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, accountName));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, accountName));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"RING"));
             DRing::addAccount(ringAccountDetails);
         }
         break;
         case Request::AddSIPAccount:
         {
             std::map<std::string, std::string> sipAccountDetails;
-            sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_ALIAS, accountName + " (SIP)"));
-            sipAccountDetails.insert(std::make_pair(ring::Conf::CONFIG_ACCOUNT_TYPE,"SIP"));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, accountName + " (SIP)"));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"SIP"));
             DRing::addAccount(sipAccountDetails);
         }
         break;
