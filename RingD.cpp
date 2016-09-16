@@ -38,12 +38,6 @@ using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
 void
-debugOutputWrapper(const std::string& str)
-{
-    MSG_(str);
-}
-
-void
 RingClientUWP::RingD::reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
@@ -178,6 +172,8 @@ RingClientUWP::RingD::startDaemon()
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
         using namespace std::placeholders;
 
+        auto dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
+
         std::map<std::string, SharedCallback> callHandlers = {
             // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
             DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
@@ -266,6 +262,13 @@ RingClientUWP::RingD::startDaemon()
                     reloadAccountList();
                 }));
             }),
+            DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
+            {
+                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                ref new DispatchedHandler([=]() {
+                    RingDebug::instance->print(toto);
+                }));
+            })
             /* to remove from daemon API, this callback is never used */
             //DRing::exportable_callback<DRing::CallSignal::NewCallCreated>([&](
             //            const std::string& accountId,
@@ -275,11 +278,6 @@ RingClientUWP::RingD::startDaemon()
         };
 
         registerCallHandlers(callHandlers);
-
-        std::map<std::string, SharedCallback> dringDebugOutHandler;
-        dringDebugOutHandler.insert(DRing::exportable_callback<DRing::Debug::MessageSend>
-                                    (std::bind(&debugOutputWrapper, _1)));
-        registerCallHandlers(dringDebugOutHandler);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
         {
