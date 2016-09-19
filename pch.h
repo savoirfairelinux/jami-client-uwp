@@ -21,6 +21,10 @@
 #include <iomanip>
 #include <ppltasks.h>
 #include <queue>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <string>
 
 /* required by generated headers. */
 #include "App.xaml.h"

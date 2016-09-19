@@ -22,6 +22,8 @@
 
 #include "ObjBase.h" // for CoCreateGuid
 
+#include "fileutils.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
 using namespace Windows::Data::Json;
@@ -42,31 +44,19 @@ Contact::Contact(String^ name,
     if (GUID_ == nullptr)
         GUID_ = Utils::GetNewGUID();
 
-    // load conversation from disk
     conversation_ = ref new Conversation();
+
+    // load conversation from disk
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ messagesFile = ".messages\\" + GUID_ + ".json";
-    Utils::fileExists(ApplicationData::Current->LocalFolder,
-                      messagesFile)
-    .then([this,messagesFile](bool messages_file_exists)
-    {
-        if (messages_file_exists) {
-            try {
-                create_task(ApplicationData::Current->LocalFolder->GetFileAsync(messagesFile))
-                .then([this](StorageFile^ file)
-                {
-                    create_task(FileIO::ReadTextAsync(file))
-                    .then([this](String^ fileContents) {
-                        if (fileContents != nullptr)
-                            DestringifyConversation(fileContents);
-                    });
-                });
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while opening messages file");
-            }
-        }
-    });
+    String^ messagesFile = localfolder->Path + "\\" + ".messages\\" + GUID_ + ".json";
+
+    String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(messagesFile)));
+
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    ref new DispatchedHandler([=]() {
+        if (fileContents != nullptr)
+            DestringifyConversation(fileContents);
+    }));
 
     notificationNewMessage_ = Windows::UI::Xaml::Visibility::Collapsed;
     unreadMessages_ = unreadmessages;
@@ -169,21 +159,14 @@ void
 Contact::saveConversationToFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ messagesFile = ".messages\\" + GUID_ + ".json";
+    String^ messagesFile = localfolder->Path + "\\" + ".messages\\" + GUID_ + ".json";
 
-    try {
-        create_task(localfolder->CreateFileAsync(messagesFile
-                    , Windows::Storage::CreationCollisionOption::ReplaceExisting))
-        .then([&](StorageFile^ file) {
-            try {
-                FileIO::WriteTextAsync(file, StringifyConversation());
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while writing to conversation file");
-            }
-        });
-    }
-    catch (Exception^ e) {
-        RingDebug::instance->print("Exception while opening conversation file");
+    if (ring::fileutils::recursive_mkdir(Utils::toString(localfolder->Path + "\\" + ".messages\\").c_str())) {
+        std::ofstream file(Utils::toString(messagesFile).c_str());
+        if (file.is_open())
+        {
+            file << Utils::toString(StringifyConversation());
+            file.close();
+        }
     }
 }

@@ -21,6 +21,8 @@
 
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
+using namespace Windows::UI::Core;
+using namespace Windows::ApplicationModel::Core;
 
 using namespace RingClientUWP;
 using namespace Platform;
@@ -30,64 +32,35 @@ void
 UserPreferences::save()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ preferencesFile = "preferences.json";
+    String^ preferencesFile = localfolder->Path + "\\" + "preferences.json";
 
-    try {
-        create_task(localfolder->CreateFileAsync(preferencesFile
-            ,Windows::Storage::CreationCollisionOption::ReplaceExisting))
-            .then([&](StorageFile^ newFile){
-            try {
-                FileIO::WriteTextAsync(newFile,Stringify());
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while writing to preferences file");
-            }
-        });
-    }
-    catch (Exception^ e) {
-        RingDebug::instance->print("Exception while opening preferences file");
+    std::ofstream file(Utils::toString(preferencesFile).c_str());
+    if (file.is_open())
+    {
+        file << Utils::toString(Stringify());
+        file.close();
     }
 }
 
 void
 UserPreferences::load()
 {
-    String^ preferencesFile = "preferences.json";
+    StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+    String^ preferencesFile = localfolder->Path + "\\preferences.json";
 
-    Utils::fileExists(ApplicationData::Current->LocalFolder,
-        preferencesFile)
-        .then([this,preferencesFile](bool contacts_file_exists)
-    {
-        if (contacts_file_exists) {
-            try {
-                create_task(ApplicationData::Current->LocalFolder->GetFileAsync(preferencesFile))
-                    .then([this](StorageFile^ file)
-                {
-                    try {
-                        create_task(FileIO::ReadTextAsync(file))
-                            .then([this](String^ fileContents){
-                            if (fileContents != nullptr) {
-                                Destringify(fileContents);
-                                // select account index after loading preferences
-                                selectIndex(PREF_ACCOUNT_INDEX);
-                                if (PREF_PROFILE_PHOTO)
-                                    loadProfileImage();
-                            }
-                        });
-                    }
-                    catch (Exception^ e) {
-                        RingDebug::instance->print("Exception while reading preferences file");
-                    }
-                });
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while opening preferences file");
-            }
+    String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(preferencesFile)));
+
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    ref new DispatchedHandler([=]() {
+        if (fileContents != nullptr) {
+            Destringify(fileContents);
+            selectIndex(PREF_ACCOUNT_INDEX);
+            if (PREF_PROFILE_PHOTO)
+                loadProfileImage();
         }
-        else {
+        else
             selectIndex(0);
-        }
-    });
+    }));
 }
 
 String^
