@@ -20,6 +20,8 @@
 
 #include "ContactsViewModel.h"
 
+#include "fileutils.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
@@ -57,12 +59,13 @@ ContactsViewModel::ContactsViewModel()
 
         if (contact->ringID_ == from) {
             // increment contact's unread message count
-            if(isNotSelected)
+            if (isNotSelected) {
                 contact->addNotifyNewConversationMessage();
+                // save to disk
+                saveContactsToFile();
+            }
             // update the xaml for all contacts
             notifyNewConversationMessage(isNotSelected);
-            // save to disk
-            saveContactsToFile();
         }
     });
 }
@@ -97,51 +100,31 @@ void
 ContactsViewModel::saveContactsToFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ contactsFile = ".profile\\contacts.json";
+    String^ contactsFile = localfolder->Path + "\\" + ".profile\\contacts.json";
 
-    try {
-        create_task(localfolder->CreateFileAsync(contactsFile
-                    , Windows::Storage::CreationCollisionOption::ReplaceExisting))
-        .then([&](StorageFile^ newFile) {
-            try {
-                FileIO::WriteTextAsync(newFile, Stringify());
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while writing to contacts file");
-            }
-        });
-    }
-    catch (Exception^ e) {
-        RingDebug::instance->print("Exception while opening contacts file");
+    if (ring::fileutils::recursive_mkdir(Utils::toString(localfolder->Path + "\\" + ".profile\\").c_str())) {
+        std::ofstream file(Utils::toString(contactsFile).c_str());
+        if (file.is_open())
+        {
+            file << Utils::toString(Stringify());
+            file.close();
+        }
     }
 }
 
 void
 ContactsViewModel::openContactsFromFile()
 {
-    String^ contactsFile = ".profile\\contacts.json";
+    StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+    String^ contactsFile = localfolder->Path + "\\" + ".profile\\contacts.json";
 
-    Utils::fileExists(ApplicationData::Current->LocalFolder,
-                      contactsFile)
-    .then([this,contactsFile](bool contacts_file_exists)
-    {
-        if (contacts_file_exists) {
-            try {
-                create_task(ApplicationData::Current->LocalFolder->GetFileAsync(contactsFile))
-                .then([this](StorageFile^ file)
-                {
-                    create_task(FileIO::ReadTextAsync(file))
-                    .then([this](String^ fileContents) {
-                        if (fileContents != nullptr)
-                            Destringify(fileContents);
-                    });
-                });
-            }
-            catch (Exception^ e) {
-                RingDebug::instance->print("Exception while opening contacts file");
-            }
-        }
-    });
+    String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(contactsFile)));
+
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    ref new DispatchedHandler([=]() {
+        if (fileContents != nullptr)
+            Destringify(fileContents);
+    }));
 }
 
 String^

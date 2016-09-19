@@ -137,5 +137,13 @@ Platform::String^ GetNewGUID()
     throw Exception::CreateException(hr);
 }
 
+std::string
+getStringFromFile(const std::string& filename)
+{
+    std::ifstream file(filename);
+    return std::string((std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator<char>()));
+}
+
 }
 }
