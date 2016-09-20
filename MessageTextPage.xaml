@@ -131,7 +131,7 @@
 
         </StackPanel>
         <ScrollViewer x:Name="_scrollView_"
-                       BorderThickness="0,1,0,1"
+                       BorderThickness="0,1,0,0"
                        BorderBrush="LightBlue"
                        Grid.Row="1">
             <StackPanel>
@@ -149,12 +149,9 @@
               Padding="0"
               Background="#FFF2F2F2">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="30" />
                 <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="30" />
             </Grid.ColumnDefinitions>
             <TextBox x:Name="_messageTextBox_"
-                     Grid.Column="1"
                      HorizontalAlignment="Stretch"
                      TextWrapping="NoWrap"
                      VerticalAlignment="Center"

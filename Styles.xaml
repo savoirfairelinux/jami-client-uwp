@@ -141,6 +141,19 @@
         <Setter Property="Background"
             Value="Transparent"/>
     </Style>
+    <Style x:Key="ButtonStyle6"
+        TargetType="Button">
+        <Setter Property="Width"
+            Value="320"/>
+        <Setter Property="Height"
+            Value="30"/>
+        <Setter Property="FontFamily"
+            Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+            Value="White"/>
+        <Setter Property="Background"
+            Value="Transparent"/>
+    </Style>
     <Style x:Key="ToggleButtonStyle1"
            TargetType="ToggleButton">
         <Setter Property="Width"
@@ -153,89 +166,6 @@
                 Value="White"/>
         <Setter Property="Background"
                 Value="Transparent"/>
-    </Style>
-    <Style x:Key="TextBoxStyle1"
-           TargetType="TextBox">
-        <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
-        <Setter Property="MinHeight" Value="{ThemeResource TextControlThemeMinHeight}"/>
-        <Setter Property="Foreground" Value="Black"/>
-        <Setter Property="Background" Value="white"/>
-        <Setter Property="BorderBrush" Value="Red"/>
-        <Setter Property="BorderThickness" Value="0"/>
-        <Setter Property="FontFamily" Value="{ThemeResource ContentControlThemeFontFamily}"/>
-        <Setter Property="FontSize" Value="{ThemeResource ControlContentThemeFontSize}"/>
-        <Setter Property="ScrollViewer.HorizontalScrollMode" Value="Auto"/>
-        <Setter Property="ScrollViewer.VerticalScrollMode" Value="Auto"/>
-        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Hidden"/>
-        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Hidden"/>
-        <Setter Property="ScrollViewer.IsDeferredScrollingEnabled" Value="False"/>
-        <Setter Property="Padding" Value="4,4"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="TextBox">
-                    <Grid>
-                        <Grid.Resources>
-                            <Style x:Name="DeleteButtonStyle" TargetType="Button">
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid x:Name="ButtonLayoutGrid"
-                                                  BorderThickness="5"
-                                                  Background="Yellow">
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </Grid.Resources>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Border x:Name="BackgroundElement"
-                                    Grid.Row="1"
-                                    Background="{TemplateBinding Background}"
-                                    Margin="5"
-                                    Opacity="1"
-                                    Grid.ColumnSpan="2"
-                                    Grid.RowSpan="1"/>
-                        <ScrollViewer x:Name="ContentElement"
-                      Grid.Row="1"
-                      HorizontalScrollMode="{TemplateBinding ScrollViewer.HorizontalScrollMode}"
-                      HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}"
-                      VerticalScrollMode="{TemplateBinding ScrollViewer.VerticalScrollMode}"
-                      VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}"
-                      IsHorizontalRailEnabled="{TemplateBinding ScrollViewer.IsHorizontalRailEnabled}"
-                      IsVerticalRailEnabled="{TemplateBinding ScrollViewer.IsVerticalRailEnabled}"
-                      IsDeferredScrollingEnabled="{TemplateBinding ScrollViewer.IsDeferredScrollingEnabled}"
-                      Margin="5"
-                      Padding="{TemplateBinding Padding}"
-                      IsTabStop="False"
-                      AutomationProperties.AccessibilityView="Raw"
-                      ZoomMode="Disabled"/>
-
-                        <Button x:Name="DeleteButton"
-                                    Background="Transparent"
-                                    Grid.Row="1"
-                                    FontFamily="Segoe MDL2 Assets"
-                                    Foreground="LightBlue"
-                                    Content="&#xE102;"
-                                    BorderThickness="{TemplateBinding BorderThickness}"
-                                    Margin="{ThemeResource HelperButtonThemePadding}"
-                                    IsTabStop="False"
-                                    Grid.Column="1"
-                                    Visibility="Visible"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    MinWidth="34"
-                                    VerticalAlignment="Stretch"/>
-                    </Grid>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
     </Style>
     <Style x:Key="TextBoxStyle2"
            TargetType="TextBox">
