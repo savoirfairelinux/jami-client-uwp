@@ -293,6 +293,12 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
     }
 }
 
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
+    _ringTxtBx_->Text = "";
+}
+
 // REFACTO : change the name IncomingCall if used with OutGoingCall too.
 void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
