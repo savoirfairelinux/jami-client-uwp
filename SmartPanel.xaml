@@ -291,7 +291,7 @@
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
-                               Text="default name"
+                               Text="[TEXT MISSING]"
                                Margin="10"
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">

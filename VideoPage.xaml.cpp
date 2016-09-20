@@ -46,6 +46,11 @@ VideoPage::VideoPage()
 void
 RingClientUWP::Views::VideoPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
 {
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
+    String^ from, String^ payload) {
+        scrollDown();
+    });
+
     updatePageContent();
 }
 
@@ -59,6 +64,46 @@ void RingClientUWP::Views::VideoPage::updatePageContent()
         return;
 
     _callee_->Text = contact->name_;
+
+    _messagesList_->ItemsSource = contact->_conversation->_messages;
+
+    scrollDown();
+}
+
+void RingClientUWP::Views::VideoPage::scrollDown()
+{
+    _scrollView_->UpdateLayout();
+    _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
+}
+
+void
+RingClientUWP::Views::VideoPage::_sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    sendMessage();
+}
+
+void
+RingClientUWP::Views::VideoPage::_messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (e->Key == Windows::System::VirtualKey::Enter) {
+        sendMessage();
+    }
+}
+
+void
+RingClientUWP::Views::VideoPage::sendMessage()
+{
+    auto contact = ViewModel::ContactsViewModel::instance->selectedContact;
+    auto txt = _messageTextBox_->Text;
+
+    /* empty the textbox */
+    _messageTextBox_->Text = "";
+
+    if (!contact || txt->IsEmpty())
+        return;
+
+    RingD::instance->sendAccountTextMessage(txt);
+    scrollDown();
 }
 
 void RingClientUWP::Views::VideoPage::Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -91,7 +136,14 @@ void RingClientUWP::Views::VideoPage::_btnPause__Tapped(Platform::Object^ sender
 
 void RingClientUWP::Views::VideoPage::_btnChat__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    chatPanelCall();
+    chatOpen = !chatOpen;
+    if (chatOpen) {
+        _rowChatBx_->Height = 200;
+        chatPanelCall();
+    }
+    else {
+        _rowChatBx_->Height = 0;
+    }
 }
 
 

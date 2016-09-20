@@ -242,6 +242,45 @@ RingClientUWP::RingD::startDaemon()
                     }));
                 }
             }),
+            DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
+                        const std::string& callId,
+                        const std::string& from,
+                        const std::map<std::string, std::string>& payloads)
+            {
+                MSG_("<IncomingMessage>");
+                MSG_("callId = " + callId);
+                MSG_("from = " + from);
+
+                auto callId2 = toPlatformString(callId);
+                auto from2 = toPlatformString(from);
+
+                from2 = Utils::TrimRingId2(from2);
+
+                Call^ call = CallsViewModel::instance->findCall(callId2);
+
+                if (!call)
+                    return;
+
+                String^ accountId2 = call->accountId;
+                const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
+                static const unsigned int profileSize = PROFILE_VCF.size();
+
+                for (auto i : payloads) {
+                    if (i.first.compare(0, profileSize, PROFILE_VCF) == 0) {
+                        MSG_("VCARD");
+                        return;
+                    }
+                    MSG_("payload.first = " + i.first);
+                    MSG_("payload.second = " + i.second);
+
+                    auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                    {
+                        incomingAccountMessage(accountId2, from2, payload);
+                    }));
+                }
+            }),
             DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
                         const std::string& account_id, const std::string& state,
                         int detailsCode, const std::string& detailsStr)
