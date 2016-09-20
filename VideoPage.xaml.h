@@ -18,6 +18,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 #include "VideoPage.g.h"
+#include "MessageTextPage.xaml.h"
 
 using namespace Windows::Media::Capture;
 using namespace Windows::UI::Xaml::Navigation;
@@ -56,6 +57,20 @@ public:
         }
     }
 
+    property bool chatOpen
+    {
+        bool get()
+        {
+            return chatOpen_;
+        }
+        void set(bool value)
+        {
+            chatOpen_ = value;
+        }
+    }
+
+    void scrollDown();
+
 protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
@@ -73,6 +88,11 @@ internal:
 
 private:
     bool barFading_;
+    bool chatOpen_;
+
+    void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+    void sendMessage();
 
     void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _btnCancel__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
