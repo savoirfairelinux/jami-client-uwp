@@ -23,6 +23,7 @@
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
+#include "videomanager_interface.h"
 #include "fileutils.h"
 #include "account_schema.h"
 #include "account_const.h"
@@ -32,6 +33,9 @@
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
+using namespace Windows::Media;
+using namespace Windows::Media::MediaProperties;
+using namespace Windows::Media::Capture;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
@@ -311,14 +315,7 @@ RingClientUWP::RingD::startDaemon()
                     RingDebug::instance->print(toto);
                 }));
             })
-            /* to remove from daemon API, this callback is never used */
-            //DRing::exportable_callback<DRing::CallSignal::NewCallCreated>([&](
-            //            const std::string& accountId,
-            //            const std::string& callId,
-            //            const std::string& to)
-            //{ /*...*/ })
         };
-
         registerCallHandlers(callHandlers);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
@@ -330,6 +327,91 @@ RingClientUWP::RingD::startDaemon()
         };
         registerCallHandlers(getAppPathHandler);
 
+        std::map<std::string, SharedCallback> incomingVideoHandlers =
+        {
+            DRing::exportable_callback<DRing::VideoSignal::DeviceEvent>
+            ([this]() {
+                MSG_("<DeviceEvent>");
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
+            ([this](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
+                MSG_("<DecodingStarted>");
+                Video::VideoManager::instance->rendererManager()->startedDecoding(
+                    Utils::toPlatformString(id),
+                    width,
+                    height);
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
+            ([this](const std::string &id, const std::string &shmPath, bool isMixer) {
+                MSG_("<DecodingStopped>");
+                MSG_("Removing renderer id:" + id);
+                /*auto Id = Utils::toPlatformString(id);
+                auto renderer = Video::VideoManager::instance->rendererManager()->renderer(Id);
+                if (renderer)
+                    renderer->isRendering = false;*/
+                Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
+            })
+        };
+        registerVideoHandlers(incomingVideoHandlers);
+
+        using namespace Video;
+        std::map<std::string, SharedCallback> outgoingVideoHandlers =
+        {
+            DRing::exportable_callback<DRing::VideoSignal::GetCameraInfo>
+            ([this](const std::string& device,
+                    std::vector<std::string> *formats,
+                    std::vector<unsigned> *sizes,
+                    std::vector<unsigned> *rates) {
+                MSG_("\n<GetCameraInfo>\n");
+                auto device_list = VideoManager::instance->captureManager()->deviceList;
+
+                for (unsigned int i = 0; i < device_list->Size; i++) {
+                    auto dev = device_list->GetAt(i);
+                    if (device == Utils::toString(dev->name())) {
+                        auto channel = dev->channel();
+                        Vector<Video::Resolution^>^ resolutions = channel->resolutionList();
+                        for (auto res : resolutions) {
+                            formats->emplace_back(Utils::toString(res->format()));
+                            sizes->emplace_back(res->size()->width());
+                            sizes->emplace_back(res->size()->height());
+                            rates->emplace_back(res->activeRate()->value());
+                        }
+                    }
+                }
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::SetParameters>
+            ([this](const std::string& device,
+                    std::string format,
+                    const int width,
+                    const int height,
+                    const int rate) {
+                MSG_("\n<SetParameters>\n");
+                VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
+                    Utils::toPlatformString(format),width,height,rate);
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::StartCapture>
+            ([&](const std::string& device) {
+                MSG_("\n<StartCapture>\n");
+                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                ref new DispatchedHandler([=]() {
+                    VideoManager::instance->captureManager()->InitializeCameraAsync();
+                    VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
+                }));
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::StopCapture>
+            ([&]() {
+                MSG_("\n<StopCapture>\n");
+                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                ref new DispatchedHandler([=]() {
+                    VideoManager::instance->captureManager()->StopPreviewAsync();
+                    if (VideoManager::instance->captureManager()->captureTaskTokenSource)
+                        VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
+                    VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
+                }));
+            })
+        };
+        registerVideoHandlers(outgoingVideoHandlers);
+
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));
 
@@ -338,8 +420,7 @@ RingClientUWP::RingD::startDaemon()
             return;
         }
         else {
-            if (!hasConfig)
-            {
+            if (!hasConfig) {
                 tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
                 tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
             }
