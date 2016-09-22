@@ -63,8 +63,8 @@ MainPage::MainPage()
     ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
         Contact^ selectedContact = ContactsViewModel::instance->selectedContact;
         auto call = selectedContact?
-            SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
-            nullptr;
+                    SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
+                    nullptr;
         if (call != nullptr) {
             if (call->state == "CURRENT")
                 showFrame(_videoFrame_);
@@ -77,12 +77,18 @@ MainPage::MainPage()
     });
     ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
         showFrame(_welcomeFrame_);
-        });
+    });
     CallsViewModel::instance->callStarted += ref new CallStarted([&]() {
         showFrame(_videoFrame_);
     });
     CallsViewModel::instance->callEnded += ref new CallEnded([&]() {
-        showFrame(_messageTextFrame_);
+        auto contact = ContactsViewModel::instance->selectedContact;
+
+        if(contact)
+            showFrame(_messageTextFrame_);
+        else
+            showFrame(_welcomeFrame_);
+
     });
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
