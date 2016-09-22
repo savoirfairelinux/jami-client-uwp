@@ -106,7 +106,6 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
         _navGrid_->SetRow(_welcomeFrame_, 1);
     } else if (frame == _videoFrame_) {
         _navGrid_->SetRow(_videoFrame_, 1);
-        dynamic_cast<VideoPage^>(_videoFrame_->Content)->updatePageContent();
     } else if (frame == _messageTextFrame_) {
         _navGrid_->SetRow(_messageTextFrame_, 1);
     }
@@ -260,3 +259,37 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     }
 
 }
+
+void
+MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
+{
+    WriteLine("Application_Suspending");
+    if (Frame->CurrentSourcePageType.Name ==
+        Interop::TypeName(MainPage::typeid).Name)
+    {
+        if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
+            Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
+        //displayInformation->OrientationChanged -= displayInformationEventToken;
+        auto deferral = e->SuspendingOperation->GetDeferral();
+        Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
+            .then([this, deferral]() {
+            deferral->Complete();
+        });
+    }
+}
+
+void
+MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventArgs^ e)
+{
+    if (e->Visible)
+    {
+        WriteLine("->Visible");
+        if (Video::VideoManager::instance->captureManager()->isInitialized) {
+            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
+        }
+    }
+    else
+    {
+        WriteLine("->Invisible");
+    }
+}
