@@ -20,7 +20,10 @@
 #include <pch.h>
 
 using namespace Platform;
+using namespace Platform::Collections;
 using namespace Windows::Storage;
+
+typedef Windows::UI::Xaml::Visibility VIS;
 
 namespace RingClientUWP
 {
@@ -50,7 +53,8 @@ fileExists(StorageFolder^ folder, String^ fileName)
     });
 }
 
-std::string makeString(const std::wstring& wstr)
+inline std::string
+makeString(const std::wstring& wstr)
 {
     auto wideData = wstr.c_str();
     int bufferSize = WideCharToMultiByte(CP_UTF8, 0, wideData, -1, nullptr, 0, NULL, NULL);
@@ -65,7 +69,8 @@ std::string makeString(const std::wstring& wstr)
     return std::string(utf8.get());
 }
 
-std::wstring makeWString(const std::string& str)
+inline std::wstring
+makeWString(const std::string& str)
 {
     auto utf8Data = str.c_str();
     int bufferSize = MultiByteToWideChar(CP_UTF8, 0, utf8Data, -1, nullptr, 0);
@@ -80,19 +85,22 @@ std::wstring makeWString(const std::string& str)
     return std::wstring(wide.get());;
 }
 
-std::string toString(Platform::String ^str)
+inline std::string
+toString(Platform::String ^str)
 {
     std::wstring wsstr(str->Data());
     return makeString(wsstr);
 }
 
-Platform::String^ toPlatformString(const std::string& str)
+inline Platform::String^
+toPlatformString(const std::string& str)
 {
     std::wstring wsstr = makeWString(str);
     return ref new Platform::String(wsstr.c_str(), wsstr.length());
 }
 
-Platform::String^ Trim(Platform::String^ s)
+Platform::String^
+Trim(Platform::String^ s)
 {
     const WCHAR* first = s->Begin();
     const WCHAR* last = s->End();
@@ -107,7 +115,8 @@ Platform::String^ Trim(Platform::String^ s)
 }
 
 /* fix some issue in the daemon --> <...@...> */
-Platform::String^ TrimRingId(Platform::String^ s)
+Platform::String^
+TrimRingId(Platform::String^ s)
 {
     const WCHAR* first = s->Begin();
     const WCHAR* last = s->End();
@@ -125,7 +134,8 @@ Platform::String^ TrimRingId(Platform::String^ s)
 }
 
 /* fix some issue in the daemon -->  remove "@..." */
-Platform::String^ TrimRingId2(Platform::String^ s)
+Platform::String^
+TrimRingId2(Platform::String^ s)
 {
     const WCHAR* first = s->Begin();
     const WCHAR* last = s->End();
@@ -138,7 +148,8 @@ Platform::String^ TrimRingId2(Platform::String^ s)
     return ref new Platform::String(first, static_cast<unsigned int>(last - first));
 }
 
-Platform::String^ GetNewGUID()
+Platform::String^
+GetNewGUID()
 {
     GUID result;
     HRESULT hr = CoCreateGuid(&result);
@@ -157,6 +168,32 @@ getStringFromFile(const std::string& filename)
     std::ifstream file(filename);
     return std::string((std::istreambuf_iterator<char>(file)),
         (std::istreambuf_iterator<char>()));
+}
+
+inline Map<String^,String^>^
+convertMap(const std::map<std::string, std::string>& m)
+{
+    auto temp = ref new Map<String^,String^>;
+    for (const auto& pair : m) {
+        temp->Insert(
+            Utils::toPlatformString(pair.first),
+            Utils::toPlatformString(pair.second)
+        );
+    }
+    return temp;
+}
+
+inline std::map<std::string, std::string>
+convertMap(Map<String^,String^>^ m)
+{
+    std::map<std::string, std::string> temp;
+    for (const auto& pair : m) {
+        temp.insert(
+            std::make_pair(
+                Utils::toString(pair->Key),
+                Utils::toString(pair->Value)));
+    }
+    return temp;
 }
 
 }

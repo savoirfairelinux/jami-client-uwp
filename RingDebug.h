@@ -54,6 +54,20 @@ private:
     RingDebug() {}; // singleton
 };
 
+void WriteLine(String^ str)
+{
+    std::wstringstream wStringstream;
+    wStringstream << str->Data() << "\n";
+    OutputDebugString(wStringstream.str().c_str());
+}
+
+void WriteException(Exception^ ex)
+{
+    std::wstringstream wStringstream;
+    wStringstream << "0x" << ex->HResult << ": " << ex->Message->Data();
+    OutputDebugString(wStringstream.str().c_str());
+}
+
 #define MSG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(cstr); }))
 

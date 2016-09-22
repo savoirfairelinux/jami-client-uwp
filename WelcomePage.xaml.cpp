@@ -33,8 +33,8 @@ void
 WelcomePage::PositionImage()
 {
     Rect imageBounds;
-    imageBounds.Width = _welcomePage_->ActualWidth;
-    imageBounds.Height = _welcomePage_->ActualWidth;
+    imageBounds.Width = static_cast<float>(_welcomePage_->ActualWidth);
+    imageBounds.Height = static_cast<float>(_welcomePage_->ActualHeight);
 
     _welcomeImage_->SetValue(Canvas::LeftProperty, imageBounds.Width * 0.5 - _welcomeImage_->Width * 0.5);
     _welcomeImage_->SetValue(Canvas::TopProperty, imageBounds.Height * 0.5 - _welcomeImage_->Height * 0.5);
