@@ -228,3 +228,37 @@ RingClientUWP::MainPage::hideLoadingOverlay()
 {
     _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
+
+void
+MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
+{
+    WriteLine("Application_Suspending");
+    if (Frame->CurrentSourcePageType.Name ==
+        Interop::TypeName(MainPage::typeid).Name)
+    {
+        if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
+            Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
+        //displayInformation->OrientationChanged -= displayInformationEventToken;
+        auto deferral = e->SuspendingOperation->GetDeferral();
+        Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
+            .then([this, deferral]() {
+            deferral->Complete();
+        });
+    }
+}
+
+void
+MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventArgs^ e)
+{
+    if (e->Visible)
+    {
+        WriteLine("->Visible");
+        if (Video::VideoManager::instance->captureManager()->isInitialized) {
+            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
+        }
+    }
+    else
+    {
+        WriteLine("->Invisible");
+    }
+}
