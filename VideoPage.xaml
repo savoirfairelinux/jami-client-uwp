@@ -137,19 +137,25 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition x:Name="_rowChatBx_" Height="0"/>
                 </Grid.RowDefinitions>
-                <Grid Background="#000000"
-                      Grid.Row="0"
-                  PointerMoved="_videoControl__PointerMoved">
+                <Grid   Background="#000000"
+                        Grid.Row="0"
+                        PointerMoved="_videoControl__PointerMoved">
                     <StackPanel x:Name="_headerBar_"
-                            Background="{StaticResource SemiTransparentBlack}"
-                            HorizontalAlignment="Stretch"
-                            VerticalAlignment="Top"
-                            Height="50">
-                        <TextBlock x:Name="_callee_"
-                               Text="callee"
-                               Foreground="White"
-                               Margin="20,10"/>
+                                Background="{StaticResource SemiTransparentBlack}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Top"
+                                Height="50">
+                        <TextBlock  x:Name="_callee_"
+                                    Text="callee"
+                                    Foreground="White"
+                                    Margin="20,10"/>
                     </StackPanel>
+
+                    <!-- video -->
+                    <Image Name="IncomingVideoImage"
+                           Grid.Column="0"
+                           Canvas.ZIndex="-1"/>
+
                     <StackPanel x:Name="_controlsBar_"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"

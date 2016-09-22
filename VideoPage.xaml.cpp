@@ -20,7 +20,10 @@
 
 #include "VideoPage.xaml.h"
 
+#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
+
 using namespace RingClientUWP::Views;
+using namespace Video;
 
 using namespace Concurrency;
 using namespace Platform;
@@ -38,19 +41,41 @@ using namespace Windows::Media::Capture;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::UI::Core;
 
+using namespace Windows::Graphics::Display;
+using namespace Windows::Graphics::Imaging;
+using namespace Windows::Media;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::Media::Capture;
+
 VideoPage::VideoPage()
 {
     InitializeComponent();
-}
 
-void
-RingClientUWP::Views::VideoPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
-{
+    VideoManager::instance->rendererManager()->writeVideoFrame += ref new WriteVideoFrame([this](uint8_t* buf, int width, int height) {
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([=]() {
+            try {
+                create_task(WriteFrameAsSoftwareBitmapAsync(buf, width, height));
+            }
+            catch(Platform::COMException^ e) {
+                WriteLine(e->ToString());
+            }
+        }));
+    });
+
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ from, String^ payload) {
         scrollDown();
     });
 
+    VideoManager::instance->captureManager()->displayInformation = DisplayInformation::GetForCurrentView();
+    VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
+
+}
+
+void
+RingClientUWP::Views::VideoPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
+{
     updatePageContent();
 }
 
@@ -201,4 +226,52 @@ void RingClientUWP::Views::VideoPage::btnAny_entered(Platform::Object^ sender, W
 void RingClientUWP::Views::VideoPage::btnAny_exited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     barFading_ = true;
+}
+
+task<void>
+VideoPage::WriteFrameAsSoftwareBitmapAsync(uint8_t* buf, int width, int height)
+{
+    auto vframe = ref new VideoFrame(BitmapPixelFormat::Bgra8, width, height);
+    auto frame = vframe->SoftwareBitmap;
+
+    const int BYTES_PER_PIXEL = 4;
+
+    BitmapBuffer^ buffer = frame->LockBuffer(BitmapBufferAccessMode::ReadWrite);
+    IMemoryBufferReference^ reference = buffer->CreateReference();
+
+    Microsoft::WRL::ComPtr<IMemoryBufferByteAccess> byteAccess;
+    if (SUCCEEDED(reinterpret_cast<IUnknown*>(reference)->QueryInterface(IID_PPV_ARGS(&byteAccess))))
+    {
+        byte* data;
+        unsigned capacity;
+        byteAccess->GetBuffer(&data, &capacity);
+
+        auto desc = buffer->GetPlaneDescription(0);
+
+        for (int row = 0; row < desc.Height; row++)
+        {
+            for (int col = 0; col < desc.Width; col++)
+            {
+                auto currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
+
+                data[currPixel + 0] = buf[currPixel + 0];
+                data[currPixel + 1] = buf[currPixel + 1];
+                data[currPixel + 2] = buf[currPixel + 2];
+            }
+        }
+    }
+    delete reference;
+    delete buffer;
+
+    auto sbSource = ref new Media::Imaging::SoftwareBitmapSource();
+    return create_task(sbSource->SetBitmapAsync(frame))
+        .then([this, sbSource]()
+    {
+        try {
+            IncomingVideoImage->Source = sbSource;
+        }
+        catch (Exception^ e) {
+            WriteException(e);
+        }
+    });
 }

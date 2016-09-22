@@ -94,6 +94,8 @@ private:
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void sendMessage();
 
+    Concurrency::task<void> WriteFrameAsSoftwareBitmapAsync(uint8_t* buf, int width, int height);
+
     void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _btnCancel__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _btnHangUp__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
