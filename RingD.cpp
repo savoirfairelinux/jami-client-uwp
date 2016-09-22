@@ -23,6 +23,7 @@
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
+#include "videomanager_interface.h"
 #include "fileutils.h"
 #include "account_schema.h"
 #include "account_const.h"
@@ -315,7 +316,6 @@ RingClientUWP::RingD::startDaemon()
             //            const std::string& to)
             //{ /*...*/ })
         };
-
         registerCallHandlers(callHandlers);
 
         std::map<std::string, SharedCallback> getAppPathHandler =
@@ -326,6 +326,27 @@ RingClientUWP::RingD::startDaemon()
             })
         };
         registerCallHandlers(getAppPathHandler);
+
+        std::map<std::string, SharedCallback> videoHandlers =
+        {
+            DRing::exportable_callback<DRing::VideoSignal::DeviceEvent>
+            ([this]() {
+                MSG_("\nDeviceEvent\n");
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
+            ([this](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
+                MSG_("\nStarted Decoding\n");
+                Video::VideoRenderManager::instance->startedDecoding(
+                    Utils::toPlatformString(id),
+                    width,
+                    height);
+            }),
+            DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
+            ([this](const std::string &id, const std::string &shmPath, bool isMixer) {
+                MSG_("\nStopped Decoding\n");
+            })
+        };
+        registerVideoHandlers(videoHandlers);
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));

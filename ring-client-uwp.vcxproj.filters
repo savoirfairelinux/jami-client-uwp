@@ -89,6 +89,9 @@
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
+    <ClCompile Include="VideoRenderManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -139,6 +142,9 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItemsViewModel.h">
       <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRenderManager.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

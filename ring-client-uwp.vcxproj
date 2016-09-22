@@ -193,6 +193,7 @@
     <ClInclude Include="SmartPanelItemsViewModel.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="VideoRenderManager.h" />
     <ClInclude Include="VideoPage.xaml.h">
       <DependentUpon>VideoPage.xaml</DependentUpon>
     </ClInclude>
@@ -306,6 +307,7 @@
     <ClCompile Include="SmartPanelItem.cpp" />
     <ClCompile Include="SmartPanelItemsViewModel.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
+    <ClCompile Include="VideoRenderManager.cpp" />
     <ClCompile Include="VideoPage.xaml.cpp">
       <DependentUpon>VideoPage.xaml</DependentUpon>
     </ClCompile>

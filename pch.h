@@ -44,3 +44,4 @@
 #include "RingDebug.h"
 #include "Utils.h"
 #include "UserPreferences.h"
+#include "VideoRenderManager.h"
