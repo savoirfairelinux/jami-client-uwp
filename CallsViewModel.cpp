@@ -43,7 +43,6 @@ CallsViewModel::CallsViewModel()
         for each (auto call in CallsList_) {
             if (call->callId == callId) {
                 if (state == "OVER") {
-                    delete call;
                     call->stateChange("", code);
                     callEnded();
                     callStatusUpdated(call); // used ?

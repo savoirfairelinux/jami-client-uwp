@@ -38,6 +38,15 @@
     <Filter Include="Controls">
       <UniqueIdentifier>{2cffcd5e-0546-4629-a152-37efd9c1128f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{bec54fb8-3a88-4687-8cbf-87325df1bcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media\Video">
+      <UniqueIdentifier>{f711ca0c-c71f-47a7-9352-441ab4b44d5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media\Audio">
+      <UniqueIdentifier>{448e3594-0555-4c62-be25-71e1cebc80e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
@@ -89,6 +98,18 @@
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
+    <ClCompile Include="VideoManager.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoRendererManager.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Video.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoCaptureManager.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -139,6 +160,18 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItemsViewModel.h">
       <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoCaptureManager.h">
+      <Filter>Media\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoManager.h">
+      <Filter>Media\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="VideoRendererManager.h">
+      <Filter>Media\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Video.h">
+      <Filter>Media\Video</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
