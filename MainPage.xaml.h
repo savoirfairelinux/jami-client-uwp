@@ -45,6 +45,10 @@ protected:
     void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 
 private:
+    // event handlers
+    void Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e);
+    void Application_VisibilityChanged(Object^ sender, Windows::UI::Core::VisibilityChangedEventArgs^ e);
+
     // Multi-monitor, DPI, scale factor change, and window resize detection
     void DisplayProperties_DpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
     Windows::Foundation::EventRegistrationToken dpiChangedtoken;
