@@ -66,7 +66,7 @@ MainPage::MainPage()
                     SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
                     nullptr;
         if (call != nullptr) {
-            if (call->state == "CURRENT")
+            if (call->state == CallStatus::IN_PROGRESS)
                 showFrame(_videoFrame_);
             else
                 showFrame(_messageTextFrame_);

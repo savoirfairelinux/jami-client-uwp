@@ -197,7 +197,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreDispatcherPriority::Normal, ref new DispatchedHandler([=]()
                 {
                     incomingCall(accountId2, callId2, from2);
-                    stateChange(callId2, "incoming call", 0);
+                    stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
                 }));
             }),
             DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
@@ -213,11 +213,13 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto state2 = toPlatformString(state);
 
+                auto state3 = getCallStatus(state2);
+
 
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
                 {
-                    stateChange(callId2, state2, code);
+                    stateChange(callId2, state3, code);
                 }));
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
@@ -413,4 +415,18 @@ RingD::dequeueTasks()
         }
         tasksList_.pop();
     }
+}
+
+CallStatus RingClientUWP::RingD::getCallStatus(String^ state)
+{
+    if (state == "INCOMING")
+        return CallStatus::INCOMING_RINGING;
+
+    if (state == "CURRENT")
+        return CallStatus::IN_PROGRESS;
+
+    if (state == "OVER")
+        return CallStatus::ENDED;
+
+    return CallStatus::NONE;
 }

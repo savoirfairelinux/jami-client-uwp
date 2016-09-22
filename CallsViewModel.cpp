@@ -39,21 +39,22 @@ CallsViewModel::CallsViewModel()
     });
 
     RingD::instance->stateChange += ref new RingClientUWP::StateChange([&](
-    String^ callId, String^ state, int code) {
+    String^ callId, CallStatus state, int code) {
         for each (auto call in CallsList_) {
+            // CLEAN ME
             if (call->callId == callId) {
-                if (state == "OVER") {
+                if (state == CallStatus::ENDED) {
                     delete call;
-                    call->stateChange("", code);
+                    call->stateChange(state, code);
                     callEnded();
                     callStatusUpdated(call); // used ?
                     RingD::instance->hangUpCall(call);
                     return;
                 }
-                else if (state == "CURRENT") {
+                else if (state == CallStatus::IN_PROGRESS) {
                     callStarted();
                 }
-                call->stateChange(state, code);
+                call->stateChange(state, code); // CLEAN ME
                 callStatusUpdated(call); // same...
                 return;
             }
