@@ -150,6 +150,7 @@
                                Foreground="White"
                                Margin="20,10"/>
                     </StackPanel>
+                    <Image Name="IncomingVideoImage" Grid.Column="0"/>
                     <StackPanel x:Name="_controlsBar_"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Bottom"
