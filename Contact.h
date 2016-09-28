@@ -71,18 +71,6 @@ public:
             return unreadMessages_.ToString();
         }
     }
-    property Call^ _call
-    {
-        Call^ get()
-        {
-            return call_;
-        }
-        void set(Call^ call)
-        {
-            call_ = call;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
-        }
-    }
     property Windows::UI::Xaml::GridLength _contactBarHeight
     {
         Windows::UI::Xaml::GridLength get()
@@ -110,7 +98,6 @@ private:
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;
     Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
-    Call^ call_;
 };
 }
 
