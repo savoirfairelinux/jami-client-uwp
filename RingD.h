@@ -24,7 +24,7 @@ namespace RingClientUWP
 
 /* delegate */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
-delegate void StateChange(String^ callId, String^ state, int code);
+delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void Calling(Call^ call);
 
@@ -104,6 +104,7 @@ private:
     /* functions */
     RingD(); // singleton
     void dequeueTasks();
+    CallStatus getCallStatus(String^ state);
 
     /* members */
     std::string localFolder_;

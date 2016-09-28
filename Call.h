@@ -21,12 +21,23 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
+/* enumerations. */
+public enum class CallStatus { NONE, INCOMING_RINGING, OUTGOING_RINGING, SEARCHING, IN_PROGRESS, ENDED };
+
+public ref class CallStatusText sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    CallStatusText();
+};
+
 public ref class Call sealed : public INotifyPropertyChanged
 {
 public:
+
     /* functions */
     Call(String^ accountId, String^ callId, String^ from);
-    void stateChange(String^ state, int code);
+    void stateChange(CallStatus state, int code);
 
     /* properties */
     virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -34,7 +45,7 @@ public:
     property String^ accountId;
     property String^ callId;
     property String^ from;
-    property String^ state;
+    property CallStatus state;
     property bool isOutGoing;
     property int code;
 

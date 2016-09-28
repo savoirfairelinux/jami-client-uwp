@@ -78,7 +78,7 @@ SmartPanel::SmartPanel()
         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_call = call;
     });
-    RingD::instance->stateChange += ref new StateChange([this](String^ callId, String^ state, int code) {
+    RingD::instance->stateChange += ref new StateChange([this](String^ callId, CallStatus state, int code) {
         auto call = CallsViewModel::instance->findCall(callId);
 
         if (call == nullptr)
@@ -91,18 +91,27 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        if (call->state == "incoming call")
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Visible;
+        switch (call->state) {
+        case CallStatus::INCOMING_RINGING:
+        {
 
-        if (call->state == "CURRENT") {
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        }
+        break;
+
         }
 
-        if (call->state == "") {
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-        }
+        //if (call->state == "incoming call")
+        //    item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Visible;
+
+        //if (call->state == "CURRENT") {
+        //    item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        //    item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        //}
+
+        //if (call->state == "") {
+        //    item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        //    item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
+        //}
     });
 
 
@@ -129,8 +138,7 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        /* use underscore to differentiate states from UI, we need to think more about states management */
-        call->state = "_calling_";
+        call->state = CallStatus::SEARCHING;
 
         item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Visible;
         item->_call = call;
