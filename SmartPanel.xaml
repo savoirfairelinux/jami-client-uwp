@@ -21,11 +21,15 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:RingClientUWP"
       xmlns:controls="using:RingClientUWP.Controls"
+      xmlns:views="using:RingClientUWP.Views"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       mc:Ignorable="d">
 
     <Page.Resources>
+        <!-- converters -->
+        <views:NewMessageBubleNotification x:Key="_NewMessageBubleNotification_" />
+
         <Style x:Key="addContactTextBoxStyle"
            TargetType="TextBox">
             <Setter Property="MinWidth" Value="{ThemeResource TextControlThemeMinWidth}"/>
@@ -147,9 +151,9 @@
                         </Border.RenderTransform>
                     </Border>
                     <Border x:Name="_visualNotificationNewMessage_"
-                            Visibility="{x:Bind notificationNewMessage, Mode=OneWay}"
+                            Visibility="{x:Bind _unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
                             Style="{StaticResource BorderStyle2}">
-                        <TextBlock Text="{x:Bind unreadMessages, Mode=OneWay}"
+                        <TextBlock Text="{x:Bind _unreadMessages, Mode=OneWay}"
                                    Style="{StaticResource TextStyle3}"/>
                         <Border.RenderTransform>
                             <TranslateTransform X="-17" Y="-14"/>

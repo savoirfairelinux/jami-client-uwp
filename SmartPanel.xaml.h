@@ -49,6 +49,13 @@ public:
     IsCallActive();
 };
 
+public ref class NewMessageBubleNotification sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    NewMessageBubleNotification();
+};
+
 public ref class SmartPanel sealed
 {
 public:

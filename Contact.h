@@ -64,11 +64,16 @@ public:
             PropertyChanged(this, ref new PropertyChangedEventArgs("notificationNewMessage"));
         }
     }
-    property String^ unreadMessages
+    property uint32 _unreadMessages
     {
-        String^ get()
+        uint32 get()
         {
-            return unreadMessages_.ToString();
+            return unreadMessages_;
+        }
+        void set(uint32 value)
+        {
+            unreadMessages_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_unreadMessages"));
         }
     }
     property Windows::UI::Xaml::GridLength _contactBarHeight
@@ -88,7 +93,6 @@ internal:
     void        saveConversationToFile();
     String^     StringifyConversation();
     void        DestringifyConversation(String^ data);
-    void        addNotifyNewConversationMessage();
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

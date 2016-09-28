@@ -265,7 +265,10 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
     auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
 
     Contact^ contact = (item) ? safe_cast<Contact^>(item->_contact) : nullptr;
+    if (contact)
+        contact->_unreadMessages = 0;
 
+    // HAS TO BE CHANGE SOON, USE SMARTLISTITEMVIEWMODEL INSTEAD
     ContactsViewModel::instance->selectedContact = contact;
 }
 
@@ -435,4 +438,22 @@ Object ^ RingClientUWP::Views::IsCallActive::ConvertBack(Object ^ value, Windows
 }
 
 RingClientUWP::Views::IsCallActive::IsCallActive()
+{}
+
+Object ^ RingClientUWP::Views::NewMessageBubleNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto unreadMessages = static_cast<uint32>(value);
+
+    if (unreadMessages > 0)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::NewMessageBubleNotification::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::NewMessageBubleNotification::NewMessageBubleNotification()
 {}

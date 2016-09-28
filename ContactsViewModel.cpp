@@ -58,14 +58,10 @@ ContactsViewModel::ContactsViewModel()
         contact->saveConversationToFile();
 
         if (contact->ringID_ == from) {
-            // increment contact's unread message count
             if (isNotSelected) {
-                contact->addNotifyNewConversationMessage();
-                // save to disk
+                contact->_unreadMessages++;
                 saveContactsToFile();
             }
-            // update the xaml for all contacts
-            notifyNewConversationMessage(isNotSelected);
         }
     });
 }
