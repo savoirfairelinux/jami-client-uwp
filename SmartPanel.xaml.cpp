@@ -380,3 +380,59 @@ void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::O
         _smartList_->SelectedItem = nullptr;
 
 }
+
+Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    MSG_("convert");
+    auto string = dynamic_cast<String^>(value);
+    if (string == "INCOMING")
+        return  Windows::UI::Xaml::Visibility::Visible;
+    else
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::IncomingVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::IncomingVisibility::IncomingVisibility()
+{}
+
+
+Object ^ RingClientUWP::Views::OutGoingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    MSG_("convert");
+    auto string = dynamic_cast<String^>(value);
+    if (string == "_calling_" || string == "RINGING" || string == "CONNECTING")
+        return  Windows::UI::Xaml::Visibility::Visible;
+    else
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::OutGoingVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::OutGoingVisibility::OutGoingVisibility()
+{}
+
+Object ^ RingClientUWP::Views::IsCallActive::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto call = dynamic_cast<Call^>(value);
+
+    if (call)
+        return Windows::UI::Xaml::Visibility::Visible;
+    else
+        return Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::IsCallActive::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+
+}
+
+RingClientUWP::Views::IsCallActive::IsCallActive()
+{}
