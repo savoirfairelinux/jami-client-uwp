@@ -37,30 +37,6 @@ CallsViewModel::CallsViewModel()
         // REFACTO : add if call == nullptr
         callRecieved(call);
     });
-
-    RingD::instance->stateChange += ref new RingClientUWP::StateChange([&](
-    String^ callId, CallStatus state, int code) {
-        for each (auto call in CallsList_) {
-            // CLEAN ME
-            if (call->callId == callId) {
-                if (state == CallStatus::ENDED) {
-                    delete call;
-                    call->stateChange(state, code);
-                    callEnded();
-                    callStatusUpdated(call); // used ?
-                    RingD::instance->hangUpCall(call);
-                    return;
-                }
-                else if (state == CallStatus::IN_PROGRESS) {
-                    callStarted();
-                }
-                call->stateChange(state, code); // CLEAN ME
-                callStatusUpdated(call); // same...
-                return;
-            }
-        }
-        WNG_("Call not found");
-    });
 }
 
 Call^

@@ -45,7 +45,15 @@ public:
     property String^ accountId;
     property String^ callId;
     property String^ from;
-    property CallStatus state;
+    property CallStatus state {
+        CallStatus get() {
+            return state_;
+        }
+        void set(CallStatus value) {
+            state_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("state"));
+        }
+    }
     property bool isOutGoing;
     property int code;
 
@@ -59,6 +67,9 @@ internal:
     void refuse();
     void accept();
     void cancel();
+
+private:
+    CallStatus state_;
 
 };
 }
