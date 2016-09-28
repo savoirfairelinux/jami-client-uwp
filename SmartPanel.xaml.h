@@ -42,11 +42,11 @@ public:
     OutGoingVisibility();
 };
 
-public ref class IsCallActive sealed : IValueConverter {
+public ref class HasAnActiveCall sealed : IValueConverter {
 public:
     virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
     virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
-    IsCallActive();
+    HasAnActiveCall();
 };
 
 public ref class NewMessageBubleNotification sealed : IValueConverter {

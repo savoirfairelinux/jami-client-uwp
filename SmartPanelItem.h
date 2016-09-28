@@ -80,6 +80,18 @@ public:
             PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
         }
     }
+    property Visibility _hovered
+    {
+        Visibility get()
+        {
+            return hovered_;
+        }
+        void set(Visibility value)
+        {
+            hovered_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_hovered"));
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
@@ -89,6 +101,8 @@ private:
     Visibility outGoingCallBar_ = Visibility::Collapsed;
     Visibility callBar_ = Visibility::Collapsed;
     Call^ call_;
+    Visibility hovered_ = Visibility::Collapsed;
+
 };
 }
 }

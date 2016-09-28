@@ -358,7 +358,7 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    item->_callBar = Windows::UI::Xaml::Visibility::Visible;
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
@@ -368,7 +368,7 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ send
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+    item->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
@@ -421,7 +421,7 @@ Object ^ RingClientUWP::Views::OutGoingVisibility::ConvertBack(Object ^ value, W
 RingClientUWP::Views::OutGoingVisibility::OutGoingVisibility()
 {}
 
-Object ^ RingClientUWP::Views::IsCallActive::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+Object ^ RingClientUWP::Views::HasAnActiveCall::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto call = dynamic_cast<Call^>(value);
 
@@ -431,13 +431,13 @@ Object ^ RingClientUWP::Views::IsCallActive::Convert(Object ^ value, Windows::UI
         return Windows::UI::Xaml::Visibility::Collapsed;
 }
 
-Object ^ RingClientUWP::Views::IsCallActive::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+Object ^ RingClientUWP::Views::HasAnActiveCall::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     throw ref new Platform::NotImplementedException();
 
 }
 
-RingClientUWP::Views::IsCallActive::IsCallActive()
+RingClientUWP::Views::HasAnActiveCall::HasAnActiveCall()
 {}
 
 Object ^ RingClientUWP::Views::NewMessageBubleNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)

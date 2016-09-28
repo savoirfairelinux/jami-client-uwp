@@ -29,6 +29,9 @@
     <Page.Resources>
         <!-- converters -->
         <views:NewMessageBubleNotification x:Key="_NewMessageBubleNotification_" />
+        <views:IncomingVisibility x:Key="_IncomingVisibility_" />
+        <views:OutGoingVisibility x:Key="_OutGoingVisibility_" />
+        <views:HasAnActiveCall x:Key="_HasAnActiveCall_" />
 
         <Style x:Key="addContactTextBoxStyle"
            TargetType="TextBox">
@@ -307,10 +310,189 @@
                       x:DataType="controls:SmartPanelItem">
             <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
                 <Grid.RowDefinitions>
+                    <!-- row definition for the contact. -->
                     <RowDefinition Height="auto"/>
+                    <!-- row definition for the incoming call bar. -->
+                    <RowDefinition Height="auto"/>
+                    <!-- row definition for the outgoing call bar. -->
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <ListBoxItem x:Name="_contactItem_"
+                <!--helper to detect mouse overing-->
+                <Rectangle Fill="Transparent" Grid.Row="0"/>
+                <!-- contact. -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="310"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                        <RowDefinition x:Name="_contactBar_"
+                                       Height="{x:Bind _contact._contactBarHeight, Mode=OneWay}"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="*"
+                                              MinWidth="200"/>
+                        </Grid.ColumnDefinitions>
+                        <Image x:Name="_contactAvatar_"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Grid.Column="0"
+                               Width="55"
+                               Height="55"
+                               Source="Assets\TESTS\contactAvatar.png"/>
+                        <!-- visual notifications. -->
+                        <Border x:Name="_visualNotificationVideoChat_"
+                            Visibility="Collapsed"
+                            Style="{StaticResource BorderStyle1}">
+                            <TextBlock Text="&#xE8AA;"
+                                   Style="{StaticResource TextSegoeStyle1}"/>
+                            <Border.RenderTransform>
+                                <TranslateTransform X="17" Y="-14"/>
+                            </Border.RenderTransform>
+                        </Border>
+                        <Border x:Name="_visualNotificationNewMessage_"
+                            Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
+                            Style="{StaticResource BorderStyle2}">
+                            <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
+                                   Style="{StaticResource TextStyle3}"/>
+                            <Border.RenderTransform>
+                                <TranslateTransform X="-17" Y="-14"/>
+                            </Border.RenderTransform>
+                        </Border>
+
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <!-- name of the contact. -->
+                            <TextBlock  x:Name="_contactName_"
+                                    Grid.Row="0"
+                                    Text="{x:Bind _contact.name_}"
+                                    TextTrimming="CharacterEllipsis">
+                            </TextBlock>
+                            <!-- call button. -->
+                            <Button Grid.Row="0"
+                                    Visibility="{x:Bind _hovered, Mode=OneWay}"
+                                    Click="_callContact__Click"
+                                    VerticalAlignment="Bottom"
+                                    HorizontalAlignment="Left"
+                                    Margin="10,0"
+                                    Style="{StaticResource roundButtonTemplate}"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    Content="&#xE116;">
+                                <Button.RenderTransform>
+                                    <TranslateTransform X="90" Y="25"/>
+                                </Button.RenderTransform>
+                            </Button>
+                            <!-- call status. REFACTO : REMOVE CODE BELOW -->
+                            <!--<StackPanel MaxWidth="240"
+                                    MinWidth="240"
+                                    Grid.Row="1"
+                                    HorizontalAlignment="Left">
+                            <TextBlock x:Name="_contactCallStatus_"
+                                       Foreground="DarkGray"
+                                       Text="{x:Bind _call.state, Mode=OneWay}"
+                                       Visibility="Visible"
+                                       HorizontalAlignment="Center">
+                            </TextBlock>
+                        </StackPanel>-->
+                        </Grid>
+                    </Grid>
+                    <!-- REFACTO : REMOVE CODE BELOW -->
+                    <!-- button bar for accept/reject or cancel call. -->
+                    <!-- nb : dont use Visibility with the grid, use the height of the hosting row (_contactBar_). -->
+                    <!--<Grid Width="320"
+                      HorizontalAlignment="Left"
+                      Grid.Row="2"
+                      Background="DarkGray">
+                    <StackPanel Orientation="Horizontal"
+                                Grid.Row="0"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_acceptIncomingCallBtn_"
+                                Click="_acceptIncomingCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Accept"/>
+                        <Button x:Name="_rejectIncomingCallBtn_"
+                                Click="_rejectIncomingCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Reject"/>
+                    </StackPanel>
+                </Grid>-->
+                </Grid>
+                <!-- incomming call bar. -->
+                <Grid Width="320"
+                      Grid.Row="1"
+                      HorizontalAlignment="Left"
+                      Background="DarkGray">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="_incommingCallStatus_"
+                           Grid.Row="0"
+                           Foreground="White"
+                           Text="{x:Bind _call.state, Mode=OneWay}"
+                           Visibility="{x:Bind _call.state, Converter={StaticResource _HasAnActiveCall_}, Mode=OneWay}"
+                           HorizontalAlignment="Center">
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="Visible"
+                                Grid.Row="1"
+                                HorizontalAlignment="Center">
+                        <!--{x:Bind _callState, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}-->
+                        <Button x:Name="_acceptIncomingCallBtn_"
+                            Click="_acceptIncomingCallBtn__Click"
+                            Visibility="{x:Bind _call.state, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Accept"/>
+                        <Button x:Name="_rejectIncomingCallBtn_"
+                            Click="_rejectIncomingCallBtn__Click"
+                            Visibility="{x:Bind _call.state, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Reject"/>
+                        <Button x:Name="_cancelCallBtn_"
+                            Click="_cancelCallBtn__Click"
+                            Visibility="{x:Bind _call.state, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Cancel"/>
+                    </StackPanel>
+                </Grid>
+                <!-- outgoing call bar. -->
+                <!--<Grid Width="320"
+                      Grid.Row="2"
+                      HorizontalAlignment="Left"
+                      Background="DarkGray">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="30"/>
+                        <RowDefinition Height="30"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock x:Name="_outgoingCallStatus_"
+                           Grid.Row="0"
+                           Foreground="White"
+                           Text="{x:Bind _call.state, Mode=OneWay}"
+                           Visibility="Visible"
+                           HorizontalAlignment="Center">
+                    </TextBlock>
+                    <StackPanel Orientation="Horizontal"
+                            Grid.Row="1"
+                            HorizontalAlignment="Center">
+                        <Button x:Name="_cancelCallBtn_"
+                            Click="_cancelCallBtn__Click"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="Cancel"/>
+                    </StackPanel>
+                </Grid>-->
+                <!--<ListBoxItem x:Name="_contactItem_"
                              Padding="0"
                              Margin="0"
                              Grid.Row="0"
@@ -340,7 +522,7 @@
                              Padding="0"
                              Margin="0"
                              ContentTemplate="{StaticResource OutGoingCallTemplate}"
-                             Content="{x:Bind _call, Mode=OneWay}"/>
+                             Content="{x:Bind _call, Mode=OneWay}"/>-->
             </Grid>
         </DataTemplate>
     </Page.Resources>
