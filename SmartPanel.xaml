@@ -153,7 +153,7 @@
                             <TranslateTransform X="17" Y="-14"/>
                         </Border.RenderTransform>
                     </Border>
-                    <Border x:Name="_visualNotificationNewMessage_"
+                    <!--<Border x:Name="_visualNotificationNewMessage_"
                             Visibility="{x:Bind _unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
                             Style="{StaticResource BorderStyle2}">
                         <TextBlock Text="{x:Bind _unreadMessages, Mode=OneWay}"
@@ -161,7 +161,7 @@
                         <Border.RenderTransform>
                             <TranslateTransform X="-17" Y="-14"/>
                         </Border.RenderTransform>
-                    </Border>
+                    </Border>-->
                     <Grid Grid.Column="1">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="30"/>
