@@ -34,8 +34,8 @@ CallsViewModel::CallsViewModel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
         auto call = addNewCall(accountId, callId, from);
-        // REFACTO : add if call == nullptr
-        callRecieved(call);
+        if (call)
+            callRecieved(call);
     });
 }
 

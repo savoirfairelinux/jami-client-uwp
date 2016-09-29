@@ -60,36 +60,13 @@ MainPage::MainPage()
     _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
 
     /* connect to delegates */
-    ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
-        Contact^ selectedContact = ContactsViewModel::instance->selectedContact;
-        auto call = selectedContact?
-                    SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
-                    nullptr;
-        if (call != nullptr) {
-            if (call->state == CallStatus::IN_PROGRESS)
-                showFrame(_videoFrame_);
-            else
-                showFrame(_messageTextFrame_);
-        }
-        else {
-            showFrame(_messageTextFrame_);
-        }
-    });
-    ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
-        showFrame(_welcomeFrame_);
-    });
-    CallsViewModel::instance->callStarted += ref new CallStarted([&]() {
-        showFrame(_videoFrame_);
-    });
-    CallsViewModel::instance->callEnded += ref new CallEnded([&]() {
-        auto contact = ContactsViewModel::instance->selectedContact;
-
-        if(contact)
-            showFrame(_messageTextFrame_);
-        else
-            showFrame(_welcomeFrame_);
-
-    });
+    RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::MainPage::OnstateChange);
+    auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
+    smartPanel->summonMessageTextPage += ref new RingClientUWP::SummonMessageTextPage(this, &RingClientUWP::MainPage::OnsummonMessageTextPage);
+    smartPanel->summonWelcomePage += ref new RingClientUWP::SummonWelcomePage(this, &RingClientUWP::MainPage::OnsummonWelcomePage);
+    smartPanel->summonVideoPage += ref new RingClientUWP::SummonVideoPage(this, &RingClientUWP::MainPage::OnsummonVideoPage);
+    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
+    videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
     dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
@@ -132,7 +109,6 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
         dynamic_cast<VideoPage^>(_videoFrame_->Content)->updatePageContent();
     } else if (frame == _messageTextFrame_) {
         _navGrid_->SetRow(_messageTextFrame_, 1);
-        dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
     }
 }
 
@@ -227,4 +203,65 @@ void
 RingClientUWP::MainPage::hideLoadingOverlay()
 {
     _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void RingClientUWP::MainPage::OnsummonMessageTextPage()
+{
+    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    messageTextPage->updatePageContent();
+    showFrame(_messageTextFrame_);
+
+}
+
+
+void RingClientUWP::MainPage::OnsummonWelcomePage()
+{
+    showFrame(_welcomeFrame_);
+}
+
+
+void RingClientUWP::MainPage::OnsummonVideoPage()
+{
+    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
+    videoPage->updatePageContent();
+    showFrame(_videoFrame_);
+}
+
+
+void RingClientUWP::MainPage::OnpressHangUpCall()
+{
+    OnsummonMessageTextPage();
+}
+
+
+
+void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+{
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    switch (state) {
+    /* send the user to the peer's message text page */
+    case CallStatus::ENDED:
+    {
+        if (item)
+        {
+            auto call = item->_call;
+            if (call)
+                RingD::instance->hangUpCall(call);
+            OnsummonMessageTextPage();
+        }
+        break;
+    }
+    /* if the state changes to IN_PROGRESS for any peer, show the video page.
+       nb : the peer is currently selected from the SmartPannel. */
+    case CallStatus::IN_PROGRESS:
+    {
+        if (item)
+            OnsummonVideoPage();
+        break;
+    }
+    default:
+        break;
+    }
+
 }

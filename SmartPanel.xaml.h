@@ -22,8 +22,9 @@ namespace RingClientUWP
 {
 
 delegate void ToggleSmartPan();
-delegate void SumonMessageTextPage();
-delegate void SumonVideoPage();
+delegate void SummonMessageTextPage();
+delegate void SummonVideoPage();
+delegate void SummonWelcomePage();
 
 namespace Views
 {
@@ -65,8 +66,9 @@ public:
 internal:
     enum class Mode { Minimized, Normal };
     event ToggleSmartPan^ toggleSmartPan;
-    event SumonMessageTextPage^ sumonMessageTextPage;
-    event SumonVideoPage^ sumonVideoPage;
+    event SummonMessageTextPage^ summonMessageTextPage;
+    event SummonVideoPage^ summonVideoPage;
+    event SummonWelcomePage^ summonWelcomePage;
     void setMode(RingClientUWP::Views::SmartPanel::Mode mode);
 
 private:
