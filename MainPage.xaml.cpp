@@ -60,22 +60,13 @@ MainPage::MainPage()
     _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
 
     /* connect to delegates */
-    ContactsViewModel::instance->newContactSelected += ref new NewContactSelected([&]() {
-        Contact^ selectedContact = ContactsViewModel::instance->selectedContact;
-        auto call = selectedContact?
-                    SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
-                    nullptr;
-        if (call != nullptr) {
-            if (call->state == CallStatus::IN_PROGRESS)
-                showFrame(_videoFrame_);
-            else
-                showFrame(_messageTextFrame_);
-        }
-        else {
-            showFrame(_messageTextFrame_);
-        }
-    });
-    ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
+    auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
+    smartPanel->sumonMessageTextPage += ref new RingClientUWP::SumonMessageTextPage(this, &RingClientUWP::MainPage::OnsumonMessageTextPage);
+    smartPanel->sumonWelcomePage += ref new RingClientUWP::SumonWelcomePage(this, &RingClientUWP::MainPage::OnsumonWelcomePage);
+    smartPanel->sumonVideoPage += ref new RingClientUWP::SumonVideoPage(this, &RingClientUWP::MainPage::OnsumonVideoPage);
+
+    // TO FIX
+    /*ContactsViewModel::instance->noContactSelected += ref new NoContactSelected([&]() {
         showFrame(_welcomeFrame_);
     });
     CallsViewModel::instance->callStarted += ref new CallStarted([&]() {
@@ -89,7 +80,7 @@ MainPage::MainPage()
         else
             showFrame(_welcomeFrame_);
 
-    });
+    });*/
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
     dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
@@ -132,7 +123,6 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
         dynamic_cast<VideoPage^>(_videoFrame_->Content)->updatePageContent();
     } else if (frame == _messageTextFrame_) {
         _navGrid_->SetRow(_messageTextFrame_, 1);
-        dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content)->updatePageContent();
     }
 }
 
@@ -227,4 +217,26 @@ void
 RingClientUWP::MainPage::hideLoadingOverlay()
 {
     _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+void RingClientUWP::MainPage::OnsumonMessageTextPage()
+{
+    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    messageTextPage->updatePageContent();
+    showFrame(_messageTextFrame_);
+
+}
+
+
+void RingClientUWP::MainPage::OnsumonWelcomePage()
+{
+    showFrame(_welcomeFrame_);
+}
+
+
+void RingClientUWP::MainPage::OnsumonVideoPage()
+{
+    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
+    videoPage->updatePageContent();
+    showFrame(_videoFrame_);
 }
