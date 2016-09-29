@@ -24,6 +24,7 @@ using namespace Windows::Foundation;
 
 namespace RingClientUWP
 {
+
 namespace Views {
 }
 public ref class MainPage sealed
@@ -51,5 +52,9 @@ private:
 
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
+    void OnsummonMessageTextPage();
+    void OnsummonWelcomePage();
+    void OnsummonVideoPage();
+    void OnpressHangUpCall();
 };
 }

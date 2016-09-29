@@ -32,42 +32,6 @@ public:
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
     property Contact^ _contact;
-    property Visibility _IncomingCallBar
-    {
-        Visibility get()
-        {
-            return incomingCallBar_;
-        }
-        void set(Visibility value)
-        {
-            incomingCallBar_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_IncomingCallBar"));
-        }
-    }
-    property Visibility _OutGoingCallBar
-    {
-        Visibility get()
-        {
-            return outGoingCallBar_;
-        }
-        void set(Visibility value)
-        {
-            outGoingCallBar_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_OutGoingCallBar"));
-        }
-    }
-    property Visibility _callBar
-    {
-        Visibility get()
-        {
-            return callBar_;
-        }
-        void set(Visibility value)
-        {
-            callBar_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_callBar"));
-        }
-    }
     property Call^ _call
     {
         Call^ get()
@@ -97,9 +61,6 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Visibility incomingCallBar_ = Visibility::Collapsed;
-    Visibility outGoingCallBar_ = Visibility::Collapsed;
-    Visibility callBar_ = Visibility::Collapsed;
     Call^ call_;
     Visibility hovered_ = Visibility::Collapsed;
 
