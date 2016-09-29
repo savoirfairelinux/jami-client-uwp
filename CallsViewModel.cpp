@@ -34,9 +34,10 @@ CallsViewModel::CallsViewModel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
         auto call = addNewCall(accountId, callId, from);
-        // REFACTO : add if call == nullptr
-        callRecieved(call);
+        if (call)
+            callRecieved(call);
     });
+    RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::ViewModel::CallsViewModel::OnstateChange);
 }
 
 Call^
@@ -63,4 +64,21 @@ CallsViewModel::findCall(String^ callId)
             return call;
 
     return nullptr;
+}
+
+
+void RingClientUWP::ViewModel::CallsViewModel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+{
+    auto call = findCall(callId);
+
+    if (!call)
+        return;
+
+    switch (state)
+    {
+    case CallStatus::ENDED:
+        RingD::instance->hangUpCall(call);
+    default:
+        break;
+    }
 }
