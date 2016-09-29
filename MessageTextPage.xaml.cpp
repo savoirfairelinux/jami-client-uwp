@@ -43,26 +43,14 @@ using namespace Windows::UI::Core;
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
-
-    /* connect delegates. */
-    // REFACTO : useless ?
-    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
-    String^ from, String^ payload) {
-    });
-    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&](
-    bool isContactNotSelected) {
-        if (!isContactNotSelected) {
-            /* if the contact is selected that means we should scroll down */
-            scrollDown();
-        }
-
-    });
 }
 
 void
 RingClientUWP::Views::MessageTextPage::updatePageContent()
 {
-    auto contact = ContactsViewModel::instance->selectedContact;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = item->_contact;
+
     if (!contact)
         return;
 
@@ -96,7 +84,9 @@ RingClientUWP::Views::MessageTextPage::_messageTextBox__KeyDown(Platform::Object
 void
 RingClientUWP::Views::MessageTextPage::sendMessage()
 {
-    auto contact = ContactsViewModel::instance->selectedContact;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = item->_contact;
+
     auto txt = _messageTextBox_->Text;
 
     /* empty the textbox */

@@ -45,7 +45,7 @@ ContactsViewModel::ContactsViewModel()
         if (contact == nullptr)
             contact = addNewContact(from, from); // contact checked inside addNewContact.
 
-        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
         if (contact == nullptr) {
             ERR_("contact not handled!");
@@ -57,11 +57,12 @@ ContactsViewModel::ContactsViewModel()
         /* save contacts conversation to disk */
         contact->saveConversationToFile();
 
-        if (contact->ringID_ == from) {
-            if (isNotSelected) {
-                contact->_unreadMessages++;
-                saveContactsToFile();
-            }
+        if (!item)
+            return;
+
+        if (contact->ringID_ == from && contact != item->_contact) {
+            contact->_unreadMessages++;
+            saveContactsToFile();
         }
     });
 }
