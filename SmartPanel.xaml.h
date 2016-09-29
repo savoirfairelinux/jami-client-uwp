@@ -24,6 +24,7 @@ namespace RingClientUWP
 delegate void ToggleSmartPan();
 delegate void SumonMessageTextPage();
 delegate void SumonVideoPage();
+delegate void SumonWelcomePage();
 
 namespace Views
 {
@@ -67,6 +68,7 @@ internal:
     event ToggleSmartPan^ toggleSmartPan;
     event SumonMessageTextPage^ sumonMessageTextPage;
     event SumonVideoPage^ sumonVideoPage;
+    event SumonWelcomePage^ sumonWelcomePage;
     void setMode(RingClientUWP::Views::SmartPanel::Mode mode);
 
 private:
