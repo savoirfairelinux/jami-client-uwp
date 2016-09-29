@@ -39,13 +39,13 @@ ContactsViewModel::ContactsViewModel()
 
     /* connect delegates. */
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
-    String^ from, String^ payload) {
-        auto contact = findContactByName(from);
+    String^ fromRingId, String^ payload) {
+        auto contact = findContactByName(fromRingId);
 
         if (contact == nullptr)
-            contact = addNewContact(from, from); // contact checked inside addNewContact.
+            contact = addNewContact(fromRingId, fromRingId); // contact checked inside addNewContact.
 
-        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
         if (contact == nullptr) {
             ERR_("contact not handled!");
@@ -57,11 +57,13 @@ ContactsViewModel::ContactsViewModel()
         /* save contacts conversation to disk */
         contact->saveConversationToFile();
 
-        if (contact->ringID_ == from) {
-            if (isNotSelected) {
-                contact->_unreadMessages++;
-                saveContactsToFile();
-            }
+
+        auto selectedContact = (item) ? item->_contact : nullptr;
+
+        if (contact->ringID_ == fromRingId && contact != selectedContact) {
+            contact->_unreadMessages++;
+            /* saveContactsToFile used to save the notification */
+            saveContactsToFile();
         }
     });
 }
