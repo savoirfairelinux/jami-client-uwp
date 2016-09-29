@@ -261,15 +261,25 @@ void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
-    auto listbox = safe_cast<ListBox^>(sender);
-    auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
+    auto listbox = dynamic_cast<ListBox^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(listbox->SelectedItem);
+    SmartPanelItemsViewModel::instance->_selectedItem = item;
 
-    Contact^ contact = (item) ? safe_cast<Contact^>(item->_contact) : nullptr;
-    if (contact)
+    if (!item) {
+        sumonWelcomePage();
+        return;
+    }
+
+    Contact^ contact = dynamic_cast<Contact^>(item->_contact);
+
+    if (contact) {
         contact->_unreadMessages = 0;
 
-    // HAS TO BE CHANGE SOON, USE SMARTLISTITEMVIEWMODEL INSTEAD
-    ContactsViewModel::instance->selectedContact = contact;
+        // TODO : IF CALL IS IN PROGRESS SHOW THE VIDEO PAGE
+        // ELSE SHOW THE TEXT MESSAGE PAGE
+        sumonMessageTextPage();
+
+    }
 }
 
 void
@@ -337,8 +347,6 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
     auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
     auto contact = item->_contact;
 
-    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(contact);
-
     RingD::instance->placeCall(contact);
 }
 
@@ -386,7 +394,7 @@ void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::O
 
 Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    MSG_("convert");
+    // WTF
     auto string = dynamic_cast<String^>(value);
     if (string == "INCOMING")
         return  Windows::UI::Xaml::Visibility::Visible;
@@ -405,7 +413,7 @@ RingClientUWP::Views::IncomingVisibility::IncomingVisibility()
 
 Object ^ RingClientUWP::Views::OutGoingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    MSG_("convert");
+    // WTF
     auto string = dynamic_cast<String^>(value);
     if (string == "_calling_" || string == "RINGING" || string == "CONNECTING")
         return  Windows::UI::Xaml::Visibility::Visible;

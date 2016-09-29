@@ -45,7 +45,7 @@ ContactsViewModel::ContactsViewModel()
         if (contact == nullptr)
             contact = addNewContact(from, from); // contact checked inside addNewContact.
 
-        bool isNotSelected = (contact != ContactsViewModel::instance->selectedContact) ? true : false;
+        bool isNotSelected = (contact != SmartPanelItemsViewModel::instance->_selectedItem->_contact) ? true : false;
 
         if (contact == nullptr) {
             ERR_("contact not handled!");

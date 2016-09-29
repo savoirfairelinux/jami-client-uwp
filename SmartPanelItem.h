@@ -92,6 +92,18 @@ public:
             PropertyChanged(this, ref new PropertyChangedEventArgs("_hovered"));
         }
     }
+    property uint32 _unreadMessages
+    {
+        uint32 get()
+        {
+            return unreadMessages_;
+        }
+        void set(uint32 value)
+        {
+            unreadMessages_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_SPI_unreadMessages"));
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
@@ -102,6 +114,7 @@ private:
     Visibility callBar_ = Visibility::Collapsed;
     Call^ call_;
     Visibility hovered_ = Visibility::Collapsed;
+    uint32 unreadMessages_;
 
 };
 }
