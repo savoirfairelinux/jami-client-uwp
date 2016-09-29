@@ -21,6 +21,7 @@
 #include "VideoPage.xaml.h"
 
 using namespace RingClientUWP::Views;
+using namespace ViewModel;
 
 using namespace Concurrency;
 using namespace Platform;
@@ -56,10 +57,9 @@ RingClientUWP::Views::VideoPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::Na
 
 void RingClientUWP::Views::VideoPage::updatePageContent()
 {
-    auto selectedContact = ViewModel::ContactsViewModel::instance->selectedContact;
-    Contact^ contact = selectedContact?
-        ViewModel::SmartPanelItemsViewModel::instance->findItem(selectedContact)->_contact:
-        nullptr;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = (item) ? item->_contact : nullptr;
+
     if (!contact)
         return;
 
@@ -93,7 +93,9 @@ RingClientUWP::Views::VideoPage::_messageTextBox__KeyDown(Platform::Object^ send
 void
 RingClientUWP::Views::VideoPage::sendMessage()
 {
-    auto contact = ViewModel::ContactsViewModel::instance->selectedContact;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = item->_contact;
+
     auto txt = _messageTextBox_->Text;
 
     /* empty the textbox */
@@ -118,10 +120,9 @@ void RingClientUWP::Views::VideoPage::_btnCancel__Click(Platform::Object^ sender
 
 void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    Contact^ selectedContact = ViewModel::ContactsViewModel::instance->selectedContact;
-    Call^ call = selectedContact?
-        ViewModel::SmartPanelItemsViewModel::instance->findItem(selectedContact)->_call:
-        nullptr;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto call = item->_call;
+
     if (call)
         RingD::instance->hangUpCall(call);
     pressHangUpCall();
