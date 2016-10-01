@@ -22,11 +22,41 @@ namespace RingClientUWP
 {
 
 delegate void ToggleSmartPan();
-delegate void SumonMessageTextPage();
-delegate void SumonVideoPage();
+delegate void SummonMessageTextPage();
+delegate void SummonVideoPage();
+delegate void SummonWelcomePage();
 
 namespace Views
 {
+
+public ref class IncomingVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    IncomingVisibility();
+};
+
+public ref class OutGoingVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    OutGoingVisibility();
+};
+
+public ref class HasAnActiveCall sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    HasAnActiveCall();
+};
+
+public ref class NewMessageBubleNotification sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    NewMessageBubleNotification();
+};
+
 public ref class SmartPanel sealed
 {
 public:
@@ -36,8 +66,9 @@ public:
 internal:
     enum class Mode { Minimized, Normal };
     event ToggleSmartPan^ toggleSmartPan;
-    event SumonMessageTextPage^ sumonMessageTextPage;
-    event SumonVideoPage^ sumonVideoPage;
+    event SummonMessageTextPage^ summonMessageTextPage;
+    event SummonVideoPage^ summonVideoPage;
+    event SummonWelcomePage^ summonWelcomePage;
     void setMode(RingClientUWP::Views::SmartPanel::Mode mode);
 
 private:

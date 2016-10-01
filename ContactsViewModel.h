@@ -26,11 +26,6 @@ namespace RingClientUWP
 {
 
 /* delegates */
-delegate void NewContactSelected();
-delegate void NoContactSelected();
-delegate void ScreenConversationMessage(String^ accountId, String^ from, String^ payload);
-delegate void NotifyNewConversationMessage(bool isContactNotSelected);
-delegate void ShowContactBar();
 delegate void ContactAdded(Contact^);
 
 namespace ViewModel {
@@ -56,23 +51,6 @@ internal:
     void        Destringify(String^ data);
 
     /* properties */
-    property Contact^ selectedContact
-    {
-        Contact^ get()
-        {
-            return currentItem_;
-        }
-        void set(Contact^ value)
-        {
-            oldItem_ = currentItem_;
-            currentItem_ = value;
-            if (value)
-                newContactSelected();
-            else
-                noContactSelected();
-        }
-    }
-
     property Vector<Contact^>^ contactsList
     {
         Vector<Contact^>^ get()
@@ -82,11 +60,6 @@ internal:
     }
 
     /* events */
-    event NewContactSelected^ newContactSelected;
-    event NoContactSelected^ noContactSelected;
-    event ScreenConversationMessage^ screenConversationMessage;
-    event NotifyNewConversationMessage^ notifyNewConversationMessage;
-    event ShowContactBar^ showContactBar;
     event ContactAdded^ contactAdded;
 
 private:

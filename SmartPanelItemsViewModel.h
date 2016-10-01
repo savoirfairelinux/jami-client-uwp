@@ -26,7 +26,6 @@ using namespace RingClientUWP::Controls;
 
 namespace RingClientUWP
 {
-
 namespace ViewModel {
 public ref class SmartPanelItemsViewModel sealed
 {
@@ -55,7 +54,18 @@ internal:
         }
     }
 
-    /* events */
+    property SmartPanelItem^ _selectedItem
+    {
+        SmartPanelItem^ get()
+        {
+            return currentItem_;
+        }
+        void set(SmartPanelItem^ value)
+        {
+            oldItem_ = currentItem_;
+            currentItem_ = value;
+        }
+    }
 
 private:
     SmartPanelItemsViewModel(); // singleton

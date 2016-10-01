@@ -290,5 +290,20 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <!-- rounded button for call -->
+    <Style x:Key ="roundButtonTemplate" TargetType ="Button">
+        <Setter Property ="Foreground" Value ="Black"/>
+        <Setter Property ="FontWeight" Value ="Bold"/>
+        <Setter Property ="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType ="Button">
+                    <Grid>
+                        <Ellipse Name ="OuterRing" Width ="30" Height ="30" Fill ="LightBlue"/>
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 </ResourceDictionary>

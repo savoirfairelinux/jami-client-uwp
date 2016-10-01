@@ -30,7 +30,10 @@ using namespace RingClientUWP::Controls;
 using namespace ViewModel;
 
 SmartPanelItem::SmartPanelItem()
-{}
+{
+    /* create an empty call to avoid the call bar */
+    _call = ref new Call("", "", "");
+}
 
 void
 SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
