@@ -77,8 +77,9 @@ SmartPanel::SmartPanel()
 
         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_call = call;
+
     });
-    RingD::instance->stateChange += ref new StateChange([this](String^ callId, String^ state, int code) {
+    RingD::instance->stateChange += ref new StateChange([this](String^ callId, CallStatus state, int code) {
         auto call = CallsViewModel::instance->findCall(callId);
 
         if (call == nullptr)
@@ -91,18 +92,11 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        if (call->state == "incoming call")
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Visible;
+        call->state = state;
 
-        if (call->state == "CURRENT") {
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-        }
+        if (state == CallStatus::IN_PROGRESS)
+            _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(call);
 
-        if (call->state == "") {
-            item->_IncomingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-            item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Collapsed;
-        }
     });
 
 
@@ -129,10 +123,8 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        /* use underscore to differentiate states from UI, we need to think more about states management */
-        call->state = "_calling_";
+        call->state = CallStatus::SEARCHING;
 
-        item->_OutGoingCallBar = Windows::UI::Xaml::Visibility::Visible;
         item->_call = call;
     });
 
@@ -253,12 +245,31 @@ void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
-    auto listbox = safe_cast<ListBox^>(sender);
-    auto item = safe_cast<SmartPanelItem^>(listbox->SelectedItem);
+    auto listbox = dynamic_cast<ListBox^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(listbox->SelectedItem);
+    SmartPanelItemsViewModel::instance->_selectedItem = item;
 
-    Contact^ contact = (item) ? safe_cast<Contact^>(item->_contact) : nullptr;
+    if (!item) {
+        summonWelcomePage();
+        return;
+    }
 
-    ContactsViewModel::instance->selectedContact = contact;
+    auto call = item->_call;
+    if (call) {
+        auto state = call->state;
+        if (state == CallStatus::IN_PROGRESS) {
+            summonVideoPage();
+            return;
+        }
+    }
+
+    auto contact = item->_contact;
+    if (contact) {
+        summonMessageTextPage();
+        contact->_unreadMessages = 0;
+        ContactsViewModel::instance->saveContactsToFile();
+        return;
+    }
 }
 
 void
@@ -303,7 +314,8 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sende
 void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto call = dynamic_cast<Call^>(button->DataContext);
+    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+    auto call = item->_call;
 
     call->refuse();
 }
@@ -312,9 +324,8 @@ void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::O
 void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto call = dynamic_cast<Call^>(button->DataContext);
-
-    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(call);
+    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+    auto call = item->_call;
 
     call->accept();
 }
@@ -326,8 +337,6 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
     auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
     auto contact = item->_contact;
 
-    _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getIndex(contact);
-
     RingD::instance->placeCall(contact);
 }
 
@@ -335,7 +344,8 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
 void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto call = dynamic_cast<Call^>(button->DataContext);
+    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+    auto call = item->_call;
 
     call->cancel();
 }
@@ -347,7 +357,7 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    item->_callBar = Windows::UI::Xaml::Visibility::Visible;
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
@@ -357,7 +367,7 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ send
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    item->_callBar = Windows::UI::Xaml::Visibility::Collapsed;
+    item->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
@@ -372,3 +382,76 @@ void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::O
         _smartList_->SelectedItem = nullptr;
 
 }
+
+Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto state = static_cast<CallStatus>(value);
+    if (state == CallStatus::INCOMING_RINGING)
+        return  Windows::UI::Xaml::Visibility::Visible;
+    else
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::IncomingVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::IncomingVisibility::IncomingVisibility()
+{}
+
+
+Object ^ RingClientUWP::Views::OutGoingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto state = static_cast<CallStatus>(value);
+
+    if (state == CallStatus::SEARCHING || state == CallStatus::OUTGOING_RINGING)
+        return  Windows::UI::Xaml::Visibility::Visible;
+    else
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::OutGoingVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::OutGoingVisibility::OutGoingVisibility()
+{}
+
+Object ^ RingClientUWP::Views::HasAnActiveCall::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto state = static_cast<CallStatus>(value);
+
+    if (state == CallStatus::NONE || state == CallStatus::ENDED)
+        return Windows::UI::Xaml::Visibility::Collapsed;
+    else
+        return Windows::UI::Xaml::Visibility::Visible;
+}
+
+Object ^ RingClientUWP::Views::HasAnActiveCall::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+
+}
+
+RingClientUWP::Views::HasAnActiveCall::HasAnActiveCall()
+{}
+
+Object ^ RingClientUWP::Views::NewMessageBubleNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto unreadMessages = static_cast<uint32>(value);
+
+    if (unreadMessages > 0)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::NewMessageBubleNotification::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::NewMessageBubleNotification::NewMessageBubleNotification()
+{}

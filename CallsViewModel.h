@@ -66,6 +66,7 @@ private:
     CallsViewModel(); // singleton
     Vector<Call^>^ CallsList_; // refacto : change C to c
 
+    void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
 }
 }

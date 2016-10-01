@@ -65,28 +65,6 @@ Contact::Contact(String^ name,
         notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
         PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
     }
-
-    /* connect to delegate */
-    ContactsViewModel::instance->notifyNewConversationMessage += ref new NotifyNewConversationMessage([&] (
-    bool isContactNotSelected) {
-        if (isContactNotSelected)
-            PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
-    });
-    ContactsViewModel::instance->newContactSelected += ref new RingClientUWP::NewContactSelected([&]() {
-        if (ContactsViewModel::instance->selectedContact == this) {
-            PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
-            notificationNewMessage = Windows::UI::Xaml::Visibility::Collapsed;
-            unreadMessages_ = 0;
-            ContactsViewModel::instance->saveContactsToFile();
-        }
-    });
-}
-
-void
-Contact::addNotifyNewConversationMessage()
-{
-    notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
-    unreadMessages_++;
 }
 
 void
@@ -170,3 +148,7 @@ Contact::saveConversationToFile()
         }
     }
 }
+
+
+
+

@@ -35,15 +35,8 @@ Call::Call(String^ accountIdz, String^ callIdz, String^ fromz)
 
     isOutGoing = false; // by default, we consider the call incomming, REFACTO : add this to the constructor params...
 
-    this->state = "incoming call";
+    this->state = CallStatus::NONE;
     this->code = -1;
-}
-
-void RingClientUWP::Call::stateChange(String ^ state, int code)
-{
-    this->state = state;
-    PropertyChanged(this, ref new PropertyChangedEventArgs("state"));
-    this->code = code;
 }
 
 void

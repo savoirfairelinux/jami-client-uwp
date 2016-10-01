@@ -21,12 +21,15 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
+/* enumerations. */
+public enum class CallStatus { NONE, INCOMING_RINGING, OUTGOING_RINGING, SEARCHING, IN_PROGRESS, ENDED };
+
 public ref class Call sealed : public INotifyPropertyChanged
 {
 public:
+
     /* functions */
     Call(String^ accountId, String^ callId, String^ from);
-    void stateChange(String^ state, int code);
 
     /* properties */
     virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -34,7 +37,15 @@ public:
     property String^ accountId;
     property String^ callId;
     property String^ from;
-    property String^ state;
+    property CallStatus state {
+        CallStatus get() {
+            return state_;
+        }
+        void set(CallStatus value) {
+            state_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("state"));
+        }
+    }
     property bool isOutGoing;
     property int code;
 
@@ -48,6 +59,9 @@ internal:
     void refuse();
     void accept();
     void cancel();
+
+private:
+    CallStatus state_;
 
 };
 }
