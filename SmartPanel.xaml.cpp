@@ -255,8 +255,14 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
     }
 
     auto call = item->_call;
+    auto contact = item->_contact;
+
     if (call) {
         auto state = call->state;
+
+        if (contact)
+            contact->_unreadMessages = 0;
+
         if (state == CallStatus::IN_PROGRESS) {
             summonVideoPage();
             return;
