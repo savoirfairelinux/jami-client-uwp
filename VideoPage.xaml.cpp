@@ -61,14 +61,14 @@ VideoPage::VideoPage()
     VideoManager::instance->rendererManager()->writeVideoFrame +=
         ref new WriteVideoFrame([this](String^ id, uint8_t* buf, int width, int height)
     {
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
         ref new DispatchedHandler([=]() {
             try {
                 if (!VideoManager::instance->rendererManager()->renderers->Size)
                     return;
                 VideoManager::instance->rendererManager()->renderer(id)->isRendering = true;
                 create_task(WriteFrameAsSoftwareBitmapAsync(id, buf, width, height))
-                    .then([=](task<void> previousTask) {
+                .then([=](task<void> previousTask) {
                     try {
                         previousTask.get();
                     }
@@ -88,8 +88,8 @@ VideoPage::VideoPage()
     {
         PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
         PreviewImage->FlowDirection = VideoManager::instance->captureManager()->mirroringPreview ?
-            Windows::UI::Xaml::FlowDirection::RightToLeft :
-            Windows::UI::Xaml::FlowDirection::LeftToRight;
+                                      Windows::UI::Xaml::FlowDirection::RightToLeft :
+                                      Windows::UI::Xaml::FlowDirection::LeftToRight;
     });
 
     VideoManager::instance->captureManager()->stopPreviewing +=
@@ -205,8 +205,15 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto call = item->_call;
 
-    if (call)
-        RingD::instance->hangUpCall(call);
+    /*if (call)
+        RingD::instance->hangUpCall(call);*/
+
+    if (item->_callId != "") {
+        MSG_("$1 item->callid != vide ");
+        RingD::instance->hangUpCall2(item->_callId);
+        item->_callId = "";
+    }
+
     pressHangUpCall();
 }
 
@@ -325,7 +332,7 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 
     auto sbSource = ref new Media::Imaging::SoftwareBitmapSource();
     return create_task(sbSource->SetBitmapAsync(frame))
-        .then([this, sbSource]()
+           .then([this, sbSource]()
     {
         try {
             IncomingVideoImage->Source = sbSource;

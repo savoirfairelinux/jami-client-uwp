@@ -73,6 +73,7 @@ private:
     SmartPanelItem^ currentItem_;
     SmartPanelItem^ oldItem_;
 
+
 };
 }
 }

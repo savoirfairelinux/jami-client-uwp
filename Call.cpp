@@ -44,7 +44,7 @@ Call::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::Normal,
+        CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
@@ -52,17 +52,18 @@ Call::NotifyPropertyChanged(String^ propertyName)
     }));
 }
 
-void RingClientUWP::Call::refuse()
-{
-    RingD::instance->refuseIncommingCall(this);
-}
-
-void RingClientUWP::Call::accept()
-{
-    RingD::instance->acceptIncommingCall(this);
-}
-
-void RingClientUWP::Call::cancel()
-{
-    RingD::instance->cancelOutGoingCall(this);
-}
+//void RingClientUWP::Call::refuse()
+//{
+//    RingD::instance->refuseIncommingCall(this);
+//}
+//
+//void RingClientUWP::Call::accept()
+//{
+//    RingD::instance->acceptIncommingCall(this);
+//}
+//
+//void RingClientUWP::Call::cancel()
+//{
+//    MSG_("!2--->> cancel");
+//    RingD::instance->cancelOutGoingCall(this);
+//}

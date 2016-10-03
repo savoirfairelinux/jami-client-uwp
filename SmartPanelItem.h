@@ -57,6 +57,8 @@ public:
         }
     }
 
+    property String^ _callId;
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 

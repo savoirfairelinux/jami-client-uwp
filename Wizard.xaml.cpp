@@ -38,7 +38,7 @@ Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
     std::string str(wstr.begin(), wstr.end());
     RingD::instance->hasConfig = false;
     RingD::instance->accountName = std::string(wstr.begin(), wstr.end());
-    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
+    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
     }));
 }

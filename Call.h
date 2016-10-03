@@ -56,9 +56,9 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 internal:
-    void refuse();
-    void accept();
-    void cancel();
+    //void refuse();
+    //void accept();
+    //void cancel();
 
 private:
     CallStatus state_;
