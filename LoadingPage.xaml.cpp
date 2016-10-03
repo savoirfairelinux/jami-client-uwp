@@ -53,13 +53,13 @@ LoadingPage::LoadingPage()
     {
         if (config_exists) {
             RingD::instance->hasConfig = true;
-            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
                 this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
             }));
         }
         else {
             RingD::instance->hasConfig = false;
-            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
                 this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
             }));
         }

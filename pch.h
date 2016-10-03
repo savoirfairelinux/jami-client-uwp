@@ -26,6 +26,7 @@
 #include <sstream>
 #include <string>
 
+
 /* required by generated headers. */
 #include "App.xaml.h"
 #include "Account.h"
