@@ -108,6 +108,7 @@ SmartPanel::SmartPanel()
 
     RingD::instance->calling += ref new RingClientUWP::Calling([&](
     Call^ call) {
+        MSG_("!--->> Calling lambda from smartpanel");
         auto from = call->from;
         auto contact = ContactsViewModel::instance->findContactByName(from);
 
@@ -124,6 +125,7 @@ SmartPanel::SmartPanel()
         }
 
         call->state = CallStatus::SEARCHING;
+        MSG_("!--->> should be Searching");
 
         item->_call = call;
     });
@@ -321,40 +323,63 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sende
 void RingClientUWP::Views::SmartPanel::_rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
-    auto call = item->_call;
-
-    call->refuse();
+    if (button) {
+        auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+        if (item) {
+            auto call = item->_call;
+            if (call)
+                RingD::instance->refuseIncommingCall(call);
+            //call->refuse();
+        }
+    }
 }
 
 
 void RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
-    auto call = item->_call;
-
-    call->accept();
+    if (button) {
+        auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+        if (item) {
+            auto call = item->_call;
+            if (call)
+                RingD::instance->acceptIncommingCall(call);
+            //call->accept();
+        }
+    }
 }
 
 void
 SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    MSG_("!--->> _callContact__Click");
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
-    auto contact = item->_contact;
-
-    RingD::instance->placeCall(contact);
+    if (button) {
+        auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+        if (item) {
+            auto contact = item->_contact;
+            if (contact)
+                RingD::instance->placeCall(contact);
+        }
+    }
 }
 
 
 void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
-    auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
-    auto call = item->_call;
+    if (button) {
+        auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+        if (item) {
+            auto call = item->_call;
+            RingD::instance->cancelOutGoingCall2(item->_callId);
 
-    call->cancel();
+            return;
+            if (call)
+                RingD::instance->cancelOutGoingCall(call);
+            //call->cancel();
+        }
+    }
 }
 
 

@@ -52,6 +52,9 @@ public:
         }
     }
 
+    void cancelOutGoingCall2(String^ callId); // marche
+
+
 internal:
     /* functions */
     void startDaemon();
@@ -63,7 +66,10 @@ internal:
     void acceptIncommingCall(Call^ call);
     void placeCall(Contact^ contact);
     void cancelOutGoingCall(Call^ call);
+    /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
+
     void hangUpCall(Call^ call);
+    void hangUpCall2(String^ callId);
 
     /* TODO : move members */
     bool hasConfig;
@@ -96,9 +102,14 @@ private:
             request = r;
             _call = c;
         }
+        Task(Request r, String^ c, int i) {
+            request = r;
+            _callId = c;
+        }
     public:
         property Request request;
         property Call^ _call;
+        property String^ _callId;
     };
 
     /* functions */

@@ -52,7 +52,7 @@ Contact::Contact(String^ name,
 
     String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(messagesFile)));
 
-    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
     ref new DispatchedHandler([=]() {
         if (fileContents != nullptr)
             DestringifyConversation(fileContents);
@@ -72,7 +72,7 @@ Contact::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::Normal,
+        CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));

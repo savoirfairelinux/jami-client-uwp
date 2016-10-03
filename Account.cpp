@@ -43,7 +43,7 @@ Account::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::Normal,
+        CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));

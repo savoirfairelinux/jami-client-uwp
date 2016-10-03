@@ -44,7 +44,7 @@ internal:
     /* functions */
     Call^ addNewCall(String^ accountId, String^ callId, String^ from);
     void clearCallsList();
-    void setState(String^ callId, String^ state, int code); // used ?
+    //void setState(String^ callId, String^ state, int code); // used ?
     Call^ findCall(String^ callId);
 
     /* properties */

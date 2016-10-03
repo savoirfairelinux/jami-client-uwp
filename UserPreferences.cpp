@@ -50,7 +50,7 @@ UserPreferences::load()
 
     String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(preferencesFile)));
 
-    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
     ref new DispatchedHandler([=]() {
         if (fileContents != nullptr) {
             Destringify(fileContents);
