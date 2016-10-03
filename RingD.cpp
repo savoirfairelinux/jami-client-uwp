@@ -126,6 +126,7 @@ void RingClientUWP::RingD::acceptIncommingCall(Call^ call)
 
 void RingClientUWP::RingD::placeCall(Contact^ contact)
 {
+    MSG_("!--->> placeCall");
     auto to = contact->ringID_;
     auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
 
@@ -134,12 +135,21 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 
     auto callId2 = DRing::placeCall(accountId2, to2);
 
+
+
     if (callId2 == "") {
         WNG_("call not created, the daemon didn't return a call Id");
         return;
     }
 
     auto callId = Utils::toPlatformString(callId2);
+
+
+    //auto con = ContactsViewModel::instance->findContactByName(to);
+    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+    item->_callId = callId;
+    MSG_("$1 place call with id : " + Utils::toString(item->_callId));
+
 
     auto call = CallsViewModel::instance->addNewCall(accountId, callId, to);
     call->isOutGoing = true;
@@ -156,13 +166,27 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 void
 RingClientUWP::RingD::cancelOutGoingCall(Call^ call)
 {
-    tasksList_.push(ref new RingD::Task(Request::CancelOutGoingCall, call));
+    MSG_("1!--->> cancelOutGoingCall");
+    if (call)
+        tasksList_.push(ref new RingD::Task(Request::CancelOutGoingCall, call));
+}
+
+void RingClientUWP::RingD::cancelOutGoingCall2(String ^ callId)
+{
+    MSG_("$1 cancelOutGoingCall2 : " + Utils::toString(callId));
+    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId, 0));
 }
 
 void
 RingClientUWP::RingD::hangUpCall(Call^ call)
 {
     tasksList_.push(ref new RingD::Task(Request::HangUpCall, call));
+}
+
+void RingClientUWP::RingD::hangUpCall2(String ^ callId)
+{
+    MSG_("$1 hangUpCall2 : "+Utils::toString(callId));
+    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId, 0));
 }
 
 void
@@ -199,10 +223,16 @@ RingClientUWP::RingD::startDaemon()
                 from2 = Utils::TrimRingId(from2);
 
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::Normal, ref new DispatchedHandler([=]()
+                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     incomingCall(accountId2, callId2, from2);
                     stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
+
+
+                    auto contact = ContactsViewModel::instance->findContactByName(from2);
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    item->_callId = callId2;
+
                 }));
             }),
             DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
@@ -222,7 +252,7 @@ RingClientUWP::RingD::startDaemon()
 
 
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     stateChange(callId2, state3, code);
                 }));
@@ -243,7 +273,7 @@ RingClientUWP::RingD::startDaemon()
                     MSG_("payload = " + i.second);
                     auto payload = Utils::toPlatformString(i.second);
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                     {
                         incomingAccountMessage(accountId2, from2, payload);
                     }));
@@ -282,7 +312,7 @@ RingClientUWP::RingD::startDaemon()
 
                     auto payload = Utils::toPlatformString(i.second);
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                        CoreDispatcherPriority::Low, ref new DispatchedHandler([=]()
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                     {
                         incomingAccountMessage(accountId2, from2, payload);
                     }));
@@ -294,7 +324,7 @@ RingClientUWP::RingD::startDaemon()
             {
                 MSG_("<RegistrationStateChanged>: ID = " + account_id + "state = " + state);
                 if (state == DRing::Account::States::REGISTERED) {
-                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                     ref new DispatchedHandler([=]() {
                         auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                         dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
@@ -303,14 +333,14 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
             {
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
             }),
             DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
             {
-                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     RingDebug::instance->print(toto);
                 }));
@@ -359,9 +389,9 @@ RingClientUWP::RingD::startDaemon()
         {
             DRing::exportable_callback<DRing::VideoSignal::GetCameraInfo>
             ([this](const std::string& device,
-                    std::vector<std::string> *formats,
-                    std::vector<unsigned> *sizes,
-                    std::vector<unsigned> *rates) {
+            std::vector<std::string> *formats,
+            std::vector<unsigned> *sizes,
+            std::vector<unsigned> *rates) {
                 MSG_("\n<GetCameraInfo>\n");
                 auto device_list = VideoManager::instance->captureManager()->deviceList;
 
@@ -384,7 +414,7 @@ RingClientUWP::RingD::startDaemon()
                     std::string format,
                     const int width,
                     const int height,
-                    const int rate) {
+            const int rate) {
                 MSG_("\n<SetParameters>\n");
                 VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
                     Utils::toPlatformString(format),width,height,rate);
@@ -392,7 +422,7 @@ RingClientUWP::RingD::startDaemon()
             DRing::exportable_callback<DRing::VideoSignal::StartCapture>
             ([&](const std::string& device) {
                 MSG_("\n<StartCapture>\n");
-                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     VideoManager::instance->captureManager()->InitializeCameraAsync();
                     VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
@@ -401,7 +431,7 @@ RingClientUWP::RingD::startDaemon()
             DRing::exportable_callback<DRing::VideoSignal::StopCapture>
             ([&]() {
                 MSG_("\n<StopCapture>\n");
-                dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     VideoManager::instance->captureManager()->StopPreviewAsync();
                     if (VideoManager::instance->captureManager()->captureTaskTokenSource)
@@ -425,7 +455,7 @@ RingClientUWP::RingD::startDaemon()
                 tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
             }
             else {
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
@@ -487,6 +517,12 @@ RingD::dequeueTasks()
         case Request::CancelOutGoingCall:
         case Request::HangUpCall:
         {
+
+            MSG_("1!--->> Request::CancelOutGoingCall");
+            auto id = task->_callId;
+            DRing::hangUp(Utils::toString(id));
+            return;
+
             auto callId = task->_call->callId;
             auto callId2 = Utils::toString(callId);
             DRing::hangUp(callId2);

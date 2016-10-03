@@ -118,7 +118,7 @@ ContactsViewModel::openContactsFromFile()
 
     String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(contactsFile)));
 
-    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
     ref new DispatchedHandler([=]() {
         if (fileContents != nullptr)
             Destringify(fileContents);

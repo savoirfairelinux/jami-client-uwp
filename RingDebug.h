@@ -68,13 +68,13 @@ void WriteException(Exception^ ex)
     OutputDebugString(wStringstream.str().c_str());
 }
 
-#define MSG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, \
+#define MSG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(cstr); }))
 
-#define WNG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, \
+#define WNG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), RingDebug::Type::WNG); }))
 
-#define ERR_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Low, \
+#define ERR_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), RingDebug::Type::ERR); }))
 
 }

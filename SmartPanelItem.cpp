@@ -33,6 +33,8 @@ SmartPanelItem::SmartPanelItem()
 {
     /* create an empty call to avoid the call bar */
     _call = ref new Call("", "", "");
+    _callId = "";
+
 }
 
 void
@@ -40,7 +42,7 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::Normal,
+        CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
