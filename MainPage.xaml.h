@@ -60,6 +60,6 @@ private:
     void OnsummonWelcomePage();
     void OnsummonVideoPage();
     void OnpressHangUpCall();
-    void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
+    void OnstateChange(Platform::String ^callId, CallStatus state, int code);
 };
 }
