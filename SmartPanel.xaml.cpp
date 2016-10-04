@@ -463,3 +463,20 @@ Object ^ RingClientUWP::Views::NewMessageBubleNotification::ConvertBack(Object ^
 
 RingClientUWP::Views::NewMessageBubleNotification::NewMessageBubleNotification()
 {}
+
+void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_addDevice__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+}

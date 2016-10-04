@@ -21,6 +21,10 @@ using namespace concurrency;
 
 namespace RingClientUWP
 {
+// its ok to keep this enum here and to use it with the wizard, because in pch.h headers are a-z sorted,
+// but it would be much more consistent to move this enum in globals.h when merged
+
+public enum class StartingStatus { NORMAL, REGISTERING_ON_THIS_PC, REGISTERING_THIS_DEVICE };
 
 /* delegate */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
@@ -63,6 +67,9 @@ internal: // why this property has to be internal and not public ?
         }
     }
 
+    property StartingStatus _startingStatus;
+    property String^ _pin;
+    property String^ _password;
 
 internal:
     /* functions */
@@ -80,7 +87,7 @@ internal:
     void hangUpCall2(String^ callId);
 
     /* TODO : move members */
-    bool hasConfig;
+    ///bool hasConfig; // replaced by startingStatus
     std::string accountName;
 
     /* events */
@@ -98,7 +105,8 @@ private:
         RefuseIncommingCall,
         AcceptIncommingCall,
         CancelOutGoingCall,
-        HangUpCall
+        HangUpCall,
+        RegisterDevice
     };
 
 
@@ -114,9 +122,16 @@ private:
             request = r;
             _callId = c;
         }
+        Task(Request r, String^ p, String^ P) {
+            request = r;
+            _pin = p;
+            _password = P;
+        }
     public:
         property Request request;
         property String^ _callId;
+        property String^ _pin;
+        property String^ _password;
     };
 
     /* functions */
@@ -128,5 +143,6 @@ private:
     std::string localFolder_;
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;
+    StartingStatus startingStatus_ = StartingStatus::NORMAL;
 };
 }

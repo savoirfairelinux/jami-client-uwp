@@ -389,6 +389,11 @@
                                       Checked="_shareMenuButton__Checked"
                                       Unchecked="_shareMenuButton__Unchecked"
                                       Style="{StaticResource ToggleButtonStyle1}"/>
+                        <ToggleButton x:Name="_devicesMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="devices;"
+                                      Checked="_devicesMenuButton__Checked"
+                                      Unchecked="_devicesMenuButton__Unchecked"/>
                     </StackPanel>
                 </StackPanel>
                 <ToggleButton x:Name="_settingsTBtn_"
@@ -519,6 +524,34 @@
                              Text="c4fc649aed8b2497a5e98fd2d856222f07020044"
                              Grid.Row="2"/>
                 </Grid>
+            </Grid>
+            <!-- devices menu. -->
+            <Grid x:Name="_devicesMenuGrid_"
+                  Grid.Row="2"
+                  Visibility="Collapsed"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid Background="#FFE4F1F9">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Text="devices:"
+                               Grid.Row="0"
+                               HorizontalAlignment="Center"/>
+                </Grid>
+                <Button x:Name="_addDevice_"
+                        Grid.Row="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="&#xE948;"
+                        Click="_addDevice__Click"
+                        Style="{StaticResource ButtonStyle6}"/>
             </Grid>
         </Grid>
         <!-- smartList and settings. -->

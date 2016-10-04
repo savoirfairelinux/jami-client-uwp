@@ -36,7 +36,7 @@ Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
         alias = "windows user";
     std::wstring wstr(alias->Begin());
     std::string str(wstr.begin(), wstr.end());
-    RingD::instance->hasConfig = false;
+    RingD::instance->_startingStatus = StartingStatus::REGISTERING_ON_THIS_PC;
     RingD::instance->accountName = std::string(wstr.begin(), wstr.end());
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
@@ -75,7 +75,7 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
     cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
 
     create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
-        .then([this](StorageFile^ photoFile)
+    .then([this](StorageFile^ photoFile)
     {
         if (photoFile != nullptr) {
             // maybe it would be possible to move some logics to the style sheet
@@ -92,13 +92,13 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
             StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
             String^ profilefolder = ".profile";
             create_task(localfolder->CreateFolderAsync(profilefolder,
-                Windows::Storage::CreationCollisionOption::OpenIfExists))
-                .then([=](StorageFolder^ copytofolder){
+                        Windows::Storage::CreationCollisionOption::OpenIfExists))
+            .then([=](StorageFolder^ copytofolder) {
                 try {
                     create_task(photoFile->CopyAsync(copytofolder))
-                        .then([=](StorageFile^ copiedfile){
+                    .then([=](StorageFile^ copiedfile) {
                         copiedfile->RenameAsync("profile_image.png",
-                            Windows::Storage::NameCollisionOption::ReplaceExisting);
+                                                Windows::Storage::NameCollisionOption::ReplaceExisting);
                     });
                 }
                 catch (Exception^ e) {
@@ -114,4 +114,15 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
         }
     });
 
+}
+
+void RingClientUWP::Views::Wizard::_addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    RingD::instance->_pin = _PINTextBox_->Text;
+    RingD::instance->_password = _ArchivePassword_->Password;
+    RingD::instance->_startingStatus = StartingStatus::REGISTERING_THIS_DEVICE;
+
+    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
+        this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
+    }));
 }
