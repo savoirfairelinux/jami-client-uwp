@@ -83,14 +83,8 @@
     <ClCompile Include="Conversation.cpp">
       <Filter>Model</Filter>
     </ClCompile>
-    <ClCompile Include="CallsViewModel.cpp">
-      <Filter>ModelViews</Filter>
-    </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="Call.cpp">
-      <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="SmartPanelItem.cpp">
       <Filter>Controls</Filter>
@@ -143,17 +137,11 @@
     </ClInclude>
     <ClInclude Include="LoadingPage.xaml.h" />
     <ClInclude Include="Wizard.xaml.h" />
-    <ClInclude Include="CallsViewModel.h">
-      <Filter>ModelViews</Filter>
-    </ClInclude>
     <ClInclude Include="Conversation.h">
       <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="UserPreferences.h">
       <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Call.h">
-      <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h">
       <Filter>Controls</Filter>
@@ -172,6 +160,9 @@
     </ClInclude>
     <ClInclude Include="Video.h">
       <Filter>Media\Video</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

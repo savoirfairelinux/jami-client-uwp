@@ -203,65 +203,6 @@
                            Text="{x:Bind ringID_}"/>
             </Grid>
         </DataTemplate>
-        <!-- template for incoming calls. -->
-        <DataTemplate x:Key="IncomingCallTemplate" x:DataType="local:Call">
-            <Grid Width="320"
-                      HorizontalAlignment="Left"
-                      Background="DarkGray">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <TextBlock x:Name="_contactCallStatus_"
-                           Grid.Row="0"
-                           Foreground="White"
-                           Text="{x:Bind state, Mode=OneWay}"
-                           Visibility="Visible"
-                           HorizontalAlignment="Center">
-                </TextBlock>
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="1"
-                            HorizontalAlignment="Center">
-                    <Button x:Name="_acceptIncomingCallBtn_"
-                            Click="_acceptIncomingCallBtn__Click"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Accept"/>
-                    <Button x:Name="_rejectIncomingCallBtn_"
-                            Click="_rejectIncomingCallBtn__Click"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Reject"/>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
-        <!-- template for outgoing calls. -->
-        <DataTemplate x:Key="OutGoingCallTemplate" x:DataType="local:Call">
-            <Grid Width="320"
-                      HorizontalAlignment="Left"
-                      Background="DarkGray">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <TextBlock x:Name="_contactCallStatus_"
-                           Grid.Row="0"
-                           Foreground="White"
-                           Text="{x:Bind state, Mode=OneWay}"
-                           Visibility="Visible"
-                           HorizontalAlignment="Center">
-                </TextBlock>
-                <StackPanel Orientation="Horizontal"
-                            Grid.Row="1"
-                            HorizontalAlignment="Center">
-                    <Button x:Name="_cancelCallBtn_"
-                            Click="_cancelCallBtn__Click"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Cancel"/>
-                </StackPanel>
-            </Grid>
-        </DataTemplate>
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
@@ -348,7 +289,7 @@
                         </Grid>
                     </Grid>
                 </Grid>
-                <!-- incomming call bar. -->
+                <!-- call bar. -->
                 <Grid Width="320"
                       Grid.Row="1"
                       HorizontalAlignment="Left"
@@ -357,11 +298,11 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="_incommingCallStatus_"
+                    <TextBlock x:Name="_CallStatus_"
                            Grid.Row="0"
                            Foreground="White"
-                           Text="{x:Bind _call.state, Mode=OneWay}"
-                           Visibility="{x:Bind _call.state, Converter={StaticResource _HasAnActiveCall_}, Mode=OneWay}"
+                           Text="{x:Bind _callStatus, Mode=OneWay}"
+                           Visibility="{x:Bind _callStatus, Converter={StaticResource _HasAnActiveCall_}, Mode=OneWay}"
                            HorizontalAlignment="Center">
                     </TextBlock>
                     <StackPanel Orientation="Horizontal"
@@ -370,19 +311,19 @@
                                 HorizontalAlignment="Center">
                         <Button x:Name="_acceptIncomingCallBtn_"
                             Click="_acceptIncomingCallBtn__Click"
-                            Visibility="{x:Bind _call.state, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="Accept"/>
                         <Button x:Name="_rejectIncomingCallBtn_"
                             Click="_rejectIncomingCallBtn__Click"
-                            Visibility="{x:Bind _call.state, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="Reject"/>
                         <Button x:Name="_cancelCallBtn_"
                             Click="_cancelCallBtn__Click"
-                            Visibility="{x:Bind _call.state, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
+                            Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="Cancel"/>

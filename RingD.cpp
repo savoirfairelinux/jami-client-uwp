@@ -114,14 +114,14 @@ RingD::createSIPAccount(String^ alias)
     tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
 }
 
-void RingClientUWP::RingD::refuseIncommingCall(Call^ call)
+void RingClientUWP::RingD::refuseIncommingCall(String^ callId)
 {
-    tasksList_.push(ref new RingD::Task(Request::RefuseIncommingCall, call));
+    tasksList_.push(ref new RingD::Task(Request::RefuseIncommingCall, callId));
 }
 
-void RingClientUWP::RingD::acceptIncommingCall(Call^ call)
+void RingClientUWP::RingD::acceptIncommingCall(String^ callId)
 {
-    tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, call));
+    tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, callId));
 }
 
 void RingClientUWP::RingD::placeCall(Contact^ contact)
@@ -137,65 +137,40 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 
 
 
-    if (callId2 == "") {
+    if (callId2.empty()) {
         WNG_("call not created, the daemon didn't return a call Id");
         return;
     }
 
     auto callId = Utils::toPlatformString(callId2);
 
+    _callIdsList->Append(callId);
 
     //auto con = ContactsViewModel::instance->findContactByName(to);
     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
     item->_callId = callId;
     MSG_("$1 place call with id : " + Utils::toString(item->_callId));
 
+    callPlaced(callId);
 
-    auto call = CallsViewModel::instance->addNewCall(accountId, callId, to);
-    call->isOutGoing = true;
-
-    if (call == nullptr) {
-        WNG_("call not created, nullptr reason");
-        return;
-    }
-
-    calling(call);
-
-}
-
-void
-RingClientUWP::RingD::cancelOutGoingCall(Call^ call)
-{
-    MSG_("1!--->> cancelOutGoingCall");
-    if (call)
-        tasksList_.push(ref new RingD::Task(Request::CancelOutGoingCall, call));
 }
 
 void RingClientUWP::RingD::cancelOutGoingCall2(String ^ callId)
 {
     MSG_("$1 cancelOutGoingCall2 : " + Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId, 0));
+    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
 }
 
-void
-RingClientUWP::RingD::hangUpCall(Call^ call)
-{
-    tasksList_.push(ref new RingD::Task(Request::HangUpCall, call));
-}
 
 void RingClientUWP::RingD::hangUpCall2(String ^ callId)
 {
     MSG_("$1 hangUpCall2 : "+Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId, 0));
+    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
 }
 
 void
 RingClientUWP::RingD::startDaemon()
 {
-    // TODO (during refactoring) : use namespace
-    /* clear the calls list and instantiate the singleton (required)  */
-    RingClientUWP::ViewModel::CallsViewModel::instance->clearCallsList();
-
     create_task([&]()
     {
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
@@ -226,7 +201,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     incomingCall(accountId2, callId2, from2);
-                    stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
+                    ///stateChange(callId2, CallStatus::INCOMING_RINGING, 0); // on purpose to see what happens
 
 
                     auto contact = ContactsViewModel::instance->findContactByName(from2);
@@ -249,6 +224,9 @@ RingClientUWP::RingD::startDaemon()
                 auto state2 = toPlatformString(state);
 
                 auto state3 = getCallStatus(state2);
+
+                if (state3 == CallStatus::ENDED)
+                    DRing::hangUp(callId); // solve a bug in the daemon API.
 
 
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
@@ -293,12 +271,7 @@ RingClientUWP::RingD::startDaemon()
 
                 from2 = Utils::TrimRingId2(from2);
 
-                Call^ call = CallsViewModel::instance->findCall(callId2);
 
-                if (!call)
-                    return;
-
-                String^ accountId2 = call->accountId;
                 const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
                 static const unsigned int profileSize = PROFILE_VCF.size();
 
@@ -314,7 +287,9 @@ RingClientUWP::RingD::startDaemon()
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                         CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                     {
-                        incomingAccountMessage(accountId2, from2, payload);
+                        // DOIT ETRE DIFFEREND.... NE PAS UTILISE accoutId2
+                        //incomingAccountMessage(accountId2, from2, payload);
+                        MSG_("message recu :" + i.second);
                     }));
                 }
             }),
@@ -473,6 +448,7 @@ RingClientUWP::RingD::startDaemon()
 RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+    callIdsList_ = ref new Vector<String^>();
 }
 
 void
@@ -502,14 +478,14 @@ RingD::dequeueTasks()
         break;
         case Request::RefuseIncommingCall:
         {
-            auto callId = task->_call->callId;
+            auto callId = task->_callId;
             auto callId2 = Utils::toString(callId);
             DRing::refuse(callId2);
         }
         break;
         case Request::AcceptIncommingCall:
         {
-            auto callId = task->_call->callId;
+            auto callId = task->_callId;
             auto callId2 = Utils::toString(callId);
             DRing::accept(callId2);
         }
@@ -517,15 +493,8 @@ RingD::dequeueTasks()
         case Request::CancelOutGoingCall:
         case Request::HangUpCall:
         {
-
-            MSG_("1!--->> Request::CancelOutGoingCall");
-            auto id = task->_callId;
-            DRing::hangUp(Utils::toString(id));
-            return;
-
-            auto callId = task->_call->callId;
-            auto callId2 = Utils::toString(callId);
-            DRing::hangUp(callId2);
+            auto callId = task->_callId;
+            DRing::hangUp(Utils::toString(callId));
         }
         break;
         default:
@@ -535,7 +504,7 @@ RingD::dequeueTasks()
     }
 }
 
-CallStatus RingClientUWP::RingD::getCallStatus(String^ state)
+RingClientUWP::CallStatus RingClientUWP::RingD::getCallStatus(String^ state)
 {
     if (state == "INCOMING")
         return CallStatus::INCOMING_RINGING;
