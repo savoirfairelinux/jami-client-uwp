@@ -115,7 +115,8 @@
                         <TextBox  x:Name="_PINTextBox_"
                                   Margin="10"
                                   PlaceholderText="Enter PIN"/>
-                        <PasswordBox Margin="10"
+                        <PasswordBox x:Name="_ArchivePassword_"
+                                Margin="10"
                                  PlaceholderText="Enter your password"/>
                     </StackPanel>
                     <!-- buttons yes/no to add the account. -->
@@ -127,6 +128,7 @@
                                 VerticalAlignment="Center"
                                 HorizontalAlignment="Center"
                                 Content="&#xE081;"
+                                Click="_addAccountYes__Click"
                                 Style="{StaticResource ButtonStyle2}"/>
                         </StackPanel>
                     </Grid>
