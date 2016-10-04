@@ -31,10 +31,9 @@ using namespace ViewModel;
 
 SmartPanelItem::SmartPanelItem()
 {
-    /* create an empty call to avoid the call bar */
-    _call = ref new Call("", "", "");
     _callId = "";
 
+    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Controls::SmartPanelItem::OncallPlaced);
 }
 
 void
@@ -47,4 +46,11 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
+}
+
+void RingClientUWP::Controls::SmartPanelItem::OncallPlaced(Platform::String ^callId)
+{
+    if (_callId == callId) {
+        _callStatus = CallStatus::SEARCHING;
+    }
 }
