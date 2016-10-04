@@ -95,7 +95,7 @@ void RingConsolePanel::sendCommand()
     currentCmd = "";
     historyLevel = historyCmds.Size;
 
-    if (cmdInput == "") {
+    if (cmdInput->IsEmpty()) {
         return;
     }
     else if (cmdInput == "help") {

@@ -26,13 +26,13 @@
 #include <sstream>
 #include <string>
 
+/* project's globals */
+#include "Globals.h"
 
 /* required by generated headers. */
 #include "App.xaml.h"
 #include "Account.h"
 #include "AccountsViewModel.h"
-#include "Call.h"
-#include "CallsViewModel.h"
 #include "Contact.h"
 #include "ContactsViewModel.h"
 #include "Conversation.h"

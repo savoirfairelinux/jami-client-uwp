@@ -32,7 +32,7 @@ public:
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
     property Contact^ _contact;
-    property Call^ _call
+    /*property Call^ _call
     {
         Call^ get()
         {
@@ -43,7 +43,7 @@ public:
             call_ = value;
             PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
         }
-    }
+    }*/
     property Visibility _hovered
     {
         Visibility get()
@@ -57,15 +57,33 @@ public:
         }
     }
 
-    property String^ _callId;
+    property String^ _callId; /*{
+        String^ get() {
+            return callId_;
+        }
+        void set(String^ value) {
+            _callId = value;
+        }
+    }*/
+    property CallStatus _callStatus {
+        CallStatus get() {
+            return callStatus_;
+        }
+        void set(CallStatus value) {
+            callStatus_ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("_callStatus"));
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Call^ call_;
     Visibility hovered_ = Visibility::Collapsed;
+    CallStatus callStatus_;
+    String^ callId_;
 
+    void OncallPlaced(Platform::String ^callId);
 };
 }
 }
