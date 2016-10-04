@@ -27,6 +27,10 @@ using namespace RingClientUWP::Controls;
 namespace RingClientUWP
 {
 namespace ViewModel {
+/* enumerations. */
+public enum class CallStatus { NONE, INCOMING_RINGING, OUTGOING_RINGING, SEARCHING, IN_PROGRESS, ENDED };
+
+
 public ref class SmartPanelItemsViewModel sealed
 {
 internal:
@@ -41,9 +45,9 @@ internal:
     }
 
     /* functions */
-    SmartPanelItem^ findItem(Call^ call);
+    SmartPanelItem^ findItem(String^ callId);
     SmartPanelItem^ findItem(Contact^ contact);
-    unsigned int getIndex(Call^ call);
+    unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
 
     property Vector<SmartPanelItem^>^ itemsList

@@ -203,13 +203,8 @@ void RingClientUWP::Views::VideoPage::_btnCancel__Click(Platform::Object^ sender
 void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-    auto call = item->_call;
 
-    /*if (call)
-        RingD::instance->hangUpCall(call);*/
-
-    if (item->_callId != "") {
-        MSG_("$1 item->callid != vide ");
+    if (!item->_callId->IsEmpty()) {
         RingD::instance->hangUpCall2(item->_callId);
         item->_callId = "";
     }

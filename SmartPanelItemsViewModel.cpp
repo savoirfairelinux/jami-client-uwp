@@ -36,10 +36,10 @@ SmartPanelItemsViewModel::SmartPanelItemsViewModel()
 }
 
 SmartPanelItem^
-SmartPanelItemsViewModel::findItem(Call^ call)
+SmartPanelItemsViewModel::findItem(String^ callId)
 {
     for each (SmartPanelItem^ item in itemsList)
-        if (item->_call == call)
+        if (item->_callId == callId)
             return item;
 
     return nullptr;
@@ -56,11 +56,11 @@ SmartPanelItemsViewModel::findItem(Contact^ contact)
 }
 
 unsigned int
-SmartPanelItemsViewModel::getIndex(Call^ call)
+SmartPanelItemsViewModel::getIndex(String^ callId)
 {
     unsigned int i;
     for (i = 0; i < itemsList_->Size; i++) {
-        if (itemsList_->GetAt(i)->_call == call)
+        if (itemsList_->GetAt(i)->_callId == callId)
             break;
     }
     return i;

@@ -27,58 +27,12 @@ using namespace Windows::ApplicationModel::Core;
 
 CallsViewModel::CallsViewModel()
 {
-    CallsList_ = ref new Vector<Call^>();
+    callIdsList_ = ref new Vector<String^>();
 
     /* connect to delegates. */
 
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
-        auto call = addNewCall(accountId, callId, from);
-        if (call)
-            callRecieved(call);
+        callIdsList_->Append(callId); // TODO : check if the string is remove when the call ends.
     });
-    RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::ViewModel::CallsViewModel::OnstateChange);
-}
-
-Call^
-RingClientUWP::ViewModel::CallsViewModel::addNewCall(String^ accountId, String^ callId, String^ peer)
-{
-    if (accountId == "" | callId == "" | peer == "") {
-        WNG_("call can't be created");
-    }
-    auto call = ref new Call(accountId, callId, peer);
-    CallsList_->Append(call);
-    return call;
-}
-
-void RingClientUWP::ViewModel::CallsViewModel::clearCallsList()
-{
-    CallsList_->Clear();
-}
-
-Call^
-CallsViewModel::findCall(String^ callId)
-{
-    for each (Call^ call in CallsList_)
-        if (call->callId == callId)
-            return call;
-
-    return nullptr;
-}
-
-
-void RingClientUWP::ViewModel::CallsViewModel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
-{
-    auto call = findCall(callId);
-
-    if (!call)
-        return;
-
-    switch (state)
-    {
-    case CallStatus::ENDED:
-        RingD::instance->hangUpCall(call);
-    default:
-        break;
-    }
 }
