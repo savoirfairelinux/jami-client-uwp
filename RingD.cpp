@@ -425,16 +425,29 @@ RingClientUWP::RingD::startDaemon()
             return;
         }
         else {
-            if (!hasConfig) {
+            switch (_startingStatus) {
+            case StartingStatus::REGISTERING_ON_THIS_PC:
+            {
                 tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
                 tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
+                break;
             }
-            else {
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            case StartingStatus::REGISTERING_THIS_DEVICE:
+            {
+                tasksList_.push(ref new RingD::Task(Request::RegisterDevice, _pin, _password));
+                break;
+            }
+            case StartingStatus::NORMAL:
+            default:
+            {
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                 }));
+                break;
             }
+            }
+
             while (true) {
                 DRing::pollEvents();
                 dequeueTasks();
@@ -498,6 +511,19 @@ RingD::dequeueTasks()
             DRing::hangUp(Utils::toString(callId));
         }
         break;
+        case Request::RegisterDevice:
+        {
+            auto pin = Utils::toString(_pin);
+            auto password = Utils::toString(_password);
+
+            std::map<std::string, std::string> deviceDetails;
+            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
+            //deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED, "true"));
+            //deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, "MonSuperUsername"));
+            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PIN, pin));
+            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
+            DRing::addAccount(deviceDetails);
+        }
         default:
             break;
         }
