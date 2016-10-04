@@ -26,7 +26,7 @@ namespace RingClientUWP
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
-delegate void Calling(Call^ call);
+delegate void CallPlaced(String^ callId);
 
 
 public ref class RingD sealed
@@ -54,6 +54,15 @@ public:
 
     void cancelOutGoingCall2(String^ callId); // marche
 
+internal: // why this property has to be internal and not public ?
+    property Vector<String^>^ _callIdsList
+    {
+        Vector<String^>^ get()
+        {
+            return callIdsList_;
+        }
+    }
+
 
 internal:
     /* functions */
@@ -62,13 +71,12 @@ internal:
     void sendAccountTextMessage(String^ message);
     void createRINGAccount(String^ alias);
     void createSIPAccount(String^ alias);
-    void refuseIncommingCall(Call^ call);
-    void acceptIncommingCall(Call^ call);
+    void refuseIncommingCall(String^ call);
+    void acceptIncommingCall(String^ call);
     void placeCall(Contact^ contact);
-    void cancelOutGoingCall(Call^ call);
     /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
+    CallStatus getCallStatus(String^ state);
 
-    void hangUpCall(Call^ call);
     void hangUpCall2(String^ callId);
 
     /* TODO : move members */
@@ -79,7 +87,7 @@ internal:
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
     event IncomingAccountMessage^ incomingAccountMessage;
-    event Calling^ calling;
+    event CallPlaced^ callPlaced;
 
 private:
     /* sub classes */
@@ -92,30 +100,29 @@ private:
         CancelOutGoingCall,
         HangUpCall
     };
+
+
+    Vector<String^>^ callIdsList_;
+
     ref class Task
     {
     internal:
         Task(Request r) {
             request = r;
         }
-        Task(Request r, Call^ c) {
-            request = r;
-            _call = c;
-        }
-        Task(Request r, String^ c, int i) {
+        Task(Request r, String^ c) {
             request = r;
             _callId = c;
         }
     public:
         property Request request;
-        property Call^ _call;
         property String^ _callId;
     };
 
     /* functions */
     RingD(); // singleton
     void dequeueTasks();
-    CallStatus getCallStatus(String^ state);
+//    CallStatus getCallStatus(String^ state);
 
     /* members */
     std::string localFolder_;
