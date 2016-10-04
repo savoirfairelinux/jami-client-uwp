@@ -27,6 +27,7 @@ using namespace RingClientUWP::Controls;
 namespace RingClientUWP
 {
 namespace ViewModel {
+
 public ref class SmartPanelItemsViewModel sealed
 {
 internal:
@@ -41,9 +42,9 @@ internal:
     }
 
     /* functions */
-    SmartPanelItem^ findItem(Call^ call);
+    SmartPanelItem^ findItem(String^ callId);
     SmartPanelItem^ findItem(Contact^ contact);
-    unsigned int getIndex(Call^ call);
+    unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
 
     property Vector<SmartPanelItem^>^ itemsList

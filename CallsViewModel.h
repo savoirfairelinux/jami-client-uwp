@@ -41,18 +41,12 @@ internal:
         }
     }
 
-    /* functions */
-    Call^ addNewCall(String^ accountId, String^ callId, String^ from);
-    void clearCallsList();
-    //void setState(String^ callId, String^ state, int code); // used ?
-    Call^ findCall(String^ callId);
-
     /* properties */
-    property Vector<Call^>^ CallsList
+    property Vector<String^>^ _callIdList
     {
-        Vector<Call^>^ get()
+        Vector<String^>^ get()
         {
-            return CallsList_;
+            return callIdsList_;
         }
     }
 
@@ -64,9 +58,8 @@ internal:
 
 private:
     CallsViewModel(); // singleton
-    Vector<Call^>^ CallsList_; // refacto : change C to c
+    Vector<String^>^ callIdsList_;
 
-    void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
 }
 }

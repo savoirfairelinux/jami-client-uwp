@@ -246,14 +246,6 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
             OnsummonMessageTextPage();
         break;
     }
-    /* if the state changes to IN_PROGRESS for any peer, show the video page.
-       nb : the peer is currently selected from the SmartPannel. */
-    case CallStatus::IN_PROGRESS:
-    {
-        if (item)
-            OnsummonVideoPage();
-        break;
-    }
     default:
         break;
     }
@@ -265,14 +257,14 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
 {
     WriteLine("Application_Suspending");
     if (Frame->CurrentSourcePageType.Name ==
-        Interop::TypeName(MainPage::typeid).Name)
+            Interop::TypeName(MainPage::typeid).Name)
     {
         if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
             Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
         //displayInformation->OrientationChanged -= displayInformationEventToken;
         auto deferral = e->SuspendingOperation->GetDeferral();
         Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
-            .then([this, deferral]() {
+        .then([this, deferral]() {
             deferral->Complete();
         });
     }
@@ -292,4 +284,5 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
     {
         WriteLine("->Invisible");
     }
-}
+}
+
