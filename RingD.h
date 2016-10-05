@@ -76,6 +76,7 @@ internal:
     void startDaemon();
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
+    void sendSIPTextMessage(String^ message);
     void createRINGAccount(String^ alias);
     void createSIPAccount(String^ alias);
     void refuseIncommingCall(String^ call);
