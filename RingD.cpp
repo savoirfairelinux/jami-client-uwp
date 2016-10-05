@@ -98,6 +98,35 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
     }
 }
 
+// send message during video call
+void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
+{
+    /* account id */
+    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    std::wstring accountId2(accountId->Begin());
+    std::string accountId3(accountId2.begin(), accountId2.end());
+
+    /* call */
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto callId = item->_callId;
+    std::wstring callId2(callId->Begin());
+    std::string callId3(callId2.begin(), callId2.end());
+
+    /* recipient */
+    auto contact = item->_contact;
+
+    /* payload(s) */
+    std::wstring message2(message->Begin());
+    std::string message3(message2.begin(), message2.end());
+    std::map<std::string, std::string> payloads;
+    payloads["text/plain"] = message3;
+
+    /* daemon */
+    DRing::sendTextMessage(callId3, payloads, accountId3, true /*not used*/);
+    contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_ME, message);
+    contact->saveConversationToFile();
+}
+
 void
 RingD::createRINGAccount(String^ alias)
 {
