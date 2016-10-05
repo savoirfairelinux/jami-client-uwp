@@ -235,7 +235,6 @@ RingClientUWP::RingD::startDaemon()
                     auto contact = ContactsViewModel::instance->findContactByName(from2);
                     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
                     item->_callId = callId2;
-
                 }));
             }),
             DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
@@ -315,8 +314,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                         CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                     {
-                        // DOIT ETRE DIFFEREND.... NE PAS UTILISE accoutId2
-                        //incomingAccountMessage(accountId2, from2, payload);
+                        incomingMessage(callId2, from2, payload);
                         MSG_("message recu :" + i.second);
                     }));
                 }

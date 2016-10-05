@@ -49,6 +49,8 @@ MessageTextPage::MessageTextPage()
     String^ fromRingId, String^ payload) {
         scrollDown();
     });
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::MessageTextPage::OnincomingMessage);
+
 }
 
 void
@@ -135,3 +137,9 @@ Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::ConvertBack(Object ^ 
 
 RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
 {}
+
+
+void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+{
+    scrollDown();
+}

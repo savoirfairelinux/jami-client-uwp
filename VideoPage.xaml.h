@@ -115,6 +115,7 @@ private:
     void _videoControl__PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void btnAny_entered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void btnAny_exited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload);
 };
 }
 }
