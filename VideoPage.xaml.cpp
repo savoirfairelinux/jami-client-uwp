@@ -186,7 +186,7 @@ RingClientUWP::Views::VideoPage::sendMessage()
     if (!contact || txt->IsEmpty())
         return;
 
-    RingD::instance->sendAccountTextMessage(txt);
+    RingD::instance->sendSIPTextMessage(txt);
     scrollDown();
 }
 
