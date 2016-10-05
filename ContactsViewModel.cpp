@@ -66,6 +66,7 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
 }
 
 Contact^ // refacto : remove "byName"
@@ -164,6 +165,30 @@ ContactsViewModel::Destringify(String^ data)
             auto contact = ref new Contact(name, ringid, guid, unreadmessages);
             contactsList_->Append(contact);
             contactAdded(contact);
+        }
+    }
+}
+
+
+void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+{
+    auto contact = findContactByName(from);
+
+    /* the contact HAS TO BE already registered */
+    if (contact) {
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
+
+        /* save contacts conversation to disk */
+        contact->saveConversationToFile();
+
+        auto selectedContact = (item) ? item->_contact : nullptr;
+
+        if (contact->ringID_ == from && contact != selectedContact) {
+            contact->_unreadMessages++;
+            /* saveContactsToFile used to save the notification */
+            saveContactsToFile();
         }
     }
 }
