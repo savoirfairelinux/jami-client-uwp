@@ -125,10 +125,7 @@ VideoPage::VideoPage()
         }
     });
 
-    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
-    String^ from, String^ payload) {
-        scrollDown();
-    });
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::VideoPage::OnincomingMessage);
 }
 
 void
@@ -332,4 +329,10 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
             WriteException(e);
         }
     });
+}
+
+
+void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+{
+    scrollDown();
 }

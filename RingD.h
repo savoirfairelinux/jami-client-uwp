@@ -31,6 +31,7 @@ delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void CallPlaced(String^ callId);
+delegate void IncomingMessage(String^ callId, String^ from, String^ payload);
 
 
 public ref class RingD sealed
@@ -94,6 +95,7 @@ internal:
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
     event IncomingAccountMessage^ incomingAccountMessage;
+    event IncomingMessage^ incomingMessage;
     event CallPlaced^ callPlaced;
 
 private:
