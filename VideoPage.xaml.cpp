@@ -332,7 +332,7 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 }
 
 
-void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     scrollDown();
 }
