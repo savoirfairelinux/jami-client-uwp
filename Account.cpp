@@ -30,12 +30,14 @@ using namespace RingClientUWP;
 Account::Account(String^ name,
                  String^ ringID,
                  String^ accountType,
-                 String^ accountID)
+                 String^ accountID,
+                 String^ deviceId)
 {
     name_ = name;
     ringID_ = ringID;
     accountType_ = accountType;
     accountID_ = accountID;
+    _deviceId = deviceId;
 }
 
 void

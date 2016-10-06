@@ -21,13 +21,14 @@
 
 using namespace Platform;
 using namespace Windows::UI::Xaml::Data;
+using namespace Platform::Collections;
 
 namespace RingClientUWP
 {
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID);
+    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
@@ -35,9 +36,21 @@ public:
     property String^ ringID_;
     property String^ accountType_;
     property String^ accountID_;
+    property String^ _deviceId;
+    property Windows::Foundation::Collections::IVector<String^>^ _devicesIdList {
+        Windows::Foundation::Collections::IVector<String^>^ get() {
+            return devicesIdList_;
+        }
+        void set(Windows::Foundation::Collections::IVector<String^>^ value) {
+            devicesIdList_ = value;
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
+
+private:
+    Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
 
 };
 }

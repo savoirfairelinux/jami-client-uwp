@@ -32,6 +32,7 @@ delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void CallPlaced(String^ callId);
 delegate void IncomingMessage(String^ callId, String^ payload);
+//delegate void DevicesListRefreshed()
 
 
 public ref class RingD sealed
@@ -84,9 +85,11 @@ internal:
     void acceptIncommingCall(String^ call);
     void placeCall(Contact^ contact);
     /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
-    CallStatus getCallStatus(String^ state);
+    CallStatus translateCallStatus(String^ state);
+    Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
 
     void hangUpCall2(String^ callId);
+    void askToRefreshKnownDevices(String^ accountId);
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
@@ -109,7 +112,8 @@ private:
         AcceptIncommingCall,
         CancelOutGoingCall,
         HangUpCall,
-        RegisterDevice
+        RegisterDevice,
+        GetKnownDevices
     };
 
 
@@ -135,12 +139,13 @@ private:
         property String^ _callId;
         property String^ _pin;
         property String^ _password;
+        property String^ _accountId;
     };
 
     /* functions */
     RingD(); // singleton
     void dequeueTasks();
-//    CallStatus getCallStatus(String^ state);
+//    CallStatus translateCallStatus(String^ state);
 
     /* members */
     std::string localFolder_;
