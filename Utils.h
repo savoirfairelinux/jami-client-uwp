@@ -135,6 +135,7 @@ TrimRingId(Platform::String^ s)
 
 /* fix some issue in the daemon -->  remove "@..." */
 Platform::String^
+
 TrimRingId2(Platform::String^ s)
 {
     const WCHAR* first = s->Begin();
@@ -143,6 +144,24 @@ TrimRingId2(Platform::String^ s)
     while (first != last && last[-1] != '@')
         --last;
 
+    last--;
+
+    return ref new Platform::String(first, static_cast<unsigned int>(last - first));
+}
+
+Platform::String^
+TrimFrom(Platform::String^ s)
+{
+    const WCHAR* first = s->Begin();
+    const WCHAR* last = s->End();
+
+    while (first != last && *first != ':')
+        ++first;
+
+    while (first != last && last[-1] != '>')
+        --last;
+
+    first++;
     last--;
 
     return ref new Platform::String(first, static_cast<unsigned int>(last - first));
@@ -167,7 +186,7 @@ getStringFromFile(const std::string& filename)
 {
     std::ifstream file(filename);
     return std::string((std::istreambuf_iterator<char>(file)),
-        (std::istreambuf_iterator<char>()));
+                       (std::istreambuf_iterator<char>()));
 }
 
 inline Map<String^,String^>^
