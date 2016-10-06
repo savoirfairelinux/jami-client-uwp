@@ -45,19 +45,26 @@ void
 RingClientUWP::RingD::reloadAccountList()
 {
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
+
     std::vector<std::string> accountList = DRing::getAccountList();
     std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
+
     for (; rit != accountList.rend(); ++rit) {
+
         std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
         std::string ringID(accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second);
+
         if(!ringID.empty())
             ringID = ringID.substr(5);
+
         RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second,      //name
-            ringID,                                                             //ringid
-            accountDetails.find(DRing::Account::ConfProperties::TYPE)->second,       //type
-            *rit);
+            accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second,             // alias
+            ringID,                                                                         // ringid
+            accountDetails.find(DRing::Account::ConfProperties::TYPE)->second,              // account type
+            *rit,                                                                           // account id
+            accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second);   // device id
     }
+
     // load user preferences
     Configuration::UserPreferences::instance->load();
 }
@@ -197,6 +204,14 @@ void RingClientUWP::RingD::hangUpCall2(String ^ callId)
     tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
 }
 
+void RingClientUWP::RingD::askToRefreshKnownDevices(String^ accountId)
+{
+    auto task = ref new RingD::Task(Request::GetKnownDevices);
+    task->_accountId = accountId;
+
+    tasksList_.push(task);
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -250,7 +265,7 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto state2 = toPlatformString(state);
 
-                auto state3 = getCallStatus(state2);
+                auto state3 = translateCallStatus(state2);
 
                 if (state3 == CallStatus::ENDED)
                     DRing::hangUp(callId); // solve a bug in the daemon API.
@@ -347,7 +362,18 @@ RingClientUWP::RingD::startDaemon()
                 ref new DispatchedHandler([=]() {
                     RingDebug::instance->print(toto);
                 }));
+            }),
+
+
+            DRing::exportable_callback<DRing::ConfigurationSignal::KnownDevicesChanged>([&](const std::string& accountId, const std::map<std::string, std::string>& devices)
+            {
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    RingDebug::instance->print("toto");
+                }));
             })
+
+
         };
         registerCallHandlers(callHandlers);
 
@@ -552,6 +578,15 @@ RingD::dequeueTasks()
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
             DRing::addAccount(deviceDetails);
         }
+        case Request::GetKnownDevices:
+        {
+            auto accountId = task->_accountId;
+            auto accountId2 = Utils::toString(accountId);
+
+            auto devicesList = DRing::getKnownRingDevices(accountId2);
+            auto devicesList2 = translateKnownRingDevices(devicesList);
+
+        }
         default:
             break;
         }
@@ -559,7 +594,7 @@ RingD::dequeueTasks()
     }
 }
 
-RingClientUWP::CallStatus RingClientUWP::RingD::getCallStatus(String^ state)
+RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ state)
 {
     if (state == "INCOMING")
         return CallStatus::INCOMING_RINGING;
@@ -577,4 +612,17 @@ RingClientUWP::CallStatus RingClientUWP::RingD::getCallStatus(String^ state)
         return CallStatus::SEARCHING;
 
     return CallStatus::NONE;
+}
+
+Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<std::string, std::string> devices)
+{
+    auto devicesList = ref new Vector<String^>();
+
+    for (auto i : devices) {
+        MSG_("devices.first = " + i.first);
+        MSG_("devices.second = " + i.second);
+    }
+
+
+    return devicesList;
 }

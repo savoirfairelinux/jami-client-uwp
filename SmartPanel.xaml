@@ -537,13 +537,21 @@
                 <Grid Background="#FFE4F1F9">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="devices:"
+                    <TextBlock Text="Device ID:"
                                Grid.Row="0"
                                HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="_deviceId_"
+                               Text="[TEXT_MISSING]"
+                               Grid.Row="1"
+                               IsTextSelectionEnabled="True"
+                               HorizontalAlignment="Center"/>
+                    <ListBox x:Name="_devicesIdList_"
+                         Grid.Row="2"/>
                 </Grid>
                 <Button x:Name="_addDevice_"
                         Grid.Row="1"

@@ -48,6 +48,10 @@ SmartPanel::SmartPanel()
     /* populate the smartlist */
     _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsList;
 
+
+    /* populate the device list*/
+///	_devicesIdList_ // not used so far
+
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
         _accountsList_->SelectedIndex = index;
@@ -127,9 +131,17 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     if (!account)
         return;
 
+    auto accountId = account->accountID_;
+
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
     Configuration::UserPreferences::instance->save();
-    _selectedAccountName_->Text = account->name_;
+
+    _selectedAccountName_->Text = accountId;
+    _devicesIdList_->ItemsSource = account->_devicesIdList;
+    _deviceId_->Text = account->_deviceId; /* this is the current device ...
+    ... in the way to get all associated devices, we have to querry the daemon : */
+    RingD::instance->askToRefreshKnownDevices(accountId);
+
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
