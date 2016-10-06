@@ -170,9 +170,12 @@ ContactsViewModel::Destringify(String^ data)
 }
 
 
-void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
-    auto contact = findContactByName(from);
+
+    auto item = SmartPanelItemsViewModel::instance->findItem(callId);
+    auto contact = item->_contact;
+
 
     /* the contact HAS TO BE already registered */
     if (contact) {
@@ -185,7 +188,7 @@ void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::St
 
         auto selectedContact = (item) ? item->_contact : nullptr;
 
-        if (contact->ringID_ == from && contact != selectedContact) {
+        if (contact != selectedContact) {
             contact->_unreadMessages++;
             /* saveContactsToFile used to save the notification */
             saveContactsToFile();
