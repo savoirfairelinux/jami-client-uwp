@@ -139,7 +139,7 @@ RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
 {}
 
 
-void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload)
+void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     scrollDown();
 }

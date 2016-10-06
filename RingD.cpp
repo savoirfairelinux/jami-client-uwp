@@ -296,7 +296,7 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto from2 = toPlatformString(from);
 
-                from2 = Utils::TrimRingId2(from2);
+                ///from2 = Utils::TrimFrom(from2);
 
 
                 const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
@@ -314,7 +314,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                         CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                     {
-                        incomingMessage(callId2, from2, payload);
+                        incomingMessage(callId2, payload);
                         MSG_("message recu :" + i.second);
                     }));
                 }

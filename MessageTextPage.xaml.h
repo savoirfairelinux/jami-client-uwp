@@ -49,7 +49,7 @@ private:
     void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void sendMessage();
-    void OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload);
+    void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
 };
 }
 }

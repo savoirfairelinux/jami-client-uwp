@@ -68,7 +68,7 @@ private:
     Contact^ currentItem_;
     Contact^ oldItem_;
 
-    void OnincomingMessage(Platform::String ^callId, Platform::String ^from, Platform::String ^payload);
+    void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
 };
 }
 }
