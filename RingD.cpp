@@ -384,7 +384,7 @@ RingClientUWP::RingD::startDaemon()
             DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
             {
                 auto accountId2 = Utils::toPlatformString(accountId);
-                auto pin2 = (pin.empty()) ? "Error Bad Password" : "Your generated pin :" + Utils::toPlatformString(pin);
+                auto pin2 = (pin.empty()) ? "Error bad password" : "Your generated pin : " + Utils::toPlatformString(pin);
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     exportOnRingEnded(accountId2, pin2);
@@ -611,6 +611,7 @@ RingD::dequeueTasks()
             ref new DispatchedHandler([=]() {
                 devicesListRefreshed(devicesList2);
             }));
+            break;
         }
         case Request::ExportOnRing:
         {
