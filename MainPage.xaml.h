@@ -21,6 +21,7 @@
 using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::Foundation;
+using namespace Windows::ApplicationModel::ExtendedExecution;
 
 namespace RingClientUWP
 {
@@ -45,13 +46,25 @@ protected:
     void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 
 private:
-    // event handlers
+    // Visibility and suspension
     void Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e);
+    EventRegistrationToken applicationSuspendingEventToken;
     void Application_VisibilityChanged(Object^ sender, Windows::UI::Core::VisibilityChangedEventArgs^ e);
+    EventRegistrationToken visibilityChangedEventToken;
+    void Application_Resuming(Object^ sender, Object^ args);
+    EventRegistrationToken applicationResumingEventToken;
+    //void Application_Closing(Object^ sender, Windows::UI::Core::^ e);
+    //EventRegistrationToken applicationClosingEventToken;
+
+    ExtendedExecutionSession^ session;
+    void SessionRevoked(Object^ sender, ExtendedExecutionRevokedEventArgs^ args);
+    EventRegistrationToken sessionRevokedToken;
+    task<void> BeginExtendedExecution();
+    void ClearExtendedExecution();
 
     // Multi-monitor, DPI, scale factor change, and window resize detection
     void DisplayProperties_DpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
-    Windows::Foundation::EventRegistrationToken dpiChangedtoken;
+    EventRegistrationToken dpiChangedtoken;
     Rect bounds;
 
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
