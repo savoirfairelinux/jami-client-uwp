@@ -102,6 +102,7 @@ private:
     void _pinGeneratorYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _pinGeneratorNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin);
+    void _closePin__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
