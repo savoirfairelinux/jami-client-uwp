@@ -270,7 +270,7 @@
                         <Button x:Name="_btnPause_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnPause__Tapped">
+                            Tapped="_btnPause__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Pause"/>
                         </Button>
                         <Button x:Name="_btnChat_"
@@ -282,37 +282,37 @@
                         <Button x:Name="_btnAddFriend_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnAddFriend__Tapped">
+                            Tapped="_btnAddFriend__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="AddFriend"/>
                         </Button>
                         <Button x:Name="_btnSwitch_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnSwitch__Tapped">
+                            Tapped="_btnSwitch__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Switch"/>
                         </Button>
                         <Button x:Name="_btnMicrophone_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnMicrophone__Tapped">
+                            Tapped="_btnMicrophone__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Microphone"/>
                         </Button>
                         <Button x:Name="_btnVideo_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnVideo__Tapped">
+                            Tapped="_btnVideo__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Video"/>
                         </Button>
                         <Button x:Name="_btnMemo_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnMemo__Tapped">
+                            Tapped="_btnMemo__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Memo"/>
                         </Button>
                         <Button x:Name="_btnHQ_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnHQ__Tapped">
+                            Tapped="_btnHQ__Tapped" Visibility="Collapsed">
                             <TextBlock FontSize="12" Text="HQ"/>
                         </Button>
                     </StackPanel>
