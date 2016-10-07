@@ -147,9 +147,6 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     _devicesMenuButton_->Visibility = (account->accountType_ == "RING")
                                       ? Windows::UI::Xaml::Visibility::Visible
                                       : Windows::UI::Xaml::Visibility::Collapsed;
-
-    RingD::instance->askToRefreshKnownDevices(name);
-
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -498,11 +495,22 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Unchecked(Platform::O
 {
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _waitingForPin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _passwordForPinGenerator_->Password = "";
+    // refacto : do something better...
+    _waitingAndResult_->Text = "Exporting account on the Ring...";
+
 }
 
 
 void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    RingD::instance->askToRefreshKnownDevices(accountId);
+
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -517,13 +525,16 @@ void RingClientUWP::Views::SmartPanel::_addDevice__Click(Platform::Object^ sende
 {
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _closePin_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
 void RingClientUWP::Views::SmartPanel::OndevicesListRefreshed(Platform::Collections::Vector<Platform::String ^, std::equal_to<Platform::String ^>, true> ^devicesList)
 {
+    _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     AccountsViewModel::instance->selectedAccount->_devicesIdList = devicesList;
     _devicesIdList_->ItemsSource = devicesList;
+    _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
@@ -534,6 +545,10 @@ void RingClientUWP::Views::SmartPanel::_pinGeneratorYes__Click(Platform::Object^
 
     auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
     auto password = _passwordForPinGenerator_->Password;
+    _passwordForPinGenerator_->Password = "";
+
+    /* hide the button while we are waiting... */
+    _closePin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
     RingD::instance->askToExportOnRing(accountId, password);
 }
@@ -543,11 +558,23 @@ void RingClientUWP::Views::SmartPanel::_pinGeneratorNo__Click(Platform::Object^ 
 {
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _devicesMenuButton_->IsChecked = false;
+    _passwordForPinGenerator_->Password = "";
 }
 
 
 void RingClientUWP::Views::SmartPanel::OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin)
 {
-    MSG_("XXXX");
     _waitingAndResult_->Text = pin;
+    _closePin_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+}
+
+
+void RingClientUWP::Views::SmartPanel::_closePin__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _waitingForPin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _devicesMenuButton_->IsChecked = false;
+
+    // refacto : do something better...
+    _waitingAndResult_->Text = "Exporting account on the Ring...";
 }

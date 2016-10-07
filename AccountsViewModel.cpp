@@ -26,6 +26,10 @@ using namespace ViewModel;
 AccountsViewModel::AccountsViewModel()
 {
     accountsList_ = ref new Vector<Account^>();
+
+    /* connect to delegate */
+
+
 }
 
 void

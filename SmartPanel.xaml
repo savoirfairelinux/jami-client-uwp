@@ -546,14 +546,23 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Text="Device ID:"
+                               Margin="10"
                                Grid.Row="0"
                                HorizontalAlignment="Center"/>
                     <TextBlock x:Name="_deviceId_"
+                               Margin="10"
                                Text="[TEXT_MISSING]"
+                               TextTrimming="CharacterEllipsis"
                                Grid.Row="1"
                                IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
+                    <TextBlock x:Name="_waitingDevicesList_"
+                               Text="waiting for devices list..."
+                               Grid.Row="2"
+                               IsTextSelectionEnabled="True"
+                               HorizontalAlignment="Center"/>
                     <ListBox x:Name="_devicesIdList_"
+                             Visibility="Collapsed"
                          Grid.Row="2"/>
                 </Grid>
                 <Button x:Name="_addDevice_"
@@ -632,7 +641,26 @@
                                Grid.Row="0"
                                Margin="10,10,0,10"/>
                 </Grid>
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_closePin_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE081;"
+                                Click="_closePin__Click"
+                                Style="{StaticResource ButtonStyle5}"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
+
+
+
+
+
+
+
         </Grid>
         <!-- smartList and settings. -->
         <Grid Grid.Row="1">
