@@ -71,6 +71,13 @@ MainPage::MainPage()
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
     dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
                        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
+
+    visibilityChangedEventToken = Window::Current->VisibilityChanged +=
+        ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
+    applicationSuspendingEventToken = Application::Current->Suspending +=
+        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+    applicationResumingEventToken = Application::Current->Resuming +=
+        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
 }
 
 void
@@ -251,21 +258,34 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     }
 
 }
-
+#include <dring.h>
+#include "callmanager_interface.h"
 void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
     WriteLine("Application_Suspending");
     if (Frame->CurrentSourcePageType.Name ==
-            Interop::TypeName(MainPage::typeid).Name)
-    {
-        if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
-            Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
-        //displayInformation->OrientationChanged -= displayInformationEventToken;
+            Interop::TypeName(MainPage::typeid).Name) {
         auto deferral = e->SuspendingOperation->GetDeferral();
-        Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
-        .then([this, deferral]() {
-            deferral->Complete();
+        BeginExtendedExecution()
+            .then([=](task<void> previousTask) {
+            try {
+                previousTask.get();
+            }
+            catch (Exception^ e) {
+                WriteLine("Exception: Extended Execution Begin");
+            }
+        })
+            .then([this, deferral](task<void> previousTask) {
+            try {
+                previousTask.get();
+                WriteLine("deferral->Complete()");
+                deferral->Complete();
+            }
+            catch (Exception^ e) {
+                WriteLine("Exception: Extended Execution");
+                deferral->Complete();
+            }
         });
     }
 }
@@ -273,16 +293,76 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
 void
 MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventArgs^ e)
 {
-    if (e->Visible)
-    {
+    if (e->Visible) {
         WriteLine("->Visible");
-        if (Video::VideoManager::instance->captureManager()->isInitialized) {
-            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
-        }
+        //Video::VideoManager::instance->
     }
-    else
-    {
+    else {
         WriteLine("->Invisible");
+        //Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
     }
 }
 
+void MainPage::Application_Resuming(Object^, Object^)
+{
+    WriteLine("Application_Resuming");
+}
+
+void
+MainPage::SessionRevoked(Object^ sender, ExtendedExecutionRevokedEventArgs^ args)
+{
+    Dispatcher->RunAsync(CoreDispatcherPriority::High, ref new DispatchedHandler([=]() {
+        ClearExtendedExecution();
+    }));
+}
+
+void
+MainPage::ClearExtendedExecution()
+{
+    if (session != nullptr) {
+        WriteLine("End Extended Execution");
+        session->Revoked -= sessionRevokedToken;
+    }
+}
+
+task<void>
+MainPage::BeginExtendedExecution()
+{
+    ClearExtendedExecution();
+
+    auto newSession = ref new ExtendedExecutionSession();
+    newSession->Reason = ExtendedExecutionReason::SavingData;
+    newSession->Description = "Extended Execution";
+    sessionRevokedToken = (newSession->Revoked += ref new TypedEventHandler<Object^,
+        ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
+    return create_task(newSession->RequestExtensionAsync())
+        .then([=](ExtendedExecutionResult result){
+        try {
+            switch (result)
+            {
+            case ExtendedExecutionResult::Allowed:
+                session = newSession;
+                WriteLine("Request Extended Execution Allowed");
+                WriteLine("Clean up camera...");
+                Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
+                    .then([](){
+                    WriteLine("Hang up calls...");
+                    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+                        if (item->_callId && item->_callStatus != CallStatus::NONE) {
+                            DRing::hangUp(Utils::toString(item->_callId));
+                        }
+                    }
+                });
+                break;
+
+                default:
+            case ExtendedExecutionResult::Denied:
+                WriteLine("Request Extended Execution Denied");
+                break;
+            }
+        }
+        catch (Exception^ e) {
+            WriteLine("Exception: Extended Execution Request");
+        }
+    });
+}
