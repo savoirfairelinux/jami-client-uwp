@@ -56,6 +56,9 @@ public:
             return daemonRunning_;
         }
     }
+    property StartingStatus _startingStatus;
+    property String^ _pin;
+    property String^ _password;
 
     void cancelOutGoingCall2(String^ callId); // marche
 
@@ -68,9 +71,6 @@ internal: // why this property has to be internal and not public ?
         }
     }
 
-    property StartingStatus _startingStatus;
-    property String^ _pin;
-    property String^ _password;
 
 internal:
     /* functions */
