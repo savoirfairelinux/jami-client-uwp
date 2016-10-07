@@ -295,11 +295,44 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
 {
     if (e->Visible) {
         WriteLine("->Visible");
-        //Video::VideoManager::instance->
+        auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
+        bool isInCall = false;
+        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
+                isInCall = true;
+                break;
+            }
+        }
+        if (isInCall) {
+            /*if (RingD::instance->currentCallId)
+                RingD::instance->unPauseCall(RingD::instance->currentCallId);*/
+            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
+            Video::VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
+        }
     }
     else {
         WriteLine("->Invisible");
-        //Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
+        auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
+        bool isInCall = false;
+        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
+                isInCall = true;
+                RingD::instance->currentCallId = item->_callId;
+                break;
+            }
+        }
+        if (isInCall) {
+            /*if (RingD::instance->currentCallId) {
+                WriteLine("Pausing call: " + RingD::instance->currentCallId);
+                RingD::instance->pauseCall(RingD::instance->currentCallId);
+            }*/
+            if (isPreviewing) {
+                Video::VideoManager::instance->captureManager()->StopPreviewAsync();
+                if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
+                    Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
+                Video::VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
+            }
+        }
     }
 }
 
@@ -347,11 +380,7 @@ MainPage::BeginExtendedExecution()
                 Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
                     .then([](){
                     WriteLine("Hang up calls...");
-                    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-                        if (item->_callId && item->_callStatus != CallStatus::NONE) {
-                            DRing::hangUp(Utils::toString(item->_callId));
-                        }
-                    }
+                    DRing::fini();
                 });
                 break;
 

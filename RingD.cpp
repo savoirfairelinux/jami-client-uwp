@@ -204,6 +204,18 @@ void RingClientUWP::RingD::hangUpCall2(String ^ callId)
     tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
 }
 
+void RingClientUWP::RingD::pauseCall(String ^ callId)
+{
+    MSG_("$1 pauseCall : " + Utils::toString(callId));
+    tasksList_.push(ref new RingD::Task(Request::PauseCall, callId));
+}
+
+void RingClientUWP::RingD::unPauseCall(String ^ callId)
+{
+    MSG_("$1 unPauseCall : " + Utils::toString(callId));
+    tasksList_.push(ref new RingD::Task(Request::UnPauseCall, callId));
+}
+
 void RingClientUWP::RingD::askToRefreshKnownDevices(String^ accountId)
 {
     auto task = ref new RingD::Task(Request::GetKnownDevices);
@@ -422,10 +434,6 @@ RingClientUWP::RingD::startDaemon()
             ([this](const std::string &id, const std::string &shmPath, bool isMixer) {
                 MSG_("<DecodingStopped>");
                 MSG_("Removing renderer id:" + id);
-                /*auto Id = Utils::toPlatformString(id);
-                auto renderer = Video::VideoManager::instance->rendererManager()->renderer(Id);
-                if (renderer)
-                    renderer->isRendering = false;*/
                 Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
             })
         };
@@ -534,6 +542,7 @@ RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
+    currentCallId = nullptr;
 }
 
 void
@@ -581,6 +590,16 @@ RingD::dequeueTasks()
         {
             auto callId = task->_callId;
             DRing::hangUp(Utils::toString(callId));
+        }
+        break;
+        case Request::PauseCall:
+        {
+            DRing::hold(Utils::toString(task->_callId));
+        }
+        break;
+        case Request::UnPauseCall:
+        {
+            DRing::unhold(Utils::toString(task->_callId));
         }
         break;
         case Request::RegisterDevice:
