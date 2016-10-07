@@ -134,12 +134,12 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     if (!account)
         return;
 
-    auto accountId = account->accountID_;
+    auto name = account->name_;
 
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
     Configuration::UserPreferences::instance->save();
 
-    _selectedAccountName_->Text = accountId;
+    _selectedAccountName_->Text = name;
 ///    _devicesIdList_->ItemsSource = account->_devicesIdList;
     _deviceId_->Text = account->_deviceId; /* this is the current device ...
     ... in the way to get all associated devices, we have to querry the daemon : */
@@ -148,7 +148,7 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
                                       ? Windows::UI::Xaml::Visibility::Visible
                                       : Windows::UI::Xaml::Visibility::Collapsed;
 
-    RingD::instance->askToRefreshKnownDevices(accountId);
+    RingD::instance->askToRefreshKnownDevices(name);
 
 }
 
