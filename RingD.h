@@ -32,7 +32,8 @@ delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void CallPlaced(String^ callId);
 delegate void IncomingMessage(String^ callId, String^ payload);
-//delegate void DevicesListRefreshed()
+delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
+delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 
 
 public ref class RingD sealed
@@ -90,6 +91,7 @@ internal:
 
     void hangUpCall2(String^ callId);
     void askToRefreshKnownDevices(String^ accountId);
+    void askToExportOnRing(String^ accountId, String^ password);
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
@@ -101,6 +103,8 @@ internal:
     event IncomingAccountMessage^ incomingAccountMessage;
     event IncomingMessage^ incomingMessage;
     event CallPlaced^ callPlaced;
+    event DevicesListRefreshed^ devicesListRefreshed;
+    event ExportOnRingEnded^ exportOnRingEnded;
 
 private:
     /* sub classes */
@@ -113,7 +117,8 @@ private:
         CancelOutGoingCall,
         HangUpCall,
         RegisterDevice,
-        GetKnownDevices
+        GetKnownDevices,
+        ExportOnRing
     };
 
 

@@ -98,6 +98,10 @@ private:
     void _devicesMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _devicesMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _addDevice__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void OndevicesListRefreshed(Platform::Collections::Vector<Platform::String ^, std::equal_to<Platform::String ^>, true> ^devicesList);
+    void _pinGeneratorYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _pinGeneratorNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin);
 };
 }
 }

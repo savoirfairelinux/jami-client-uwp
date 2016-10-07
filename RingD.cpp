@@ -57,12 +57,12 @@ RingClientUWP::RingD::reloadAccountList()
         if(!ringID.empty())
             ringID = ringID.substr(5);
 
-        RingClientUWP::ViewModel::AccountsViewModel::instance->add(
-            accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second,             // alias
-            ringID,                                                                         // ringid
-            accountDetails.find(DRing::Account::ConfProperties::TYPE)->second,              // account type
-            *rit,                                                                           // account id
-            accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second);   // device id
+        auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
+        auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
+        auto deviceId = (type == "SIP")? std::string() : accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
+
+        RingClientUWP::ViewModel::AccountsViewModel::instance->add(alias, ringID, type, *rit /*account id*/, deviceId);
+
     }
 
     // load user preferences
@@ -208,6 +208,15 @@ void RingClientUWP::RingD::askToRefreshKnownDevices(String^ accountId)
 {
     auto task = ref new RingD::Task(Request::GetKnownDevices);
     task->_accountId = accountId;
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::askToExportOnRing(String ^ accountId, String ^ password)
+{
+    auto task = ref new RingD::Task(Request::ExportOnRing);
+    task->_accountId = accountId;
+    task->_password = password;
 
     tasksList_.push(task);
 }
@@ -369,7 +378,16 @@ RingClientUWP::RingD::startDaemon()
             {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                    RingDebug::instance->print("toto");
+                    RingDebug::instance->print("KnownDevicesChanged ---> C PAS FINI");
+                }));
+            }),
+            DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
+            {
+                auto accountId2 = Utils::toPlatformString(accountId);
+                auto pin2 = (pin.empty()) ? "Error Bad Password" : "Your generated pin :" + Utils::toPlatformString(pin);
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    exportOnRingEnded(accountId2, pin2);
                 }));
             })
 
@@ -584,8 +602,25 @@ RingD::dequeueTasks()
             auto accountId2 = Utils::toString(accountId);
 
             auto devicesList = DRing::getKnownRingDevices(accountId2);
+            if (devicesList.empty())
+                break;
+
             auto devicesList2 = translateKnownRingDevices(devicesList);
 
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+            ref new DispatchedHandler([=]() {
+                devicesListRefreshed(devicesList2);
+            }));
+        }
+        case Request::ExportOnRing:
+        {
+            auto accountId = task->_accountId;
+            auto password = task->_password;
+
+            auto accountId2 = Utils::toString(accountId);
+            auto password2 = Utils::toString(password);
+
+            DRing::exportOnRing(accountId2, password2);
         }
         default:
             break;
@@ -621,7 +656,10 @@ Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<
     for (auto i : devices) {
         MSG_("devices.first = " + i.first);
         MSG_("devices.second = " + i.second);
+        auto deviceName = Utils::toPlatformString(i.second);
+        devicesList->Append(deviceName);
     }
+
 
 
     return devicesList;
