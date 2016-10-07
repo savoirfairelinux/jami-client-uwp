@@ -208,6 +208,12 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
 
 void RingClientUWP::Views::VideoPage::_btnPause__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
+    /*auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    if (item->_callStatus == CallStatus::IN_PROGRESS)
+        RingD::instance->pauseCall(item->_callId);
+    else if (item->_callStatus == CallStatus::PAUSED)
+        RingD::instance->unPauseCall(item->_callId);*/
+
     pauseCall();
 }
 
