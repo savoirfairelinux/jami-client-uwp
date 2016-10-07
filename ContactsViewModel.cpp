@@ -172,7 +172,7 @@ ContactsViewModel::Destringify(String^ data)
 
 void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
-
+    auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);
     auto contact = item->_contact;
 

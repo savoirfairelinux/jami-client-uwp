@@ -296,9 +296,6 @@ RingClientUWP::RingD::startDaemon()
                 auto callId2 = toPlatformString(callId);
                 auto from2 = toPlatformString(from);
 
-                ///from2 = Utils::TrimFrom(from2);
-
-
                 const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
                 static const unsigned int profileSize = PROFILE_VCF.size();
 
@@ -328,8 +325,12 @@ RingClientUWP::RingD::startDaemon()
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                     ref new DispatchedHandler([=]() {
                         reloadAccountList();
-                        auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                        dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+                        std::vector<std::string> accountList = DRing::getAccountList();
+                        auto last_id = accountList.back();
+                        if (!account_id.compare(last_id)) {
+                            auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+                        }
                     }));
                 }
             }),
