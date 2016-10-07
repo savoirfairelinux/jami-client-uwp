@@ -90,12 +90,15 @@ internal:
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
 
     void hangUpCall2(String^ callId);
+    void pauseCall(String ^ callId);
+    void unPauseCall(String ^ callId);
     void askToRefreshKnownDevices(String^ accountId);
     void askToExportOnRing(String^ accountId, String^ password);
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
     std::string accountName;
+    String ^ currentCallId; // to save ongoing call id during visibility change
 
     /* events */
     event IncomingCall^ incomingCall;
@@ -116,6 +119,8 @@ private:
         AcceptIncommingCall,
         CancelOutGoingCall,
         HangUpCall,
+        PauseCall,
+        UnPauseCall,
         RegisterDevice,
         GetKnownDevices,
         ExportOnRing
