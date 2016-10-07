@@ -34,7 +34,7 @@ public:
 
     property String^ name_;
     property String^ ringID_;
-    property String^ accountType_;
+    property String^ accountType_; // refacto : create a enum accountType
     property String^ accountID_;
     property String^ _deviceId;
     property Windows::Foundation::Collections::IVector<String^>^ _devicesIdList {
