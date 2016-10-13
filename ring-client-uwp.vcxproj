@@ -102,8 +102,8 @@
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>115755ECEE36DEA516C910E0534B36F7ACAC690B</PackageCertificateThumbprint>
-    <AppxPackageDir>C:\Users\andreas.traczyk\Desktop\</AppxPackageDir>
+    <PackageCertificateThumbprint>13DE1E90818B523E210522CE40C78F2AD099C412</PackageCertificateThumbprint>
+    <AppxPackageDir>C:\Users\user\Desktop\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -251,6 +251,12 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\ring-daemon\contrib\redist\msvcr100.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
+    <None Include="..\ring-daemon\contrib\redist\pthreadVC2.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="ring-client-uwp_TemporaryKey.pfx" />

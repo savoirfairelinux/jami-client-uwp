@@ -241,6 +241,12 @@
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
+    <None Include="..\ring-daemon\contrib\redist\msvcr100.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\redist\pthreadVC2.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
