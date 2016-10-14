@@ -322,11 +322,10 @@ VideoCaptureManager::CopyFrame(Object^ sender, Object^ e)
 task<void>
 VideoCaptureManager::CopyFrameAsync()
 {
-    auto previewProperties = static_cast<MediaProperties::VideoEncodingProperties^>(
-            mediaCapture->VideoDeviceController->GetMediaStreamProperties(Capture::MediaStreamType::VideoPreview));
-    unsigned int videoFrameWidth = previewProperties->Width;
-    unsigned int videoFrameHeight = previewProperties->Height;
+    unsigned int videoFrameWidth = activeDevice->channel()->currentResolution()->size()->width();
+    unsigned int videoFrameHeight = activeDevice->channel()->currentResolution()->size()->height();
 
+    // for now, only bgra
     auto videoFrame = ref new VideoFrame(BitmapPixelFormat::Bgra8, videoFrameWidth, videoFrameHeight);
 
     try {
@@ -375,9 +374,10 @@ VideoCaptureManager::CopyFrameAsync()
                     delete buffer;
                 }
                 delete currentFrame;
+
             }
             catch (Exception^ e) {
-                WriteLine("failed to copy frame to bitmap");
+                WriteLine("failed to copy frame to daemon's buffer");
             }
         }).then([=](task<void> previousTask) {
             try {
