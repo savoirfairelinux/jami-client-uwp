@@ -17,6 +17,8 @@
 **************************************************************************/
 #pragma once
 
+using namespace Windows::Storage;
+
 namespace RingClientUWP
 {
 
@@ -40,6 +42,8 @@ public:
         }
     }
 
+    property StorageFile^ _logFile;
+
     /* properties */
 
     /* functions */
@@ -51,7 +55,7 @@ internal:
     event debugMessageToScreen^ messageToScreen;
 
 private:
-    RingDebug() {}; // singleton
+    RingDebug(); // singleton
 };
 
 void WriteLine(String^ str)

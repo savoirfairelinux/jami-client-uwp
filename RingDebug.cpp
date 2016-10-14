@@ -24,6 +24,7 @@ using namespace RingClientUWP;
 
 using namespace Platform;
 using namespace Windows::UI::Core;
+using namespace Windows::Storage;
 
 void
 RingDebug::print(const std::string& message,
@@ -53,5 +54,21 @@ RingDebug::print(const std::string& message,
     OutputDebugString((wString + L"\n").c_str());
 
     /* fire the event. */
-    messageToScreen(ref new String(wString.c_str(), wString.length()));
+    auto line = ref new String(wString.c_str(), wString.length());
+    messageToScreen(line);
+    FileIO::AppendTextAsync(_logFile, line+"\n");
 }
+
+RingClientUWP::RingDebug::RingDebug()
+{
+    StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
+
+    StorageFile^ logFile;
+
+    task<StorageFile^>(storageFolder->CreateFileAsync("debug.log", CreationCollisionOption::ReplaceExisting)).then([this](StorageFile^ file)
+    {
+        this->_logFile = file;
+    });
+
+}
+
