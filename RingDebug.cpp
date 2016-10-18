@@ -56,7 +56,18 @@ RingDebug::print(const std::string& message,
     /* fire the event. */
     auto line = ref new String(wString.c_str(), wString.length());
     messageToScreen(line);
-    FileIO::AppendTextAsync(_logFile, line+"\n");
+    FileIO::AppendTextAsync(_logFile, line + "\n");
+}
+
+void RingClientUWP::RingDebug::WriteLine(String^ str)
+{
+    /* save in file */
+    // __await FileIO::AppendTextAsync(_videoFile, str + "\n");
+
+    /* screen in visual studio console */
+    std::wstringstream wStringstream;
+    wStringstream << str->Data() << "\n";
+    OutputDebugString(wStringstream.str().c_str());
 }
 
 RingClientUWP::RingDebug::RingDebug()
@@ -68,6 +79,11 @@ RingClientUWP::RingDebug::RingDebug()
     task<StorageFile^>(storageFolder->CreateFileAsync("debug.log", CreationCollisionOption::ReplaceExisting)).then([this](StorageFile^ file)
     {
         this->_logFile = file;
+    });
+
+    task<StorageFile^>(storageFolder->CreateFileAsync("video.log", CreationCollisionOption::ReplaceExisting)).then([this](StorageFile^ file)
+    {
+        this->_videoFile = file;
     });
 
 }
