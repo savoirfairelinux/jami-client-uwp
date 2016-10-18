@@ -52,11 +52,42 @@ LoadingPage::LoadingPage()
     .then([this](bool config_exists)
     {
         if (config_exists) {
-            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
-                this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
-            }));
+            Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
+            .then([this](bool token_exists)
+            {
+                if (token_exists) {
+                    /* we have a token, the config has to be considered as corrupted, summon the wizard */
+
+                    Utils::fileExists(ApplicationData::Current->LocalFolder, ".config\\dring.yml")
+                    .then([this](bool token_exists)
+                    {
+                        if (token_exists) {
+                            StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
+                            task<StorageFile^>(storageFolder->GetFileAsync(".config\\dring.yml")).then([this](StorageFile^ folder)
+                            {
+                                folder->DeleteAsync();
+                            });
+                        }
+                    });
+
+                    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
+                        this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
+                    }));
+                }
+                else {
+                    /* there is no token and we have a config.yml, summon the main page */
+                    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
+                        this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
+                    }));
+                }
+            });
         }
         else {
+            /* no config file, create the token and summon the wizard*/
+            StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
+
+            storageFolder->CreateFileAsync("creation.token", CreationCollisionOption::ReplaceExisting);
+
             this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
                 this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
             }));
