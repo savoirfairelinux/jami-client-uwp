@@ -94,6 +94,7 @@ internal:
     void unPauseCall(String ^ callId);
     void askToRefreshKnownDevices(String^ accountId);
     void askToExportOnRing(String^ accountId, String^ password);
+    void eraseCacheFolder();
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
