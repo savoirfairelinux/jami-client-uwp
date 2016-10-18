@@ -528,6 +528,21 @@ RingClientUWP::RingD::startDaemon()
             }
             }
 
+
+            /* at this point the config.yml is safe. */
+            Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
+            .then([this](bool token_exists)
+            {
+                if (token_exists) {
+                    StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
+                    task<StorageFile^>(storageFolder->GetFileAsync("creation.token")).then([this](StorageFile^ file)
+                    {
+                        file->DeleteAsync();
+                    });
+                }
+            });
+
+
             while (true) {
                 DRing::pollEvents();
                 dequeueTasks();
