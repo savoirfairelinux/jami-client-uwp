@@ -43,6 +43,7 @@ public:
     }
 
     property StorageFile^ _logFile;
+    property StorageFile^ _videoFile;
 
     /* properties */
 
@@ -50,6 +51,8 @@ public:
 internal:
     enum class Type { MSG, WNG, ERR };
     void print(const std::string& message, const Type& type = Type::MSG);
+
+    void WriteLine(String^ str);
 
     /* event */
     event debugMessageToScreen^ messageToScreen;
