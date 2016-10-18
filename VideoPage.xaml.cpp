@@ -73,12 +73,12 @@ VideoPage::VideoPage()
                         previousTask.get();
                     }
                     catch (Platform::Exception^ e) {
-                        WriteLine( "Caught exception from previous task.\n" );
+                        RingDebug::instance->WriteLine( "Caught exception from previous task.\n" );
                     }
                 });
             }
             catch(Platform::COMException^ e) {
-                WriteLine(e->ToString());
+                RingDebug::instance->WriteLine(e->ToString());
             }
         }));
     });

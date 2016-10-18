@@ -51,6 +51,9 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
+
+
+
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
 
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
@@ -73,11 +76,11 @@ MainPage::MainPage()
                        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
-        ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
+                                      ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
     applicationSuspendingEventToken = Application::Current->Suspending +=
-        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+                                          ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
     applicationResumingEventToken = Application::Current->Resuming +=
-        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
 }
 
 void
@@ -123,6 +126,7 @@ RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
     RingD::instance->startDaemon();
     showLoadingOverlay(true, false);
+
 }
 
 void
@@ -263,27 +267,27 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
 void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
-    WriteLine("Application_Suspending");
+    RingDebug::instance->WriteLine("Application_Suspending");
     if (Frame->CurrentSourcePageType.Name ==
             Interop::TypeName(MainPage::typeid).Name) {
         auto deferral = e->SuspendingOperation->GetDeferral();
         BeginExtendedExecution()
-            .then([=](task<void> previousTask) {
+        .then([=](task<void> previousTask) {
             try {
                 previousTask.get();
             }
             catch (Exception^ e) {
-                WriteLine("Exception: Extended Execution Begin");
+                RingDebug::instance->WriteLine("Exception: Extended Execution Begin");
             }
         })
-            .then([this, deferral](task<void> previousTask) {
+        .then([this, deferral](task<void> previousTask) {
             try {
                 previousTask.get();
-                WriteLine("deferral->Complete()");
+                RingDebug::instance->WriteLine("deferral->Complete()");
                 deferral->Complete();
             }
             catch (Exception^ e) {
-                WriteLine("Exception: Extended Execution");
+                RingDebug::instance->WriteLine("Exception: Extended Execution");
                 deferral->Complete();
             }
         });
@@ -294,7 +298,7 @@ void
 MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventArgs^ e)
 {
     if (e->Visible) {
-        WriteLine("->Visible");
+        RingDebug::instance->WriteLine("->Visible");
         auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
@@ -311,7 +315,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         }
     }
     else {
-        WriteLine("->Invisible");
+        RingDebug::instance->WriteLine("->Invisible");
         auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
@@ -338,7 +342,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
 
 void MainPage::Application_Resuming(Object^, Object^)
 {
-    WriteLine("Application_Resuming");
+    RingDebug::instance->WriteLine("Application_Resuming");
 }
 
 void
@@ -353,7 +357,7 @@ void
 MainPage::ClearExtendedExecution()
 {
     if (session != nullptr) {
-        WriteLine("End Extended Execution");
+        RingDebug::instance->WriteLine("End Extended Execution");
         session->Revoked -= sessionRevokedToken;
     }
 }
@@ -367,31 +371,31 @@ MainPage::BeginExtendedExecution()
     newSession->Reason = ExtendedExecutionReason::SavingData;
     newSession->Description = "Extended Execution";
     sessionRevokedToken = (newSession->Revoked += ref new TypedEventHandler<Object^,
-        ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
+                           ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
     return create_task(newSession->RequestExtensionAsync())
-        .then([=](ExtendedExecutionResult result){
+    .then([=](ExtendedExecutionResult result) {
         try {
             switch (result)
             {
             case ExtendedExecutionResult::Allowed:
                 session = newSession;
-                WriteLine("Request Extended Execution Allowed");
-                WriteLine("Clean up camera...");
+                RingDebug::instance->WriteLine("Request Extended Execution Allowed");
+                RingDebug::instance->WriteLine("Clean up camera...");
                 Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
-                    .then([](){
-                    WriteLine("Hang up calls...");
+                .then([]() {
+                    RingDebug::instance->WriteLine("Hang up calls...");
                     DRing::fini();
                 });
                 break;
 
-                default:
+            default:
             case ExtendedExecutionResult::Denied:
-                WriteLine("Request Extended Execution Denied");
+                RingDebug::instance->WriteLine("Request Extended Execution Denied");
                 break;
             }
         }
         catch (Exception^ e) {
-            WriteLine("Exception: Extended Execution Request");
+            RingDebug::instance->WriteLine("Exception: Extended Execution Request");
         }
     });
 }
