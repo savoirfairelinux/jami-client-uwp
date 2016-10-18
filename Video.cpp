@@ -145,7 +145,7 @@ Resolution::Resolution(Video::Size^ size):
 String^
 Resolution::name()
 {
-   return size()->width().ToString() + "x" + size()->height().ToString();
+    return size()->width().ToString() + "x" + size()->height().ToString();
 }
 
 Rate^
@@ -193,12 +193,12 @@ Resolution::setFormat(String^ format)
 bool
 Resolution::setActiveRate(Rate^ rate)
 {
-   if (m_currentRate == rate)
-      return false;
+    if (m_currentRate == rate)
+        return false;
 
-   m_currentRate = rate;
-   // set camera device rate here
-   return true;
+    m_currentRate = rate;
+    // set camera device rate here
+    return true;
 }
 
 /************************************************************
@@ -222,7 +222,7 @@ Device::id()
 Vector<Channel^>^
 Device::channelList()
 {
-   return m_channels;
+    return m_channels;
 }
 
 String^
@@ -261,7 +261,7 @@ bool
 Device::isActive()
 {
     return false;
-   //return Video::DeviceModel::instance().activeDevice() == this;
+    //return Video::DeviceModel::instance().activeDevice() == this;
 }
 
 void
@@ -270,12 +270,12 @@ Device::SetDeviceProperties(String^ format, int width, int height, int rate)
     auto rl = m_currentChannel->resolutionList();
     for (auto res : rl) {
         if (res->format() == format &&
-            res->size()->width() == width &&
-            res->size()->height() == height &&
-            res->activeRate()->value() == rate)
+                res->size()->width() == width &&
+                res->size()->height() == height &&
+                res->activeRate()->value() == rate)
         {
             m_currentChannel->setCurrentResolution(res);
-            WriteLine("SetDeviceProperties");
+            RingDebug::instance->WriteLine("SetDeviceProperties");
             return;
         }
     }
