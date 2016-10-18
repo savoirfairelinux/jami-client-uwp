@@ -199,6 +199,7 @@
                            Foreground="Crimson"
                            Margin="10,5,10,0"
                            FontSize="14"
+                           IsTextSelectionEnabled="True"
                            TextTrimming="CharacterEllipsis"
                            Text="{x:Bind ringID_}"/>
             </Grid>
