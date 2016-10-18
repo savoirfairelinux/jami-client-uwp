@@ -233,9 +233,28 @@ void RingClientUWP::RingD::askToExportOnRing(String ^ accountId, String ^ passwo
     tasksList_.push(task);
 }
 
+void RingClientUWP::RingD::eraseCacheFolder()
+{
+    StorageFolder^ localFolder = ApplicationData::Current->LocalFolder;
+    String^ folderName = ".cache";
+
+    task<IStorageItem^>(localFolder->TryGetItemAsync(folderName)).then([this](IStorageItem^ folder)
+    {
+        if (folder) {
+            MSG_("erasing cache folder.");
+            folder->DeleteAsync();
+        }
+        else {
+            WNG_("cache folder not found.");
+        }
+    });
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
+    eraseCacheFolder();
+
     create_task([&]()
     {
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
