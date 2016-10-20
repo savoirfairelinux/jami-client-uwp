@@ -214,6 +214,9 @@
     <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
+    <Image Include="Assets\qrCodeIcon.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
