@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="libqrencode">
+      <UniqueIdentifier>{028cb178-238a-4290-ae02-af6392847b87}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="qrcodelib.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\bitstream.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\qrcode\getopt.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mask.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mmask.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\mqrspec.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\qrenc.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\qrencode.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\qrinput.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\qrspec.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\rscode.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\split.c">
+      <Filter>libqrencode</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="qrcodelib.def">
+      <Filter>Source Files</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\bitstream.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mask.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mmask.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\mqrspec.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qrencode.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qrinput.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\qrspec.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\rscode.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\split.h">
+      <Filter>libqrencode</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+</Project>

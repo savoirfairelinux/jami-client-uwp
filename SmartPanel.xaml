@@ -199,7 +199,6 @@
                            Foreground="Crimson"
                            Margin="10,5,10,0"
                            FontSize="14"
-                           IsTextSelectionEnabled="True"
                            TextTrimming="CharacterEllipsis"
                            Text="{x:Bind ringID_}"/>
             </Grid>
@@ -384,14 +383,16 @@
                                       Checked="_accountsMenuButton__Checked"
                                       Unchecked="_accountsMenuButton__Unchecked"
                                       Style="{StaticResource ToggleButtonStyle1}"/>
-                        <!-- _shareMenuButton_ collapsed on purpose -->
+                        <!-- _shareMenuButton_ -->
                         <ToggleButton x:Name="_shareMenuButton_"
                                       VerticalAlignment="Bottom"
-                                      Visibility="Collapsed"
-                                      Content="&#xE72D;"
                                       Checked="_shareMenuButton__Checked"
                                       Unchecked="_shareMenuButton__Unchecked"
-                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                                      Style="{StaticResource ToggleButtonStyle1}">
+                            <Image Source="Assets/qrCodeIcon.png"
+                                   Stretch="Uniform"/>
+                        </ToggleButton>
+                        <!-- _devicesMenuButton_ -->
                         <ToggleButton x:Name="_devicesMenuButton_"
                                       VerticalAlignment="Bottom"
                                       Content="&#xE836;"
@@ -514,20 +515,33 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <Image x:Name="_selectedAccountQrCode_"
-                           Source="Assets\TESTS\qrcode.png"
+                    <Grid Background="white"
+                          Margin="10"
+                          MaxHeight="150"
+                          MaxWidth="140"
+                          Padding="5">
+                        <Image x:Name="_selectedAccountQrCode_"
                            Width="200"
                            Margin="5"
                            Grid.Row="0"
+                           Stretch="None"
                            Height="200"/>
-                    <TextBlock Text="RingId:"
+                    </Grid>
+                    <TextBlock x:Name="_ringId_"
+                               Padding="5"
+                               Style="{StaticResource TextStyle4}"
+                               Text=""
                                Grid.Row="1"
+                               IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
-                    <TextBox Style="{StaticResource TextBoxStyle2}"
-                             HorizontalAlignment="Center"
-                             Text="c4fc649aed8b2497a5e98fd2d856222f07020044"
-                             Grid.Row="2"/>
                 </Grid>
+                <Button x:Name="_shareMenuDone_"
+                        Grid.Row="1"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Content="&#xE081;"
+                        Click="_shareMenuDone__Click"
+                        Style="{StaticResource ButtonStyle6}"/>
             </Grid>
             <!-- devices menu. -->
             <Grid x:Name="_devicesMenuGrid_"

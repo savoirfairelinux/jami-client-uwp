@@ -56,6 +56,17 @@
         <Setter Property="Foreground"
                 Value="White"/>
     </Style>
+    <Style x:Key="TextStyle4"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="12"/>
+        <Setter Property="HorizontalAlignment"
+                Value="Center"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+    </Style>
     <Style x:Key="TextSegoeStyle1"
            TargetType="TextBlock">
         <Setter Property="FontFamily"
