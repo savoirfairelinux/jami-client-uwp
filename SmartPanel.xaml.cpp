@@ -19,6 +19,8 @@
 #include "pch.h"
 #include <string> // move it
 #include "SmartPanel.xaml.h"
+#include "qrencode.h"
+#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace Platform;
 
@@ -34,6 +36,10 @@ using namespace Windows::UI::Xaml::Shapes;
 using namespace Windows::UI::Xaml::Media;
 using namespace Concurrency;
 using namespace Windows::Foundation;
+using namespace Windows::Graphics::Imaging;
+using namespace Windows::Foundation;
+using namespace Concurrency;
+
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
@@ -147,6 +153,10 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     _devicesMenuButton_->Visibility = (account->accountType_ == "RING")
                                       ? Windows::UI::Xaml::Visibility::Visible
                                       : Windows::UI::Xaml::Visibility::Collapsed;
+
+    _shareMenuButton_->Visibility = (account->accountType_ == "RING")
+                                    ? Windows::UI::Xaml::Visibility::Visible
+                                    : Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -207,6 +217,8 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Checked(Platform::Objec
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuButton_->IsChecked = false;
     _devicesMenuButton_->IsChecked = false;
+
+    generateQRcode();
 }
 
 void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -418,6 +430,75 @@ void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::O
 
 }
 
+void RingClientUWP::Views::SmartPanel::generateQRcode()
+{
+    auto ringId = AccountsViewModel::instance->selectedAccount->ringID_;
+    auto ringId2 = Utils::toString(ringId);
+
+    _ringId_->Text = ringId;
+
+    auto qrcode = QRcode_encodeString(ringId2.c_str(),
+                                      0, //Let the version be decided by libqrencode
+                                      QR_ECLEVEL_L, // Lowest level of error correction
+                                      QR_MODE_8, // 8-bit data mode
+                                      1);
+
+    if (!qrcode) {
+        WNG_("Failed to generate QR code: ");
+        return;
+    }
+
+    const int STRETCH_FACTOR = 4;
+    const int widthQrCode = qrcode->width;
+    const int widthBitmap = STRETCH_FACTOR * widthQrCode;
+
+    unsigned char* qrdata = qrcode->data;
+
+    auto frame = ref new SoftwareBitmap(BitmapPixelFormat::Bgra8, widthBitmap, widthBitmap, BitmapAlphaMode::Premultiplied);
+
+    const int BYTES_PER_PIXEL = 4;
+
+
+    BitmapBuffer^ buffer = frame->LockBuffer(BitmapBufferAccessMode::ReadWrite);
+    IMemoryBufferReference^ reference = buffer->CreateReference();
+
+    Microsoft::WRL::ComPtr<IMemoryBufferByteAccess> byteAccess;
+    if (SUCCEEDED(reinterpret_cast<IUnknown*>(reference)->QueryInterface(IID_PPV_ARGS(&byteAccess))))
+    {
+        byte* data;
+        unsigned capacity;
+        byteAccess->GetBuffer(&data, &capacity);
+
+        auto desc = buffer->GetPlaneDescription(0);
+
+        unsigned char* row, * p;
+        p = qrcode->data;
+
+        for (int u = 0 ; u < widthBitmap ; u++) {
+            for (int v = 0; v < widthBitmap; v++) {
+                int x = (float)u / (float)widthBitmap * (float)widthQrCode;
+                int y = (float)v / (float)widthBitmap * (float)widthQrCode;
+
+                auto currPixelRow = desc.StartIndex + desc.Stride * u + BYTES_PER_PIXEL * v;
+                row = (p + (y * widthQrCode));
+
+                if (*(row + x) & 0x1) {
+                    data[currPixelRow + 3] = 255;
+                }
+            }
+        }
+
+    }
+    delete reference;
+    delete buffer;
+
+    auto sbSource = ref new Media::Imaging::SoftwareBitmapSource();
+
+    sbSource->SetBitmapAsync(frame);
+
+    _selectedAccountQrCode_->Source = sbSource;
+}
+
 Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto state = static_cast<CallStatus>(value);
@@ -577,4 +658,12 @@ void RingClientUWP::Views::SmartPanel::_closePin__Click(Platform::Object^ sender
 
     // refacto : do something better...
     _waitingAndResult_->Text = "Exporting account on the Ring...";
+}
+
+
+void RingClientUWP::Views::SmartPanel::_shareMenuDone__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _shareMenuButton_->IsChecked = false;
+
+    _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
