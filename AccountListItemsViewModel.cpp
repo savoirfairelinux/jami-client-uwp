@@ -50,3 +50,13 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
 {
     itemsList_->Clear();
 }
+
+AccountListItem^
+RingClientUWP::ViewModel::AccountListItemsViewModel::findItem(String^ accountId)
+{
+    for each (AccountListItem^ item in itemsList_)
+        if (item->_account->accountID_ == accountId)
+            return item;
+
+    return nullptr;
+}

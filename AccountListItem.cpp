@@ -31,7 +31,8 @@ using namespace ViewModel;
 
 AccountListItem::AccountListItem(Account^ a)
 {
-	    _account = a;
+    _account = a;
+    _editionMode = false;
 }
 
 void

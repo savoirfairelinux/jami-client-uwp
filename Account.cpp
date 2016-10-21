@@ -31,13 +31,15 @@ Account::Account(String^ name,
                  String^ ringID,
                  String^ accountType,
                  String^ accountID,
-                 String^ deviceId)
+                 String^ deviceId,
+                 bool upnpState)
 {
     name_ = name;
     ringID_ = ringID;
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
+    _upnpState = _upnpState;
 }
 
 void
