@@ -104,6 +104,12 @@
     <ClCompile Include="VideoCaptureManager.cpp">
       <Filter>Media\Video</Filter>
     </ClCompile>
+    <ClCompile Include="AccountListItem.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="AccountListItemsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -163,6 +169,12 @@
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountListItem.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountListItemsViewModel.h">
+      <Filter>ModelViews</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

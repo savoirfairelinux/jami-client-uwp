@@ -39,6 +39,8 @@ using namespace Windows::Foundation;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::Foundation;
 using namespace Concurrency;
+using namespace Platform::Collections;
+
 
 
 using namespace Windows::ApplicationModel::Core;
@@ -49,7 +51,8 @@ SmartPanel::SmartPanel()
 {
     InitializeComponent();
 
-    _accountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
+    /* populate accounts listBox*/
+    _accountsList_->ItemsSource = AccountListItemsViewModel::instance->itemsList;
 
     /* populate the smartlist */
     _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsList;
@@ -60,6 +63,9 @@ SmartPanel::SmartPanel()
 
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
+        auto i = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource);
+        auto ii = i->Size;
+        ////if ()
         _accountsList_->SelectedIndex = index;
     });
     Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
@@ -136,25 +142,25 @@ SmartPanel::SmartPanel()
 void
 RingClientUWP::Views::SmartPanel::updatePageContent()
 {
-    auto account = AccountsViewModel::instance->selectedAccount;
-    if (!account)
+    auto accountListItem = AccountListItemsViewModel::instance->_selectedItem;
+    if (!accountListItem)
         return;
 
-    auto name = account->name_;
+    auto name = accountListItem->_account->name_;
 
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
     Configuration::UserPreferences::instance->save();
 
-    _selectedAccountName_->Text = name;
+    _selectedAccountName_->Text = name; // refacto : bind this in xaml directly
 ///    _devicesIdList_->ItemsSource = account->_devicesIdList;
-    _deviceId_->Text = account->_deviceId; /* this is the current device ...
+    _deviceId_->Text = accountListItem->_account->_deviceId; /* this is the current device ...
     ... in the way to get all associated devices, we have to querry the daemon : */
 
-    _devicesMenuButton_->Visibility = (account->accountType_ == "RING")
+    _devicesMenuButton_->Visibility = (accountListItem->_account->accountType_ == "RING")
                                       ? Windows::UI::Xaml::Visibility::Visible
                                       : Windows::UI::Xaml::Visibility::Collapsed;
 
-    _shareMenuButton_->Visibility = (account->accountType_ == "RING")
+    _shareMenuButton_->Visibility = (accountListItem->_account->accountType_ == "RING")
                                     ? Windows::UI::Xaml::Visibility::Visible
                                     : Windows::UI::Xaml::Visibility::Collapsed;
 }
@@ -321,8 +327,8 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
             }
         }
     }
-    auto account = safe_cast<Account^>(listbox->SelectedItem);
-    AccountsViewModel::instance->selectedAccount = account;
+    auto account = safe_cast<AccountListItem^>(listbox->SelectedItem);
+    AccountListItemsViewModel::instance->_selectedItem = account;
     updatePageContent();
 }
 
@@ -432,7 +438,7 @@ void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::O
 
 void RingClientUWP::Views::SmartPanel::generateQRcode()
 {
-    auto ringId = AccountsViewModel::instance->selectedAccount->ringID_;
+    auto ringId = AccountListItemsViewModel::instance->_selectedItem->_account->ringID_;
     auto ringId2 = Utils::toString(ringId);
 
     _ringId_->Text = ringId;
@@ -589,7 +595,7 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Obj
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
     RingD::instance->askToRefreshKnownDevices(accountId);
 
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -613,7 +619,7 @@ void RingClientUWP::Views::SmartPanel::_addDevice__Click(Platform::Object^ sende
 void RingClientUWP::Views::SmartPanel::OndevicesListRefreshed(Platform::Collections::Vector<Platform::String ^, std::equal_to<Platform::String ^>, true> ^devicesList)
 {
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    AccountsViewModel::instance->selectedAccount->_devicesIdList = devicesList;
+    AccountListItemsViewModel::instance->_selectedItem->_account->_devicesIdList = devicesList;
     _devicesIdList_->ItemsSource = devicesList;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
@@ -624,7 +630,7 @@ void RingClientUWP::Views::SmartPanel::_pinGeneratorYes__Click(Platform::Object^
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _waitingForPin_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 
-    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
     auto password = _passwordForPinGenerator_->Password;
     _passwordForPinGenerator_->Password = "";
 
@@ -690,7 +696,7 @@ Object ^ RingClientUWP::Views::AccountSelectedToVisibility::Convert(Object ^ val
 {
     //auto accountId = static_cast<bool(value);
 
-    if (/*AccountsViewModel::instance->selectedAccount->_isSelected ==*/ (bool)value == true)
+    if (/*AccountListItemsViewModel::instance->_selectedItem->_account->_isSelected ==*/ (bool)value == true)
         return Windows::UI::Xaml::Visibility::Visible;
 
     return Windows::UI::Xaml::Visibility::Collapsed;

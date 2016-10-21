@@ -1,6 +1,6 @@
 /***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
- * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+ * Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
  * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify    *
@@ -16,38 +16,62 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
+#pragma once
 
-#include "pch.h"
-
-#include "Account.h"
-
-using namespace Windows::ApplicationModel::Core;
-using namespace Platform;
-using namespace Windows::UI::Core;
+using namespace Platform::Collections;
+using namespace Concurrency;
 
 using namespace RingClientUWP;
+using namespace RingClientUWP::Controls;
 
-Account::Account(String^ name,
-                 String^ ringID,
-                 String^ accountType,
-                 String^ accountID,
-                 String^ deviceId)
+namespace RingClientUWP
 {
-    name_ = name;
-    ringID_ = ringID;
-    accountType_ = accountType;
-    accountID_ = accountID;
-    _deviceId = deviceId;
-}
+namespace ViewModel {
 
-void
-Account::NotifyPropertyChanged(String^ propertyName)
+public ref class AccountListItemsViewModel sealed
 {
-    CoreApplicationView^ view = CoreApplication::MainView;
-    view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High,
-        ref new DispatchedHandler([this, propertyName]()
+internal:
+    /* singleton */
+    static property AccountListItemsViewModel^ instance
     {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-    }));
+        AccountListItemsViewModel^ get()
+        {
+            static AccountListItemsViewModel^ instance_ = ref new AccountListItemsViewModel();
+            return instance_;
+        }
+    }
+
+    /* functions */
+    // to do
+
+
+    property Vector<AccountListItem^>^ itemsList
+    {
+        Vector<AccountListItem^>^ get()
+        {
+            return itemsList_;
+        }
+    }
+
+    property AccountListItem^ _selectedItem
+    {
+        AccountListItem^ get()
+        {
+            return currentItem_;
+        }
+        void set(AccountListItem^ value)
+        {
+            currentItem_ = value;
+        }
+    }
+
+private:
+    AccountListItemsViewModel(); // singleton
+    Vector<AccountListItem^>^ itemsList_;
+    AccountListItem^ currentItem_;
+
+    void OnaccountAdded(RingClientUWP::Account ^account);
+    void OnclearAccountsList();
+};
+}
 }
