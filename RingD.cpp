@@ -41,6 +41,8 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
+using namespace Windows::System;
+
 void
 RingClientUWP::RingD::reloadAccountList()
 {
@@ -416,6 +418,18 @@ RingClientUWP::RingD::startDaemon()
         };
         registerCallHandlers(getAppPathHandler);
 
+        std::map<std::string, SharedCallback> getAppUserNameHandler =
+        {
+            DRing::exportable_callback<DRing::ConfigurationSignal::GetAppUserName>
+            ([this](std::vector<std::string>* unames) {
+                unames->emplace_back(Utils::toString(
+                    UserModel::instance->firstName +
+                    "." +
+                    UserModel::instance->lastName));
+            })
+        };
+        registerCallHandlers(getAppUserNameHandler);
+
         std::map<std::string, SharedCallback> incomingVideoHandlers =
         {
             DRing::exportable_callback<DRing::VideoSignal::DeviceEvent>
@@ -667,6 +681,13 @@ RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ stat
         return CallStatus::SEARCHING;
 
     return CallStatus::NONE;
+}
+
+String^
+RingD::getUserName()
+{
+    auto users = User::FindAllAsync();
+    return nullptr;
 }
 
 Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<std::string, std::string> devices)
