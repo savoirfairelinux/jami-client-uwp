@@ -31,6 +31,7 @@ delegate void AccountAdded(Account^ account);
 delegate void ClearAccountsList();
 
 namespace ViewModel {
+
 public ref class AccountsViewModel sealed
 {
 internal:
@@ -45,8 +46,9 @@ internal:
     }
 
     /* functions */
-    void add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId);
+    void add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId, bool upnpState);
     void clearAccountList();
+    Account^ findItem(String^ accountId);
 
     /* properties */
     property Vector<Account^>^ accountsList

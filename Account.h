@@ -28,11 +28,20 @@ namespace RingClientUWP
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId);
+    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
-    property String^ name_;
+    property String^ name_
+    {
+        String^ get() {
+            return name__;
+        }
+        void set(String^ value) {
+            name__ = value;
+            PropertyChanged(this, ref new PropertyChangedEventArgs("name_"));
+        }
+    }
     property String^ ringID_;
     property String^ accountType_; // refacto : create a enum accountType
     property String^ accountID_;
@@ -44,13 +53,15 @@ public:
         void set(Windows::Foundation::Collections::IVector<String^>^ value) {
             devicesIdList_ = value;
         }
-    }
+    };
+    property bool _upnpState;
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
+    String^ name__;
 
 };
 }

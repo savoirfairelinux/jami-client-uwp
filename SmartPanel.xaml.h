@@ -119,6 +119,10 @@ private:
     void OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin);
     void _closePin__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _shareMenuDone__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _editAccountMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _acceptAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _cancelAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void OnaccountUpdated(RingClientUWP::Account ^account);
 };
 }
 }

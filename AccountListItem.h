@@ -41,6 +41,7 @@ public:
             return isSelected_;
         }
     }
+    property bool _editionMode;
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

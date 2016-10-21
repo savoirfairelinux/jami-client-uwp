@@ -35,6 +35,7 @@ delegate void IncomingMessage(String^ callId, String^ payload);
 delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
 delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
+delegate void AccountUpdated(Account^ account);
 
 
 public ref class RingD sealed
@@ -96,6 +97,7 @@ internal:
     void askToRefreshKnownDevices(String^ accountId);
     void askToExportOnRing(String^ accountId, String^ password);
     void eraseCacheFolder();
+    void updateAccount(String^ accountId);
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
@@ -111,6 +113,7 @@ internal:
     event DevicesListRefreshed^ devicesListRefreshed;
     event ExportOnRingEnded^ exportOnRingEnded;
     event SummonWizard^ summonWizard;
+    event AccountUpdated^ accountUpdated;
 
 private:
     /* sub classes */
@@ -126,7 +129,8 @@ private:
         UnPauseCall,
         RegisterDevice,
         GetKnownDevices,
-        ExportOnRing
+        ExportOnRing,
+        UpdateAccount
     };
 
 
@@ -165,5 +169,6 @@ private:
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
+    bool editModeOn_ = false;
 };
 }

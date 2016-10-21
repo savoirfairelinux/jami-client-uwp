@@ -27,6 +27,8 @@
 #include "fileutils.h"
 #include "account_schema.h"
 #include "account_const.h"
+#include "string_utils.h" // used to get some const expr like TRUE_STR
+
 
 #include "SmartPanel.xaml.h"
 
@@ -44,7 +46,7 @@ using namespace RingClientUWP::ViewModel;
 void
 RingClientUWP::RingD::reloadAccountList()
 {
-    RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
+    //RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
 
     std::vector<std::string> accountList = DRing::getAccountList();
 
@@ -61,6 +63,12 @@ RingClientUWP::RingD::reloadAccountList()
         std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
         std::string ringID(accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second);
 
+        bool upnpState = (accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR)
+                         ? true
+                         : false;
+
+        MSG_("upnp state : " + accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second);
+
         if(!ringID.empty())
             ringID = ringID.substr(5);
 
@@ -68,7 +76,22 @@ RingClientUWP::RingD::reloadAccountList()
         auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
         auto deviceId = (type == "SIP")? std::string() : accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
 
-        RingClientUWP::ViewModel::AccountsViewModel::instance->add(alias, ringID, type, *rit /*account id*/, deviceId);
+        auto accountId = Utils::toPlatformString(*rit);
+        auto account = AccountsViewModel::instance->findItem(accountId);
+
+        if (account) {
+            account->name_ = Utils::toPlatformString(alias);
+            account->_upnpState = upnpState;
+            accountUpdated(account);
+        }
+        else {
+            RingClientUWP::ViewModel::AccountsViewModel::instance->add(alias, ringID, type, *rit /*account id*/, deviceId, upnpState);
+        }
+
+        if (editModeOn_) {
+            auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+        }
 
     }
 
@@ -257,6 +280,19 @@ void RingClientUWP::RingD::eraseCacheFolder()
     });
 }
 
+void RingClientUWP::RingD::updateAccount(String^ accountId)
+{
+    editModeOn_ = true;
+
+    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+
+    auto task = ref new RingD::Task(Request::UpdateAccount);
+    task->_accountId = accountId;
+
+    tasksList_.push(task);
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -398,6 +434,7 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
             {
+                MSG_("<AccountsChanged>");
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
@@ -682,6 +719,19 @@ RingD::dequeueTasks()
             auto password2 = Utils::toString(password);
 
             DRing::exportOnRing(accountId2, password2);
+            break;
+        }
+        case Request::UpdateAccount:
+        {
+            auto accountId = task->_accountId;
+            auto accountId2 = Utils::toString(accountId);
+            auto account = AccountListItemsViewModel::instance->findItem(accountId)->_account;
+            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(accountId2);
+            accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
+            accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
+
+            DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
+            break;
         }
         default:
             break;
