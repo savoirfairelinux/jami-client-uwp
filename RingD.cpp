@@ -73,7 +73,7 @@ RingClientUWP::RingD::reloadAccountList()
 void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
 {
     /* account id */
-    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
     std::wstring accountId2(accountId->Begin());
     std::string accountId3(accountId2.begin(), accountId2.end());
 
@@ -109,7 +109,7 @@ void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
 void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
 {
     /* account id */
-    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
     std::wstring accountId2(accountId->Begin());
     std::string accountId3(accountId2.begin(), accountId2.end());
 
@@ -164,7 +164,7 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 {
     MSG_("!--->> placeCall");
     auto to = contact->ringID_;
-    auto accountId = AccountsViewModel::instance->selectedAccount->accountID_;
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
 
     auto to2 = Utils::toString(to);
     auto accountId2 = Utils::toString(accountId);

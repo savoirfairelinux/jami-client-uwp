@@ -27,6 +27,8 @@ namespace RingClientUWP
 delegate void NewAccountSelected();
 delegate void NoAccountSelected();
 delegate void UpdateScrollView();
+delegate void AccountAdded(Account^ account);
+delegate void ClearAccountsList();
 
 namespace ViewModel {
 public ref class AccountsViewModel sealed
@@ -47,27 +49,6 @@ internal:
     void clearAccountList();
 
     /* properties */
-    property Account^ selectedAccount
-    {
-        Account^ get()
-        {
-            return currentItem_;
-        }
-        void set(Account^ value)
-        {
-            oldItem_ = currentItem_;
-            if (oldItem_)
-                oldItem_->_isSelected = false;
-            currentItem_ = value;
-            if (currentItem_)
-                currentItem_->_isSelected = true;
-            if (value)
-                newAccountSelected();
-            else
-                noAccountSelected();
-        }
-    }
-
     property Vector<Account^>^ accountsList
     {
         Vector<Account^>^ get()
@@ -80,12 +61,12 @@ internal:
     event NewAccountSelected^ newAccountSelected;
     event NoAccountSelected^ noAccountSelected;
     event UpdateScrollView^ updateScrollView;
+    event AccountAdded^ accountAdded;
+    event ClearAccountsList^ clearAccountsList;
 
 private:
     AccountsViewModel(); // singleton
     Vector<Account^>^ accountsList_;
-    Account^ currentItem_;
-    Account^ oldItem_;
 
 };
 }
