@@ -262,6 +262,8 @@
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\AccountTypeRING.png" />
+    <Image Include="Assets\AccountTypeSIP.png" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
     <Image Include="Assets\qrCodeIcon.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
