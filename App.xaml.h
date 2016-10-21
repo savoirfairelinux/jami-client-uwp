@@ -33,5 +33,6 @@ internal:
 
 private:
     Frame^ rootFrame;
+    void OnsummonWizard();
 };
 }
