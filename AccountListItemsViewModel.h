@@ -61,6 +61,8 @@ internal:
         }
         void set(AccountListItem^ value)
         {
+            if (currentItem_)
+                currentItem_->_isSelected = false;
             currentItem_ = value;
         }
     }

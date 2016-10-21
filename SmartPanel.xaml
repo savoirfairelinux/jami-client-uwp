@@ -192,6 +192,7 @@
                         VerticalAlignment="Top"
                         Content="&#xE104;"
                         FontFamily="Segoe MDL2 Assets"
+                        Click="_editAccountMenuButton__Click"
                         FontSize="20"
                         Foreground="White"
                         Background="Transparent"
@@ -505,6 +506,66 @@
                                 HorizontalAlignment="Center"
                                 Content="&#xE106;"
                                 Click="_createAccountNo__Click"
+                                Style="{StaticResource ButtonStyle5}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <!-- account edition menu. -->
+            <Grid x:Name="_accountEditionMenuGrid_"
+                  Grid.Row="2"
+                  Visibility="Collapsed"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Vertical"
+                            Grid.Row="0"
+                            Background="#FFE4F1F9">
+                    <!-- alias sub menu. -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE1CB;"/>
+                        <TextBlock Text="Alias" Margin="10"/>
+                    </StackPanel>
+                    <TextBox  x:Name="_aliasTextBoxEditionMenu_"
+                              FontSize="20"
+                              Margin="20,10"
+                                  PlaceholderText="Enter your username"/>
+                    <!-- upnp sub menu. -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE15E;"/>
+                        <TextBlock Text="UPnP" Margin="10"/>
+                    </StackPanel>
+                    <ToggleSwitch Margin="20,10" />
+                    <!-- delete account sub menu. -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE74D;"/>
+                        <TextBlock Text="Delete account" Margin="10"/>
+                    </StackPanel>
+                    <ToggleButton x:Name="_deleteAccountBtnEditionMenu_"
+                            Margin="20,10"
+                            Content="Delete"/>
+                </StackPanel>
+                <!-- buttons yes/no to accept the modification. -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_acceptAccountModification_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE081;"
+                                Click="_acceptAccountModification__Click"
+                                Style="{StaticResource ButtonStyle5}"/>
+                        <Button x:Name="_cancelAccountModification_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE106;"
+                                Click="_cancelAccountModification__Click"
                                 Style="{StaticResource ButtonStyle5}"/>
                     </StackPanel>
                 </Grid>

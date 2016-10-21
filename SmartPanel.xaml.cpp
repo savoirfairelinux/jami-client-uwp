@@ -145,6 +145,8 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
 
     auto name = accountListItem->_account->name_;
 
+    accountListItem->_isSelected = true;
+
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
     Configuration::UserPreferences::instance->save();
 
@@ -176,6 +178,7 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ se
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void RingClientUWP::Views::SmartPanel::_settings__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -216,6 +219,7 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Checked(Platform::Objec
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuButton_->IsChecked = false;
@@ -228,6 +232,7 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
 {
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
@@ -326,6 +331,7 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
     }
     auto account = safe_cast<AccountListItem^>(listbox->SelectedItem);
     AccountListItemsViewModel::instance->_selectedItem = account;
+
     updatePageContent();
 }
 
@@ -706,3 +712,23 @@ Object ^ RingClientUWP::Views::AccountSelectedToVisibility::ConvertBack(Object ^
 
 RingClientUWP::Views::AccountSelectedToVisibility::AccountSelectedToVisibility()
 {}
+
+
+void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+    _aliasTextBoxEditionMenu_->Text = account->name_;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+
+}
+
+
+void RingClientUWP::Views::SmartPanel::_cancelAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
