@@ -45,22 +45,12 @@ public:
             devicesIdList_ = value;
         }
     }
-    property bool _isSelected {
-        void set(bool value) {
-            // isSelected_ = value; disabled on purpose for future use
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_isSelected"));
-        }
-        bool get() {
-            return isSelected_;
-        }
-    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
-    bool isSelected_;
 
 };
 }

@@ -1,6 +1,6 @@
 /***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
- * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+ * Author: JÃ¤ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
  * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
  *                                                                         *
  * This program is free software; you can redistribute it and/or modify    *
@@ -16,38 +16,37 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #include "pch.h"
 
-#include "Account.h"
+#include "AccountListItemsViewModel.h"
 
 using namespace Windows::ApplicationModel::Core;
-using namespace Platform;
+using namespace Windows::Data::Json;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
 using namespace Windows::UI::Core;
 
-using namespace RingClientUWP;
 
-Account::Account(String^ name,
-                 String^ ringID,
-                 String^ accountType,
-                 String^ accountID,
-                 String^ deviceId)
+using namespace RingClientUWP;
+using namespace ViewModel;
+
+AccountListItemsViewModel::AccountListItemsViewModel()
 {
-    name_ = name;
-    ringID_ = ringID;
-    accountType_ = accountType;
-    accountID_ = accountID;
-    _deviceId = deviceId;
+    itemsList_ = ref new Vector<AccountListItem^>();
+
+    /* connect to delegates */
+    AccountsViewModel::instance->accountAdded += ref new RingClientUWP::AccountAdded(this, &RingClientUWP::ViewModel::AccountListItemsViewModel::OnaccountAdded);
+    AccountsViewModel::instance->clearAccountsList += ref new RingClientUWP::ClearAccountsList(this, &RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList);
 }
 
-void
-Account::NotifyPropertyChanged(String^ propertyName)
+void RingClientUWP::ViewModel::AccountListItemsViewModel::OnaccountAdded(RingClientUWP::Account ^account)
 {
-    CoreApplicationView^ view = CoreApplication::MainView;
-    view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High,
-        ref new DispatchedHandler([this, propertyName]()
-    {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-    }));
+    auto item = ref new AccountListItem(account);
+    itemsList_->Append(item);
+}
+
+
+void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
+{
+    itemsList_->Clear();
 }
