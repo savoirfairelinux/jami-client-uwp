@@ -104,6 +104,9 @@
     <ClCompile Include="VideoCaptureManager.cpp">
       <Filter>Media\Video</Filter>
     </ClCompile>
+    <ClCompile Include="UserModel.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -163,6 +166,9 @@
     </ClInclude>
     <ClInclude Include="Globals.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="UserModel.h">
+      <Filter>Model</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -241,10 +247,7 @@
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\ring-daemon\contrib\redist\msvcr100.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\redist\pthreadVC2.dll">
+    <None Include="..\ring-daemon\contrib\bin\x64\pthreads-UWP.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
   </ItemGroup>

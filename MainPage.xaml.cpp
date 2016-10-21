@@ -45,11 +45,14 @@ using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
-using namespace Windows::System;
+
+using namespace Concurrency;
 
 MainPage::MainPage()
 {
     InitializeComponent();
+
+    UserModel::instance->getUserData();
 
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
 

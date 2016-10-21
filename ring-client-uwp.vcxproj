@@ -98,12 +98,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <PackageCertificateKeyFile>ring-client-uwp_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>13DE1E90818B523E210522CE40C78F2AD099C412</PackageCertificateThumbprint>
-    <AppxPackageDir>C:\Users\user\Desktop\</AppxPackageDir>
+    <PackageCertificateThumbprint>6E2CEF8A6A6A44314AB297CE41FC3BC8F2890973</PackageCertificateThumbprint>
+    <AppxPackageDir>C:\Users\andreas.traczyk\Desktop\tests\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -146,7 +146,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)..\ring-daemon\contrib\bin\x64;$(SolutionDir)..\ring-daemon\contrib\boost\stage\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -155,13 +155,14 @@
       <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
     <Link>
-      <AdditionalDependencies>winsqlite3.lib;shell32.lib;strmiids.lib;dring.lib;WindowsApp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>winsqlite3.lib;shell32.lib;strmiids.lib;dring.lib;WindowsApp.lib;</AdditionalDependencies>
     </Link>
     <Link>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
     </Link>
     <Link>
       <AdditionalOptions>/nodefaultlib:libcmt.lib /ignore:4006,4049,4099 %(AdditionalOptions)</AdditionalOptions>
+      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -196,6 +197,7 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h" />
     <ClInclude Include="SmartPanelItemsViewModel.h" />
+    <ClInclude Include="UserModel.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="Video.h" />
@@ -253,12 +255,7 @@
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
-    <None Include="..\ring-daemon\contrib\redist\msvcr100.dll">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </None>
-    <None Include="..\ring-daemon\contrib\redist\pthreadVC2.dll">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
-    </None>
+    <None Include="..\ring-daemon\contrib\bin\x64\pthreads-UWP.dll" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -318,6 +315,7 @@
     </ClCompile>
     <ClCompile Include="SmartPanelItem.cpp" />
     <ClCompile Include="SmartPanelItemsViewModel.cpp" />
+    <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoCaptureManager.cpp" />
