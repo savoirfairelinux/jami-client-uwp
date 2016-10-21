@@ -32,6 +32,8 @@
         <views:IncomingVisibility x:Key="_IncomingVisibility_" />
         <views:OutGoingVisibility x:Key="_OutGoingVisibility_" />
         <views:HasAnActiveCall x:Key="_HasAnActiveCall_" />
+        <views:AccountTypeToSourceImage x:Key="_AccountTypeToSourceImage_" />
+        <views:AccountSelectedToVisibility x:Key="_AccountSelectedToVisibility_" />
 
         <Style x:Key="addContactTextBoxStyle"
            TargetType="TextBox">
@@ -171,36 +173,42 @@
         <!-- template for accounts. -->
         <DataTemplate x:Key="AccountTemplate"
                       x:DataType="local:Account">
-            <Grid>
+            <Grid Margin="0,10">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="260"/>
-                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="290"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="30"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <TextBlock x:Name="_accountName_"
-                           Grid.Column="0"
-                           Grid.Row="0"
-                           Margin="10,5,10,0"
+                <Border Grid.Column="0"
+                        Margin="5,0"
+                        Style="{StaticResource BorderStyle3}">
+                    <Image x:Name="_AccountTypeIcon_"
+                           VerticalAlignment="Center"
+                           HorizontalAlignment="Center"
+                           Source="{x:Bind accountType_, Converter={StaticResource _AccountTypeToSourceImage_}, Mode=OneWay}"/>
+                </Border>
+                <Button x:Name="_editAccountMenuButton_"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Top"
+                        Content="&#xE104;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="20"
+                        Foreground="White"
+                        Background="Transparent"
+                        Visibility="{x:Bind _isSelected, Converter={StaticResource _AccountSelectedToVisibility_}, Mode=OneWay}"
+                        Grid.Column="1">
+                    <Button.RenderTransform>
+                        <TranslateTransform X="-5" Y="-5"/>
+                    </Button.RenderTransform>
+                </Button>
+                <StackPanel Grid.Column="1">
+                    <TextBlock x:Name="_accountName_"
+                           Style="{StaticResource TextStyle5}"
                            Text="{x:Bind name_}"/>
-                <TextBlock x:Name="_accountType_"
-                           Grid.Column="1"
-                           Grid.Row="0"
-                           TextAlignment="Right"
-                           Margin="0,5,18,0"
-                           Foreground="ForestGreen"
-                           Text="{x:Bind accountType_}"/>
-                <TextBlock x:Name="_ringID_"
-                           Grid.Column="0"
+                    <TextBlock x:Name="_ringID_"
                            Grid.ColumnSpan="2"
-                           Grid.Row="1"
-                           Foreground="Crimson"
-                           Margin="10,5,10,0"
-                           FontSize="14"
-                           TextTrimming="CharacterEllipsis"
+                           Style="{StaticResource TextStyle6}"
                            Text="{x:Bind ringID_}"/>
+                </StackPanel>
             </Grid>
         </DataTemplate>
         <!-- template for smartpanelitems. -->

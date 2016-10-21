@@ -50,6 +50,20 @@ public:
     HasAnActiveCall();
 };
 
+public ref class AccountTypeToSourceImage sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    AccountTypeToSourceImage();
+};
+
+public ref class AccountSelectedToVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    AccountSelectedToVisibility();
+};
+
 public ref class NewMessageBubleNotification sealed : IValueConverter {
 public:
     virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
