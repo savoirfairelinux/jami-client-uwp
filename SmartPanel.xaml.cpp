@@ -667,3 +667,39 @@ void RingClientUWP::Views::SmartPanel::_shareMenuDone__Click(Platform::Object^ s
 
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
+
+Object ^ RingClientUWP::Views::AccountTypeToSourceImage::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto accountType = dynamic_cast<String^>(value);
+    Uri^ uri = (accountType == "RING")
+               ? ref new Uri("ms-appx:///Assets/AccountTypeRING.png")
+               : ref new Uri("ms-appx:///Assets/AccountTypeSIP.png");
+
+    return ref new BitmapImage(uri);
+}
+
+Object ^ RingClientUWP::Views::AccountTypeToSourceImage::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::AccountTypeToSourceImage::AccountTypeToSourceImage()
+{}
+
+Object ^ RingClientUWP::Views::AccountSelectedToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    //auto accountId = static_cast<bool(value);
+
+    if (/*AccountsViewModel::instance->selectedAccount->_isSelected ==*/ (bool)value == true)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::AccountSelectedToVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::AccountSelectedToVisibility::AccountSelectedToVisibility()
+{}

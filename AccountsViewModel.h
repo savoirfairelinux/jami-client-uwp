@@ -56,7 +56,11 @@ internal:
         void set(Account^ value)
         {
             oldItem_ = currentItem_;
+            if (oldItem_)
+                oldItem_->_isSelected = false;
             currentItem_ = value;
+            if (currentItem_)
+                currentItem_->_isSelected = true;
             if (value)
                 newAccountSelected();
             else
