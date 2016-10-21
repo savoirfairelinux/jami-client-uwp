@@ -29,14 +29,15 @@ AccountsViewModel::AccountsViewModel()
 }
 
 void
-AccountsViewModel::add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId)
+AccountsViewModel::add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId, bool upnpState)
 {
     auto account = ref new Account(
                        Utils::toPlatformString(name),
                        Utils::toPlatformString(ringID),
                        Utils::toPlatformString(accountType),
                        Utils::toPlatformString(accountID),
-                       Utils::toPlatformString(deviceId));
+                       Utils::toPlatformString(deviceId),
+                       upnpState);
 
     accountsList_->Append(account);
     updateScrollView();
@@ -48,4 +49,13 @@ AccountsViewModel::clearAccountList()
 {
     accountsList_->Clear();
     clearAccountsList();
+}
+
+Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ accountId)
+{
+    for each (Account^ item in accountsList_)
+        if (item->accountID_ == accountId)
+            return item;
+
+    return nullptr;
 }
