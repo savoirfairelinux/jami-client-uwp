@@ -170,9 +170,9 @@
                 </Grid>
             </Grid>
         </DataTemplate>
-        <!-- template for accounts. -->
-        <DataTemplate x:Key="AccountTemplate"
-                      x:DataType="local:Account">
+        <!-- template for AccountListItems. -->
+        <DataTemplate x:Key="AccountListItemsTemplate"
+                      x:DataType="controls:AccountListItem">
             <Grid Margin="0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -184,7 +184,7 @@
                     <Image x:Name="_AccountTypeIcon_"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
-                           Source="{x:Bind accountType_, Converter={StaticResource _AccountTypeToSourceImage_}, Mode=OneWay}"/>
+                           Source="{x:Bind  _account.accountType_, Converter={StaticResource _AccountTypeToSourceImage_}, Mode=OneWay}"/>
                 </Border>
                 <Button x:Name="_editAccountMenuButton_"
                         HorizontalAlignment="Right"
@@ -203,11 +203,11 @@
                 <StackPanel Grid.Column="1">
                     <TextBlock x:Name="_accountName_"
                            Style="{StaticResource TextStyle5}"
-                           Text="{x:Bind name_}"/>
+                           Text="{x:Bind  _account.name_}"/>
                     <TextBlock x:Name="_ringID_"
                            Grid.ColumnSpan="2"
                            Style="{StaticResource TextStyle6}"
-                           Text="{x:Bind ringID_}"/>
+                           Text="{x:Bind  _account.ringID_}"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -440,7 +440,7 @@
                          Width="320"
                          ItemContainerStyle="{StaticResource contactsListBoxStyle}"
                          Background="#FFE4F1F9"
-                         ItemTemplate="{StaticResource AccountTemplate}"/>
+                         ItemTemplate="{StaticResource AccountListItemsTemplate}"/>
                 </ScrollViewer>
                 <Button x:Name="_addAccountBtn_"
                         Grid.Row="1"

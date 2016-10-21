@@ -31,19 +31,21 @@ AccountsViewModel::AccountsViewModel()
 void
 AccountsViewModel::add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId)
 {
+    auto account = ref new Account(
+                       Utils::toPlatformString(name),
+                       Utils::toPlatformString(ringID),
+                       Utils::toPlatformString(accountType),
+                       Utils::toPlatformString(accountID),
+                       Utils::toPlatformString(deviceId));
 
-    accountsList_->Append(ref new Account(
-                              Utils::toPlatformString(name),
-                              Utils::toPlatformString(ringID),
-                              Utils::toPlatformString(accountType),
-                              Utils::toPlatformString(accountID),
-                              Utils::toPlatformString(deviceId)
-                          ));
+    accountsList_->Append(account);
     updateScrollView();
+    accountAdded(account);
 }
 
 void
 AccountsViewModel::clearAccountList()
 {
     accountsList_->Clear();
+    clearAccountsList();
 }
