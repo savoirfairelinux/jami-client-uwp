@@ -131,7 +131,7 @@ SmartPanel::SmartPanel()
     });
 
     RingD::instance->exportOnRingEnded += ref new RingClientUWP::ExportOnRingEnded(this, &RingClientUWP::Views::SmartPanel::OnexportOnRingEnded);
-
+    RingD::instance->accountUpdated += ref new RingClientUWP::AccountUpdated(this, &RingClientUWP::Views::SmartPanel::OnaccountUpdated);
 
 
 }
@@ -143,7 +143,9 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     if (!accountListItem)
         return;
 
-    auto name = accountListItem->_account->name_;
+    auto name = accountListItem->_account->name_; // refacto remove name variable and use the link directly on the next line... like _upnpnState..._
+
+    accountListItem->_isSelected = true;
 
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
     Configuration::UserPreferences::instance->save();
@@ -160,6 +162,8 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     _shareMenuButton_->Visibility = (accountListItem->_account->accountType_ == "RING")
                                     ? Windows::UI::Xaml::Visibility::Visible
                                     : Windows::UI::Xaml::Visibility::Collapsed;
+
+    _upnpState_->IsOn = accountListItem->_account->_upnpState;
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -176,6 +180,7 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ se
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void RingClientUWP::Views::SmartPanel::_settings__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -216,6 +221,7 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Checked(Platform::Objec
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuButton_->IsChecked = false;
@@ -228,6 +234,7 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
 {
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
@@ -326,6 +333,7 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
     }
     auto account = safe_cast<AccountListItem^>(listbox->SelectedItem);
     AccountListItemsViewModel::instance->_selectedItem = account;
+
     updatePageContent();
 }
 
@@ -706,3 +714,39 @@ Object ^ RingClientUWP::Views::AccountSelectedToVisibility::ConvertBack(Object ^
 
 RingClientUWP::Views::AccountSelectedToVisibility::AccountSelectedToVisibility()
 {}
+
+
+void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+    _aliasTextBoxEditionMenu_->Text = account->name_;
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+    auto accountId = account->accountID_;
+    account->name_ = _aliasTextBoxEditionMenu_->Text;
+    account->_upnpState = _upnpState_->IsOn;
+
+
+    RingD::instance->updateAccount(accountId);
+
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountsMenuButton_->IsChecked = false;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_cancelAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartPanel::OnaccountUpdated(RingClientUWP::Account ^account)
+{
+    updatePageContent();
+}

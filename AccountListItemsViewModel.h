@@ -42,9 +42,9 @@ internal:
     }
 
     /* functions */
-    // to do
+    AccountListItem^ findItem(String^ accountId);
 
-
+    /* properties */
     property Vector<AccountListItem^>^ itemsList
     {
         Vector<AccountListItem^>^ get()
@@ -61,6 +61,8 @@ internal:
         }
         void set(AccountListItem^ value)
         {
+            if (currentItem_)
+                currentItem_->_isSelected = false;
             currentItem_ = value;
         }
     }
