@@ -67,6 +67,30 @@
         <Setter Property="Foreground"
                 Value="Black"/>
     </Style>
+    <Style x:Key="TextStyle5"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="15"/>
+        <Setter Property="HorizontalAlignment"
+                Value="Left"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="FontStyle"
+                Value="Italic"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+    </Style>
+    <Style x:Key="TextStyle6"
+           TargetType="TextBlock">
+        <Setter Property="FontSize"
+                Value="12"/>
+        <Setter Property="HorizontalAlignment"
+                Value="Left"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+    </Style>
     <Style x:Key="TextSegoeStyle1"
            TargetType="TextBlock">
         <Setter Property="FontFamily"
@@ -158,6 +182,19 @@
             Value="320"/>
         <Setter Property="Height"
             Value="30"/>
+        <Setter Property="FontFamily"
+            Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+            Value="White"/>
+        <Setter Property="Background"
+            Value="Transparent"/>
+    </Style>
+    <Style x:Key="ButtonStyle7"
+        TargetType="Button">
+        <Setter Property="Width"
+            Value="20"/>
+        <Setter Property="Height"
+            Value="20"/>
         <Setter Property="FontFamily"
             Value="Segoe MDL2 Assets"/>
         <Setter Property="Foreground"
@@ -277,6 +314,16 @@
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Width" Value="25"/>
         <Setter Property="Height" Value="23"/>
+        <Setter Property="Padding" Value="4"/>
+    </Style>
+    <Style x:Key="BorderStyle3"
+           TargetType="Border">
+        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Width" Value="28"/>
+        <Setter Property="Height" Value="50"/>
+        <Setter Property="BorderThickness" Value="2"/>
+        <Setter Property="BorderBrush" Value="white"/>
         <Setter Property="Padding" Value="4"/>
     </Style>
     <Style x:Key="messageBubleStyle"

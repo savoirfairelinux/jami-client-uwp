@@ -217,6 +217,12 @@
     <Image Include="Assets\qrCodeIcon.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\AccountTypeSIP.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\AccountTypeRING.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

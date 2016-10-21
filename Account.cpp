@@ -38,6 +38,7 @@ Account::Account(String^ name,
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
+    _isSelected = false;
 }
 
 void
