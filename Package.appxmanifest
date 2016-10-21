@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="ring-client-uwp-multi-device" Publisher="CN=user" Version="1.0.0.0" />
+  <Identity Name="ring-client-uwp-multi-device-test" Publisher="CN=andreas.traczyk" Version="1.0.33.0" />
   <mp:PhoneIdentity PhoneProductId="2385953f-9019-423d-aa82-d1bbacfa258b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>ring-client-uwp</DisplayName>
@@ -32,13 +32,11 @@
     <uap:Capability Name="blockedChatMessages" />
     <uap:Capability Name="chat" />
     <uap:Capability Name="contacts" />
-    <uap:Capability Name="enterpriseAuthentication" />
     <uap:Capability Name="musicLibrary" />
     <uap:Capability Name="objects3D" />
     <uap:Capability Name="phoneCall" />
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="removableStorage" />
-    <uap:Capability Name="sharedUserCertificates" />
     <uap:Capability Name="userAccountInformation" />
     <uap:Capability Name="videosLibrary" />
     <uap:Capability Name="voipCall" />
