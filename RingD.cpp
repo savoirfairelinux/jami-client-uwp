@@ -47,6 +47,13 @@ RingClientUWP::RingD::reloadAccountList()
     RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
 
     std::vector<std::string> accountList = DRing::getAccountList();
+
+    /* if for any reason there is no account at all, screen the wizard */
+    if (accountList.size() == 0) {
+        summonWizard();
+        return;
+    }
+
     std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
 
     for (; rit != accountList.rend(); ++rit) {
@@ -380,7 +387,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                     ref new DispatchedHandler([=]() {
                         reloadAccountList();
-                        std::vector<std::string> accountList = DRing::getAccountList();
+                        std::vector<std::string> accountList = DRing::getAccountList(); // refacto : there is already a callo to getAccountList in reloadAccountList
                         auto last_id = accountList.back();
                         if (!account_id.compare(last_id)) {
                             auto frame = dynamic_cast<Frame^>(Window::Current->Content);

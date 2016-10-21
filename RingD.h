@@ -34,6 +34,7 @@ delegate void CallPlaced(String^ callId);
 delegate void IncomingMessage(String^ callId, String^ payload);
 delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
 delegate void ExportOnRingEnded(String^ accountId, String^ pin);
+delegate void SummonWizard();
 
 
 public ref class RingD sealed
@@ -109,6 +110,7 @@ internal:
     event CallPlaced^ callPlaced;
     event DevicesListRefreshed^ devicesListRefreshed;
     event ExportOnRingEnded^ exportOnRingEnded;
+    event SummonWizard^ summonWizard;
 
 private:
     /* sub classes */

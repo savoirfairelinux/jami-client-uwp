@@ -19,6 +19,7 @@
 
 #include "LoadingPage.xaml.h"
 #include "MainPage.xaml.h"
+#include "Wizard.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
@@ -35,6 +36,9 @@ using namespace RingClientUWP;
 App::App()
 {
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
+
+    /* connect to delegate */
+    RingD::instance->summonWizard += ref new RingClientUWP::SummonWizard(this, &RingClientUWP::App::OnsummonWizard);
 }
 
 void
@@ -59,4 +63,9 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = Colors::LightBlue;
     ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
+}
+
+void RingClientUWP::App::OnsummonWizard()
+{
+    rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::Wizard::typeid));
 }
