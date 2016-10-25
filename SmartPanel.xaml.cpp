@@ -727,6 +727,8 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
     _aliasTextBoxEditionMenu_->Text = account->name_;
     _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _deleteAccountBtnEditionMenu_->IsChecked = false;
+    _deleteAccountBtnEditionMenu_->IsEnabled = (AccountListItemsViewModel::instance->itemsList->Size > 1)? true : false;
 }
 
 
@@ -739,19 +741,19 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     // mettre ca en visibility du bouton delete
     auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
 
+    /* if the delete button is toggled, just delete the account */
     if (_deleteAccountBtnEditionMenu_->IsChecked && accountsListSize > 1) {
+        AccountListItem^ item;
+        for each (item in AccountListItemsViewModel::instance->itemsList)
+            if (item->_account->accountID_ == accountId)
+                break;
+
+        if (item)
+            AccountListItemsViewModel::instance->removeItem(item);
+
         RingD::instance->deleteAccount(accountId);
 
-        /* rebuild a new list of accounts without the one to delete */
-        auto newAccountList = ref new Vector<AccountListItem^>();
-        for each (AccountListItem^ item in AccountListItemsViewModel::instance->itemsList) {
-            if (item->_account->accountID_ != accountId)
-                newAccountList->Append(item);
-        }
-
-        _accountsList_->ItemsSource = newAccountList;
-
-    } else {
+    } else { /* otherwise edit the account */
 
         account->name_ = _aliasTextBoxEditionMenu_->Text;
         account->_upnpState = _upnpState_->IsOn;

@@ -37,20 +37,21 @@ public:
     property bool _isSelected {
         void set(bool value) {
             isSelected_ = value;
-            NotifyPropertyChanged("_isSelected");
+            if (!_disconnected)
+                NotifyPropertyChanged("_isSelected");
         }
         bool get() {
             return isSelected_;
         }
     }
     property bool _editionMode;
+    property bool _disconnected;
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     bool isSelected_;
-
 };
 }
 }

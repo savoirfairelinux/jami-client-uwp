@@ -60,3 +60,14 @@ RingClientUWP::ViewModel::AccountListItemsViewModel::findItem(String^ accountId)
 
     return nullptr;
 }
+
+void RingClientUWP::ViewModel::AccountListItemsViewModel::removeItem(AccountListItem ^ item)
+{
+    unsigned int index;
+    itemsList_->IndexOf(item, &index);
+
+    item->_disconnected = true; // avoid disconected exception.
+
+    itemsList_->RemoveAt(index);
+
+}
