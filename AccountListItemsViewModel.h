@@ -43,6 +43,7 @@ internal:
 
     /* functions */
     AccountListItem^ findItem(String^ accountId);
+    void removeItem(AccountListItem^ item);
 
     /* properties */
     property Vector<AccountListItem^>^ itemsList
