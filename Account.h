@@ -42,7 +42,15 @@ public:
             NotifyPropertyChanged("name_");
         }
     }
-    property String^ ringID_;
+    property String^ ringID_ {
+        String^ get() {
+            return ringID__;
+        }
+        void set(String^ value) {
+            ringID__ = value;
+            NotifyPropertyChanged("ringID_");
+        }
+    }
     property String^ accountType_; // refacto : create a enum accountType
     property String^ accountID_;
     property String^ _deviceId;
@@ -62,6 +70,7 @@ protected:
 private:
     Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
     String^ name__;
+    String^ ringID__;
 
 };
 }

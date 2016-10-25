@@ -75,6 +75,7 @@ RingClientUWP::RingD::reloadAccountList()
         auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
         auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
         auto deviceId = (type == "SIP")? std::string() : accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
+        auto ringId = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
 
         auto accountId = Utils::toPlatformString(*rit);
         auto account = AccountsViewModel::instance->findItem(accountId);
@@ -82,15 +83,12 @@ RingClientUWP::RingD::reloadAccountList()
         if (account) {
             account->name_ = Utils::toPlatformString(alias);
             account->_upnpState = upnpState;
+            account->accountType_ = Utils::toPlatformString(type);
+            account->ringID_ = Utils::toPlatformString(ringId);
             accountUpdated(account);
         }
         else {
             RingClientUWP::ViewModel::AccountsViewModel::instance->add(alias, ringID, type, *rit /*account id*/, deviceId, upnpState);
-        }
-
-        if (editModeOn_) {
-            auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
         }
 
     }
@@ -167,6 +165,12 @@ void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
 void
 RingD::createRINGAccount(String^ alias)
 {
+
+    editModeOn_ = true;
+
+    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+
     // refactoring : create a dedicated class constructor task and removes accountName from RingD
     accountName = Utils::toString(alias);
     tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
@@ -175,6 +179,11 @@ RingD::createRINGAccount(String^ alias)
 void
 RingD::createSIPAccount(String^ alias)
 {
+    editModeOn_ = true;
+
+    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+
     // refactoring : create a dedicated class constructor task and removes accountName from RingD
     accountName = Utils::toString(alias);
     tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
@@ -310,6 +319,8 @@ void
 RingClientUWP::RingD::startDaemon()
 {
     eraseCacheFolder();
+    editModeOn_ = true;
+
 
     create_task([&]()
     {
@@ -431,16 +442,15 @@ RingClientUWP::RingD::startDaemon()
                         const std::string& account_id, const std::string& state,
                         int detailsCode, const std::string& detailsStr)
             {
-                MSG_("<RegistrationStateChanged>: ID = " + account_id + "state = " + state);
+                MSG_("<RegistrationStateChanged>: ID = " + account_id + " state = " + state);
                 if (state == DRing::Account::States::REGISTERED) {
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                     ref new DispatchedHandler([=]() {
                         reloadAccountList();
-                        std::vector<std::string> accountList = DRing::getAccountList(); // refacto : there is already a callo to getAccountList in reloadAccountList
-                        auto last_id = accountList.back();
-                        if (!account_id.compare(last_id)) {
+                        if (editModeOn_) {
                             auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                             dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+                            editModeOn_ = false;
                         }
                     }));
                 }
@@ -451,6 +461,11 @@ RingClientUWP::RingD::startDaemon()
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
+                    if (editModeOn_) {
+                        auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                        dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+                        editModeOn_ = false;
+                    }
                 }));
             }),
             DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
