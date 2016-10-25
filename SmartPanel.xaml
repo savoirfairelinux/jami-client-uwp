@@ -209,7 +209,7 @@
                     <TextBlock x:Name="_ringID_"
                            Grid.ColumnSpan="2"
                            Style="{StaticResource TextStyle6}"
-                           Text="{x:Bind  _account.ringID_}"/>
+                           Text="{x:Bind  _account.ringID_, Mode=OneWay}"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -483,9 +483,13 @@
                         <TextBox  x:Name="_aliasTextBox_"
                                   Margin="10"
                                   PlaceholderText="Enter your username"/>
-                        <PasswordBox Margin="10"
+                        <PasswordBox x:Name="_passwordBoxAccountCreation_"
+                                     Margin="10"
+                                     PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
                                      PlaceholderText="Enter your password"/>
-                        <PasswordBox  Margin="10"
+                        <PasswordBox  x:Name="_passwordBoxAccountCreationCheck_"
+                                      Margin="10"
+                                      PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
                                       PlaceholderText="Repeat your Password"/>
                     </StackPanel>
                 </StackPanel>
