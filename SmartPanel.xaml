@@ -541,14 +541,14 @@
                     <ToggleSwitch x:Name="_upnpState_"
                                   Margin="20,10"/>
                     <!-- delete account sub menu. -->
-                    <!--<StackPanel Orientation="Horizontal" Margin="10">
+                    <StackPanel Orientation="Horizontal" Margin="10">
                         <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                    Text="&#xE74D;"/>
                         <TextBlock Text="Delete account" Margin="10"/>
                     </StackPanel>
                     <ToggleButton x:Name="_deleteAccountBtnEditionMenu_"
                             Margin="20,10"
-                            Content="Delete"/>-->
+                            Content="Delete"/>
                 </StackPanel>
                 <!-- buttons yes/no to accept the modification. -->
                 <Grid Grid.Row="1">

@@ -98,6 +98,7 @@ internal:
     void askToExportOnRing(String^ accountId, String^ password);
     void eraseCacheFolder();
     void updateAccount(String^ accountId);
+    void deleteAccount(String^ accountId);
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
@@ -130,7 +131,8 @@ private:
         RegisterDevice,
         GetKnownDevices,
         ExportOnRing,
-        UpdateAccount
+        UpdateAccount,
+        DeleteAccount
     };
 
 

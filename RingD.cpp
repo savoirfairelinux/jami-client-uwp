@@ -293,6 +293,19 @@ void RingClientUWP::RingD::updateAccount(String^ accountId)
     tasksList_.push(task);
 }
 
+void RingClientUWP::RingD::deleteAccount(String ^ accountId)
+{
+    editModeOn_ = true;
+
+    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+
+    auto task = ref new RingD::Task(Request::DeleteAccount);
+    task->_accountId = accountId;
+
+    tasksList_.push(task);
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -731,6 +744,14 @@ RingD::dequeueTasks()
             accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
 
             DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
+            break;
+        }
+        case Request::DeleteAccount:
+        {
+            auto accountId = task->_accountId;
+            auto accountId2 = Utils::toString(accountId);
+
+            DRing::removeAccount(accountId2);
             break;
         }
         default:
