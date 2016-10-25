@@ -39,7 +39,7 @@ public:
         }
         void set(String^ value) {
             name__ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("name_"));
+            NotifyPropertyChanged("name_");
         }
     }
     property String^ ringID_;
