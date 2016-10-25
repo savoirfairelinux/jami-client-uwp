@@ -37,7 +37,7 @@ public:
     property bool _isSelected {
         void set(bool value) {
             isSelected_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_isSelected"));
+            NotifyPropertyChanged("_isSelected");
         }
         bool get() {
             return isSelected_;
