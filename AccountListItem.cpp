@@ -33,6 +33,7 @@ AccountListItem::AccountListItem(Account^ a)
 {
     _account = a;
     _editionMode = false;
+
 }
 
 void

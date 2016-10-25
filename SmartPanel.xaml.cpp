@@ -63,7 +63,13 @@ SmartPanel::SmartPanel()
 
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
-        _accountsList_->SelectedIndex = index;
+        if (_accountsList_) {
+            auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
+            if (accountsListSize > index)
+                _accountsList_->SelectedIndex = index;
+            else
+                _accountsList_->SelectedIndex = 0;
+        }
     });
     Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
         StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
@@ -728,11 +734,30 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
 {
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
     auto accountId = account->accountID_;
-    account->name_ = _aliasTextBoxEditionMenu_->Text;
-    account->_upnpState = _upnpState_->IsOn;
 
 
-    RingD::instance->updateAccount(accountId);
+    // mettre ca en visibility du bouton delete
+    auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
+
+    if (_deleteAccountBtnEditionMenu_->IsChecked && accountsListSize > 1) {
+        RingD::instance->deleteAccount(accountId);
+
+        /* rebuild a new list of accounts without the one to delete */
+        auto newAccountList = ref new Vector<AccountListItem^>();
+        for each (AccountListItem^ item in AccountListItemsViewModel::instance->itemsList) {
+            if (item->_account->accountID_ != accountId)
+                newAccountList->Append(item);
+        }
+
+        _accountsList_->ItemsSource = newAccountList;
+
+    } else {
+
+        account->name_ = _aliasTextBoxEditionMenu_->Text;
+        account->_upnpState = _upnpState_->IsOn;
+
+        RingD::instance->updateAccount(accountId);
+    }
 
     _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
