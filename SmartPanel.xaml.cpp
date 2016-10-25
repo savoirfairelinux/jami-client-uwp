@@ -248,6 +248,7 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _createAccountYes_->IsEnabled = false;
 }
 
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -256,11 +257,6 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     {
     case 0:
     {
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-        ref new DispatchedHandler([=]() {
-            auto frame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
-            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
-        }));
         RingD::instance->createRINGAccount(_aliasTextBox_->Text);
         _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _accountsMenuButton__Checked(nullptr, nullptr);
@@ -278,6 +274,8 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
         break;
     }
     _aliasTextBox_->Text = "";
+    _passwordBoxAccountCreation_->Password = "";
+    _passwordBoxAccountCreationCheck_->Password = "";
 }
 
 
@@ -729,6 +727,7 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
     _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _deleteAccountBtnEditionMenu_->IsChecked = false;
     _deleteAccountBtnEditionMenu_->IsEnabled = (AccountListItemsViewModel::instance->itemsList->Size > 1)? true : false;
+    _createAccountYes_->IsEnabled = false;
 }
 
 
@@ -776,4 +775,12 @@ void RingClientUWP::Views::SmartPanel::_cancelAccountModification__Click(Platfor
 void RingClientUWP::Views::SmartPanel::OnaccountUpdated(RingClientUWP::Account ^account)
 {
     updatePageContent();
+}
+
+void RingClientUWP::Views::SmartPanel::_passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _createAccountYes_->IsEnabled = (_passwordBoxAccountCreation_->Password
+                                     == _passwordBoxAccountCreationCheck_->Password
+                                     && _passwordBoxAccountCreation_->Password->Length() > 0)
+                                    ? true : false;
 }
