@@ -61,7 +61,7 @@ public:
         void set(Visibility visibility)
         {
             notificationNewMessage_ = visibility;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("notificationNewMessage"));
+            NotifyPropertyChanged("notificationNewMessage");
         }
     }
     property uint32 _unreadMessages
@@ -73,7 +73,7 @@ public:
         void set(uint32 value)
         {
             unreadMessages_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_unreadMessages"));
+            NotifyPropertyChanged("_unreadMessages");
         }
     }
     property Windows::UI::Xaml::GridLength _contactBarHeight
@@ -85,7 +85,7 @@ public:
         void set(Windows::UI::Xaml::GridLength value)
         {
             contactBarHeight_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_contactBarHeight"));
+            NotifyPropertyChanged("_contactBarHeight");
         }
     }
 
