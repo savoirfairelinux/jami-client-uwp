@@ -63,7 +63,7 @@ Contact::Contact(String^ name,
 
     if(unreadMessages_) {
         notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
-        PropertyChanged(this, ref new PropertyChangedEventArgs("unreadMessages"));
+        NotifyPropertyChanged("unreadMessages");
     }
 }
 

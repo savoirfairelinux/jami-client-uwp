@@ -53,7 +53,7 @@ public:
         void set(Visibility value)
         {
             hovered_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_hovered"));
+            NotifyPropertyChanged("_hovered");
         }
     }
 
@@ -71,7 +71,7 @@ public:
         }
         void set(CallStatus value) {
             callStatus_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_callStatus"));
+            NotifyPropertyChanged("_callStatus");
         }
     }
 
