@@ -379,6 +379,11 @@
                     Height="80"
                     Width="80"
                     Grid.Column="0"
+                    Stroke="White"
+                    StrokeThickness="3"
+                    PointerEntered="_selectedAccountAvatarContainer__PointerEntered"
+                    PointerExited="_selectedAccountAvatarContainer__PointerExited"
+                    PointerReleased="_selectedAccountAvatarContainer__PointerReleased"
                     Margin="5">
                     <Ellipse.Fill>
                         <ImageBrush
@@ -386,6 +391,24 @@
                             ImageSource="Assets\TESTS\contactAvatar.png"/>
                     </Ellipse.Fill>
                 </Ellipse>
+                <Ellipse
+                    x:Name="_shaderPhotoboothIcon_"
+                    Visibility="Collapsed"
+                    Height="80"
+                    Width="80"
+                    Grid.Column="0"
+                    IsHitTestVisible="False"
+                    Fill="Black"
+                    Opacity="0.3"
+                    Margin="5">
+                </Ellipse>
+                <TextBlock x:Name="_photoboothIcon_"
+                           Grid.Column="0"
+                           Visibility="Collapsed"
+                           IsHitTestVisible="False"
+                           Style="{StaticResource TextSegoeStyle-Centered-40pt-white}"
+                           Text="&#xE722;">
+                </TextBlock>
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
