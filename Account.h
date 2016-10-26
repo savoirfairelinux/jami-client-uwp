@@ -28,17 +28,18 @@ namespace RingClientUWP
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState);
+    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState
+            , String^ sipHostname, String^ sipUsername, String^ sipPassword);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ name_
     {
         String^ get() {
-            return name__;
+            return alias_;
         }
         void set(String^ value) {
-            name__ = value;
+            alias_ = value;
             NotifyPropertyChanged("name_");
         }
     }
@@ -63,14 +64,27 @@ public:
         }
     };
     property bool _upnpState;
+    property String^ _sipHostname;
+    property String^ _sipUsername
+    {
+        String^ get() {
+            return sipUsername_;
+        }
+        void set(String^ value) {
+            sipUsername_ = value;
+            NotifyPropertyChanged("_sipUsername");
+        }
+    }
+    property String^ _sipPassword; // refacto : think to encrypt password in memory
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
-    String^ name__;
+    String^ alias_;
     String^ ringID__;
+    String^ sipUsername_;
 
 };
 }
