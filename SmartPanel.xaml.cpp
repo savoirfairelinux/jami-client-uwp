@@ -762,7 +762,7 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
 
     /* if the delete button is toggled, just delete the account */
-    if (_deleteAccountBtnEditionMenu_->IsChecked && accountsListSize > 1) {
+    if ( _deleteAccountBtnEditionMenu_->IsChecked->Value == true && accountsListSize > 1) {
         AccountListItem^ item;
         for each (item in AccountListItemsViewModel::instance->itemsList)
             if (item->_account->accountID_ == accountId)
