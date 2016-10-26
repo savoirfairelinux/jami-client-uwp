@@ -426,21 +426,22 @@ void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ s
 void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
-    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    if (item->_callId->IsEmpty())
-        item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+        it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
+
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
 void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    item->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
+    for each (auto it in SmartPanelItemsViewModel::instance->itemsList)
+        item->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
@@ -923,4 +924,22 @@ void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerE
 {
     _photoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _shaderPhotoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_smartList__PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+
+}
+
+
+void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    auto grid = dynamic_cast<Grid^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+
+    for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+        it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
+
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 }
