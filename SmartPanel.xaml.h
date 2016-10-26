@@ -71,6 +71,13 @@ public:
     NewMessageBubleNotification();
 };
 
+public ref class CollapseEmptyString sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    CollapseEmptyString();
+};
+
 public ref class SmartPanel sealed
 {
 public:
@@ -124,6 +131,8 @@ private:
     void _cancelAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnaccountUpdated(RingClientUWP::Account ^account);
     void _passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _accountTypeComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
+    void _ringAliasTextBox__TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 };
 }
 }

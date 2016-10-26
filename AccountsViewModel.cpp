@@ -29,15 +29,38 @@ AccountsViewModel::AccountsViewModel()
 }
 
 void
-AccountsViewModel::add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId, bool upnpState)
+AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState)
 {
     auto account = ref new Account(
-                       Utils::toPlatformString(name),
+                       Utils::toPlatformString(alias),
                        Utils::toPlatformString(ringID),
-                       Utils::toPlatformString(accountType),
+                       "RING",
                        Utils::toPlatformString(accountID),
                        Utils::toPlatformString(deviceId),
-                       upnpState);
+                       upnpState,
+                       "" /* sip hostame not used woth ring account */,
+                       "" /* sip username not used with ring account */,
+                       "" /* sip password not used with ring */ );
+
+    accountsList_->Append(account);
+    updateScrollView();
+    accountAdded(account);
+}
+
+void
+AccountsViewModel::addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword)
+{
+    auto account = ref new Account(
+                       Utils::toPlatformString(alias),
+                       "" /* ring Id not used with sip */ ,
+                       "SIP",
+                       Utils::toPlatformString(accountID),
+                       "" /* device id not used with sip */,
+                       false /* upnpn not used with sip */,
+                       Utils::toPlatformString(sipHostname),
+                       Utils::toPlatformString(sipUsername),
+                       Utils::toPlatformString(sipPassword)
+                   );
 
     accountsList_->Append(account);
     updateScrollView();
