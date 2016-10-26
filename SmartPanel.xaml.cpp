@@ -206,17 +206,20 @@ void RingClientUWP::Views::SmartPanel::setMode(RingClientUWP::Views::SmartPanel:
     if (mode == RingClientUWP::Views::SmartPanel::Mode::Normal) {
         _rowRingTxtBx_->Height = 40;
         _selectedAccountAvatarContainer_->Height = 80;
+        _shaderPhotoboothIcon_->Height = 80;
         _selectedAccountAvatarColumn_->Width = 90;
         _selectedAccountRow_->Height = 90;
     }
     else {
         _rowRingTxtBx_->Height = 0;
         _selectedAccountAvatarContainer_->Height = 50;
+        _shaderPhotoboothIcon_->Height = 50;
         _selectedAccountAvatarColumn_->Width = 60;
         _selectedAccountRow_->Height = 60;
     }
 
     _selectedAccountAvatarContainer_->Width = _selectedAccountAvatarContainer_->Height;
+    _shaderPhotoboothIcon_->Width = _shaderPhotoboothIcon_->Height;
     _settingsTBtn_->IsChecked = false;
     _accountsMenuButton_->IsChecked = false;
     _shareMenuButton_->IsChecked = false;
@@ -858,3 +861,66 @@ Object ^ RingClientUWP::Views::CollapseEmptyString::ConvertBack(Object ^ value, 
 
 RingClientUWP::Views::CollapseEmptyString::CollapseEmptyString()
 {}
+
+
+void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    _photoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _shaderPhotoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+
+    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
+    .then([this](StorageFile^ photoFile)
+    {
+        if (photoFile != nullptr) {
+            // maybe it would be possible to move some logics to the style sheet
+            auto brush = ref new ImageBrush();
+
+            auto circle = ref new Ellipse();
+            circle->Height = 80; // TODO : use some global constant when ready
+            circle->Width = 80;
+            auto path = photoFile->Path;
+            auto uri = ref new Windows::Foundation::Uri(path);
+            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+            bitmapImage->UriSource = uri;
+
+            StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+            String^ profilefolder = ".profile";
+            create_task(localfolder->CreateFolderAsync(profilefolder,
+                        Windows::Storage::CreationCollisionOption::OpenIfExists))
+            .then([=](StorageFolder^ copytofolder) {
+                try {
+                    create_task(photoFile->CopyAsync(copytofolder))
+                    .then([=](StorageFile^ copiedfile) {
+                        copiedfile->RenameAsync("profile_image.png",
+                                                Windows::Storage::NameCollisionOption::ReplaceExisting);
+                    });
+                }
+                catch (Exception^ e) {
+                    RingDebug::instance->print("Exception while saving profile image");
+                }
+            });
+
+            Configuration::UserPreferences::instance->PREF_PROFILE_PHOTO = true;
+
+            Configuration::UserPreferences::instance->save();
+
+            brush->ImageSource = bitmapImage;
+            _selectedAccountAvatar_->ImageSource = bitmapImage;
+        }
+    });
+}
+
+
+void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    _photoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _shaderPhotoboothIcon_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
