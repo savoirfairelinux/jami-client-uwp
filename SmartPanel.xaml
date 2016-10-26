@@ -223,7 +223,7 @@
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited">
+            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited" PointerMoved="Grid_PointerMoved">
                 <Grid.RowDefinitions>
                     <!-- row definition for the contact. -->
                     <RowDefinition Height="auto"/>
