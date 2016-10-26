@@ -35,6 +35,7 @@
         <views:HasAnActiveCall x:Key="_HasAnActiveCall_" />
         <views:AccountTypeToSourceImage x:Key="_AccountTypeToSourceImage_" />
         <views:AccountSelectedToVisibility x:Key="_AccountSelectedToVisibility_" />
+        <views:CollapseEmptyString x:Key="_CollapseEmptyString_" />
 
         <Style x:Key="addContactTextBoxStyle"
            TargetType="TextBox">
@@ -207,9 +208,15 @@
                            Style="{StaticResource TextStyle5}"
                            Text="{x:Bind  _account.name_, Mode=OneWay}"/>
                     <TextBlock x:Name="_ringID_"
-                           Grid.ColumnSpan="2"
-                           Style="{StaticResource TextStyle6}"
-                           Text="{x:Bind  _account.ringID_, Mode=OneWay}"/>
+                               Grid.ColumnSpan="2"
+                               Style="{StaticResource TextStyle6}"
+                               Visibility="{x:Bind  _account.ringID_, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}"
+                               Text="{x:Bind  _account.ringID_, Mode=OneWay}"/>
+                    <TextBlock x:Name="_sipUsername_"
+                               Grid.ColumnSpan="2"
+                               Visibility="{x:Bind  _account._sipUsername, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}"
+                               Style="{StaticResource TextStyle6}"
+                               Text="{x:Bind  _account._sipUsername, Mode=OneWay}"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -464,33 +471,77 @@
                 <StackPanel Orientation="Vertical"
                             Grid.Row="0"
                             Background="#FFE4F1F9">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock VerticalAlignment="Center"
-                                   Text="Account type : "
-                                   Margin="10,10,0,10"/>
-                        <ComboBox x:Name="_accountTypeComboBox_"
+                    <!-- alias sub menu. -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE8EC;"/>
+                        <TextBlock Text="Alias" Margin="10"/>
+                    </StackPanel>
+                    <TextBox  x:Name="_ringAliasTextBox_"
+                              TextChanged="_ringAliasTextBox__TextChanged"
+                              Margin="10"
+                              PlaceholderText="Enter alias"/>
+                    <!-- account type chooser -->
+                    <StackPanel Orientation="Horizontal" Margin="10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE168;"/>
+                        <TextBlock Text="Account type" Margin="10"/>
+                    </StackPanel>
+                    <ComboBox x:Name="_accountTypeComboBox_"
                                   SelectedIndex="0"
                                   Margin="10"
+                                  SelectionChanged="_accountTypeComboBox__SelectionChanged"
                                   VerticalAlignment="Center"
                                   Width="195">
-                            <ComboBoxItem Content="Ring"/>
-                            <ComboBoxItem Content="Sip"/>
-                        </ComboBox>
-                    </StackPanel>
+                        <ComboBoxItem Content="Ring"/>
+                        <ComboBoxItem Content="Sip"/>
+                    </ComboBox>
                     <!-- RING account. -->
                     <StackPanel x:Name="_ringAccountCreationStack_"
                                 Visibility="Visible">
-                        <TextBox  x:Name="_aliasTextBox_"
-                                  Margin="10"
-                                  PlaceholderText="Enter your username"/>
-                        <PasswordBox x:Name="_passwordBoxAccountCreation_"
+                        <!-- password sub menu. -->
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE8D7;"/>
+                            <TextBlock Text="Archive password" Margin="10"/>
+                        </StackPanel>
+                        <PasswordBox x:Name="_ringPasswordBoxAccountCreation_"
                                      Margin="10"
                                      PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
-                                     PlaceholderText="Enter your password"/>
-                        <PasswordBox  x:Name="_passwordBoxAccountCreationCheck_"
+                                     PlaceholderText="Enter archive password"/>
+                        <PasswordBox  x:Name="_ringPasswordBoxAccountCreationCheck_"
                                       Margin="10"
                                       PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
-                                      PlaceholderText="Repeat your Password"/>
+                                      PlaceholderText="Repeat archive Password"/>
+                        <!-- upnp sub menu. -->
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE15E;"/>
+                            <TextBlock Text="UPnP" Margin="10"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="_upnpStateAccountCreation_"
+                                      IsOn="True"
+                                      Margin="20,10"/>
+                    </StackPanel>
+                    <!-- SIP account. -->
+                    <StackPanel x:Name="_sipAccountCreationStack_"
+                                Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Text="&#xE717;"/>
+                            <TextBlock Text="SIP account parameters"
+                                       Margin="10"/>
+                        </StackPanel>
+                        <TextBox  x:Name="_sipHostnameTextBox_"
+                                  Margin="10"
+                                  PlaceholderText="Enter hostname"/>
+                        <TextBox  x:Name="_sipUsernameTextBox_"
+                                  Margin="10"
+                                  PlaceholderText="Enter username"/>
+                        <PasswordBox x:Name="_sipPasswordBoxAccountCreation_"
+                                     Margin="10"
+                                     PlaceholderText="Enter password"/>
                     </StackPanel>
                 </StackPanel>
                 <!-- buttons yes/no to create the new account. -->
@@ -535,15 +586,37 @@
                     <TextBox  x:Name="_aliasTextBoxEditionMenu_"
                               FontSize="20"
                               Margin="20,10"
-                              PlaceholderText="Enter your username"/>
+                              PlaceholderText="Enter alias"/>
                     <!-- upnp sub menu. -->
-                    <StackPanel Orientation="Horizontal" Margin="10">
-                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                   Text="&#xE15E;"/>
-                        <TextBlock Text="UPnP" Margin="10"/>
+                    <StackPanel x:Name="_upnpStackEditionMenu_">
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Text="&#xE15E;"/>
+                            <TextBlock Text="UPnP" Margin="10"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="_upnpState_"
+                                      Margin="20,10"/>
                     </StackPanel>
-                    <ToggleSwitch x:Name="_upnpState_"
-                                  Margin="20,10"/>
+                    <!-- SIP parameters. -->
+                    <StackPanel x:Name="_sipAccountStackEditionMenu_"
+                                Visibility="Collapsed">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Text="&#xE717;"/>
+                            <TextBlock Text="SIP account parameters"
+                                       Margin="10"/>
+                        </StackPanel>
+                        <TextBox  x:Name="_sipHostnameEditionMenu_"
+                                  Margin="10"
+                                  PlaceholderText="Enter hostname"/>
+                        <TextBox  x:Name="_sipUsernameEditionTextBox_"
+                                  Margin="10"
+                                  PlaceholderText="Enter username"/>
+                        <PasswordBox x:Name="_sipPasswordEditionMenu_"
+                                     Margin="10"
+                                     PlaceholderText="Enter password"/>
+                    </StackPanel>
                     <!-- delete account sub menu. -->
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"

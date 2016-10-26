@@ -248,34 +248,42 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
     _createAccountYes_->IsEnabled = false;
+
+    _accountTypeComboBox_->SelectedIndex = 0;
+    _upnpStateAccountCreation_->IsOn = true;
+    _ringAliasTextBox_->Text = "";
 }
 
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    switch (_accountTypeComboBox_->SelectedIndex)
+    switch (_accountTypeComboBox_->SelectedIndex) {
+    case 0: /* RING account */
     {
-    case 0:
-    {
-        RingD::instance->createRINGAccount(_aliasTextBox_->Text);
-        _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _accountsMenuButton__Checked(nullptr, nullptr);
+        RingD::instance->createRINGAccount(_ringAliasTextBox_->Text, _ringPasswordBoxAccountCreation_->Password, _upnpStateAccountCreation_->IsOn);
+        _ringPasswordBoxAccountCreation_->Password = "";
+        _ringPasswordBoxAccountCreationCheck_->Password = "";
         break;
     }
     break;
-    case 1:
+    case 1: /* SIP account */
     {
-        RingD::instance->createSIPAccount(_aliasTextBox_->Text);
-        _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _accountsMenuButton__Checked(nullptr, nullptr);
+        RingD::instance->createSIPAccount(_ringAliasTextBox_->Text, _sipPasswordBoxAccountCreation_->Password, _sipHostnameTextBox_->Text, _sipUsernameTextBox_->Text);
+        _sipPasswordBoxAccountCreation_->Password = "";
+        _sipUsernameTextBox_->Text = "";
+        _sipHostnameTextBox_->Text = "";
         break;
     }
     default:
         break;
     }
-    _aliasTextBox_->Text = "";
-    _passwordBoxAccountCreation_->Password = "";
-    _passwordBoxAccountCreationCheck_->Password = "";
+
+    _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountsMenuButton__Checked(nullptr, nullptr);
+
+
 }
 
 
@@ -728,6 +736,16 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
     _deleteAccountBtnEditionMenu_->IsChecked = false;
     _deleteAccountBtnEditionMenu_->IsEnabled = (AccountListItemsViewModel::instance->itemsList->Size > 1)? true : false;
     _createAccountYes_->IsEnabled = false;
+    _sipAccountStackEditionMenu_->Visibility = (account->accountType_ == "SIP")
+            ? Windows::UI::Xaml::Visibility::Visible
+            :Windows::UI::Xaml::Visibility::Collapsed;
+    _upnpStackEditionMenu_->Visibility = (account->accountType_ == "RING")
+                                         ? Windows::UI::Xaml::Visibility::Visible
+                                         : Windows::UI::Xaml::Visibility::Collapsed;
+    _sipHostnameEditionMenu_->Text = account->_sipHostname;
+    _sipUsernameEditionTextBox_->Text = account->_sipUsername;
+    _sipPasswordEditionMenu_->Password = account->_sipPassword;
+
 }
 
 
@@ -779,8 +797,64 @@ void RingClientUWP::Views::SmartPanel::OnaccountUpdated(RingClientUWP::Account ^
 
 void RingClientUWP::Views::SmartPanel::_passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    _createAccountYes_->IsEnabled = (_passwordBoxAccountCreation_->Password
-                                     == _passwordBoxAccountCreationCheck_->Password
-                                     && _passwordBoxAccountCreation_->Password->Length() > 0)
+    _createAccountYes_->IsEnabled = (_ringPasswordBoxAccountCreation_->Password
+                                     == _ringPasswordBoxAccountCreationCheck_->Password
+                                     && _ringPasswordBoxAccountCreation_->Password->Length() > 0)
                                     ? true : false;
 }
+
+
+void RingClientUWP::Views::SmartPanel::_accountTypeComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+    auto accountTypeComboBox = dynamic_cast<ComboBox^>(sender);
+
+    /* avoid exception at start */
+    if (_ringAccountCreationStack_ == nullptr && _sipAccountCreationStack_ == nullptr)
+        return;
+
+    /* empty everything, avoid to keep credentials in memory... */
+    _ringPasswordBoxAccountCreation_->Password = "";
+    _ringPasswordBoxAccountCreationCheck_->Password = "";
+    _sipPasswordBoxAccountCreation_->Password = "";
+    _sipUsernameTextBox_->Text = "";
+    _sipHostnameTextBox_->Text = "";
+
+    if (accountTypeComboBox->SelectedIndex == 0 /* RING type is selected */) {
+        _ringAccountCreationStack_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        _sipAccountCreationStack_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _createAccountYes_->IsEnabled = false;
+        _upnpStateAccountCreation_->IsOn = true;
+    } else { /* SIP type is selected */
+        _ringAccountCreationStack_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _sipAccountCreationStack_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        _createAccountYes_->IsEnabled = (_ringAliasTextBox_->Text->IsEmpty()) ? false : true;
+    }
+}
+
+
+
+
+void RingClientUWP::Views::SmartPanel::_ringAliasTextBox__TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e)
+{
+    _createAccountYes_->IsEnabled = (_ringAliasTextBox_->Text->IsEmpty()
+                                     || (_accountTypeComboBox_->SelectedIndex == 0 /* RING type is selected */
+                                         && _ringPasswordBoxAccountCreation_->Password->Length() < 1))
+                                    ? false : true;
+}
+
+Object ^ RingClientUWP::Views::CollapseEmptyString::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto stringValue = dynamic_cast<String^>(value);
+
+    return (stringValue->IsEmpty())
+           ? Windows::UI::Xaml::Visibility::Collapsed
+           : Windows::UI::Xaml::Visibility::Visible;
+}
+
+Object ^ RingClientUWP::Views::CollapseEmptyString::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::CollapseEmptyString::CollapseEmptyString()
+{}

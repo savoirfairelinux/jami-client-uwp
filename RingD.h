@@ -61,8 +61,8 @@ public:
         }
     }
     property StartingStatus _startingStatus;
-    property String^ _pin;
-    property String^ _password;
+    property String^ _pin; // you should RM ME
+    property String^ _password; // refatco : think a little... RM ME
 
     void cancelOutGoingCall2(String^ callId); // marche
 
@@ -82,8 +82,8 @@ internal:
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
-    void createRINGAccount(String^ alias);
-    void createSIPAccount(String^ alias);
+    void createRINGAccount(String^ alias, String^ archivePassword, bool upnp);
+    void createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername);
     void refuseIncommingCall(String^ call);
     void acceptIncommingCall(String^ call);
     void placeCall(Contact^ contact);
@@ -102,7 +102,7 @@ internal:
 
     /* TODO : move members */
     ///bool hasConfig; // replaced by startingStatus
-    std::string accountName;
+    std::string accountName; // YOU SHOULD RM ME
     String ^ currentCallId; // to save ongoing call id during visibility change
 
     /* events */
@@ -155,10 +155,15 @@ private:
         }
     public:
         property Request request;
+        property String^ _alias;
         property String^ _callId;
         property String^ _pin;
-        property String^ _password;
+        property String^ _password; // refacto : is it safe ? are tasks destroy quickly after been used ?
         property String^ _accountId;
+        property bool _upnp;
+        property String^ _sipPassword;
+        property String^ _sipHostname;
+        property String^ _sipUsername;
     };
 
     /* functions */
