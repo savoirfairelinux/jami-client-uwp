@@ -46,7 +46,8 @@ internal:
     }
 
     /* functions */
-    void add(std::string& name, std::string& ringID, std::string& accountType, std::string& accountID, std::string& deviceId, bool upnpState);
+    void addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState);
+    void addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword);
     void clearAccountList();
     Account^ findItem(String^ accountId);
 

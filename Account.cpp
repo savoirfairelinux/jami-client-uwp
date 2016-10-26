@@ -32,7 +32,10 @@ Account::Account(String^ name,
                  String^ accountType,
                  String^ accountID,
                  String^ deviceId,
-                 bool upnpState)
+                 bool upnpState,
+                 String^ sipHostname,
+                 String^ sipUsername,
+                 String^ sipPassword)
 {
     name_ = name;
     ringID_ = ringID;
@@ -40,6 +43,10 @@ Account::Account(String^ name,
     accountID_ = accountID;
     _deviceId = deviceId;
     _upnpState = _upnpState;
+    _sipHostname = sipHostname;
+    _sipUsername = sipUsername;
+    _sipPassword = sipPassword;
+
 }
 
 void

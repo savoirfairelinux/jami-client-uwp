@@ -59,38 +59,58 @@ RingClientUWP::RingD::reloadAccountList()
     std::vector<std::string>::reverse_iterator rit = accountList.rbegin();
 
     for (; rit != accountList.rend(); ++rit) {
-
         std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
-        std::string ringID(accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second);
 
-        bool upnpState = (accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR)
-                         ? true
-                         : false;
-
-        MSG_("upnp state : " + accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second);
-
-        if(!ringID.empty())
-            ringID = ringID.substr(5);
-
-        auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
         auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
-        auto deviceId = (type == "SIP")? std::string() : accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
-        auto ringId = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
+        if (type == "RING") {
+            auto  ringID = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
+            if (!ringID.empty())
+                ringID = ringID.substr(5);
 
-        auto accountId = Utils::toPlatformString(*rit);
-        auto account = AccountsViewModel::instance->findItem(accountId);
+            bool upnpState = (accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR)
+                             ? true
+                             : false;
+            auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
+            auto deviceId = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
+            auto accountId = *rit;
 
-        if (account) {
-            account->name_ = Utils::toPlatformString(alias);
-            account->_upnpState = upnpState;
-            account->accountType_ = Utils::toPlatformString(type);
-            account->ringID_ = Utils::toPlatformString(ringId);
-            accountUpdated(account);
+            auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
+
+            if (account) {
+                account->name_ = Utils::toPlatformString(alias);
+                account->_upnpState = upnpState;
+                account->accountType_ = Utils::toPlatformString(type);
+                account->ringID_ = Utils::toPlatformString(ringID);
+                accountUpdated(account);
+            }
+            else {
+                RingClientUWP::ViewModel::AccountsViewModel::instance->addRingAccount(alias, ringID, accountId, deviceId, upnpState);
+            }
         }
-        else {
-            RingClientUWP::ViewModel::AccountsViewModel::instance->add(alias, ringID, type, *rit /*account id*/, deviceId, upnpState);
-        }
+        else { /* SIP */
+            auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
+            auto accountId = *rit;
+            auto sipHostname = accountDetails.find(DRing::Account::ConfProperties::HOSTNAME)->second;
+            auto sipUsername = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
+            auto sipPassword = accountDetails.find(DRing::Account::ConfProperties::PASSWORD)->second;
 
+            auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
+
+            if (account) {
+                account->name_ = Utils::toPlatformString(alias);
+                account->accountType_ = Utils::toPlatformString(type);
+                account->_sipHostname = Utils::toPlatformString(sipHostname);
+                account->_sipUsername = Utils::toPlatformString(sipUsername);
+                account->_sipPassword = Utils::toPlatformString(sipPassword);
+                accountUpdated(account);
+            }
+            else {
+                RingClientUWP::ViewModel::AccountsViewModel::instance->addSipAccount(alias, accountId, sipHostname, sipUsername, sipPassword);
+            }
+
+            sipPassword = ""; // avoid to keep password in memory
+
+        }
     }
 
     // load user preferences
@@ -163,30 +183,38 @@ void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
 }
 
 void
-RingD::createRINGAccount(String^ alias)
+RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp)
 {
-
     editModeOn_ = true;
 
     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
     dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
 
-    // refactoring : create a dedicated class constructor task and removes accountName from RingD
-    accountName = Utils::toString(alias);
-    tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
+    auto task = ref new RingD::Task(Request::AddRingAccount);
+
+    task->_alias = alias;
+    task->_password = archivePassword;
+    task->_upnp = upnp;
+
+    tasksList_.push(task);
 }
 
 void
-RingD::createSIPAccount(String^ alias)
+RingD::createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername)
 {
     editModeOn_ = true;
 
     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
     dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
 
-    // refactoring : create a dedicated class constructor task and removes accountName from RingD
-    accountName = Utils::toString(alias);
-    tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
+    auto task = ref new RingD::Task(Request::AddSIPAccount);
+
+    task->_alias = alias;
+    task->_sipPassword = sipPassword;
+    task->_sipHostname = sipHostname;
+    task->_sipUsername = sipusername;
+
+    tasksList_.push(task);
 }
 
 void RingClientUWP::RingD::refuseIncommingCall(String^ callId)
@@ -600,7 +628,6 @@ RingClientUWP::RingD::startDaemon()
             case StartingStatus::REGISTERING_ON_THIS_PC:
             {
                 tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
-                tasksList_.push(ref new RingD::Task(Request::AddSIPAccount));
                 break;
             }
             case StartingStatus::REGISTERING_THIS_DEVICE:
@@ -663,17 +690,28 @@ RingD::dequeueTasks()
         case Request::AddRingAccount:
         {
             std::map<std::string, std::string> ringAccountDetails;
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, accountName));
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, accountName));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS
+                                      , Utils::toString(task->_alias)));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD,
+                                      Utils::toString(task->_password)));
             ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"RING"));
+            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED
+                                      , (task->_upnp)? ring::TRUE_STR : ring::FALSE_STR));
             DRing::addAccount(ringAccountDetails);
         }
         break;
         case Request::AddSIPAccount:
         {
             std::map<std::string, std::string> sipAccountDetails;
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, accountName + " (SIP)"));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS
+                                                    , Utils::toString(task->_alias)));
             sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"SIP"));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::PASSWORD
+                                                    , Utils::toString(task->_sipPassword)));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::HOSTNAME
+                                                    , Utils::toString(task->_sipHostname)));
+            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::USERNAME
+                                                    , Utils::toString(task->_sipUsername)));
             DRing::addAccount(sipAccountDetails);
         }
         break;
