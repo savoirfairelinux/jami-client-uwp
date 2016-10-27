@@ -46,13 +46,13 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::System;
+using namespace Concurrency;
 
 MainPage::MainPage()
 {
     InitializeComponent();
 
-
-
+    UserModel::instance->getUserData();
 
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
 
@@ -76,11 +76,11 @@ MainPage::MainPage()
                        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
-                                      ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
+        ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
     applicationSuspendingEventToken = Application::Current->Suspending +=
-                                          ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
     applicationResumingEventToken = Application::Current->Resuming +=
-                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
 }
 
 void
@@ -126,7 +126,6 @@ RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
     RingD::instance->startDaemon();
     showLoadingOverlay(true, false);
-
 }
 
 void
@@ -371,9 +370,9 @@ MainPage::BeginExtendedExecution()
     newSession->Reason = ExtendedExecutionReason::SavingData;
     newSession->Description = "Extended Execution";
     sessionRevokedToken = (newSession->Revoked += ref new TypedEventHandler<Object^,
-                           ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
+        ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
     return create_task(newSession->RequestExtensionAsync())
-    .then([=](ExtendedExecutionResult result) {
+        .then([=](ExtendedExecutionResult result){
         try {
             switch (result)
             {

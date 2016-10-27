@@ -38,6 +38,7 @@
 #include "Contact.h"
 #include "ContactsViewModel.h"
 #include "Conversation.h"
+#include "UserModel.h"
 #include "MainPage.xaml.h"
 #include "SmartPanelItem.h"
 #include "SmartPanelItemsViewModel.h"
