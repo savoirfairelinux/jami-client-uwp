@@ -1,102 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <Filter Include="Common">
-      <UniqueIdentifier>e1354e5c-d116-4970-86d8-c5b0c0ca4591</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets">
-      <UniqueIdentifier>dcac1771-4f06-4a41-b772-3f502f0f39da</UniqueIdentifier>
-      <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
-    </Filter>
-    <Filter Include="Views">
-      <UniqueIdentifier>{1d1ef61d-6e71-458f-9bb7-45441e9a94d0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\Dlls">
-      <UniqueIdentifier>{06835bd7-8bac-406a-8651-007b82da36ed}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings">
-      <UniqueIdentifier>{f6781cdb-0686-4a19-a1b8-3dc7df5efd56}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\en-US">
-      <UniqueIdentifier>{70f7b244-b108-4bf1-8b6d-679a424b973f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Strings\fr-Fr">
-      <UniqueIdentifier>{d42f40f3-a5fb-40d3-83b9-2c816189dc77}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Styles">
-      <UniqueIdentifier>{38929305-13e6-4beb-9e52-4020da29e403}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Assets\TESTS">
-      <UniqueIdentifier>{758258ab-8169-4388-a89d-a834cebce79a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ModelViews">
-      <UniqueIdentifier>{c9f1f5bd-c315-4f6f-a91b-bc67fe27e0b9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{8ea3251c-a70e-4de5-9f26-8db3df45c2c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Controls">
-      <UniqueIdentifier>{2cffcd5e-0546-4629-a152-37efd9c1128f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media">
-      <UniqueIdentifier>{bec54fb8-3a88-4687-8cbf-87325df1bcc7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Video">
-      <UniqueIdentifier>{f711ca0c-c71f-47a7-9352-441ab4b44d5d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Audio">
-      <UniqueIdentifier>{448e3594-0555-4c62-be25-71e1cebc80e1}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <PRIResource Include="localization\US-en\Resources.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\Fr-fr\Resources.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="App.xaml.cpp" />
+    <ClCompile Include="LoadingPage.xaml.cpp" />
     <ClCompile Include="MainPage.xaml.cpp" />
+    <ClCompile Include="MessageTextPage.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="WelcomePage.xaml.cpp" />
-    <ClCompile Include="SmartPanel.xaml.cpp" />
     <ClCompile Include="RingConsolePanel.xaml.cpp" />
-    <ClCompile Include="Contact.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
-    <ClCompile Include="Account.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
-    <ClCompile Include="AccountsViewModel.cpp">
-      <Filter>ModelViews</Filter>
-    </ClCompile>
-    <ClCompile Include="ContactsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+    <ClCompile Include="SmartPanel.xaml.cpp" />
+    <ClCompile Include="VideoPage.xaml.cpp" />
+    <ClCompile Include="WelcomePage.xaml.cpp" />
+    <ClCompile Include="Wizard.xaml.cpp" />
+    <ClCompile Include="RingD.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="RingDebug.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="MessageTextPage.xaml.cpp" />
-    <ClCompile Include="VideoPage.xaml.cpp" />
-    <ClCompile Include="RingD.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
-    <ClCompile Include="LoadingPage.xaml.cpp" />
-    <ClCompile Include="Wizard.xaml.cpp" />
-    <ClCompile Include="Conversation.cpp">
-      <Filter>Model</Filter>
-    </ClCompile>
     <ClCompile Include="UserPreferences.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="SmartPanelItem.cpp">
+    <ClCompile Include="AccountListItem.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
-    <ClCompile Include="SmartPanelItemsViewModel.cpp">
-      <Filter>ModelViews</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoManager.cpp">
-      <Filter>Media\Video</Filter>
-    </ClCompile>
-    <ClCompile Include="VideoRendererManager.cpp">
-      <Filter>Media\Video</Filter>
+    <ClCompile Include="SmartPanelItem.cpp">
+      <Filter>Controls</Filter>
     </ClCompile>
     <ClCompile Include="Video.cpp">
       <Filter>Media\Video</Filter>
@@ -104,56 +43,71 @@
     <ClCompile Include="VideoCaptureManager.cpp">
       <Filter>Media\Video</Filter>
     </ClCompile>
-    <ClCompile Include="AccountListItem.cpp">
-      <Filter>Controls</Filter>
+    <ClCompile Include="VideoManager.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="VideoRendererManager.cpp">
+      <Filter>Media\Video</Filter>
+    </ClCompile>
+    <ClCompile Include="Account.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Contact.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
+    <ClCompile Include="Conversation.cpp">
+      <Filter>Model</Filter>
     </ClCompile>
     <ClCompile Include="AccountListItemsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
+    <ClCompile Include="AccountsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
+    <ClCompile Include="ContactsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
+    <ClCompile Include="SmartPanelItemsViewModel.cpp">
+      <Filter>ModelViews</Filter>
+    </ClCompile>
+    <ClCompile Include="UserModel.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LoadingPage.xaml.h" />
+    <ClInclude Include="MessageTextPage.xaml.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
     <ClInclude Include="MainPage.xaml.h" />
-    <ClInclude Include="WelcomePage.xaml.h" />
-    <ClInclude Include="SmartPanel.xaml.h" />
     <ClInclude Include="RingConsolePanel.xaml.h" />
-    <ClInclude Include="Contact.h">
-      <Filter>Model</Filter>
+    <ClInclude Include="SmartPanel.xaml.h" />
+    <ClInclude Include="VideoPage.xaml.h" />
+    <ClInclude Include="WelcomePage.xaml.h" />
+    <ClInclude Include="Wizard.xaml.h" />
+    <ClInclude Include="Globals.h">
+      <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="Account.h">
-      <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="AccountsViewModel.h">
-      <Filter>ModelViews</Filter>
-    </ClInclude>
-    <ClInclude Include="ContactsViewModel.h">
-      <Filter>ModelViews</Filter>
+    <ClInclude Include="RingD.h">
+      <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="RingDebug.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="UserPreferences.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="MessageTextPage.xaml.h" />
-    <ClInclude Include="VideoPage.xaml.h" />
-    <ClInclude Include="RingD.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="LoadingPage.xaml.h" />
-    <ClInclude Include="Wizard.xaml.h" />
-    <ClInclude Include="Conversation.h">
-      <Filter>Model</Filter>
-    </ClInclude>
-    <ClInclude Include="UserPreferences.h">
-      <Filter>Common</Filter>
+    <ClInclude Include="AccountListItem.h">
+      <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h">
       <Filter>Controls</Filter>
     </ClInclude>
-    <ClInclude Include="SmartPanelItemsViewModel.h">
-      <Filter>ModelViews</Filter>
+    <ClInclude Include="Video.h">
+      <Filter>Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoCaptureManager.h">
       <Filter>Media\Video</Filter>
@@ -164,48 +118,42 @@
     <ClInclude Include="VideoRendererManager.h">
       <Filter>Media\Video</Filter>
     </ClInclude>
-    <ClInclude Include="Video.h">
-      <Filter>Media\Video</Filter>
+    <ClInclude Include="Account.h">
+      <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="Globals.h">
-      <Filter>Common</Filter>
+    <ClInclude Include="Contact.h">
+      <Filter>Model</Filter>
     </ClInclude>
-    <ClInclude Include="AccountListItem.h">
-      <Filter>Controls</Filter>
+    <ClInclude Include="Conversation.h">
+      <Filter>Model</Filter>
     </ClInclude>
     <ClInclude Include="AccountListItemsViewModel.h">
       <Filter>ModelViews</Filter>
     </ClInclude>
+    <ClInclude Include="AccountsViewModel.h">
+      <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="ContactsViewModel.h">
+      <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="SmartPanelItemsViewModel.h">
+      <Filter>ModelViews</Filter>
+    </ClInclude>
+    <ClInclude Include="UserModel.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="Assets\LockScreenLogo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\SplashScreen.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\Square150x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\Square44x44Logo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\StoreLogo.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\Wide310x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\TESTS\contactAvatar.png">
+    <Image Include="Assets\AccountTypeRING.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
-    <Image Include="Assets\TESTS\qrcode.png">
+    <Image Include="Assets\AccountTypeSIP.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
     <Image Include="Assets\TESTS\blank.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\TESTS\contactAvatar.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-100.png">
@@ -226,21 +174,41 @@
     <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
-    <Image Include="Assets\qrCodeIcon.png">
+    <Image Include="Assets\TESTS\qrcode.png">
+      <Filter>Assets\TESTS</Filter>
+    </Image>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\AccountTypeSIP.png">
-      <Filter>Assets\TESTS</Filter>
+    <Image Include="Assets\SplashScreen.scale-200.png">
+      <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\AccountTypeRING.png">
-      <Filter>Assets\TESTS</Filter>
+    <Image Include="Assets\Square44x44Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Square150x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\Wide310x150Logo.scale-200.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\qrCodeIcon.png">
+      <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ring-client-uwp_StoreKey.pfx" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
+    <None Include="Package.StoreAssociation.xml" />
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
@@ -256,31 +224,26 @@
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\ring-daemon\contrib\redist\msvcr100.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\redist\pthreadVC2.dll">
+    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
-    <Page Include="WelcomePage.xaml">
-      <Filter>Views</Filter>
-    </Page>
+    <Page Include="Wizard.xaml" />
     <Page Include="Styles.xaml">
       <Filter>Styles</Filter>
     </Page>
-    <Page Include="RingConsolePanel.xaml">
+    <Page Include="LoadingPage.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="SmartPanel.xaml">
+    <Page Include="MessageTextPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="RingConsolePanel.xaml">
       <Filter>Views</Filter>
     </Page>
     <Page Include="SmartPanel.xaml">
@@ -289,20 +252,55 @@
     <Page Include="VideoPage.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="MessageTextPage.xaml">
+    <Page Include="WelcomePage.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="LoadingPage.xaml">
-      <Filter>Views</Filter>
-    </Page>
-    <Page Include="Wizard.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="localization\US-en\Resources.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="localization\Fr-fr\Resources.resw">
-      <Filter>Strings\fr-Fr</Filter>
-    </PRIResource>
+    <Filter Include="Assets">
+      <UniqueIdentifier>{c8c09e1f-904b-4121-bf45-ccee3d7dcd7f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Dlls">
+      <UniqueIdentifier>{5cfe090d-7521-4f12-adaf-dd47afd8fa58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\TESTS">
+      <UniqueIdentifier>{41024596-5974-4b5d-b9ce-970c3746ac80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{98b4d31d-b4eb-44ec-ab04-2b98816714b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Controls">
+      <UniqueIdentifier>{befd33e5-463a-42bb-9b9b-68c1ab49f0df}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media">
+      <UniqueIdentifier>{b4690532-30e8-4640-8478-1a686d31d7a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media\Audio">
+      <UniqueIdentifier>{851d9f4a-c6b8-40aa-ba0f-44a7185795e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Media\Video">
+      <UniqueIdentifier>{6d47b8c1-b056-4461-98d6-5bcb52d30447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Model">
+      <UniqueIdentifier>{04b389af-ccff-45ed-b44a-645c39388eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ModelViews">
+      <UniqueIdentifier>{259b6ba4-1943-4393-b7a1-5e83f15a0217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings">
+      <UniqueIdentifier>{f9db2a3e-6f39-4c23-922e-7143eb98197b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\en-US">
+      <UniqueIdentifier>{a710d34d-6f6b-4a72-a62b-3d0bb132533b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr-FR">
+      <UniqueIdentifier>{e97f4433-16c6-425e-b476-f2e3877d4104}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Styles">
+      <UniqueIdentifier>{88bf5748-d567-486c-91cf-1c7a124078d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Views">
+      <UniqueIdentifier>{b81596e4-e16c-4537-9631-65655360cbf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
 </Project>
