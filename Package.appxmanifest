@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="ring-client-uwp-multi-device" Publisher="CN=user" Version="2.0.3.0" />
+  <Identity Name="Savoir-faireLinux.GNURing" Publisher="CN=8121A5F7-3CA1-4CAA-92B2-4F595B011941" Version="1.1.0.0" />
   <mp:PhoneIdentity PhoneProductId="2385953f-9019-423d-aa82-d1bbacfa258b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>ring-client-uwp</DisplayName>
-    <PublisherDisplayName>Savoir-Faire Linux</PublisherDisplayName>
+    <DisplayName>GNU Ring</DisplayName>
+    <PublisherDisplayName>Savoir-faire Linux</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="RingClientUWP.App">
-      <uap:VisualElements DisplayName="ring-client-uwp-md" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="ring-client-uwp" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="GNU Ring" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="ring-client-uwp" BackgroundColor="transparent">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png">
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
@@ -32,13 +32,11 @@
     <uap:Capability Name="blockedChatMessages" />
     <uap:Capability Name="chat" />
     <uap:Capability Name="contacts" />
-    <uap:Capability Name="enterpriseAuthentication" />
     <uap:Capability Name="musicLibrary" />
     <uap:Capability Name="objects3D" />
     <uap:Capability Name="phoneCall" />
     <uap:Capability Name="picturesLibrary" />
     <uap:Capability Name="removableStorage" />
-    <uap:Capability Name="sharedUserCertificates" />
     <uap:Capability Name="userAccountInformation" />
     <uap:Capability Name="videosLibrary" />
     <uap:Capability Name="voipCall" />

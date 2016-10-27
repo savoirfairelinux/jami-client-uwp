@@ -89,6 +89,7 @@ internal:
     void placeCall(Contact^ contact);
     /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
     CallStatus translateCallStatus(String^ state);
+    String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
 
     void hangUpCall2(String^ callId);
