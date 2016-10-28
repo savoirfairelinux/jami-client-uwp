@@ -626,6 +626,15 @@ RingClientUWP::RingD::startDaemon()
                         VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
                     VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
                 }));
+                /*}),
+                	DRing::exportable_callback<ConfigurationSignal::NameRegistrationEnded>(
+                		[this](const std::string &accountId, int status, const std::string &name) {
+                	MSG_("\n<NameRegistrationEnded>\n");
+
+                }),
+                	DRing::exportable_callback<ConfigurationSignal::RegisteredNameFound>(
+                		[this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+                	MSG_("\n<RegisteredNameFound>\n");*/
             })
         };
         registerVideoHandlers(outgoingVideoHandlers);
@@ -819,6 +828,21 @@ RingD::dequeueTasks()
             auto accountId2 = Utils::toString(accountId);
 
             DRing::removeAccount(accountId2);
+            break;
+        }
+        case Request::LookUpName:
+        {
+            //DRing::lookupName(accountID.toStdString(), nameServiceURL.toStdString(), name.toStdString());
+            break;
+        }
+        case Request::LookUpAddress:
+        {
+            //DRing::lookupAddress(accountID.toStdString(), nameServiceURL.toStdString(), address.toStdString());
+            break;
+        }
+        case Request::RegisterName:
+        {
+            //DRing::registerName(accountID.toStdString(), password.toStdString(), name.toStdString());
             break;
         }
         default:
