@@ -36,6 +36,8 @@ delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
 delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
+delegate void NameRegistrationEnded(String^ accountId, int status, String^ name);
+delegate void RegisteredNameFound(String^ accountId, int status, String^ address, String^ name);
 
 
 public ref class RingD sealed
@@ -116,6 +118,8 @@ internal:
     event ExportOnRingEnded^ exportOnRingEnded;
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
+    event NameRegistrationEnded^ nameRegistrationEnded;
+    event RegisteredNameFound^ registeredNameFound;
 
 private:
     /* sub classes */
@@ -133,7 +137,10 @@ private:
         GetKnownDevices,
         ExportOnRing,
         UpdateAccount,
-        DeleteAccount
+        DeleteAccount,
+        LookUpName,
+        LookUpAddress,
+        RegisterName
     };
 
 
