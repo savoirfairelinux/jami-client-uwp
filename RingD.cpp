@@ -348,7 +348,7 @@ void RingClientUWP::RingD::deleteAccount(String ^ accountId)
 void
 RingClientUWP::RingD::startDaemon()
 {
-    eraseCacheFolder();
+    //eraseCacheFolder();
     editModeOn_ = true;
 
 
@@ -687,7 +687,7 @@ RingClientUWP::RingD::startDaemon()
             while (true) {
                 DRing::pollEvents();
                 dequeueTasks();
-                Sleep(1000);
+                Sleep(5);
             }
             DRing::fini();
         }
