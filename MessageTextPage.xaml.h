@@ -50,6 +50,8 @@ private:
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void sendMessage();
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
+    void OnSelectionChanged(Platform::Object ^sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^e);
+
 };
 }
 }

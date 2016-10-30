@@ -29,6 +29,7 @@ String^ GUIDKey = "guid";
 String^ unreadMessagesKey = "unreadmessages";
 String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
+String^ accountIdAssociatedKey = "accountIdAssociated";
 
 namespace RingClientUWP
 {
@@ -88,6 +89,7 @@ public:
             NotifyPropertyChanged("_contactBarHeight");
         }
     }
+    property String^ _accountIdAssociated;
 
 internal:
     void        saveConversationToFile();
