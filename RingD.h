@@ -63,8 +63,6 @@ public:
         }
     }
     property StartingStatus _startingStatus;
-    property String^ _pin; // you should RM ME
-    property String^ _password; // refatco : think a little... RM ME
 
     void cancelOutGoingCall2(String^ callId); // marche
 
@@ -102,10 +100,9 @@ internal:
     void eraseCacheFolder();
     void updateAccount(String^ accountId);
     void deleteAccount(String^ accountId);
+    void registerThisDevice(String^ pin, String^ archivePassword);
 
     /* TODO : move members */
-    ///bool hasConfig; // replaced by startingStatus
-    std::string accountName; // YOU SHOULD RM ME
     String ^ currentCallId; // to save ongoing call id during visibility change
 
     /* events */
