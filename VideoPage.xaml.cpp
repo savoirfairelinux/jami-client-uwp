@@ -120,7 +120,7 @@ VideoPage::VideoPage()
     RingD::instance->stateChange +=
         ref new StateChange([&](String^ callId, CallStatus state, int code)
     {
-        if (state == CallStatus::ENDED) {
+        if (state == CallStatus::NONE) {
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
         }
     });
