@@ -233,7 +233,16 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 {
     MSG_("!--->> placeCall");
     auto to = contact->ringID_;
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+    String^ accountId;
+
+    if (contact->_accountIdAssociated->IsEmpty()) {
+        accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        MSG_("adding account id to contact");
+        contact->_accountIdAssociated = accountId;
+    }
+    else {
+        accountId = contact->_accountIdAssociated;
+    }
 
     auto to2 = Utils::toString(to);
     auto accountId2 = Utils::toString(accountId);
@@ -868,6 +877,7 @@ RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ stat
 
     if (state == "CONNECTING")
         return CallStatus::SEARCHING;
+
 
     return CallStatus::NONE;
 }
