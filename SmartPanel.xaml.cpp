@@ -94,6 +94,8 @@ SmartPanel::SmartPanel()
             return;
         }
 
+        contact->_accountIdAssociated = accountId;
+
         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_callId = callId;
 
