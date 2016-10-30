@@ -32,14 +32,12 @@ void
 Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
 {
     auto alias = _aliasTextBox_->Text;
-    if (alias->IsEmpty())
-        alias = "windows user";
-    std::wstring wstr(alias->Begin());
-    std::string str(wstr.begin(), wstr.end());
     RingD::instance->_startingStatus = StartingStatus::REGISTERING_ON_THIS_PC;
-    RingD::instance->accountName = std::string(wstr.begin(), wstr.end());
+
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
+        RingD::instance->createRINGAccount(_aliasTextBox_->Text, _password_->Password, true);
+        _password_->Password = "";
     }));
 }
 
@@ -118,11 +116,21 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
 
 void RingClientUWP::Views::Wizard::_addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    RingD::instance->_pin = _PINTextBox_->Text;
-    RingD::instance->_password = _ArchivePassword_->Password;
     RingD::instance->_startingStatus = StartingStatus::REGISTERING_THIS_DEVICE;
 
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
+        RingD::instance->registerThisDevice(_PINTextBox_->Text, _ArchivePassword_->Password);
+        _ArchivePassword_->Password = "";
+        _PINTextBox_->Text = "";
     }));
+}
+
+
+void RingClientUWP::Views::Wizard::validatePassword(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _createAccountYes_->IsEnabled = (_password_->Password
+                                     == _passwordCheck_->Password
+                                     && _password_->Password->Length() > 0)
+                                    ? true : false;
 }
