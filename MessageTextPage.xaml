@@ -147,6 +147,9 @@
                 <Button x:Name="_deleteContact_"
                         Content="delete"
                         Click="_deleteContact__Click"/>
+                    <Button x:Name="_clearConversation_"
+                        Content="clear conversation"
+                        Click="_clearConversation__Click"/>
                 </StackPanel>
             </StackPanel>
 
