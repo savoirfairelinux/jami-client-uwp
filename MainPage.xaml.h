@@ -74,5 +74,6 @@ private:
     void OnsummonVideoPage();
     void OnpressHangUpCall();
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
+    void OncloseMessageTextPage();
 };
 }
