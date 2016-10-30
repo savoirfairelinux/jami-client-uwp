@@ -173,6 +173,20 @@ ContactsViewModel::Destringify(String^ data)
     }
 }
 
+void RingClientUWP::ViewModel::ContactsViewModel::deleteContact(Contact ^ contact)
+{
+    unsigned int index;
+    auto itemsList = SmartPanelItemsViewModel::instance->itemsList;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    if (contactsList_->IndexOf(contact, &index)) {
+        contact->deleteConversationFile();
+        contactsList_->RemoveAt(index);
+    }
+
+    saveContactsToFile();
+}
+
 
 void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {

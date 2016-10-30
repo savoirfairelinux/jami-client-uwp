@@ -21,6 +21,8 @@
 
 namespace RingClientUWP
 {
+delegate void CloseMessageTextPage();
+
 namespace Views
 {
 
@@ -45,6 +47,9 @@ public:
     void updatePageContent();
     void scrollDown();
 
+internal:
+    event CloseMessageTextPage^ closeMessageTextPage;
+
 private:
     void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
@@ -52,6 +57,7 @@ private:
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
     void OnSelectionChanged(Platform::Object ^sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^e);
 
+    void _deleteContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
