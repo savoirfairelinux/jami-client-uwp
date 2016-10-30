@@ -17,6 +17,7 @@ private:
     void _showAddAccountMenuBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void validatePassword(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 
 }
