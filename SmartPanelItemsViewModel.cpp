@@ -76,3 +76,11 @@ SmartPanelItemsViewModel::getIndex(Contact^ contact)
     }
     return i;
 }
+
+void RingClientUWP::ViewModel::SmartPanelItemsViewModel::removeItem(SmartPanelItem ^ item)
+{
+    unsigned int index;
+
+    if (itemsList->IndexOf(item, &index))
+        itemsList->RemoveAt(index);
+}

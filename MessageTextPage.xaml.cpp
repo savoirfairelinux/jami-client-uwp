@@ -179,3 +179,14 @@ void RingClientUWP::Views::MessageTextPage::OnSelectionChanged(Platform::Object 
     auto account = dynamic_cast<Account^>(_associableAccountsList_->SelectedItem);
     SmartPanelItemsViewModel::instance->_selectedItem->_contact->_accountIdAssociated = account->accountID_;
 }
+
+void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = item->_contact;
+
+    closeMessageTextPage();
+
+    ContactsViewModel::instance->deleteContact(contact);
+    SmartPanelItemsViewModel::instance->removeItem(item);
+}

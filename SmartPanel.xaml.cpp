@@ -173,6 +173,11 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     _upnpState_->IsOn = accountListItem->_account->_upnpState;
 }
 
+void RingClientUWP::Views::SmartPanel::unselectContact()
+{
+    _smartList_->SelectedItem = nullptr;
+}
+
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
 {
     _shareMenuButton_->IsChecked = false;
