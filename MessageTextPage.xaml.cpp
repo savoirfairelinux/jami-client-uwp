@@ -190,3 +190,12 @@ void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Obje
     ContactsViewModel::instance->deleteContact(contact);
     SmartPanelItemsViewModel::instance->removeItem(item);
 }
+
+
+void RingClientUWP::Views::MessageTextPage::_clearConversation__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto contact = item->_contact;
+    contact->_conversation->_messages->Clear();
+    contact->saveConversationToFile();
+}
