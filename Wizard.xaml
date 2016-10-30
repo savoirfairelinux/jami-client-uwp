@@ -54,9 +54,13 @@
                             <TextBox x:Name="_aliasTextBox_"
                                      Margin="10"
                                      PlaceholderText="Enter your username"/>
-                            <PasswordBox Margin="10"
+                            <PasswordBox x:Name="_password_"
+                                         Margin="10"
+                                         PasswordChanged="validatePassword"
                                          PlaceholderText="Enter your password"/>
-                            <PasswordBox  Margin="10,10,10,20"
+                            <PasswordBox  x:Name="_passwordCheck_"
+                                          Margin="10,10,10,20"
+                                          PasswordChanged="validatePassword"
                                           PlaceholderText="Repeat your Password"/>
                         </StackPanel>
                         <!-- SIP account. -->
@@ -81,6 +85,7 @@
                                     VerticalAlignment="Center"
                                     HorizontalAlignment="Center"
                                     Content="&#xE081;"
+                                    IsEnabled="False"
                                     Click="_createAccountYes__Click"
                                     Style="{StaticResource ButtonStyle2}"/>
                         </StackPanel>

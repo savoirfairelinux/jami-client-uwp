@@ -354,6 +354,13 @@ void RingClientUWP::RingD::deleteAccount(String ^ accountId)
     tasksList_.push(task);
 }
 
+void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePassword)
+{
+    tasksList_.push(ref new RingD::Task(Request::RegisterDevice, pin, archivePassword));
+    archivePassword = "";
+    pin = "";
+}
+
 void
 RingClientUWP::RingD::startDaemon()
 {
@@ -649,13 +656,8 @@ RingClientUWP::RingD::startDaemon()
         else {
             switch (_startingStatus) {
             case StartingStatus::REGISTERING_ON_THIS_PC:
-            {
-                tasksList_.push(ref new RingD::Task(Request::AddRingAccount));
-                break;
-            }
             case StartingStatus::REGISTERING_THIS_DEVICE:
             {
-                tasksList_.push(ref new RingD::Task(Request::RegisterDevice, _pin, _password));
                 break;
             }
             case StartingStatus::NORMAL:
@@ -771,8 +773,8 @@ RingD::dequeueTasks()
         break;
         case Request::RegisterDevice:
         {
-            auto pin = Utils::toString(_pin);
-            auto password = Utils::toString(_password);
+            auto pin = Utils::toString(task->_pin);
+            auto password = Utils::toString(task->_password);
 
             std::map<std::string, std::string> deviceDetails;
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
