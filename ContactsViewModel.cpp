@@ -149,6 +149,7 @@ ContactsViewModel::Destringify(String^ data)
     String^         ringid;
     String^         guid;
     unsigned int    unreadmessages;
+    String^			accountIdAssociated;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (unsigned int i = 0; i < contactlist->Size; i++) {
@@ -161,8 +162,11 @@ ContactsViewModel::Destringify(String^ data)
                 ringid = contactObject->GetNamedString(ringIDKey);
                 guid = contactObject->GetNamedString(GUIDKey);
                 unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
+                accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
+
             }
             auto contact = ref new Contact(name, ringid, guid, unreadmessages);
+            contact->_accountIdAssociated = accountIdAssociated;
             contactsList_->Append(contact);
             contactAdded(contact);
         }

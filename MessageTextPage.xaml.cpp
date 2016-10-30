@@ -44,6 +44,10 @@ MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
 
+    /* bind the source to account only able to be used to contact the contact */
+    _associableAccountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
+    _associableAccountsList_->SelectionChanged += ref new Windows::UI::Xaml::Controls::SelectionChangedEventHandler(this, &RingClientUWP::Views::MessageTextPage::OnSelectionChanged);
+
     /* connect to delegates */
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ fromRingId, String^ payload) {
@@ -59,14 +63,39 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
 
-    if (!contact)
+
+
+    if (!contact) /* should never happen */
         return;
 
+
+    /* show the name of contact on the page */
     _title_->Text = contact->name_;
 
+    /* show messages */
     _messagesList_->ItemsSource = contact->_conversation->_messages;
 
+    /* select the associated accountId stored with the contact */
+    auto accountIdAssociated = contact->_accountIdAssociated;
+    auto list = AccountsViewModel::instance->accountsList;
+    unsigned int index = 0;
+    bool found = true;
+
+    for (auto item : list)
+        if (item->accountID_ == accountIdAssociated) {
+            found = list->IndexOf(item, &index);
+            break;
+        }
+
+
+    if (found)
+        _associableAccountsList_->SelectedIndex = index;
+    else
+        ERR_("mismatch between accountIdAssociated and associable accounts!");
+
+    /* scroll to the last message on the page*/
     scrollDown();
+
 }
 
 void RingClientUWP::Views::MessageTextPage::scrollDown()
@@ -142,4 +171,11 @@ RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
 void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     scrollDown();
+}
+
+
+void RingClientUWP::Views::MessageTextPage::OnSelectionChanged(Platform::Object ^sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^e)
+{
+    auto account = dynamic_cast<Account^>(_associableAccountsList_->SelectedItem);
+    SmartPanelItemsViewModel::instance->_selectedItem->_contact->_accountIdAssociated = account->accountID_;
 }

@@ -107,6 +107,12 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <DataTemplate x:Key="_AssociableAccountsListDataTemplate_"
+                      x:DataType="local:Account">
+            <Grid>
+                <TextBlock Text="{x:Bind name_}"/>
+            </Grid>
+        </DataTemplate>
     </Page.Resources>
 
     <Grid Background="#FFF2F2F2">
@@ -128,6 +134,15 @@
                                VerticalAlignment="Center"
                                FontSize="20"
                                Margin="20,0" />
+                <ComboBox x:Name="_associableAccountsList_">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="local:Account">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
             </StackPanel>
 
         </StackPanel>
