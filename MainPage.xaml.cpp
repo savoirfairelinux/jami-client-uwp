@@ -70,6 +70,9 @@ MainPage::MainPage()
     smartPanel->summonVideoPage += ref new RingClientUWP::SummonVideoPage(this, &RingClientUWP::MainPage::OnsummonVideoPage);
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
     videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
+    auto messageTextFrame = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    messageTextFrame->closeMessageTextPage += ref new RingClientUWP::CloseMessageTextPage(this, &RingClientUWP::MainPage::OncloseMessageTextPage);
+
 
     DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
     dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
@@ -397,4 +400,11 @@ MainPage::BeginExtendedExecution()
             RingDebug::instance->WriteLine("Exception: Extended Execution Request");
         }
     });
+}
+
+
+void RingClientUWP::MainPage::OncloseMessageTextPage()
+{
+    auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
+    smartPanel->unselectContact();
 }

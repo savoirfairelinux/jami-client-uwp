@@ -136,6 +136,19 @@ Contact::DestringifyConversation(String^ data)
     }
 }
 
+void RingClientUWP::Contact::deleteConversationFile()
+{
+    StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
+    String^ messagesFile = ".messages\\" + GUID_ + ".json";
+
+    // refacto : Utils::fileExists fails here if the file doesn't exist, code below should replace fileExist everywhere
+    create_task(localfolder->TryGetItemAsync(messagesFile)).then([](IStorageItem^ storageFile) {
+        if (storageFile)
+            storageFile->DeleteAsync();
+    });
+
+}
+
 void
 Contact::saveConversationToFile()
 {

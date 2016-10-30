@@ -46,6 +46,7 @@ internal:
     SmartPanelItem^ findItem(Contact^ contact);
     unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
+    void removeItem(SmartPanelItem^ item);
 
     property Vector<SmartPanelItem^>^ itemsList
     {

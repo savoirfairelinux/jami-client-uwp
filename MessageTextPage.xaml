@@ -134,6 +134,7 @@
                                VerticalAlignment="Center"
                                FontSize="20"
                                Margin="20,0" />
+                <StackPanel Orientation="Horizontal">
                 <ComboBox x:Name="_associableAccountsList_">
                     <ComboBox.ItemTemplate>
                         <DataTemplate x:DataType="local:Account">
@@ -143,6 +144,10 @@
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
                 </ComboBox>
+                <Button x:Name="_deleteContact_"
+                        Content="delete"
+                        Click="_deleteContact__Click"/>
+                </StackPanel>
             </StackPanel>
 
         </StackPanel>

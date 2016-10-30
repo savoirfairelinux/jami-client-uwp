@@ -83,6 +83,7 @@ public ref class SmartPanel sealed
 public:
     SmartPanel();
     void updatePageContent();
+    void unselectContact();
 
 internal:
     enum class Mode { Minimized, Normal };
