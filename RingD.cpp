@@ -391,7 +391,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     incomingCall(accountId2, callId2, from2);
-                    stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
+                    stateChange(callId2, CallStatus::RINGING, 0);
 
                     auto contact = ContactsViewModel::instance->findContactByName(from2);
                     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
@@ -413,7 +413,7 @@ RingClientUWP::RingD::startDaemon()
 
                 auto state3 = translateCallStatus(state2);
 
-                if (state3 == CallStatus::ENDED)
+                if (state3 == CallStatus::NONE)
                     DRing::hangUp(callId); // solve a bug in the daemon API.
 
 
@@ -864,19 +864,13 @@ RingD::dequeueTasks()
 RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ state)
 {
     if (state == "INCOMING")
-        return CallStatus::INCOMING_RINGING;
+        return CallStatus::RINGING;
 
     if (state == "CURRENT")
         return CallStatus::IN_PROGRESS;
 
-    if (state == "OVER")
-        return CallStatus::ENDED;
-
-    if (state == "RINGING")
-        return CallStatus::OUTGOING_RINGING;
-
-    if (state == "CONNECTING")
-        return CallStatus::SEARCHING;
+    if (state == "CONNECTING" || state == "RINGING")
+        return CallStatus::CONNECTING;
 
 
     return CallStatus::NONE;

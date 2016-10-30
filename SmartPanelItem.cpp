@@ -51,6 +51,6 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
 void RingClientUWP::Controls::SmartPanelItem::OncallPlaced(Platform::String ^callId)
 {
     if (_callId == callId) {
-        _callStatus = CallStatus::SEARCHING;
+        _callStatus = CallStatus::CONNECTING;
     }
 }
