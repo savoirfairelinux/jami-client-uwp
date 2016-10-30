@@ -65,6 +65,8 @@ Contact::Contact(String^ name,
         notificationNewMessage = Windows::UI::Xaml::Visibility::Visible;
         NotifyPropertyChanged("unreadMessages");
     }
+
+    _accountIdAssociated = "";
 }
 
 void
@@ -87,6 +89,7 @@ Contact::ToJsonObject()
     contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
     contactObject->SetNamedValue(GUIDKey, JsonValue::CreateStringValue(GUID_));
     contactObject->SetNamedValue(unreadMessagesKey, JsonValue::CreateNumberValue(unreadMessages_));
+    contactObject->SetNamedValue(accountIdAssociatedKey, JsonValue::CreateStringValue(_accountIdAssociated));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);
