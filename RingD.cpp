@@ -557,7 +557,6 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
             ([this](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
-                MSG_("<DecodingStarted>");
                 Video::VideoManager::instance->rendererManager()->startedDecoding(
                     Utils::toPlatformString(id),
                     width,
@@ -565,8 +564,6 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
             ([this](const std::string &id, const std::string &shmPath, bool isMixer) {
-                MSG_("<DecodingStopped>");
-                MSG_("Removing renderer id:" + id);
                 Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
             })
         };
@@ -580,7 +577,6 @@ RingClientUWP::RingD::startDaemon()
             std::vector<std::string> *formats,
             std::vector<unsigned> *sizes,
             std::vector<unsigned> *rates) {
-                MSG_("\n<GetCameraInfo>\n");
                 auto device_list = VideoManager::instance->captureManager()->deviceList;
 
                 for (unsigned int i = 0; i < device_list->Size; i++) {
@@ -603,13 +599,11 @@ RingClientUWP::RingD::startDaemon()
                     const int width,
                     const int height,
             const int rate) {
-                MSG_("\n<SetParameters>\n");
                 VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
                     Utils::toPlatformString(format),width,height,rate);
             }),
             DRing::exportable_callback<DRing::VideoSignal::StartCapture>
             ([&](const std::string& device) {
-                MSG_("\n<StartCapture>\n");
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     VideoManager::instance->captureManager()->InitializeCameraAsync();
@@ -618,7 +612,6 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::VideoSignal::StopCapture>
             ([&]() {
-                MSG_("\n<StopCapture>\n");
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     VideoManager::instance->captureManager()->StopPreviewAsync();
@@ -626,18 +619,22 @@ RingClientUWP::RingD::startDaemon()
                         VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
                     VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
                 }));
-                /*}),
-                	DRing::exportable_callback<ConfigurationSignal::NameRegistrationEnded>(
-                		[this](const std::string &accountId, int status, const std::string &name) {
-                	MSG_("\n<NameRegistrationEnded>\n");
-
-                }),
-                	DRing::exportable_callback<ConfigurationSignal::RegisteredNameFound>(
-                		[this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
-                	MSG_("\n<RegisteredNameFound>\n");*/
             })
         };
         registerVideoHandlers(outgoingVideoHandlers);
+
+        std::map<std::string, SharedCallback> nameRegistrationHandlers =
+        {
+            /*}),
+            	DRing::exportable_callback<ConfigurationSignal::NameRegistrationEnded>(
+            		[this](const std::string &accountId, int status, const std::string &name) {
+            	MSG_("\n<NameRegistrationEnded>\n");
+
+            }),
+            	DRing::exportable_callback<ConfigurationSignal::RegisteredNameFound>(
+            		[this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+            	MSG_("\n<RegisteredNameFound>\n");*/
+        };
 
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));
