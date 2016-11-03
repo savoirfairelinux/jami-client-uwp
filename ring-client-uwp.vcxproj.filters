@@ -230,6 +230,12 @@
     <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
+    <None Include="..\restbed\dependency\openssl\out32dll\libeay32.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\restbed\dependency\openssl\out32dll\ssleay32.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />

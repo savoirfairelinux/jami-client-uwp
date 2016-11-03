@@ -113,6 +113,7 @@ SmartPanel::SmartPanel()
 
         switch (state) {
         case CallStatus::NONE:
+        case CallStatus::ENDED:
         {
             item->_callId = "";
             break;
@@ -536,7 +537,7 @@ Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windo
 {
     auto state = static_cast<CallStatus>(value);
 
-    if (state == CallStatus::RINGING)
+    if (state == CallStatus::INCOMING_RINGING)
         return  Windows::UI::Xaml::Visibility::Visible;
     else
         return  Windows::UI::Xaml::Visibility::Collapsed;
@@ -555,7 +556,7 @@ Object ^ RingClientUWP::Views::OutGoingVisibility::Convert(Object ^ value, Windo
 {
     auto state = static_cast<CallStatus>(value);
 
-    if (state == CallStatus::CONNECTING || state == CallStatus::RINGING)
+    if (state == CallStatus::SEARCHING || state == CallStatus::OUTGOING_RINGING)
         return  Windows::UI::Xaml::Visibility::Visible;
     else
         return  Windows::UI::Xaml::Visibility::Collapsed;
@@ -573,7 +574,7 @@ Object ^ RingClientUWP::Views::HasAnActiveCall::Convert(Object ^ value, Windows:
 {
     auto state = static_cast<CallStatus>(value);
 
-    if (state == CallStatus::NONE)
+    if (state == CallStatus::NONE || state == CallStatus::ENDED)
         return Windows::UI::Xaml::Visibility::Collapsed;
     else
         return Windows::UI::Xaml::Visibility::Visible;
