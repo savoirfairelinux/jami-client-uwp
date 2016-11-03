@@ -99,6 +99,9 @@ internal:
     void updateAccount(String^ accountId);
     void deleteAccount(String^ accountId);
     void registerThisDevice(String^ pin, String^ archivePassword);
+    void getCallsList();
+    void killCall(String^ callId);
+    void switchDebug();
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -130,7 +133,10 @@ private:
         GetKnownDevices,
         ExportOnRing,
         UpdateAccount,
-        DeleteAccount
+        DeleteAccount,
+        GetCallsList,
+        KillCall,
+        switchDebug,
     };
 
 
@@ -175,5 +181,6 @@ private:
     std::queue<Task^> tasksList_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     bool editModeOn_ = false;
+    bool debugModeOn_ = true;
 };
 }

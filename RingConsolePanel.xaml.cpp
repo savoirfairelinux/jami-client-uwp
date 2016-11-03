@@ -21,6 +21,7 @@
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Documents;
@@ -88,26 +89,87 @@ void RingConsolePanel::_sendDbgCmd__KeyDown(Platform::Object^ sender, Windows::U
 /*\ ADD EACH NEW COMMAND TO THE HELP LIST \*/
 void RingConsolePanel::sendCommand()
 {
-    auto cmdInput = _tBoxDbg_->Text;
+    auto inputConst_str = Utils::toString(_tBoxDbg_->Text);
+    if (inputConst_str.empty())
+        return;
+
+    auto inputConst_cstr = inputConst_str.c_str();
+    char* input_cstr = _strdup(inputConst_cstr); // full string
+    char* input_cstr_nextToken; // tokenized string
+    char* cmd_cstr = strtok_s(input_cstr, " ", &input_cstr_nextToken);
+    char* parameter1_cstr = strtok_s(input_cstr_nextToken, " ", &input_cstr_nextToken);
+    // parameter2...
+
+    if (!cmd_cstr)
+        return;
+
+    std::string input(cmd_cstr);
+    std::string parameter1;
+
+    if (parameter1_cstr)
+        parameter1 = parameter1_cstr;
+
+    free(input_cstr);
+    free(input_cstr_nextToken);
+    //free((char*)inputConst_cstr);
+
     addCommandToHistory();
     historyLevel++;
     _tBoxDbg_->Text = "";
     currentCmd = "";
     historyLevel = historyCmds.Size;
 
-    if (cmdInput->IsEmpty()) {
-        return;
-    }
-    else if (cmdInput == "help") {
+    if (input == "help") {
         MSG_(">> Help :");
         MSG_("use PgUp/PgDown for crawling commands history.");
+        MSG_("getCallsList, switchDebug, killCall [callId, -all], getAccountInfo, getContactsList, placeCall [contact name]");
         return;
     }
+    else if (input == "getCallsList") {
+        RingD::instance->getCallsList();
+        return;
+    }
+    else if (input == "switchDebug") {
+        MSG_(">> switching dameon debug output");
+        RingD::instance->switchDebug();
+        return;
+    }
+    else if (input == "killCall") {
+        if (parameter1.empty()) {
+            MSG_("callId missing");
+            return;
+        }
+        RingD::instance->killCall(Utils::toPlatformString(parameter1));
+        return;
+    }
+    else if (input == "getAccountInfo") {
+        auto id = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        MSG_("id : "+Utils::toString(id));
+        return;
+    }
+    else if (input == "getContactsList") {
+        auto list = ContactsViewModel::instance->contactsList;
+        MSG_("list of calls returned by the daemon :");
+        for (auto contact : list) {
+            MSG_("name : " + Utils::toString(contact->name_));
+            MSG_("ringId : " + Utils::toString(contact->ringID_));
+        }
+        return;
+    }
+    else if (input == "placeCall") {
+        if (parameter1.empty()) {
+            MSG_("contact name missing");
+            return;
+        }
+        auto contact = ContactsViewModel::instance->findContactByName(Utils::toPlatformString(parameter1));
+        if (!contact) {
+            MSG_("contact "+parameter1+" not found");
+            return;
+        }
+        RingD::instance->placeCall(contact);
+    }
 
-    std::wstring wStr(cmdInput->Begin());
-    std::string result(wStr.begin(), wStr.end());
-
-    MSG_(">> error, command \'" + result + "\' not found");
+    MSG_(">> error, command \'" + input + "\' not found");
 }
 
 void RingConsolePanel::addCommandToHistory()
