@@ -364,6 +364,10 @@ void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePass
 void
 RingClientUWP::RingD::startDaemon()
 {
+    if (daemonRunning) {
+        ERR_("daemon already runnging");
+        return;
+    }
     //eraseCacheFolder();
     editModeOn_ = true;
 
@@ -420,8 +424,8 @@ RingClientUWP::RingD::startDaemon()
 
                 auto state3 = translateCallStatus(state2);
 
-                if (state3 == CallStatus::NONE)
-                    DRing::hangUp(callId); // solve a bug in the daemon API.
+//                if (state3 == CallStatus::NONE)
+//                    DRing::hangUp(callId); // solve a bug in the daemon API.
 
 
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
@@ -516,8 +520,9 @@ RingClientUWP::RingD::startDaemon()
             }),
             DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
             {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
+                if (debugModeOn_)
+                    dispatcher->RunAsync(CoreDispatcherPriority::High,
+                    ref new DispatchedHandler([=]() {
                     RingDebug::instance->print(toto);
                 }));
             }),
@@ -655,7 +660,9 @@ RingClientUWP::RingD::startDaemon()
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));
 
-        if (!DRing::start()) {
+        daemonRunning_ = DRing::start();
+
+        if (!daemonRunning_) {
             ERR_("\ndaemon didn't start.\n");
             return;
         }
@@ -692,7 +699,7 @@ RingClientUWP::RingD::startDaemon()
             });
 
 
-            while (true) {
+            while (daemonRunning) {
                 DRing::pollEvents();
                 dequeueTasks();
                 Sleep(5);
@@ -790,6 +797,7 @@ RingD::dequeueTasks()
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
             DRing::addAccount(deviceDetails);
         }
+        break;
         case Request::GetKnownDevices:
         {
             auto accountId = task->_accountId;
@@ -853,11 +861,65 @@ RingD::dequeueTasks()
             //DRing::registerName(accountID.toStdString(), password.toStdString(), name.toStdString());
             break;
         }
+        case Request::GetCallsList:
+        {
+            auto callsList = DRing::getCallList();
+            MSG_("list of calls returned by the daemon :");
+            for (auto call : callsList)
+                MSG_(call);
+            MSG_("[EOL]"); // end of list
+            break;
+        }
+        case Request::KillCall:
+        {
+            auto callId = task->_callId;
+            auto callId2 = Utils::toString(callId);
+            MSG_("asking daemon to kill : " + callId2);
+            DRing::hangUp(callId2);
+            break;
+        }
+        case Request::SwitchDbg:
+        {
+            debugModeOn_ = !debugModeOn_;
+            break;
+        }
+        case Request::StopDaemon:
+        {
+            stopDaemon();
+        }
         default:
             break;
         }
         tasksList_.pop();
     }
+}
+
+void RingClientUWP::RingD::getCallsList()
+{
+    auto task = ref new RingD::Task(Request::GetCallsList);
+
+    tasksList_.push(task);
+
+}
+
+void RingClientUWP::RingD::killCall(String ^ callId)
+{
+    auto task = ref new RingD::Task(Request::KillCall);
+    task->_callId = callId;
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::switchDbg()
+{
+    auto task = ref new RingD::Task(Request::SwitchDbg);
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::stopDaemon()
+{
+
 }
 
 RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ state)
