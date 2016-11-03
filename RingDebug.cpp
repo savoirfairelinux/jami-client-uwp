@@ -62,7 +62,7 @@ RingDebug::print(const std::string& message,
 void RingClientUWP::RingDebug::WriteLine(String^ str)
 {
     /* save in file */
-    FileIO::AppendTextAsync(_videoFile, str + "\n");
+    //FileIO::AppendTextAsync(_videoFile, str + "\n");
 
     /* screen in visual studio console */
     std::wstringstream wStringstream;
