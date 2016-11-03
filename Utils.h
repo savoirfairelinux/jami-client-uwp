@@ -171,52 +171,87 @@ TrimFrom(Platform::String^ s)
 }
 
 Platform::String^
-GetNewGUID()
+TrimCmd(Platform::String^ s)
 {
-    GUID result;
-    HRESULT hr = CoCreateGuid(&result);
+    const WCHAR* first = s->Begin();
+    const WCHAR* last = s->End();
 
-    if (SUCCEEDED(hr)) {
-        Guid guid(result);
-        return guid.ToString();
-    }
+    while (first != last && last[0] != '\ ' )
+            --last;
 
-    throw Exception::CreateException(hr);
-}
+            //last--;
 
-std::string
-getStringFromFile(const std::string& filename)
-{
-    std::ifstream file(filename);
-    return std::string((std::istreambuf_iterator<char>(file)),
-                       (std::istreambuf_iterator<char>()));
-}
+            return ref new Platform::String(first, sizeof(last));
+        }
 
-inline Map<String^,String^>^
-convertMap(const std::map<std::string, std::string>& m)
-{
-    auto temp = ref new Map<String^,String^>;
-    for (const auto& pair : m) {
-        temp->Insert(
+            Platform::String^
+            TrimParameter(Platform::String^ s)
+            {
+            const WCHAR* first = s->Begin();
+            const WCHAR* last = s->End();
+
+            while (first != last && *first != '[')
+                    ++first;
+
+                    while (first != last && last[-1] != ']')
+            --last;
+
+            first++;
+            last--;
+
+            if (static_cast<unsigned int>(last - first) > 0)
+            return ref new Platform::String(first, static_cast<unsigned int>(last - first));
+            else
+            return "";
+        }
+
+            Platform::String^
+            GetNewGUID()
+            {
+            GUID result;
+            HRESULT hr = CoCreateGuid(&result);
+
+            if (SUCCEEDED(hr)) {
+            Guid guid(result);
+            return guid.ToString();
+        }
+
+            throw Exception::CreateException(hr);
+        }
+
+            std::string
+            getStringFromFile(const std::string& filename)
+            {
+            std::ifstream file(filename);
+            return std::string((std::istreambuf_iterator<char>(file)),
+            (std::istreambuf_iterator<char>()));
+        }
+
+            inline Map<String^,String^>^
+            convertMap(const std::map<std::string, std::string>& m)
+            {
+            auto temp = ref new Map<String^,String^>;
+            for (const auto& pair : m) {
+            temp->Insert(
             Utils::toPlatformString(pair.first),
             Utils::toPlatformString(pair.second)
-        );
-    }
-    return temp;
-}
+            );
+        }
+            return temp;
+        }
 
-inline std::map<std::string, std::string>
-convertMap(Map<String^,String^>^ m)
-{
-    std::map<std::string, std::string> temp;
-    for (const auto& pair : m) {
-        temp.insert(
+            inline std::map<std::string, std::string>
+            convertMap(Map<String^,String^>^ m)
+            {
+            std::map<std::string, std::string> temp;
+            for (const auto& pair : m) {
+            temp.insert(
             std::make_pair(
-                Utils::toString(pair->Key),
-                Utils::toString(pair->Value)));
-    }
-    return temp;
-}
+            Utils::toString(pair->Key),
+            Utils::toString(pair->Value)));
+        }
+            return temp;
+        }
 
-}
-}
+        }
+        }
