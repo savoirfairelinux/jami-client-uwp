@@ -64,18 +64,22 @@ VideoPage::VideoPage()
         CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
         ref new DispatchedHandler([=]() {
             try {
-                if (!VideoManager::instance->rendererManager()->renderers->Size)
+                auto renderer_w = VideoManager::instance->rendererManager()->renderer(id);
+                if (!renderer_w) {
                     return;
-                VideoManager::instance->rendererManager()->renderer(id)->isRendering = true;
-                create_task(WriteFrameAsSoftwareBitmapAsync(id, buf, width, height))
-                .then([=](task<void> previousTask) {
-                    try {
-                        previousTask.get();
-                    }
-                    catch (Platform::Exception^ e) {
-                        RingDebug::instance->WriteLine( "Caught exception from previous task.\n" );
-                    }
-                });
+                }
+                else {
+                    renderer_w->isRendering = true;
+                    create_task(WriteFrameAsSoftwareBitmapAsync(id, buf, width, height))
+                    .then([=](task<void> previousTask) {
+                        try {
+                            previousTask.get();
+                        }
+                        catch (Platform::Exception^ e) {
+                            RingDebug::instance->WriteLine( "Caught exception from previous task.\n" );
+                        }
+                    });
+                }
             }
             catch(Platform::COMException^ e) {
                 RingDebug::instance->WriteLine(e->ToString());
@@ -120,7 +124,7 @@ VideoPage::VideoPage()
     RingD::instance->stateChange +=
         ref new StateChange([&](String^ callId, CallStatus state, int code)
     {
-        if (state == CallStatus::NONE) {
+        if (state == CallStatus::ENDED) {
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
         }
     });
