@@ -259,11 +259,9 @@
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="..\restbed\dependency\openssl\out32dll\libeay32.dll">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\restbed\dependency\openssl\out32dll\ssleay32.dll">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</DeploymentContent>
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="ring-client-uwp_StoreKey.pfx" />

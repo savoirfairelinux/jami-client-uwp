@@ -30,6 +30,7 @@
 #include "string_utils.h" // used to get some const expr like TRUE_STR
 #include <gnutls\gnutls.h>
 
+#include "gnutls\gnutls.h"
 
 #include "SmartPanel.xaml.h"
 
@@ -115,6 +116,8 @@ RingClientUWP::RingD::reloadAccountList()
 
         }
     }
+
+    DRing::lookupName("", "", "wagaf");
 
     // load user preferences
     Configuration::UserPreferences::instance->load();
@@ -368,6 +371,7 @@ RingClientUWP::RingD::startDaemon()
     //eraseCacheFolder();
     editModeOn_ = true;
 
+    gnutls_global_init();
 
     create_task([&]()
     {
@@ -399,7 +403,7 @@ RingClientUWP::RingD::startDaemon()
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     incomingCall(accountId2, callId2, from2);
-                    stateChange(callId2, CallStatus::RINGING, 0);
+                    stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
 
                     auto contact = ContactsViewModel::instance->findContactByName(from2);
                     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
@@ -421,7 +425,7 @@ RingClientUWP::RingD::startDaemon()
 
                 auto state3 = translateCallStatus(state2);
 
-                if (state3 == CallStatus::NONE)
+                if (state3 == CallStatus::ENDED)
                     DRing::hangUp(callId); // solve a bug in the daemon API.
 
 
@@ -540,8 +544,6 @@ RingClientUWP::RingD::startDaemon()
                     exportOnRingEnded(accountId2, pin2);
                 }));
             })
-
-
         };
         registerCallHandlers(callHandlers);
 
@@ -573,15 +575,21 @@ RingClientUWP::RingD::startDaemon()
                 MSG_("<DeviceEvent>");
             }),
             DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
-            ([this](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
-                Video::VideoManager::instance->rendererManager()->startedDecoding(
-                    Utils::toPlatformString(id),
-                    width,
-                    height);
+            ([&](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    Video::VideoManager::instance->rendererManager()->startedDecoding(
+                        Utils::toPlatformString(id),
+                        width,
+                        height);
+                }));
             }),
             DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
-            ([this](const std::string &id, const std::string &shmPath, bool isMixer) {
-                Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
+            ([&](const std::string &id, const std::string &shmPath, bool isMixer) {
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
+                }));
             })
         };
         registerVideoHandlers(incomingVideoHandlers);
@@ -611,13 +619,16 @@ RingClientUWP::RingD::startDaemon()
                 }
             }),
             DRing::exportable_callback<DRing::VideoSignal::SetParameters>
-            ([this](const std::string& device,
+            ([&](const std::string& device,
                     std::string format,
                     const int width,
                     const int height,
-            const int rate) {
-                VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
-                    Utils::toPlatformString(format),width,height,rate);
+                    const int rate) {
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
+                        Utils::toPlatformString(format),width,height,rate);
+                }));
             }),
             DRing::exportable_callback<DRing::VideoSignal::StartCapture>
             ([&](const std::string& device) {
@@ -642,16 +653,17 @@ RingClientUWP::RingD::startDaemon()
 
         std::map<std::string, SharedCallback> nameRegistrationHandlers =
         {
-            /*}),
-            	DRing::exportable_callback<ConfigurationSignal::NameRegistrationEnded>(
-            		[this](const std::string &accountId, int status, const std::string &name) {
+            DRing::exportable_callback<DRing::ConfigurationSignal::NameRegistrationEnded>(
+            [this](const std::string &accountId, int status, const std::string &name) {
             	MSG_("\n<NameRegistrationEnded>\n");
 
             }),
-            	DRing::exportable_callback<ConfigurationSignal::RegisteredNameFound>(
-            		[this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
-            	MSG_("\n<RegisteredNameFound>\n");*/
+            DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
+            [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+            	MSG_("<RegisteredNameFound>" + name + " : " + address);
+            })
         };
+        registerConfHandlers(nameRegistrationHandlers);
 
         gnutls_global_init();
 
@@ -682,7 +694,6 @@ RingClientUWP::RingD::startDaemon()
             }
             }
 
-
             /* at this point the config.yml is safe. */
             Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
             .then([this](bool token_exists)
@@ -703,6 +714,8 @@ RingClientUWP::RingD::startDaemon()
                 Sleep(5);
             }
             DRing::fini();
+
+            gnutls_global_deinit();
         }
     });
 }
@@ -868,13 +881,19 @@ RingD::dequeueTasks()
 RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ state)
 {
     if (state == "INCOMING")
-        return CallStatus::RINGING;
+        return CallStatus::INCOMING_RINGING;
 
     if (state == "CURRENT")
         return CallStatus::IN_PROGRESS;
 
-    if (state == "CONNECTING" || state == "RINGING")
-        return CallStatus::CONNECTING;
+    if (state == "OVER")
+        return CallStatus::ENDED;
+
+    if (state == "RINGING")
+        return CallStatus::OUTGOING_RINGING;
+
+    if (state == "CONNECTING")
+        return CallStatus::SEARCHING;
 
 
     return CallStatus::NONE;

@@ -106,11 +106,14 @@ VideoRendererManager::removeRenderer(String^ id)
 {
     if(!renderers)
         return;
-    std::unique_lock<std::mutex> lk(renderers->Lookup(id)->render_mutex);
-    renderers->Lookup(id)->frame_cv.wait(lk, [=] {
-        return !renderers->Lookup(id)->isRendering;
-    });
-    renderers->Remove(id);
+    auto renderer_w = renderer(id);
+    if (renderer_w) {
+        std::unique_lock<std::mutex> lk(renderer_w->render_mutex);
+        renderer_w->frame_cv.wait(lk, [=] {
+            return !renderer_w->isRendering;
+        });
+        renderers->Remove(id);
+    }
 }
 
 VideoRendererWrapper^

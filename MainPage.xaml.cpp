@@ -79,11 +79,11 @@ MainPage::MainPage()
                        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
-                                      ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
+        ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
     applicationSuspendingEventToken = Application::Current->Suspending +=
-                                          ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
     applicationResumingEventToken = Application::Current->Resuming +=
-                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
 }
 
 void
@@ -253,7 +253,7 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
 
     switch (state) {
     /* send the user to the peer's message text page */
-    case CallStatus::NONE:
+    case CallStatus::ENDED:
     {
         if (item)
             OnsummonMessageTextPage();
@@ -373,9 +373,9 @@ MainPage::BeginExtendedExecution()
     newSession->Reason = ExtendedExecutionReason::SavingData;
     newSession->Description = "Extended Execution";
     sessionRevokedToken = (newSession->Revoked += ref new TypedEventHandler<Object^,
-                           ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
+        ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
     return create_task(newSession->RequestExtensionAsync())
-    .then([=](ExtendedExecutionResult result) {
+        .then([=](ExtendedExecutionResult result){
         try {
             switch (result)
             {
