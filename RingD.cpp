@@ -28,6 +28,7 @@
 #include "account_schema.h"
 #include "account_const.h"
 #include "string_utils.h" // used to get some const expr like TRUE_STR
+#include <gnutls\gnutls.h>
 
 
 #include "SmartPanel.xaml.h"
@@ -652,8 +653,12 @@ RingClientUWP::RingD::startDaemon()
             	MSG_("\n<RegisteredNameFound>\n");*/
         };
 
+        gnutls_global_init();
+
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));
+
+
 
         if (!DRing::start()) {
             ERR_("\ndaemon didn't start.\n");
