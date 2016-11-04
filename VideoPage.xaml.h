@@ -116,6 +116,8 @@ private:
     void btnAny_entered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void btnAny_exited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
+    void _btnVideo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void OnincomingVideoMuted(Platform::String ^callId, bool state);
 };
 }
 }

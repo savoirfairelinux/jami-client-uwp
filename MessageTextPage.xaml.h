@@ -59,6 +59,8 @@ private:
 
     void _deleteContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _clearConversation__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _audioCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _videoCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
