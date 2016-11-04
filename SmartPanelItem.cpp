@@ -32,8 +32,15 @@ using namespace ViewModel;
 SmartPanelItem::SmartPanelItem()
 {
     _callId = "";
+    videoMuted_ = false;
 
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Controls::SmartPanelItem::OncallPlaced);
+}
+
+void RingClientUWP::Controls::SmartPanelItem::muteVideo(bool state)
+{
+    videoMuted_ = state;
+    RingD::instance->muteVideo(_callId, state);
 }
 
 void

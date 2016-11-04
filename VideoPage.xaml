@@ -155,6 +155,16 @@
                     <Image Name="IncomingVideoImage"
                            Grid.Column="0"
                            Canvas.ZIndex="-1"/>
+                    <TextBlock Name="_MutedVideoIcon_"
+                               Grid.Column="0"
+                               Text="&#xE767;"
+                               Foreground="White"
+                               FontSize="200"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               FontFamily="Segoe MDL2 Assets"
+                               Visibility="Collapsed"
+                               Canvas.ZIndex="-1"/>
 
                     <!--camera preview-->
                     <CaptureElement Name="PreviewImage"
@@ -300,7 +310,8 @@
                         <Button x:Name="_btnVideo_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnVideo__Tapped" Visibility="Collapsed">
+                            Click="_btnVideo__Click"
+                            Tapped="_btnVideo__Tapped">
                             <SymbolIcon Symbol="Video"/>
                         </Button>
                         <Button x:Name="_btnMemo_"

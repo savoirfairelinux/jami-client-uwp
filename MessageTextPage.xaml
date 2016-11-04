@@ -128,28 +128,44 @@
                     Padding="10,10">
             <Image Source="ms-appx:///contact-avatar-test.png" />
             <StackPanel>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="auto" />
+                    </Grid.ColumnDefinitions>
                     <TextBlock x:Name="_title_"
+                               Grid.Column="0"
                                Text="[TEXT MISSING]"
                                TextWrapping="NoWrap"
                                VerticalAlignment="Center"
                                FontSize="20"
                                Margin="20,0" />
+                    <Button x:Name="_audioCall_"
+                            Grid.Column="1"
+                            Click="_audioCall__Click"
+                            Content="audio call"/>
+                    <Button x:Name="_videoCall_"
+                            Click="_videoCall__Click"
+                            Grid.Column="2"
+                            Content="video call"/>
+                </Grid>
                 <StackPanel Orientation="Horizontal">
-                <ComboBox x:Name="_associableAccountsList_">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="local:Account">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Button x:Name="_deleteContact_"
-                        Content="delete"
-                        Click="_deleteContact__Click"/>
+                    <ComboBox x:Name="_associableAccountsList_">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:Account">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                    <Button x:Name="_deleteContact_"
+                            Content="delete"
+                            Click="_deleteContact__Click"/>
                     <Button x:Name="_clearConversation_"
-                        Content="clear conversation"
-                        Click="_clearConversation__Click"/>
+                            Content="clear conversation"
+                            Click="_clearConversation__Click"/>
                 </StackPanel>
             </StackPanel>
 

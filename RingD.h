@@ -38,6 +38,7 @@ delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void NameRegistrationEnded(String^ accountId, int status, String^ name);
 delegate void RegisteredNameFound(String^ accountId, int status, String^ address, String^ name);
+delegate void IncomingVideoMuted(String^ callId, bool state);
 
 
 public ref class RingD sealed
@@ -104,6 +105,7 @@ internal:
     void getCallsList();
     void killCall(String^ callId);
     void switchDebug();
+    void muteVideo(String^ callId, bool muted);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -120,6 +122,7 @@ internal:
     event AccountUpdated^ accountUpdated;
     event NameRegistrationEnded^ nameRegistrationEnded;
     event RegisteredNameFound^ registeredNameFound;
+    event IncomingVideoMuted^ incomingVideoMuted;
 
 private:
     /* sub classes */
@@ -144,6 +147,7 @@ private:
         GetCallsList,
         KillCall,
         switchDebug,
+        MuteVideo,
     };
 
 
@@ -175,6 +179,7 @@ private:
         property String^ _sipPassword;
         property String^ _sipHostname;
         property String^ _sipUsername;
+        property bool _muted;
     };
 
     /* functions */

@@ -29,6 +29,7 @@ public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 {
 public:
     SmartPanelItem();
+    void muteVideo(bool state);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
     property Contact^ _contact;
@@ -74,6 +75,13 @@ public:
             NotifyPropertyChanged("_callStatus");
         }
     }
+    property bool _videoMuted
+    {
+        bool get()
+        {
+            return videoMuted_;
+        }
+    }
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
@@ -82,6 +90,7 @@ private:
     Visibility hovered_ = Visibility::Collapsed;
     CallStatus callStatus_;
     String^ callId_;
+    bool videoMuted_;
 
     void OncallPlaced(Platform::String ^callId);
 };

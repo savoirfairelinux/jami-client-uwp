@@ -29,6 +29,7 @@
 #include "account_const.h"
 #include "string_utils.h" // used to get some const expr like TRUE_STR
 #include "gnutls\gnutls.h"
+#include "media_const.h" // used to get some const expr like MEDIA_TYPE_VIDEO
 
 #include "SmartPanel.xaml.h"
 
@@ -582,6 +583,8 @@ RingClientUWP::RingD::startDaemon()
                         Utils::toPlatformString(id),
                         width,
                         height);
+                    auto callId2 = Utils::toPlatformString(id);
+                    incomingVideoMuted(callId2, false);
                 }));
             }),
             DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
@@ -589,6 +592,8 @@ RingClientUWP::RingD::startDaemon()
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
+                    auto callId2 = Utils::toPlatformString(id);
+                    incomingVideoMuted(callId2, true);
                 }));
             })
         };
@@ -894,6 +899,12 @@ RingD::dequeueTasks()
             debugModeOn_ = !debugModeOn_;
             break;
         }
+        case Request::MuteVideo:
+        {
+            auto callId = Utils::toString(task->_callId);
+            bool muted = task->_muted;
+            DRing::muteLocalMedia(callId, DRing::Media::Details::MEDIA_TYPE_VIDEO, muted);
+        }
         default:
             break;
         }
@@ -933,6 +944,16 @@ void RingClientUWP::RingD::killCall(String ^ callId)
 void RingClientUWP::RingD::switchDebug()
 {
     auto task = ref new RingD::Task(Request::switchDebug);
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::muteVideo(String ^ callId, bool muted)
+{
+    auto task = ref new RingD::Task(Request::MuteVideo);
+
+    task->_callId = callId;
+    task->_muted = muted;
 
     tasksList_.push(task);
 }
