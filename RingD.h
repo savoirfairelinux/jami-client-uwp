@@ -36,6 +36,7 @@ delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
 delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
+delegate void IncomingVideoMuted(String^ callId, bool state);
 
 
 public ref class RingD sealed
@@ -102,6 +103,7 @@ internal:
     void getCallsList();
     void killCall(String^ callId);
     void switchDebug();
+    void muteVideo(String^ callId, bool muted);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -116,6 +118,7 @@ internal:
     event ExportOnRingEnded^ exportOnRingEnded;
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
+    event IncomingVideoMuted^ incomingVideoMuted;
 
 private:
     /* sub classes */
@@ -137,6 +140,7 @@ private:
         GetCallsList,
         KillCall,
         switchDebug,
+        MuteVideo
     };
 
 
@@ -168,6 +172,7 @@ private:
         property String^ _sipPassword;
         property String^ _sipHostname;
         property String^ _sipUsername;
+        property bool _muted;
     };
 
     /* functions */

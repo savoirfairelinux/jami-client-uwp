@@ -199,3 +199,31 @@ void RingClientUWP::Views::MessageTextPage::_clearConversation__Click(Platform::
     contact->_conversation->_messages->Clear();
     contact->saveConversationToFile();
 }
+
+
+void RingClientUWP::Views::MessageTextPage::_audioCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    if (button) {
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+        if (item) {
+            auto contact = item->_contact;
+            if (contact)
+                RingD::instance->placeCall(contact);
+        }
+    }
+}
+
+
+void RingClientUWP::Views::MessageTextPage::_videoCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    if (button) {
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+        if (item) {
+            auto contact = item->_contact;
+            if (contact)
+                RingD::instance->placeCall(contact);
+        }
+    }
+}

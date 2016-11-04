@@ -41,6 +41,7 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Media::Capture;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::UI::Core;
+using namespace Windows::UI;
 
 using namespace Windows::Graphics::Display;
 using namespace Windows::Graphics::Imaging;
@@ -130,6 +131,7 @@ VideoPage::VideoPage()
     });
 
     RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::VideoPage::OnincomingMessage);
+    RingD::instance->incomingVideoMuted += ref new RingClientUWP::IncomingVideoMuted(this, &RingClientUWP::Views::VideoPage::OnincomingVideoMuted);
 }
 
 void
@@ -345,4 +347,24 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     scrollDown();
+}
+
+
+void RingClientUWP::Views::VideoPage::_btnVideo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    item->muteVideo(!item->_videoMuted);
+}
+
+
+void RingClientUWP::Views::VideoPage::OnincomingVideoMuted(Platform::String ^callId, bool state)
+{
+    /*_MutedVideoIcon_->Visibility = (state)
+                                   ? Windows::UI::Xaml::Visibility::Visible
+                                   : Windows::UI::Xaml::Visibility::Collapsed;*/
+
+    IncomingVideoImage->Visibility = (state)
+                                     ? Windows::UI::Xaml::Visibility::Collapsed
+                                     : Windows::UI::Xaml::Visibility::Visible;
 }
