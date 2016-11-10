@@ -103,7 +103,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
     <PackageCertificateThumbprint>6E2CEF8A6A6A44314AB297CE41FC3BC8F2890973</PackageCertificateThumbprint>
-    <AppxPackageDir>C:\</AppxPackageDir>
+    <AppxPackageDir>$(USERPROFILE)\ring_packaging\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -163,7 +163,8 @@
     </Link>
     <Link>
       <AdditionalOptions>/nodefaultlib:libcmt.lib /ignore:4006,4049,4099 %(AdditionalOptions)</AdditionalOptions>
-      <GenerateWindowsMetadata>false</GenerateWindowsMetadata>
+      <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+      <WindowsMetadataFile>$(OutDir)RingClientUWP.winmd</WindowsMetadataFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
