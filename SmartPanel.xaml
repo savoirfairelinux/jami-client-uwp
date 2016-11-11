@@ -880,7 +880,30 @@
             <Grid x:Name="_settings_"
                   Grid.Row="0"
                   Visibility="Collapsed">
-                <TextBlock>some settings</TextBlock>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Grid x:Name="_videoSettings_"
+                      Grid.Row="0">
+                    <StackPanel Margin="10">
+                        <TextBlock Text="Video Device"
+                                   Margin="10"/>
+                        <ComboBox x:Name="_videoDeviceComboBox_"
+                                  Margin="10"
+                                  SelectionChanged="_videoDeviceComboBox__SelectionChanged">
+                        </ComboBox>
+                        <TextBlock Text="Video Resolution" Margin="10"/>
+                        <ComboBox x:Name="_videoResolutionComboBox_"
+                                  Margin="10"
+                                  SelectionChanged="_videoResolutionComboBox__SelectionChanged">
+                        </ComboBox>
+                        <TextBlock Text="Video Rate" Margin="10"/>
+                        <ComboBox x:Name="_videoRateComboBox_"
+                                  Margin="10"
+                                  SelectionChanged="_videoRateComboBox__SelectionChanged">
+                        </ComboBox>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Grid>
     </Grid>

@@ -32,12 +32,11 @@ namespace RingClientUWP
 {
 namespace Utils
 {
-
 task<bool>
 fileExists(StorageFolder^ folder, String^ fileName)
 {
     return create_task(folder->GetFileAsync(fileName))
-           .then([](task<StorageFile^> taskResult)
+        .then([](task<StorageFile^> taskResult)
     {
         bool exists;
         try {
@@ -176,82 +175,91 @@ TrimCmd(Platform::String^ s)
     const WCHAR* first = s->Begin();
     const WCHAR* last = s->End();
 
-    while (first != last && last[0] != '\ ' )
-            --last;
+    while (first != last && last[0] != '\ ')
+        --last;
 
-            //last--;
+        //last--;
 
-            return ref new Platform::String(first, sizeof(last));
-        }
+    return ref new Platform::String(first, sizeof(last));
+}
 
-            Platform::String^
-            TrimParameter(Platform::String^ s)
-            {
-            const WCHAR* first = s->Begin();
-            const WCHAR* last = s->End();
+Platform::String^
+TrimParameter(Platform::String^ s)
+{
+    const WCHAR* first = s->Begin();
+    const WCHAR* last = s->End();
 
-            while (first != last && *first != '[')
-                    ++first;
+    while (first != last && *first != '[')
+        ++first;
 
-                    while (first != last && last[-1] != ']')
-            --last;
+    while (first != last && last[-1] != ']')
+        --last;
 
-            first++;
-            last--;
+    first++;
+    last--;
 
-            if (static_cast<unsigned int>(last - first) > 0)
-            return ref new Platform::String(first, static_cast<unsigned int>(last - first));
-            else
-            return "";
-        }
+    if (static_cast<unsigned int>(last - first) > 0)
+        return ref new Platform::String(first, static_cast<unsigned int>(last - first));
+    else
+        return "";
+}
 
-            Platform::String^
-            GetNewGUID()
-            {
-            GUID result;
-            HRESULT hr = CoCreateGuid(&result);
+Platform::String^
+GetNewGUID()
+{
+    GUID result;
+    HRESULT hr = CoCreateGuid(&result);
 
-            if (SUCCEEDED(hr)) {
-            Guid guid(result);
-            return guid.ToString();
-        }
+    if (SUCCEEDED(hr)) {
+        Guid guid(result);
+        return guid.ToString();
+    }
 
-            throw Exception::CreateException(hr);
-        }
+    throw Exception::CreateException(hr);
+}
 
-            std::string
-            getStringFromFile(const std::string& filename)
-            {
-            std::ifstream file(filename);
-            return std::string((std::istreambuf_iterator<char>(file)),
-            (std::istreambuf_iterator<char>()));
-        }
+std::string
+getStringFromFile(const std::string& filename)
+{
+    std::ifstream file(filename);
+    return std::string((std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator<char>()));
+}
 
-            inline Map<String^,String^>^
-            convertMap(const std::map<std::string, std::string>& m)
-            {
-            auto temp = ref new Map<String^,String^>;
-            for (const auto& pair : m) {
-            temp->Insert(
+inline Map<String^, String^>^
+convertMap(const std::map<std::string, std::string>& m)
+{
+    auto temp = ref new Map<String^, String^>;
+    for (const auto& pair : m) {
+        temp->Insert(
             Utils::toPlatformString(pair.first),
             Utils::toPlatformString(pair.second)
-            );
-        }
-            return temp;
-        }
+        );
+    }
+    return temp;
+}
 
-            inline std::map<std::string, std::string>
-            convertMap(Map<String^,String^>^ m)
-            {
-            std::map<std::string, std::string> temp;
-            for (const auto& pair : m) {
-            temp.insert(
+inline std::map<std::string, std::string>
+convertMap(Map<String^, String^>^ m)
+{
+    std::map<std::string, std::string> temp;
+    for (const auto& pair : m) {
+        temp.insert(
             std::make_pair(
-            Utils::toString(pair->Key),
-            Utils::toString(pair->Value)));
-        }
-            return temp;
-        }
+                Utils::toString(pair->Key),
+                Utils::toString(pair->Value)));
+    }
+    return temp;
+}
 
-        }
-        }
+template<class T>
+bool
+findIn(std::vector<T> vec, T val)
+{
+    if (std::find(vec.begin(), vec.end(), val) == vec.end())
+        return true;
+    return false;
+}
+
+} /*namespace Utils*/
+} /*namespace RingClientUWP*/

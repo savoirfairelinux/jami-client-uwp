@@ -18,8 +18,6 @@
 **************************************************************************/
 #include "pch.h"
 
-/* daemon */
-#include <dring.h>
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
@@ -39,6 +37,7 @@ using namespace Windows::UI::Core;
 using namespace Windows::Media;
 using namespace Windows::Media::MediaProperties;
 using namespace Windows::Media::Capture;
+using namespace Windows::System::Threading;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
@@ -115,8 +114,6 @@ RingClientUWP::RingD::reloadAccountList()
 
         }
     }
-
-    DRing::lookupName("", "", "wagaf");
 
     // load user preferences
     Configuration::UserPreferences::instance->load();
@@ -365,150 +362,124 @@ void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePass
 }
 
 void
-RingClientUWP::RingD::startDaemon()
+RingD::registerCallbacks()
 {
-    if (daemonRunning) {
-        ERR_("daemon already runnging");
-        return;
-    }
-    //eraseCacheFolder();
-    editModeOn_ = true;
+    dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
 
-    create_task([&]()
-    {
-        using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
-        using namespace std::placeholders;
+    callHandlers = {
+        // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
+        DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
+            const std::string& accountId,
+            const std::string& callId,
+            const std::string& from)
+        {
+            MSG_("<IncomingCall>");
+            MSG_("accountId = " + accountId);
+            MSG_("callId = " + callId);
+            MSG_("from = " + from);
 
-        auto dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
+            auto accountId2 = toPlatformString(accountId);
+            auto callId2 = toPlatformString(callId);
+            auto from2 = toPlatformString(from);
 
-        std::map<std::string, SharedCallback> callHandlers = {
-            // use IncomingCall only to register the call client sided, use StateChange to determine the impact on the UI
-            DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
-                const std::string& accountId,
-                const std::string& callId,
-                const std::string& from)
+            /* fix some issue in the daemon --> <...@...> */
+            from2 = Utils::TrimRingId(from2);
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
             {
-                MSG_("<IncomingCall>");
-                MSG_("accountId = " + accountId);
-                MSG_("callId = " + callId);
-                MSG_("from = " + from);
+                incomingCall(accountId2, callId2, from2);
+                stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
 
-                auto accountId2 = toPlatformString(accountId);
-                auto callId2 = toPlatformString(callId);
-                auto from2 = toPlatformString(from);
+                auto contact = ContactsViewModel::instance->findContactByName(from2);
+                auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                item->_callId = callId2;
+            }));
+        }),
+        DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
+                    const std::string& callId,
+                    const std::string& state,
+                    int code)
+        {
+            MSG_("<StateChange>");
+            MSG_("callId = " + callId);
+            MSG_("state = " + state);
+            MSG_("code = " + std::to_string(code));
 
-                /* fix some issue in the daemon --> <...@...> */
-                from2 = Utils::TrimRingId(from2);
+            auto callId2 = toPlatformString(callId);
+            auto state2 = toPlatformString(state);
 
+            auto state3 = translateCallStatus(state2);
+
+            if (state3 == CallStatus::ENDED)
+                DRing::hangUp(callId); // solve a bug in the daemon API.
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+            {
+                stateChange(callId2, state3, code);
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
+                    const std::string& accountId,
+                    const std::string& from,
+                    const std::map<std::string, std::string>& payloads)
+        {
+            MSG_("<IncomingAccountMessage>");
+            MSG_("accountId = " + accountId);
+            MSG_("from = " + from);
+
+            auto accountId2 = toPlatformString(accountId);
+            auto from2 = toPlatformString(from);
+
+            for (auto i : payloads) {
+                MSG_("payload = " + i.second);
+                auto payload = Utils::toPlatformString(i.second);
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
-                    incomingCall(accountId2, callId2, from2);
-                    stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
-
-                    auto contact = ContactsViewModel::instance->findContactByName(from2);
-                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                    item->_callId = callId2;
+                    incomingAccountMessage(accountId2, from2, payload);
                 }));
-            }),
-            DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
-                        const std::string& callId,
-                        const std::string& state,
-                        int code)
-            {
-                MSG_("<StateChange>");
-                MSG_("callId = " + callId);
-                MSG_("state = " + state);
-                MSG_("code = " + std::to_string(code));
+            }
+        }),
+        DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
+                    const std::string& callId,
+                    const std::string& from,
+                    const std::map<std::string, std::string>& payloads)
+        {
+            MSG_("<IncomingMessage>");
+            MSG_("callId = " + callId);
+            MSG_("from = " + from);
 
-                auto callId2 = toPlatformString(callId);
-                auto state2 = toPlatformString(state);
+            auto callId2 = toPlatformString(callId);
+            auto from2 = toPlatformString(from);
 
-                auto state3 = translateCallStatus(state2);
+            const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
+            static const unsigned int profileSize = PROFILE_VCF.size();
 
-                if (state3 == CallStatus::ENDED)
-                    DRing::hangUp(callId); // solve a bug in the daemon API.
+            for (auto i : payloads) {
+                if (i.first.compare(0, profileSize, PROFILE_VCF) == 0) {
+                    MSG_("VCARD");
+                    return;
+                }
+                MSG_("payload.first = " + i.first);
+                MSG_("payload.second = " + i.second);
 
+                auto payload = Utils::toPlatformString(i.second);
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
-                    stateChange(callId2, state3, code);
+                    incomingMessage(callId2, payload);
+                    MSG_("message recu :" + i.second);
                 }));
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::IncomingAccountMessage>([&](
-                        const std::string& accountId,
-                        const std::string& from,
-                        const std::map<std::string, std::string>& payloads)
-            {
-                MSG_("<IncomingAccountMessage>");
-                MSG_("accountId = " + accountId);
-                MSG_("from = " + from);
-
-                auto accountId2 = toPlatformString(accountId);
-                auto from2 = toPlatformString(from);
-
-                for (auto i : payloads) {
-                    MSG_("payload = " + i.second);
-                    auto payload = Utils::toPlatformString(i.second);
-                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                    {
-                        incomingAccountMessage(accountId2, from2, payload);
-                    }));
-                }
-            }),
-            DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
-                        const std::string& callId,
-                        const std::string& from,
-                        const std::map<std::string, std::string>& payloads)
-            {
-                MSG_("<IncomingMessage>");
-                MSG_("callId = " + callId);
-                MSG_("from = " + from);
-
-                auto callId2 = toPlatformString(callId);
-                auto from2 = toPlatformString(from);
-
-                const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
-                static const unsigned int profileSize = PROFILE_VCF.size();
-
-                for (auto i : payloads) {
-                    if (i.first.compare(0, profileSize, PROFILE_VCF) == 0) {
-                        MSG_("VCARD");
-                        return;
-                    }
-                    MSG_("payload.first = " + i.first);
-                    MSG_("payload.second = " + i.second);
-
-                    auto payload = Utils::toPlatformString(i.second);
-                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                    {
-                        incomingMessage(callId2, payload);
-                        MSG_("message recu :" + i.second);
-                    }));
-                }
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
-                        const std::string& account_id, const std::string& state,
-                        int detailsCode, const std::string& detailsStr)
-            {
-                MSG_("<RegistrationStateChanged>: ID = " + account_id + " state = " + state);
-                if (state == DRing::Account::States::REGISTERED) {
-                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                    ref new DispatchedHandler([=]() {
-                        reloadAccountList();
-                        if (editModeOn_) {
-                            auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                            dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
-                            editModeOn_ = false;
-                        }
-                    }));
-                }
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
-            {
-                MSG_("<AccountsChanged>");
+            }
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
+                    const std::string& account_id, const std::string& state,
+                    int detailsCode, const std::string& detailsStr)
+        {
+            MSG_("<RegistrationStateChanged>: ID = " + account_id + " state = " + state);
+            if (state == DRing::Account::States::REGISTERED) {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
@@ -518,164 +489,213 @@ RingClientUWP::RingD::startDaemon()
                         editModeOn_ = false;
                     }
                 }));
-            }),
-            DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
-            {
-                if (debugModeOn_)
-                    dispatcher->RunAsync(CoreDispatcherPriority::High,
-                    ref new DispatchedHandler([=]() {
-                    RingDebug::instance->print(toto);
-                }));
-            }),
-
-
-            DRing::exportable_callback<DRing::ConfigurationSignal::KnownDevicesChanged>([&](const std::string& accountId, const std::map<std::string, std::string>& devices)
-            {
+            }
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
+        {
+            MSG_("<AccountsChanged>");
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                reloadAccountList();
+                if (editModeOn_) {
+                    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
+                    editModeOn_ = false;
+                }
+            }));
+        }),
+        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
+        {
+            if (debugModeOn_)
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                    RingDebug::instance->print("KnownDevicesChanged ---> C PAS FINI");
-                }));
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
-            {
-                auto accountId2 = Utils::toPlatformString(accountId);
-                auto pin2 = (pin.empty()) ? "Error bad password" : "Your generated pin : " + Utils::toPlatformString(pin);
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    exportOnRingEnded(accountId2, pin2);
-                }));
-            })
-        };
-        registerCallHandlers(callHandlers);
+                RingDebug::instance->print(toto);
+            }));
+        }),
 
-        std::map<std::string, SharedCallback> getAppPathHandler =
+
+        DRing::exportable_callback<DRing::ConfigurationSignal::KnownDevicesChanged>([&](const std::string& accountId, const std::map<std::string, std::string>& devices)
         {
-            DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
-            ([this](std::vector<std::string>* paths) {
-                paths->emplace_back(localFolder_);
-            })
-        };
-        registerCallHandlers(getAppPathHandler);
-
-        std::map<std::string, SharedCallback> getAppUserNameHandler =
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                RingDebug::instance->print("KnownDevicesChanged ---> C PAS FINI");
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
         {
-            DRing::exportable_callback<DRing::ConfigurationSignal::GetAppUserName>
-            ([this](std::vector<std::string>* unames) {
-                unames->emplace_back(Utils::toString(
-                    UserModel::instance->firstName +
-                    "." +
-                    UserModel::instance->lastName));
-            })
-        };
-        registerCallHandlers(getAppUserNameHandler);
+            auto accountId2 = Utils::toPlatformString(accountId);
+            auto pin2 = (pin.empty()) ? "Error bad password" : "Your generated pin : " + Utils::toPlatformString(pin);
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                exportOnRingEnded(accountId2, pin2);
+            }));
+        })
+    };
+    registerCallHandlers(callHandlers);
 
-        std::map<std::string, SharedCallback> incomingVideoHandlers =
-        {
-            DRing::exportable_callback<DRing::VideoSignal::DeviceEvent>
-            ([this]() {
-                MSG_("<DeviceEvent>");
-            }),
-            DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
-            ([&](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    Video::VideoManager::instance->rendererManager()->startedDecoding(
-                        Utils::toPlatformString(id),
-                        width,
-                        height);
-                    auto callId2 = Utils::toPlatformString(id);
-                    incomingVideoMuted(callId2, false);
-                }));
-            }),
-            DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
-            ([&](const std::string &id, const std::string &shmPath, bool isMixer) {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
-                    auto callId2 = Utils::toPlatformString(id);
-                    incomingVideoMuted(callId2, true);
-                }));
-            })
-        };
-        registerVideoHandlers(incomingVideoHandlers);
+    getAppPathHandler =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
+        ([this](std::vector<std::string>* paths) {
+            paths->emplace_back(localFolder_);
+        })
+    };
+    registerCallHandlers(getAppPathHandler);
 
-        using namespace Video;
-        std::map<std::string, SharedCallback> outgoingVideoHandlers =
-        {
-            DRing::exportable_callback<DRing::VideoSignal::GetCameraInfo>
-            ([this](const std::string& device,
-            std::vector<std::string> *formats,
-            std::vector<unsigned> *sizes,
-            std::vector<unsigned> *rates) {
-                auto device_list = VideoManager::instance->captureManager()->deviceList;
+    getAppUserNameHandler =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::GetAppUserName>
+        ([this](std::vector<std::string>* unames) {
+            unames->emplace_back(Utils::toString(
+                UserModel::instance->firstName +
+                "." +
+                UserModel::instance->lastName));
+        })
+    };
+    registerCallHandlers(getAppUserNameHandler);
 
-                for (unsigned int i = 0; i < device_list->Size; i++) {
-                    auto dev = device_list->GetAt(i);
-                    if (device == Utils::toString(dev->name())) {
-                        auto channel = dev->channel();
-                        Vector<Video::Resolution^>^ resolutions = channel->resolutionList();
-                        for (auto res : resolutions) {
-                            formats->emplace_back(Utils::toString(res->format()));
-                            sizes->emplace_back(res->size()->width());
-                            sizes->emplace_back(res->size()->height());
-                            rates->emplace_back(res->activeRate()->value());
+    incomingVideoHandlers =
+    {
+        DRing::exportable_callback<DRing::VideoSignal::DeviceEvent>
+        ([this]() {
+            MSG_("<DeviceEvent>");
+        }),
+        DRing::exportable_callback<DRing::VideoSignal::DecodingStarted>
+        ([&](const std::string &id, const std::string &shmPath, int width, int height, bool isMixer) {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                Video::VideoManager::instance->rendererManager()->startedDecoding(
+                    Utils::toPlatformString(id),
+                    width,
+                    height);
+                auto callId2 = Utils::toPlatformString(id);
+                incomingVideoMuted(callId2, false);
+            }));
+        }),
+        DRing::exportable_callback<DRing::VideoSignal::DecodingStopped>
+        ([&](const std::string &id, const std::string &shmPath, bool isMixer) {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                Video::VideoManager::instance->rendererManager()->removeRenderer(Utils::toPlatformString(id));
+                auto callId2 = Utils::toPlatformString(id);
+                incomingVideoMuted(callId2, true);
+            }));
+        })
+    };
+    registerVideoHandlers(incomingVideoHandlers);
+
+    using namespace Video;
+    outgoingVideoHandlers =
+    {
+        DRing::exportable_callback<DRing::VideoSignal::GetCameraInfo>
+        ([this](const std::string& device,
+        std::vector<std::string> *formats,
+        std::vector<unsigned> *sizes,
+        std::vector<unsigned> *rates) {
+            MSG_("<GetCameraInfo>");
+            auto device_list = VideoManager::instance->captureManager()->deviceList;
+
+            for (unsigned int i = 0; i < device_list->Size; i++) {
+                auto dev = device_list->GetAt(i);
+                if (device == Utils::toString(dev->name())) {
+                    Vector<Video::Resolution^>^ resolutions = dev->resolutionList();
+                    for (auto res : resolutions) {
+                        formats->emplace_back(Utils::toString(res->activeRate()->format()));
+                        sizes->emplace_back(res->width());
+                        sizes->emplace_back(res->height());
+                        for (auto rate : res->rateList()) {
+                            rates->emplace_back(rate->value());
                         }
                     }
                 }
-            }),
-            DRing::exportable_callback<DRing::VideoSignal::SetParameters>
-            ([&](const std::string& device,
-                 std::string format,
-                 const int width,
-                 const int height,
-            const int rate) {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
-                        Utils::toPlatformString(format),width,height,rate);
-                }));
-            }),
-            DRing::exportable_callback<DRing::VideoSignal::StartCapture>
-            ([&](const std::string& device) {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    VideoManager::instance->captureManager()->InitializeCameraAsync();
-                    VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
-                }));
-            }),
-            DRing::exportable_callback<DRing::VideoSignal::StopCapture>
-            ([&]() {
-                dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    VideoManager::instance->captureManager()->StopPreviewAsync();
-                    if (VideoManager::instance->captureManager()->captureTaskTokenSource)
-                        VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
-                    VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
-                }));
-            })
-        };
-        registerVideoHandlers(outgoingVideoHandlers);
+            }
+        }),
+        DRing::exportable_callback<DRing::VideoSignal::SetParameters>
+        ([&](const std::string& device,
+             std::string format,
+             const int width,
+             const int height,
+        const int rate) {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("<SetParameters>");
+                VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
+                    Utils::toPlatformString(format),width,height,rate);
+            }));
+        }),
+        DRing::exportable_callback<DRing::VideoSignal::StartCapture>
+        ([&](const std::string& device) {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                VideoManager::instance->captureManager()->InitializeCameraAsync(false);
+                VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
+            }));
+        }),
+        DRing::exportable_callback<DRing::VideoSignal::StopCapture>
+        ([&]() {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                VideoManager::instance->captureManager()->StopPreviewAsync();
+                if (VideoManager::instance->captureManager()->captureTaskTokenSource)
+                    VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
+                VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
+            }));
+        })
+    };
+    registerVideoHandlers(outgoingVideoHandlers);
 
-        std::map<std::string, SharedCallback> nameRegistrationHandlers =
-        {
-            DRing::exportable_callback<DRing::ConfigurationSignal::NameRegistrationEnded>(
-            [this](const std::string &accountId, int status, const std::string &name) {
-                MSG_("\n<NameRegistrationEnded>\n");
+    nameRegistrationHandlers =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::NameRegistrationEnded>(
+        [this](const std::string &accountId, int status, const std::string &name) {
+            MSG_("\n<NameRegistrationEnded>\n");
 
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
-            [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
-                MSG_("<RegisteredNameFound>" + name + " : " + address);
-            })
-        };
-        registerConfHandlers(nameRegistrationHandlers);
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
+        [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+            MSG_("<RegisteredNameFound>" + name + " : " + address);
+        })
+    };
+    registerConfHandlers(nameRegistrationHandlers);
+}
 
-        gnutls_global_init();
+void
+RingD::initDaemon(int flags)
+{
+    DRing::init(static_cast<DRing::InitFlag>(flags));
+}
 
-        DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
-                    DRing::DRING_FLAG_DEBUG));
+void
+RingD::startDaemon()
+{
+    if (daemonRunning_) {
+        ERR_("daemon already runnging");
+        return;
+    }
+    //eraseCacheFolder();
+    editModeOn_ = true;
 
+    IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
+    {
         daemonRunning_ = DRing::start();
+
+        auto vcm = Video::VideoManager::instance->captureManager();
+        std::string deviceName = DRing::getDefaultDevice();
+        std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
+        int rate = stoi(settings["rate"]);
+        std::string size = settings["size"];
+        std::string::size_type pos = size.find('x');
+        int width = std::stoi(size.substr(0, pos));
+        int height = std::stoi(size.substr(pos + 1, size.length()));
+        for (auto dev : vcm->deviceList) {
+            if (!Utils::toString(dev->name()).compare(deviceName))
+                vcm->activeDevice = dev;
+        }
+        vcm->activeDevice->SetDeviceProperties("", width, height, rate);
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([=]() {
+            finishCaptureDeviceEnumeration();
+        }));
 
         if (!daemonRunning_) {
             ERR_("\ndaemon didn't start.\n");
@@ -712,17 +732,13 @@ RingClientUWP::RingD::startDaemon()
                 }
             });
 
-
-            while (daemonRunning) {
+            while (daemonRunning_) {
                 DRing::pollEvents();
                 dequeueTasks();
                 Sleep(5);
             }
-            DRing::fini();
-
-            gnutls_global_deinit();
         }
-    });
+    },Platform::CallbackContext::Any), WorkItemPriority::High);
 }
 
 RingD::RingD()
