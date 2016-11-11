@@ -18,19 +18,17 @@
 **************************************************************************/
 #pragma once
 
-#include "WelcomePage.g.h"
+#include "PreviewPage.g.h"
 
 namespace RingClientUWP
 {
 namespace Views
 {
-public ref class WelcomePage sealed
+public ref class PreviewPage sealed
 {
 public:
-    WelcomePage();
+    PreviewPage();
 protected:
-    void PositionImage();
-    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 };
 }
 }

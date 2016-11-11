@@ -39,6 +39,7 @@ using namespace Windows::UI::Core;
 using namespace Windows::Media;
 using namespace Windows::Media::MediaProperties;
 using namespace Windows::Media::Capture;
+using namespace Windows::System::Threading;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
@@ -115,8 +116,6 @@ RingClientUWP::RingD::reloadAccountList()
 
         }
     }
-
-    DRing::lookupName("", "", "wagaf");
 
     // load user preferences
     Configuration::UserPreferences::instance->load();
@@ -365,16 +364,16 @@ void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePass
 }
 
 void
-RingClientUWP::RingD::startDaemon()
+RingD::startDaemon()
 {
-    if (daemonRunning) {
+    if (daemonRunning_) {
         ERR_("daemon already runnging");
         return;
     }
     //eraseCacheFolder();
     editModeOn_ = true;
 
-    create_task([&]()
+    IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
     {
         using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
         using namespace std::placeholders;
@@ -607,18 +606,24 @@ RingClientUWP::RingD::startDaemon()
             std::vector<std::string> *formats,
             std::vector<unsigned> *sizes,
             std::vector<unsigned> *rates) {
+                MSG_("<GetCameraInfo>");
                 auto device_list = VideoManager::instance->captureManager()->deviceList;
 
                 for (unsigned int i = 0; i < device_list->Size; i++) {
                     auto dev = device_list->GetAt(i);
                     if (device == Utils::toString(dev->name())) {
-                        auto channel = dev->channel();
-                        Vector<Video::Resolution^>^ resolutions = channel->resolutionList();
+                        Vector<Video::Resolution^>^ resolutions = dev->resolutionList();
                         for (auto res : resolutions) {
                             formats->emplace_back(Utils::toString(res->format()));
-                            sizes->emplace_back(res->size()->width());
-                            sizes->emplace_back(res->size()->height());
-                            rates->emplace_back(res->activeRate()->value());
+                            //if (!Utils::findIn(*formats, Utils::toString(res->format())))
+                                //formats->emplace_back(Utils::toString(res->format()));
+                            sizes->emplace_back(res->width());
+                            sizes->emplace_back(res->height());
+                            for (auto rate : res->rateList()) {
+                                //if (!Utils::findIn(*rates, rate->value()))
+                                //if (std::find(rates->begin(), rates->end(), res->activeRate()->value()) == rates->end())
+                                    rates->emplace_back(rate->value());
+                            }
                         }
                     }
                 }
@@ -631,6 +636,7 @@ RingClientUWP::RingD::startDaemon()
             const int rate) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
+                    MSG_("<SetParameters>");
                     VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
                         Utils::toPlatformString(format),width,height,rate);
                 }));
@@ -639,7 +645,7 @@ RingClientUWP::RingD::startDaemon()
             ([&](const std::string& device) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                    VideoManager::instance->captureManager()->InitializeCameraAsync();
+                    VideoManager::instance->captureManager()->InitializeCameraAsync(false);
                     VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
                 }));
             }),
@@ -675,7 +681,11 @@ RingClientUWP::RingD::startDaemon()
         DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
                     DRing::DRING_FLAG_DEBUG));
 
+        VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
+
         daemonRunning_ = DRing::start();
+
+        //VideoManager::instance->captureManager()->GetDeviceCapsAsync();
 
         if (!daemonRunning_) {
             ERR_("\ndaemon didn't start.\n");
@@ -712,17 +722,15 @@ RingClientUWP::RingD::startDaemon()
                 }
             });
 
-
-            while (daemonRunning) {
+            while (daemonRunning_) {
                 DRing::pollEvents();
                 dequeueTasks();
                 Sleep(5);
             }
-            DRing::fini();
 
             gnutls_global_deinit();
         }
-    });
+    },Platform::CallbackContext::Any), WorkItemPriority::High);
 }
 
 RingD::RingD()

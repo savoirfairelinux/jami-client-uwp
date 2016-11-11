@@ -37,7 +37,7 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
-
+delegate void FinishCaptureDeviceEnumeration();
 
 public ref class RingD sealed
 {
@@ -119,6 +119,7 @@ internal:
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
     event IncomingVideoMuted^ incomingVideoMuted;
+    event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
 
 private:
     /* sub classes */

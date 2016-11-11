@@ -71,6 +71,8 @@ private:
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
     void OnsummonMessageTextPage();
     void OnsummonWelcomePage();
+    void OnsummonPreviewPage();
+    void OnhidePreviewPage();
     void OnsummonVideoPage();
     void OnpressHangUpCall();
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
