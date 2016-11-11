@@ -189,6 +189,9 @@
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="PreviewPage.xaml.h">
+      <DependentUpon>PreviewPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="RingConsolePanel.xaml.h">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
     </ClInclude>
@@ -227,6 +230,7 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="MessageTextPage.xaml" />
+    <Page Include="PreviewPage.xaml" />
     <Page Include="RingConsolePanel.xaml" />
     <Page Include="SmartPanel.xaml" />
     <Page Include="Styles.xaml" />
@@ -317,6 +321,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PreviewPage.xaml.cpp">
+      <DependentUpon>PreviewPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="RingConsolePanel.xaml.cpp">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>

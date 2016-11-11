@@ -22,6 +22,7 @@
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
 #include "VideoPage.xaml.h"
+#include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
 
 #include "MainPage.xaml.h"
@@ -60,6 +61,7 @@ MainPage::MainPage()
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
     _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
+    _previewFrame_->Navigate(TypeName(RingClientUWP::Views::PreviewPage::typeid));
     _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
 
     /* connect to delegates */
@@ -67,6 +69,8 @@ MainPage::MainPage()
     auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
     smartPanel->summonMessageTextPage += ref new RingClientUWP::SummonMessageTextPage(this, &RingClientUWP::MainPage::OnsummonMessageTextPage);
     smartPanel->summonWelcomePage += ref new RingClientUWP::SummonWelcomePage(this, &RingClientUWP::MainPage::OnsummonWelcomePage);
+    smartPanel->summonPreviewPage += ref new RingClientUWP::SummonPreviewPage(this, &RingClientUWP::MainPage::OnsummonPreviewPage);
+    smartPanel->hidePreviewPage += ref new RingClientUWP::HidePreviewPage(this, &RingClientUWP::MainPage::OnhidePreviewPage);
     smartPanel->summonVideoPage += ref new RingClientUWP::SummonVideoPage(this, &RingClientUWP::MainPage::OnsummonVideoPage);
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
     videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
@@ -231,6 +235,17 @@ void RingClientUWP::MainPage::OnsummonWelcomePage()
     showFrame(_welcomeFrame_);
 }
 
+void RingClientUWP::MainPage::OnsummonPreviewPage()
+{
+    WriteLine("Show Settings Preview");
+    _previewFrame_->Visibility = VIS::Visible;
+}
+
+void RingClientUWP::MainPage::OnhidePreviewPage()
+{
+    WriteLine("Hide Settings Preview");
+    _previewFrame_->Visibility = VIS::Collapsed;
+}
 
 void RingClientUWP::MainPage::OnsummonVideoPage()
 {
@@ -244,8 +259,6 @@ void RingClientUWP::MainPage::OnpressHangUpCall()
 {
     OnsummonMessageTextPage();
 }
-
-
 
 void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
 {
@@ -312,7 +325,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         if (isInCall) {
             /*if (RingD::instance->currentCallId)
                 RingD::instance->unPauseCall(RingD::instance->currentCallId);*/
-            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
+            Video::VideoManager::instance->captureManager()->InitializeCameraAsync(false);
             Video::VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
         }
     }

@@ -19,10 +19,12 @@
 #include "pch.h"
 
 #include "VideoCaptureManager.h"
+#include "SmartPanel.xaml.h"
 
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace RingClientUWP;
+using namespace RingClientUWP::Views;
 using namespace Video;
 
 using namespace Windows::Graphics::Display;
@@ -31,6 +33,9 @@ using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Media;
 using namespace Windows::Media::MediaProperties;
 using namespace Windows::Media::Capture;
+
+//Map<String^, int> pixel_formats = {{"YUV2", 0}, {"NV12", 2}, {"MJPG", 3}, {"RGB24", 4}};
+std::map<std::string, int> pixel_formats = {{"YUV2", 0}, {"NV12", 2}, {"MJPG", 3}, {"RGB24", 4}};
 
 VideoCaptureManager::VideoCaptureManager():
     mediaCapture(nullptr)
@@ -67,6 +72,7 @@ VideoCaptureManager::MediaCapture_Failed(Capture::MediaCapture^, Capture::MediaC
 
     if (captureTaskTokenSource)
         captureTaskTokenSource->cancel();
+
     CleanupCameraAsync();
 }
 
@@ -84,7 +90,6 @@ VideoCaptureManager::CleanupCameraAsync()
             auto stopPreviewTask = create_task(StopPreviewAsync());
             taskList.push_back(stopPreviewTask);
         }
-
         isInitialized = false;
     }
 
@@ -112,13 +117,24 @@ VideoCaptureManager::EnumerateWebcamsAsync()
         try {
             devInfoCollection = findTask.get();
             if (devInfoCollection == nullptr || devInfoCollection->Size == 0) {
-                RingDebug::instance->WriteLine("No WebCams found.");
+                WriteLine("No WebCams found.");
             }
             else {
+                std::vector<task<void>> taskList;
                 for (unsigned int i = 0; i < devInfoCollection->Size; i++) {
-                    AddVideoDevice(i);
+                    taskList.push_back(AddVideoDeviceAsync(i));
                 }
-                RingDebug::instance->WriteLine("Enumerating Webcams completed successfully.");
+                when_all(taskList.begin(), taskList.end())
+                    .then([this](task<void> previousTasks)
+                {
+                    try {
+                        previousTasks.get();
+                        captureEnumerationComplete();
+                    }
+                    catch (Exception^ e) {
+                        WriteException(e);
+                    }
+                });
             }
         }
         catch (Platform::Exception^ e) {
@@ -128,12 +144,16 @@ VideoCaptureManager::EnumerateWebcamsAsync()
 }
 
 task<void>
-VideoCaptureManager::StartPreviewAsync()
+VideoCaptureManager::StartPreviewAsync(bool isSettingsPreview)
 {
-    RingDebug::instance->RingDebug::instance->WriteLine("StartPreviewAsync");
+    WriteLine("StartPreviewAsync");
     displayRequest->RequestActive();
 
-    auto sink = getSink();
+    Windows::UI::Xaml::Controls::CaptureElement^ sink;
+    if (isSettingsPreview)
+        sink = getSettingsPreviewSink();
+    else
+        sink = getSink();
     sink->Source = mediaCapture.Get();
 
     return create_task(mediaCapture->StartPreviewAsync())
@@ -143,7 +163,7 @@ VideoCaptureManager::StartPreviewAsync()
             previewTask.get();
             isPreviewing = true;
             startPreviewing();
-            RingDebug::instance->WriteLine("StartPreviewAsync DONE");
+            WriteLine("StartPreviewAsync DONE");
         }
         catch (Exception ^e) {
             WriteException(e);
@@ -181,7 +201,7 @@ VideoCaptureManager::StopPreviewAsync()
 }
 
 task<void>
-VideoCaptureManager::InitializeCameraAsync()
+VideoCaptureManager::InitializeCameraAsync(bool isSettingsPreview)
 {
     RingDebug::instance->WriteLine("InitializeCameraAsync");
 
@@ -193,7 +213,7 @@ VideoCaptureManager::InitializeCameraAsync()
     auto devInfo = devInfoCollection->GetAt(0); //preferences - video capture device
 
     mediaCaptureFailedEventToken = mediaCapture->Failed +=
-                                       ref new Capture::MediaCaptureFailedEventHandler(this, &VideoCaptureManager::MediaCapture_Failed);
+        ref new Capture::MediaCaptureFailedEventHandler(this, &VideoCaptureManager::MediaCapture_Failed);
 
     if (devInfo == nullptr)
         return create_task([]() {});
@@ -202,14 +222,14 @@ VideoCaptureManager::InitializeCameraAsync()
     settings->VideoDeviceId = devInfo->Id;
 
     return create_task(mediaCapture->InitializeAsync(settings))
-           .then([this](task<void> initTask)
+           .then([=](task<void> initTask)
     {
         try {
             initTask.get();
             SetCaptureSettings();
             isInitialized = true;
             RingDebug::instance->WriteLine("InitializeCameraAsync DONE");
-            return StartPreviewAsync();
+            return StartPreviewAsync(isSettingsPreview);
         }
         catch (Exception ^e) {
             WriteException(e);
@@ -218,8 +238,8 @@ VideoCaptureManager::InitializeCameraAsync()
     });
 }
 
-void
-VideoCaptureManager::AddVideoDevice(uint8_t index)
+task<void>
+VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
 {
     RingDebug::instance->WriteLine("GetDeviceCaps " + index.ToString());
     Platform::Agile<Windows::Media::Capture::MediaCapture^> mc;
@@ -228,47 +248,80 @@ VideoCaptureManager::AddVideoDevice(uint8_t index)
     auto devInfo = devInfoCollection->GetAt(index);
 
     if (devInfo == nullptr)
-        return;
+        return concurrency::task_from_result();
 
     auto settings = ref new MediaCaptureInitializationSettings();
     settings->VideoDeviceId = devInfo->Id;
 
-    create_task(mc->InitializeAsync(settings))
+    return create_task(mc->InitializeAsync(settings))
     .then([=](task<void> initTask)
     {
         try {
             initTask.get();
             auto allprops = mc->VideoDeviceController->GetAvailableMediaStreamProperties(MediaStreamType::VideoPreview);
             Video::Device^ device = ref new Device(devInfo->Id);
-            Video::Channel^ channel = ref new Channel();
             for (auto props : allprops) {
                 MediaProperties::VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(props);
-                int width = vidprops->Width;
-                int height = vidprops->Height;
-                Video::Resolution^ resolution = ref new Resolution(ref new Size(width,height));
+                // Create resolution
+                Video::Resolution^ resolution = ref new Resolution(props);
+                // Get pixel-format
+                String^ format = vidprops->Subtype;
+                // Create rate
                 Video::Rate^ rate = ref new Rate();
                 unsigned int frame_rate = 0;
                 if (vidprops->FrameRate->Denominator != 0)
                     frame_rate = vidprops->FrameRate->Numerator / vidprops->FrameRate->Denominator;
                 rate->setValue(frame_rate);
-                rate->setName(rate->value().ToString() + "fps");
+                rate->setName(rate->value().ToString() + " FPS");
+                // Try to find a resolution with the same dimensions in this device's resolution list
+                std::vector<int>::size_type resolution_index;
+                Video::Resolution^ matchingResolution;
+                for(resolution_index = 0; resolution_index != device->resolutionList()->Size; resolution_index++) {
+                    matchingResolution = device->resolutionList()->GetAt(resolution_index);
+                    if (matchingResolution->width() == resolution->width() &&
+                        matchingResolution->height() == resolution->height())
+                        break;
+                }
+                if (resolution_index < device->resolutionList()->Size) {
+                    // Resolution found, check if rate is already in this resolution's ratelist,
+                    // If so, pick the best format (prefer YUV2 -> NV12 -> MJPG -> RGB24 -> scrap the rest),
+                    // otherwise append to resolution's ratelist, and continue looping
+                    std::vector<int>::size_type rate_index;
+                    for(rate_index = 0; rate_index != matchingResolution->rateList()->Size; rate_index++) {
+                        auto rat = matchingResolution->rateList()->GetAt(rate_index);
+                        if (rat->value() == rate->value())
+                            break;
+                    }
+                    if (rate_index < matchingResolution->rateList()->Size) {
+                        // Rate found, prefer better pixel-format
+                        /*if (pixel_formats.Lookup(format) < pixel_formats.Lookup(res->format))
+                            res->format = format;*/
+                        if (pixel_formats[Utils::toString(format)] <
+                            pixel_formats[Utils::toString(matchingResolution->format())])
+                            matchingResolution->setFormat(format);
+                        continue;
+                    }
+                    // Rate NOT found
+                    device->resolutionList()->GetAt(resolution_index)->rateList()->Append(rate);
+                    continue;
+                }
+                // Resolution NOT found, append rate to this resolution's ratelist and append resolution
+                // to device's resolutionlist
+                resolution->rateList()->Append(rate);
                 resolution->setActiveRate(rate);
-                String^ format = vidprops->Subtype;
                 resolution->setFormat(format);
-                channel->resolutionList()->Append(resolution);
-                RingDebug::instance->WriteLine(devInfo->Name + " "
-                                               + width.ToString() + "x" + height.ToString()
+                device->resolutionList()->Append(resolution);
+                WriteLine(devInfo->Name + " "
+                                               + vidprops->Width.ToString() + "x" + vidprops->Height.ToString()
                                                + " " + frame_rate.ToString() + "FPS" + " " + format);
             }
-            device->channelList()->Append(channel);
-            device->setCurrentChannel(device->channelList()->GetAt(0));
             auto location = devInfo->EnclosureLocation;
             if (location != nullptr) {
                 if (location->Panel == Windows::Devices::Enumeration::Panel::Front) {
                     device->setName(devInfo->Name + "-Front");
                 }
                 else if (location->Panel == Windows::Devices::Enumeration::Panel::Back) {
-                    device->setName(devInfo->Name + "-Back"); //ignore
+                    device->setName(devInfo->Name + "-Back"); // TODO: ignore these back panel cameras..?
                 }
                 else {
                     device->setName(devInfo->Name);
@@ -279,7 +332,7 @@ VideoCaptureManager::AddVideoDevice(uint8_t index)
             }
             this->deviceList->Append(device);
             this->activeDevice = deviceList->GetAt(0);
-            RingDebug::instance->WriteLine("GetDeviceCaps DONE");
+            WriteLine("GetDeviceCaps DONE");
             DRing::addVideoDevice(Utils::toString(device->name()));
         }
         catch (Platform::Exception^ e) {
@@ -324,8 +377,8 @@ VideoCaptureManager::CopyFrame(Object^ sender, Object^ e)
 task<void>
 VideoCaptureManager::CopyFrameAsync()
 {
-    unsigned int videoFrameWidth = activeDevice->channel()->currentResolution()->size()->width();
-    unsigned int videoFrameHeight = activeDevice->channel()->currentResolution()->size()->height();
+    unsigned int videoFrameWidth = activeDevice->currentResolution()->width();
+    unsigned int videoFrameHeight = activeDevice->currentResolution()->height();
 
     // for now, only bgra
     auto videoFrame = ref new VideoFrame(BitmapPixelFormat::Bgra8, videoFrameWidth, videoFrameHeight);
@@ -379,7 +432,7 @@ VideoCaptureManager::CopyFrameAsync()
 
             }
             catch (Exception^ e) {
-                RingDebug::instance->WriteLine("failed to copy frame to daemon's buffer");
+                RingDebug::instance->WriteLine("Failed to copy frame to daemon's buffer");
             }
         }).then([=](task<void> previousTask) {
             try {
@@ -387,7 +440,7 @@ VideoCaptureManager::CopyFrameAsync()
                 isRendering = false;
             }
             catch (Platform::Exception^ e) {
-                RingDebug::instance->WriteLine( "Caught exception from previous task.\n" );
+                WriteException(e);
             }
         });
     }
@@ -400,14 +453,24 @@ VideoCaptureManager::CopyFrameAsync()
 void
 VideoCaptureManager::SetCaptureSettings()
 {
+    WriteLine("SetCaptureSettings");
     auto vp = ref new VideoEncodingProperties;
-    auto res = activeDevice->channel()->currentResolution();
-    vp->Width = res->size()->width();
-    vp->Height = res->size()->height();
+    auto res = activeDevice->currentResolution();
+    vp->Width = res->width();
+    vp->Height = res->height();
     vp->FrameRate->Numerator = res->activeRate()->value();
     vp->FrameRate->Denominator = 1;
     vp->Subtype = res->format();
     auto encodingProperties = static_cast<IMediaEncodingProperties^>(vp);
     create_task(mediaCapture->VideoDeviceController->SetMediaStreamPropertiesAsync(
-                    MediaStreamType::VideoPreview, encodingProperties));
+                    MediaStreamType::VideoPreview, encodingProperties))
+        .then([](task<void> setpropsTask){
+        try {
+            setpropsTask.get();
+            WriteLine("SetCaptureSettings DONE");
+        }
+        catch (Exception^ e) {
+            WriteException(e);
+        }
+    });
 }

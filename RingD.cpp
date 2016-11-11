@@ -116,8 +116,6 @@ RingClientUWP::RingD::reloadAccountList()
         }
     }
 
-    DRing::lookupName("", "", "wagaf");
-
     // load user preferences
     Configuration::UserPreferences::instance->load();
 }
@@ -612,12 +610,11 @@ RingClientUWP::RingD::startDaemon()
                 for (unsigned int i = 0; i < device_list->Size; i++) {
                     auto dev = device_list->GetAt(i);
                     if (device == Utils::toString(dev->name())) {
-                        auto channel = dev->channel();
-                        Vector<Video::Resolution^>^ resolutions = channel->resolutionList();
+                        Vector<Video::Resolution^>^ resolutions = dev->resolutionList();
                         for (auto res : resolutions) {
                             formats->emplace_back(Utils::toString(res->format()));
-                            sizes->emplace_back(res->size()->width());
-                            sizes->emplace_back(res->size()->height());
+                            sizes->emplace_back(res->width());
+                            sizes->emplace_back(res->height());
                             rates->emplace_back(res->activeRate()->value());
                         }
                     }
@@ -639,7 +636,7 @@ RingClientUWP::RingD::startDaemon()
             ([&](const std::string& device) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                    VideoManager::instance->captureManager()->InitializeCameraAsync();
+                    VideoManager::instance->captureManager()->InitializeCameraAsync(false);
                     VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
                 }));
             }),

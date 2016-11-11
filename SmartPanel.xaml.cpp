@@ -29,6 +29,7 @@ using namespace RingClientUWP::Controls;
 using namespace RingClientUWP::Views;
 using namespace RingClientUWP::ViewModel;
 using namespace Windows::Media::Capture;
+using namespace Windows::Media::MediaProperties;
 using namespace Windows::UI::Xaml;
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
@@ -40,8 +41,6 @@ using namespace Windows::Graphics::Imaging;
 using namespace Windows::Foundation;
 using namespace Concurrency;
 using namespace Platform::Collections;
-
-
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
@@ -141,7 +140,9 @@ SmartPanel::SmartPanel()
     RingD::instance->exportOnRingEnded += ref new RingClientUWP::ExportOnRingEnded(this, &RingClientUWP::Views::SmartPanel::OnexportOnRingEnded);
     RingD::instance->accountUpdated += ref new RingClientUWP::AccountUpdated(this, &RingClientUWP::Views::SmartPanel::OnaccountUpdated);
 
-
+    Video::VideoManager::instance->captureManager()->captureEnumerationComplete += ref new RingClientUWP::CaptureEnumerationComplete([this]() {
+        populateVideoDeviceSettingsComboBox();
+    });
 }
 
 void
@@ -200,12 +201,20 @@ void RingClientUWP::Views::SmartPanel::_settings__Checked(Object^ sender, Routed
 {
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _settings_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    auto vcm = Video::VideoManager::instance->captureManager();
+    if (!vcm->isInitialized)
+        vcm->InitializeCameraAsync(true);
+    else
+        vcm->StartPreviewAsync(true);
+    summonPreviewPage();
 }
 
 void RingClientUWP::Views::SmartPanel::_settings__Unchecked(Object^ sender, RoutedEventArgs^ e)
 {
     _settings_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    Video::VideoManager::instance->captureManager()->StopPreviewAsync();
+    hidePreviewPage();
 }
 
 void RingClientUWP::Views::SmartPanel::setMode(RingClientUWP::Views::SmartPanel::Mode mode)
@@ -949,4 +958,151 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
     item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+}
+
+// VIDEO
+
+void
+SmartPanel::_videoDeviceComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^)
+{
+    if (_videoDeviceComboBox_->Items->Size) {
+        Video::VideoCaptureManager^ vcm = Video::VideoManager::instance->captureManager();
+        auto selectedItem = static_cast<ComboBoxItem^>(static_cast<ComboBox^>(sender)->SelectedItem);
+        auto deviceId = static_cast<String^>(selectedItem->Tag);
+        std::vector<int>::size_type index;
+        for(index = 0; index != vcm->deviceList->Size; index++) {
+            auto dev =  vcm->deviceList->GetAt(index);
+            if (dev->id() == deviceId) {
+                break;
+            }
+        }
+        vcm->activeDevice = vcm->deviceList->GetAt(index);
+        populateVideoResolutionSettingsComboBox();
+    }
+}
+
+void
+SmartPanel::_videoResolutionComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^)
+{
+    if (_videoResolutionComboBox_->Items->Size) {
+        Video::VideoCaptureManager^ vcm = Video::VideoManager::instance->captureManager();
+        auto device = vcm->activeDevice;
+        auto selectedItem = static_cast<ComboBoxItem^>(static_cast<ComboBox^>(sender)->SelectedItem);
+        auto encodingProperties = static_cast<IMediaEncodingProperties^>(selectedItem->Tag);
+        VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(encodingProperties);
+        std::vector<int>::size_type index;
+        for(index = 0; index != device->resolutionList()->Size; index++) {
+            auto res = device->resolutionList()->GetAt(index);
+            if (res->width() == vidprops->Width && res->height() == vidprops->Height) {
+                break;
+            }
+        }
+        vcm->activeDevice->setCurrentResolution( device->resolutionList()->GetAt(index) );
+        populateVideoRateSettingsComboBox();
+    }
+}
+
+void
+SmartPanel::_videoRateComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^)
+{
+    if (_videoRateComboBox_->Items->Size) {
+        Video::VideoCaptureManager^ vcm = Video::VideoManager::instance->captureManager();
+        auto resolution = vcm->activeDevice->currentResolution();
+        auto selectedItem = static_cast<ComboBoxItem^>(static_cast<ComboBox^>(sender)->SelectedItem);
+        auto encodingProperties = static_cast<IMediaEncodingProperties^>(selectedItem->Tag);
+        VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(encodingProperties);
+        unsigned int frame_rate = 0;
+        if (vidprops->FrameRate->Denominator != 0)
+            frame_rate = vidprops->FrameRate->Numerator / vidprops->FrameRate->Denominator;
+        std::vector<int>::size_type index;
+        for(index = 0; index != resolution->rateList()->Size; index++) {
+            auto rate = resolution->rateList()->GetAt(index);
+            if (rate->value() == frame_rate)
+                break;
+        }
+        if (frame_rate != 0)
+            vcm->activeDevice->currentResolution()->setActiveRate( resolution->rateList()->GetAt(index) );
+
+        // change device settings in daemon
+        auto currentResolution = vcm->activeDevice->currentResolution();
+        std::string deviceName = Utils::toString(vcm->activeDevice->name());
+        std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
+        settings["size"] = Utils::toString( currentResolution->width().ToString()
+                                    + "x" + currentResolution->height().ToString());
+        settings["rate"] = Utils::toString(currentResolution->activeRate()->value().ToString());
+        DRing::applySettings(deviceName, settings);
+
+        if (vcm->isPreviewing) {
+            vcm->SetCaptureSettings();
+        }
+    }
+}
+
+void
+SmartPanel::populateVideoDeviceSettingsComboBox()
+{
+    _videoDeviceComboBox_->Items->Clear();
+    auto devices = Video::VideoManager::instance->captureManager()->deviceList;
+    int index = 0;
+    bool deviceSelected = false;
+    for (auto device : devices) {
+        ComboBoxItem^ comboBoxItem = ref new ComboBoxItem();
+        comboBoxItem->Content = device->name();
+        comboBoxItem->Tag = device->id();
+        _videoDeviceComboBox_->Items->Append(comboBoxItem);
+        if (device->isActive()) {
+            _videoDeviceComboBox_->SelectedIndex = index;
+            deviceSelected = true;
+        }
+        ++index;
+    }
+    if (!deviceSelected && devices->Size > 0)
+        _videoDeviceComboBox_->SelectedIndex = 0;
+}
+
+void
+SmartPanel::populateVideoResolutionSettingsComboBox()
+{
+    _videoResolutionComboBox_->Items->Clear();
+    Video::Device^ device = Video::VideoManager::instance->captureManager()->activeDevice;
+    auto resolutions = device->resolutionList();
+    int index = 0;
+    bool resolutionSelected = false;
+    for (auto resolution : resolutions) {
+        ComboBoxItem^ comboBoxItem = ref new ComboBoxItem();
+        comboBoxItem->Content = resolution->getFriendlyName();
+        comboBoxItem->Tag = resolution->getMediaEncodingProperties();
+        _videoResolutionComboBox_->Items->Append(comboBoxItem);
+        if (device->currentResolution() == resolution) {
+            _videoResolutionComboBox_->SelectedIndex = index;
+            resolutionSelected = true;
+        }
+        ++index;
+    }
+    if (!resolutionSelected && resolutions->Size > 0)
+        _videoResolutionComboBox_->SelectedIndex = 0;
+}
+
+void
+SmartPanel::populateVideoRateSettingsComboBox()
+{
+    _videoRateComboBox_->Items->Clear();
+    Video::Device^ device = Video::VideoManager::instance->captureManager()->activeDevice;
+    auto resolution = device->currentResolution();
+    auto props = resolution->getMediaEncodingProperties();
+    int index = 0;
+    bool rateSelected = false;
+    for (auto rate : resolution->rateList()) {
+        ComboBoxItem^ comboBoxItem = ref new ComboBoxItem();
+        comboBoxItem->Content = rate->name();
+        comboBoxItem->Tag = props;
+        _videoRateComboBox_->Items->Append(comboBoxItem);
+        if (resolution->activeRate() == rate && !rateSelected) {
+            _videoRateComboBox_->SelectedIndex = index;
+            rateSelected = true;
+        }
+        ++index;
+    }
+    if (!rateSelected && resolution->rateList()->Size > 0)
+        _videoRateComboBox_->SelectedIndex = 0;
 }
