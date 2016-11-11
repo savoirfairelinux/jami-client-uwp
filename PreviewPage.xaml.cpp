@@ -16,21 +16,22 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#pragma once
+#include "pch.h"
 
-#include "WelcomePage.g.h"
+#include "PreviewPage.xaml.h"
 
-namespace RingClientUWP
+using namespace RingClientUWP;
+using namespace RingClientUWP::Views;
+
+using namespace Video;
+
+PreviewPage::PreviewPage()
 {
-namespace Views
-{
-public ref class WelcomePage sealed
-{
-public:
-    WelcomePage();
-protected:
-    void PositionImage();
-    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
+    InitializeComponent();
+
+    VideoManager::instance->captureManager()->getSettingsPreviewSink +=
+        ref new GetSettingsPreviewSink([this]()
+    {
+        return SettingsPreviewImage;
+    });
 };
-}
-}
