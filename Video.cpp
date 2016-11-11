@@ -25,42 +25,17 @@ using namespace RingClientUWP;
 using namespace Video;
 
 using namespace Platform;
-
-/************************************************************
- *                                                          *
- *                         Size                             *
- *                                                          *
- ***********************************************************/
-
-unsigned int
-Video::Size::width()
-{
-    return m_Width;
-}
-
-unsigned int
-Video::Size::height()
-{
-    return m_Height;
-}
-
-void
-Video::Size::setWidth(unsigned int width)
-{
-    m_Width = width;
-}
-
-void
-Video::Size::setHeight(unsigned int height)
-{
-    m_Height = height;
-}
+using namespace Windows::Media::MediaProperties;
 
 /************************************************************
  *                                                          *
  *                         Rate                             *
  *                                                          *
  ***********************************************************/
+Rate::Rate()
+{
+    m_validFormats = ref new Vector<String^>();
+}
 
 String^
 Rate::name()
@@ -72,6 +47,24 @@ unsigned int
 Rate::value()
 {
     return m_value;
+}
+
+String^
+Rate::format()
+{
+    return m_currentFormat;
+}
+
+Vector<String^>^
+Rate::formatList()
+{
+    return m_validFormats;
+}
+
+IMediaEncodingProperties^
+Rate::getMediaEncodingProperties()
+{
+    return m_encodingProperties;
 }
 
 void
@@ -86,44 +79,16 @@ Rate::setValue(unsigned int value)
     m_value = value;
 }
 
-/************************************************************
- *                                                          *
- *                         Channel                          *
- *                                                          *
- ***********************************************************/
-Channel::Channel()
+void
+Rate::setFormat(String^ format)
 {
-    m_validResolutions = ref new Vector<Resolution^>();
-}
-
-String^
-Channel::name()
-{
-    return m_name;
-}
-
-Resolution^
-Channel::currentResolution()
-{
-    return m_currentResolution;
+    m_currentFormat = format;
 }
 
 void
-Channel::setName(String^ name)
+Rate::setMediaEncodingProperties(IMediaEncodingProperties^ props)
 {
-    m_name = name;
-}
-
-void
-Channel::setCurrentResolution(Resolution^ currentResolution)
-{
-    m_currentResolution = currentResolution;
-}
-
-Vector<Resolution^>^
-Channel::resolutionList()
-{
-    return m_validResolutions;
+    m_encodingProperties = props;
 }
 
 /************************************************************
@@ -132,20 +97,33 @@ Channel::resolutionList()
  *                                                          *
  ***********************************************************/
 
-Resolution::Resolution()
+Resolution::Resolution(IMediaEncodingProperties^ encodingProperties):
+    m_encodingProperties(encodingProperties)
 {
-    m_size = ref new Size();
     m_validRates = ref new Vector<Rate^>();
+    VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(encodingProperties);
+    m_width = vidprops->Width;
+    m_height = vidprops->Height;
 }
 
-Resolution::Resolution(Video::Size^ size):
-    m_size(size)
-{ }
+String^
+Resolution::getFriendlyName()
+{
+    std::wstringstream ss;
+    ss << m_width << "x" << m_height;
+    return ref new String(ss.str().c_str());
+}
+
+IMediaEncodingProperties^
+Resolution::getMediaEncodingProperties()
+{
+    return m_encodingProperties;
+}
 
 String^
 Resolution::name()
 {
-    return size()->width().ToString() + "x" + size()->height().ToString();
+    return m_width.ToString() + "x" + m_height.ToString();
 }
 
 Rate^
@@ -160,28 +138,34 @@ Resolution::rateList()
     return m_validRates;
 }
 
-Video::Size^
-Resolution::size()
+unsigned int
+Resolution::width()
 {
-    return m_size;
+    return m_width;
+}
+
+unsigned int
+Resolution::height()
+{
+    return m_height;
+}
+
+void
+Resolution::setWidth(unsigned int width)
+{
+    m_width = width;
+}
+
+void
+Resolution::setHeight(unsigned int height)
+{
+    m_height = height;
 }
 
 String^
 Resolution::format()
 {
     return m_format;
-}
-
-void
-Resolution::setWidth(int width)
-{
-    m_size->setWidth(width);
-}
-
-void
-Resolution::setHeight(int height)
-{
-    m_size->setHeight(height);
 }
 
 void
@@ -197,8 +181,13 @@ Resolution::setActiveRate(Rate^ rate)
         return false;
 
     m_currentRate = rate;
-    // set camera device rate here
     return true;
+}
+
+void
+Resolution::setMediaEncodingProperties(IMediaEncodingProperties^ props)
+{
+    m_encodingProperties = props;
 }
 
 /************************************************************
@@ -210,7 +199,7 @@ Resolution::setActiveRate(Rate^ rate)
 Device::Device(String^ id)
 {
     m_deviceId = id;
-    m_channels = ref new Vector<Channel^>();
+    m_validResolutions = ref new Vector<Resolution^>();
 }
 
 String^
@@ -219,37 +208,34 @@ Device::id()
     return m_deviceId;
 }
 
-Vector<Channel^>^
-Device::channelList()
-{
-    return m_channels;
-}
-
 String^
 Device::name()
 {
     return m_name;
 }
 
-Channel^
-Device::channel()
+Resolution^
+Device::currentResolution()
 {
-    return m_currentChannel;
+    return m_currentResolution;
 }
 
-bool
-Device::setCurrentChannel(Channel^ channel)
+Vector<Resolution^>^
+Device::resolutionList()
 {
-    if (m_currentChannel == channel)
-        return false;
-    m_currentChannel = channel;
-    return true;
+    return m_validResolutions;
 }
 
 void
 Device::setName(String^ name)
 {
     m_name = name;
+}
+
+void
+Device::setCurrentResolution(Resolution^ currentResolution)
+{
+    m_currentResolution = currentResolution;
 }
 
 void
@@ -260,22 +246,22 @@ Device::save()
 bool
 Device::isActive()
 {
-    return false;
-    //return Video::DeviceModel::instance().activeDevice() == this;
+    return Video::VideoManager::instance->captureManager()->activeDevice == this;
 }
 
 void
 Device::SetDeviceProperties(String^ format, int width, int height, int rate)
 {
-    auto rl = m_currentChannel->resolutionList();
-    for (auto res : rl) {
-        if (res->format() == format &&
-                res->size()->width() == width &&
-                res->size()->height() == height &&
-                res->activeRate()->value() == rate)
+    for (auto resolution_ : m_validResolutions) {
+        if (    resolution_->width() == width &&
+                resolution_->height() == height )
         {
-            m_currentChannel->setCurrentResolution(res);
-            RingDebug::instance->WriteLine("SetDeviceProperties");
+            setCurrentResolution(resolution_);
+            for (auto rate_ : resolution_->rateList()) {
+                if (rate_->value() == rate &&
+                    (format->IsEmpty()? true : rate_->format() == format))
+                    currentResolution()->setActiveRate(rate_);
+            }
             return;
         }
     }

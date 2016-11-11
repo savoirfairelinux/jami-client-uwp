@@ -54,9 +54,6 @@ VideoPage::VideoPage()
 {
     InitializeComponent();
 
-    VideoManager::instance->captureManager()->displayInformation = DisplayInformation::GetForCurrentView();
-    VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
-
     Page::NavigationCacheMode = Navigation::NavigationCacheMode::Required;
 
     VideoManager::instance->rendererManager()->writeVideoFrame +=
@@ -77,7 +74,7 @@ VideoPage::VideoPage()
                             previousTask.get();
                         }
                         catch (Platform::Exception^ e) {
-                            RingDebug::instance->WriteLine( "Caught exception from previous task.\n" );
+                            RingDebug::instance->WriteLine( "Caught exception from WriteFrameAsSoftwareBitmapAsync task.\n" );
                         }
                     });
                 }
