@@ -23,6 +23,7 @@ using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Devices::Enumeration;
 using namespace Windows::Media::Capture;
 using namespace Windows::Foundation;
+using namespace Windows::UI::Xaml::Controls;
 using namespace Concurrency;
 
 namespace RingClientUWP
@@ -30,7 +31,8 @@ namespace RingClientUWP
 
 delegate void StartPreviewing();
 delegate void StopPreviewing();
-delegate Windows::UI::Xaml::Controls::CaptureElement^ GetSink();
+delegate CaptureElement^ GetSink();
+delegate void CaptureEnumerationComplete();
 
 namespace Video
 {
@@ -82,7 +84,7 @@ internal:
     cancellation_token_source* captureTaskTokenSource;
 
     void MediaCapture_Failed(MediaCapture ^currentCaptureObject, MediaCaptureFailedEventArgs^ errorEventArgs);
-    void AddVideoDevice(uint8_t index);
+    task<void> AddVideoDeviceAsync(uint8_t index);
     void SetCaptureSettings();
 
     DispatcherTimer^ videoFrameCopyInvoker;
@@ -93,6 +95,7 @@ internal:
     event StartPreviewing^ startPreviewing;
     event StopPreviewing^ stopPreviewing;
     event GetSink^ getSink;
+    event CaptureEnumerationComplete^ captureEnumerationComplete;
 
 private:
     bool isPreviewing_;
