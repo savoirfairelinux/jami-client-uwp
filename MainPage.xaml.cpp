@@ -22,7 +22,10 @@
 #include "SmartPanel.xaml.h"
 #include "RingConsolePanel.xaml.h"
 #include "VideoPage.xaml.h"
+#include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
+
+#include "gnutls\gnutls.h"
 
 #include "MainPage.xaml.h"
 
@@ -60,6 +63,7 @@ MainPage::MainPage()
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
     _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
     _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
+    _previewFrame_->Navigate(TypeName(RingClientUWP::Views::PreviewPage::typeid));
     _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));
 
     /* connect to delegates */
@@ -67,6 +71,8 @@ MainPage::MainPage()
     auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
     smartPanel->summonMessageTextPage += ref new RingClientUWP::SummonMessageTextPage(this, &RingClientUWP::MainPage::OnsummonMessageTextPage);
     smartPanel->summonWelcomePage += ref new RingClientUWP::SummonWelcomePage(this, &RingClientUWP::MainPage::OnsummonWelcomePage);
+    smartPanel->summonPreviewPage += ref new RingClientUWP::SummonPreviewPage(this, &RingClientUWP::MainPage::OnsummonPreviewPage);
+    smartPanel->hidePreviewPage += ref new RingClientUWP::HidePreviewPage(this, &RingClientUWP::MainPage::OnhidePreviewPage);
     smartPanel->summonVideoPage += ref new RingClientUWP::SummonVideoPage(this, &RingClientUWP::MainPage::OnsummonVideoPage);
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
     videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
@@ -127,7 +133,12 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
 void
 RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
-    RingD::instance->startDaemon();
+    gnutls_global_init();
+    RingD::instance->registerCallbacks();
+    DRing::init(static_cast<DRing::InitFlag>(DRing::DRING_FLAG_CONSOLE_LOG |
+                    DRing::DRING_FLAG_DEBUG));
+    //RingD::instance->initDaemon( DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG );
+    Video::VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
     showLoadingOverlay(true, false);
 }
 
@@ -231,6 +242,17 @@ void RingClientUWP::MainPage::OnsummonWelcomePage()
     showFrame(_welcomeFrame_);
 }
 
+void RingClientUWP::MainPage::OnsummonPreviewPage()
+{
+    WriteLine("Show Settings Preview");
+    _previewFrame_->Visibility = VIS::Visible;
+}
+
+void RingClientUWP::MainPage::OnhidePreviewPage()
+{
+    WriteLine("Hide Settings Preview");
+    _previewFrame_->Visibility = VIS::Collapsed;
+}
 
 void RingClientUWP::MainPage::OnsummonVideoPage()
 {
@@ -244,8 +266,6 @@ void RingClientUWP::MainPage::OnpressHangUpCall()
 {
     OnsummonMessageTextPage();
 }
-
-
 
 void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
 {
@@ -264,8 +284,7 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     }
 
 }
-#include <dring.h>
-#include "callmanager_interface.h"
+
 void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
@@ -299,9 +318,9 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
 void
 MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventArgs^ e)
 {
+    auto vcm = Video::VideoManager::instance->captureManager();
     if (e->Visible) {
         RingDebug::instance->WriteLine("->Visible");
-        auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
@@ -312,13 +331,23 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         if (isInCall) {
             /*if (RingD::instance->currentCallId)
                 RingD::instance->unPauseCall(RingD::instance->currentCallId);*/
-            Video::VideoManager::instance->captureManager()->InitializeCameraAsync();
-            Video::VideoManager::instance->captureManager()->videoFrameCopyInvoker->Start();
+            vcm->InitializeCameraAsync(false);
+            vcm->videoFrameCopyInvoker->Start();
+        }
+        else if (vcm->isSettingsPreviewing) {
+            vcm->CleanupCameraAsync()
+                .then([=](task<void> cleanupTask){
+                cleanupTask.get();
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+                {
+                    vcm->InitializeCameraAsync(true);
+                }));
+            });
         }
     }
     else {
         RingDebug::instance->WriteLine("->Invisible");
-        auto isPreviewing = Video::VideoManager::instance->captureManager()->isPreviewing;
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
@@ -328,16 +357,20 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
             }
         }
         if (isInCall) {
+            // TODO
             /*if (RingD::instance->currentCallId) {
                 WriteLine("Pausing call: " + RingD::instance->currentCallId);
                 RingD::instance->pauseCall(RingD::instance->currentCallId);
             }*/
-            if (isPreviewing) {
-                Video::VideoManager::instance->captureManager()->StopPreviewAsync();
-                if (Video::VideoManager::instance->captureManager()->captureTaskTokenSource)
-                    Video::VideoManager::instance->captureManager()->captureTaskTokenSource->cancel();
-                Video::VideoManager::instance->captureManager()->videoFrameCopyInvoker->Stop();
+            if (vcm->isPreviewing) {
+                vcm->StopPreviewAsync();
+                if (vcm->captureTaskTokenSource)
+                    vcm->captureTaskTokenSource->cancel();
+                vcm->videoFrameCopyInvoker->Stop();
             }
+        }
+        else if (vcm->isSettingsPreviewing) {
+            vcm->StopPreviewAsync();
         }
     }
 }
@@ -383,11 +416,10 @@ MainPage::BeginExtendedExecution()
                 session = newSession;
                 RingDebug::instance->WriteLine("Request Extended Execution Allowed");
                 RingDebug::instance->WriteLine("Clean up camera...");
-                Video::VideoManager::instance->captureManager()->CleanupCameraAsync()
-                .then([]() {
-                    RingDebug::instance->WriteLine("Hang up calls...");
-                    DRing::fini();
-                });
+                Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
+                RingDebug::instance->WriteLine("Hang up calls...");
+                DRing::fini();
+                gnutls_global_init();
                 break;
 
             default:

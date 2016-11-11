@@ -42,9 +42,6 @@ public:
         }
     }
 
-    property StorageFile^ _logFile;
-    property StorageFile^ _videoFile;
-
     /* properties */
 
     /* functions */
