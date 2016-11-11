@@ -23,6 +23,7 @@ using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Devices::Enumeration;
 using namespace Windows::Media::Capture;
 using namespace Windows::Foundation;
+using namespace Windows::UI::Xaml::Controls;
 using namespace Concurrency;
 
 namespace RingClientUWP
@@ -30,7 +31,9 @@ namespace RingClientUWP
 
 delegate void StartPreviewing();
 delegate void StopPreviewing();
-delegate Windows::UI::Xaml::Controls::CaptureElement^ GetSink();
+delegate CaptureElement^ GetSink();
+delegate CaptureElement^ GetSettingsPreviewSink();
+delegate void CaptureEnumerationComplete();
 
 namespace Video
 {
@@ -43,12 +46,16 @@ internal:
         bool get() { return isPreviewing_; }
         void set(bool value) { isPreviewing_ = value; }
     }
+    property bool isSettingsPreviewing
+    {
+        bool get() { return isSettingsPreviewing_; }
+        void set(bool value) { isSettingsPreviewing_ = value; }
+    }
 
     Map<String^,String^>^ getSettings(String^ device);
 
     VideoCaptureManager();
 
-    Windows::Graphics::Display::DisplayInformation^ displayInformation;
     Windows::Graphics::Display::DisplayOrientations displayOrientation;
 
     Windows::System::Display::DisplayRequest^ displayRequest;
@@ -68,21 +75,20 @@ internal:
 
     Platform::Agile<Windows::Media::Capture::MediaCapture^> mediaCapture;
 
-    task<void> InitializeCameraAsync();
-    task<void> StartPreviewAsync();
+    task<void> InitializeCameraAsync(bool isSettingsPreview);
+    task<void> StartPreviewAsync(bool isSettingsPreview);
     task<void> StopPreviewAsync();
     task<void> EnumerateWebcamsAsync();
     task<void> CleanupCameraAsync();
 
     // event tokens
     EventRegistrationToken mediaCaptureFailedEventToken;
-    EventRegistrationToken displayInformationEventToken;
     EventRegistrationToken visibilityChangedEventToken;
 
     cancellation_token_source* captureTaskTokenSource;
 
     void MediaCapture_Failed(MediaCapture ^currentCaptureObject, MediaCaptureFailedEventArgs^ errorEventArgs);
-    void AddVideoDevice(uint8_t index);
+    task<void> AddVideoDeviceAsync(uint8_t index);
     void SetCaptureSettings();
 
     DispatcherTimer^ videoFrameCopyInvoker;
@@ -93,9 +99,12 @@ internal:
     event StartPreviewing^ startPreviewing;
     event StopPreviewing^ stopPreviewing;
     event GetSink^ getSink;
+    event GetSettingsPreviewSink^ getSettingsPreviewSink;
+    event CaptureEnumerationComplete^ captureEnumerationComplete;
 
 private:
     bool isPreviewing_;
+    bool isSettingsPreviewing_;
 
 };
 

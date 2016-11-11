@@ -20,6 +20,8 @@
 /* client */
 #include "pch.h"
 
+#include "fileutils.h"
+
 using namespace RingClientUWP;
 
 using namespace Platform;
@@ -56,14 +58,15 @@ RingDebug::print(const std::string& message,
     /* fire the event. */
     auto line = ref new String(wString.c_str(), wString.length());
     messageToScreen(line);
-    FileIO::AppendTextAsync(_logFile, line + "\n");
+
+    std::ofstream ofs;
+    ofs.open ("debug.log", std::ofstream::out | std::ofstream::app);
+    ofs << Utils::toString(line) << "\n";
+    ofs.close();
 }
 
 void RingClientUWP::RingDebug::WriteLine(String^ str)
 {
-    /* save in file */
-    //FileIO::AppendTextAsync(_videoFile, str + "\n");
-
     /* screen in visual studio console */
     std::wstringstream wStringstream;
     wStringstream << str->Data() << "\n";
@@ -72,19 +75,4 @@ void RingClientUWP::RingDebug::WriteLine(String^ str)
 
 RingClientUWP::RingDebug::RingDebug()
 {
-    StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
-
-    StorageFile^ logFile;
-
-    task<StorageFile^>(storageFolder->CreateFileAsync("debug.log", CreationCollisionOption::ReplaceExisting)).then([this](StorageFile^ file)
-    {
-        this->_logFile = file;
-    });
-
-    task<StorageFile^>(storageFolder->CreateFileAsync("video.log", CreationCollisionOption::ReplaceExisting)).then([this](StorageFile^ file)
-    {
-        this->_videoFile = file;
-    });
-
 }
-

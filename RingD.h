@@ -16,6 +16,7 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#include <dring.h>
 
 using namespace concurrency;
 
@@ -37,7 +38,10 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
+delegate void FinishCaptureDeviceEnumeration();
 
+using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
+using namespace std::placeholders;
 
 public ref class RingD sealed
 {
@@ -77,6 +81,8 @@ internal: // why this property has to be internal and not public ?
 
 internal:
     /* functions */
+    void registerCallbacks();
+    void initDaemon(int flags);
     void startDaemon();
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
@@ -119,6 +125,7 @@ internal:
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
     event IncomingVideoMuted^ incomingVideoMuted;
+    event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
 
 private:
     /* sub classes */
@@ -181,11 +188,20 @@ private:
 //    CallStatus translateCallStatus(String^ state);
 
     /* members */
+    Windows::UI::Core::CoreDispatcher^ dispatcher;
+
     std::string localFolder_;
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     bool editModeOn_ = false;
     bool debugModeOn_ = true;
+
+    std::map<std::string, SharedCallback> callHandlers;
+    std::map<std::string, SharedCallback> getAppPathHandler;
+    std::map<std::string, SharedCallback> getAppUserNameHandler;
+    std::map<std::string, SharedCallback> incomingVideoHandlers;
+    std::map<std::string, SharedCallback> outgoingVideoHandlers;
+    std::map<std::string, SharedCallback> nameRegistrationHandlers;
 };
 }
