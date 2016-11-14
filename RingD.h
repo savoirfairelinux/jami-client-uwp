@@ -37,6 +37,7 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
+delegate void RegisteredNameFound(LookupStatus status);
 
 
 public ref class RingD sealed
@@ -104,6 +105,8 @@ internal:
     void killCall(String^ callId);
     void switchDebug();
     void muteVideo(String^ callId, bool muted);
+    void lookUpName(String^ name);
+    void registerName(String^ accountId, String^ password, String^ username);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -119,6 +122,7 @@ internal:
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
     event IncomingVideoMuted^ incomingVideoMuted;
+    event RegisteredNameFound^ registeredNameFound;
 
 private:
     /* sub classes */
@@ -140,7 +144,10 @@ private:
         GetCallsList,
         KillCall,
         switchDebug,
-        MuteVideo
+        MuteVideo,
+        LookUpName,
+        LookUpAddress,
+        RegisterName
     };
 
 
