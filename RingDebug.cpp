@@ -56,7 +56,7 @@ RingDebug::print(const std::string& message,
     /* fire the event. */
     auto line = ref new String(wString.c_str(), wString.length());
     messageToScreen(line);
-    FileIO::AppendTextAsync(_logFile, line + "\n");
+///    FileIO::AppendTextAsync(_logFile, line + "\n"); KAPUT
 }
 
 void RingClientUWP::RingDebug::WriteLine(String^ str)
