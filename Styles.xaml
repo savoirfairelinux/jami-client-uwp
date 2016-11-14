@@ -117,6 +117,21 @@
         <Setter Property="Foreground"
                 Value="Black"/>
     </Style>
+    <Style x:Key="TextSegoeStyle-24pt-black"
+           TargetType="TextBlock">
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="FontSize"
+                Value="24"/>
+        <Setter Property="HorizontalAlignment"
+                Value="Left"/>
+        <Setter Property="VerticalAlignment"
+                Value="Bottom"/>
+        <Setter Property="Foreground"
+                Value="Black"/>
+        <Setter Property="Margin"
+                Value="0,0,10,0"/>
+    </Style>
     <Style x:Key="TextSegoeStyle-Centered-40pt-white"
            TargetType="TextBlock">
         <Setter Property="FontFamily"
@@ -129,6 +144,32 @@
                 Value="Center"/>
         <Setter Property="Foreground"
                 Value="White"/>
+    </Style>
+    <Style x:Key="TextSegoeStyle-20pt-green"
+           TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment"
+                Value="Center"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="Foreground"
+                Value="Green"/>
+        <Setter Property="FontSize"
+                Value="20"/>
+    </Style>
+    <Style x:Key="TextSegoeStyle-20pt-red"
+           TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment"
+                Value="Center"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="VerticalAlignment"
+                Value="Center"/>
+        <Setter Property="Foreground"
+                Value="Red"/>
+        <Setter Property="FontSize"
+                Value="20"/>
     </Style>
     <Style x:Key="ButtonStyle1"
            TargetType="Button">

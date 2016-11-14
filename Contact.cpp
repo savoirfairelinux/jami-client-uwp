@@ -23,6 +23,7 @@
 #include "ObjBase.h" // for CoCreateGuid
 
 #include "fileutils.h"
+#include "direct.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
@@ -155,7 +156,7 @@ Contact::saveConversationToFile()
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
     String^ messagesFile = localfolder->Path + "\\" + ".messages\\" + GUID_ + ".json";
 
-    if (ring::fileutils::recursive_mkdir(Utils::toString(localfolder->Path + "\\" + ".messages\\").c_str())) {
+    if (_mkdir(Utils::toString(localfolder->Path + "\\" + ".messages\\").c_str())) {
         std::ofstream file(Utils::toString(messagesFile).c_str());
         if (file.is_open())
         {
