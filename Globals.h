@@ -12,4 +12,11 @@ public enum class CallStatus {
     TERMINATING
 };
 
+public enum class LookupStatus {
+    SUCCESS,
+    INVALID_NAME,
+    NOT_FOUND,
+    ERRORR // one cannot simply use ERROR
+};
+
 }

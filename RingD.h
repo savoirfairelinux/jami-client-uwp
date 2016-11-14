@@ -37,6 +37,7 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
+delegate void RegisteredNameFound(LookupStatus status);
 
 
 public ref class RingD sealed
@@ -81,7 +82,7 @@ internal:
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
-    void createRINGAccount(String^ alias, String^ archivePassword, bool upnp);
+    void createRINGAccount(String^ alias, String^ archivePassword, bool upnp, String^ registeredName = "");
     void createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername);
     void refuseIncommingCall(String^ call);
     void acceptIncommingCall(String^ call);
@@ -104,6 +105,12 @@ internal:
     void killCall(String^ callId);
     void switchDebug();
     void muteVideo(String^ callId, bool muted);
+    void lookUpName(String^ name);
+    void registerName(String^ accountId, String^ password, String^ username);
+    void registerName_new(const std::string& accountId, const std::string& password, const std::string& username);
+    std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
+    void lookUpAddress(String^ address);
+    std::string registeredName(Account^ account);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -119,6 +126,7 @@ internal:
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
     event IncomingVideoMuted^ incomingVideoMuted;
+    event RegisteredNameFound^ registeredNameFound;
 
 private:
     /* sub classes */
@@ -140,7 +148,10 @@ private:
         GetCallsList,
         KillCall,
         switchDebug,
-        MuteVideo
+        MuteVideo,
+        LookUpName,
+        LookUpAddress,
+        RegisterName
     };
 
 
@@ -173,6 +184,13 @@ private:
         property String^ _sipHostname;
         property String^ _sipUsername;
         property bool _muted;
+        property String^ _registeredName; // public username
+        property String^ _address; // ringId
+
+    internal:
+        std::string _accountId_new;
+        std::string _password_new;
+        std::string _publicUsername_new;
     };
 
     /* functions */
