@@ -140,7 +140,7 @@ SmartPanel::SmartPanel()
 
     RingD::instance->exportOnRingEnded += ref new RingClientUWP::ExportOnRingEnded(this, &RingClientUWP::Views::SmartPanel::OnexportOnRingEnded);
     RingD::instance->accountUpdated += ref new RingClientUWP::AccountUpdated(this, &RingClientUWP::Views::SmartPanel::OnaccountUpdated);
-
+    RingD::instance->registeredNameFound += ref new RingClientUWP::RegisteredNameFound(this, &RingClientUWP::Views::SmartPanel::OnregisteredNameFound);
 
 }
 
@@ -742,6 +742,9 @@ RingClientUWP::Views::AccountSelectedToVisibility::AccountSelectedToVisibility()
 void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+
+    auto volatileAccountDetails = RingD::instance->getVolatileAccountDetails(account);
+
     _aliasTextBoxEditionMenu_->Text = account->name_;
     _accountEditionMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _deleteAccountBtnEditionMenu_->IsChecked = false;
@@ -756,6 +759,8 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
     _sipHostnameEditionMenu_->Text = account->_sipHostname;
     _sipUsernameEditionTextBox_->Text = account->_sipUsername;
     _sipPasswordEditionMenu_->Password = account->_sipPassword;
+
+
 
 }
 
@@ -949,4 +954,45 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
     item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::SmartPanel::_registerOnBlockchainEditionMenu__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+
+    RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEditionMenu_->Text);
+}
+
+
+void RingClientUWP::Views::SmartPanel::_usernameTextBoxEditionMenu__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    RingD::instance->lookUpName(_usernameTextBoxEditionMenu_->Text);
+
+    _usernameValidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _usernameInvalidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status)
+{
+    switch (status)
+    {
+    case LookupStatus::SUCCESS:
+        _usernameValidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _usernameInvalidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        break;
+    case LookupStatus::INVALID_NAME:
+        _usernameValidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _usernameInvalidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        break;
+    case LookupStatus::NOT_FOUND:
+        _usernameValidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        _usernameInvalidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        break;
+    case LookupStatus::ERRORR:
+        _usernameValidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _usernameInvalidEditionMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        break;
+    }
 }

@@ -116,8 +116,6 @@ RingClientUWP::RingD::reloadAccountList()
         }
     }
 
-    DRing::lookupName("", "", "wagaf");
-
     // load user preferences
     Configuration::UserPreferences::instance->load();
 }
@@ -188,7 +186,7 @@ void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
 }
 
 void
-RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp)
+RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp, String^ registeredName)
 {
     editModeOn_ = true;
 
@@ -200,6 +198,7 @@ RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp)
     task->_alias = alias;
     task->_password = archivePassword;
     task->_upnp = upnp;
+    task->_registeredName = registeredName;
 
     tasksList_.push(task);
 }
@@ -368,7 +367,7 @@ void
 RingClientUWP::RingD::startDaemon()
 {
     if (daemonRunning) {
-        ERR_("daemon already runnging");
+        WNG_("daemon already runnging");
         return;
     }
     //eraseCacheFolder();
@@ -544,6 +543,28 @@ RingClientUWP::RingD::startDaemon()
                 ref new DispatchedHandler([=]() {
                     exportOnRingEnded(accountId2, pin2);
                 }));
+            }),
+            DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
+            [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+                //MSG_("<RegisteredNameFound>" + name + " : " + address + " status=" +std::to_string(status));
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                ref new DispatchedHandler([=]() {
+                    switch (status)
+                    {
+                    case 0: // everything went fine. Name/address pair was found.
+                        registeredNameFound(LookupStatus::SUCCESS);
+                        break;
+                    case 1: // provided name is not valid.
+                        registeredNameFound(LookupStatus::INVALID_NAME);
+                        break;
+                    case 2: // everything went fine. Name/address pair was not found.
+                        registeredNameFound(LookupStatus::NOT_FOUND);
+                        break;
+                    case 3: // An error happened
+                        registeredNameFound(LookupStatus::ERRORR);
+                        break;
+                    }
+                }));
             })
         };
         registerCallHandlers(callHandlers);
@@ -656,19 +677,53 @@ RingClientUWP::RingD::startDaemon()
         };
         registerVideoHandlers(outgoingVideoHandlers);
 
-        std::map<std::string, SharedCallback> nameRegistrationHandlers =
-        {
-            DRing::exportable_callback<DRing::ConfigurationSignal::NameRegistrationEnded>(
-            [this](const std::string &accountId, int status, const std::string &name) {
-                MSG_("\n<NameRegistrationEnded>\n");
+        //std::map<std::string, SharedCallback> nameRegistrationHandlers =
+        //{
+        //    DRing::exportable_callback<DRing::ConfigurationSignal::NameRegistrationEnded>(
+        //    [this](const std::string &accountId, int status, const std::string &name) {
+        //        OutputDebugString(L"XXXX");
+        //        //MSG_("\n<NameRegistrationEnded>\n");
+        //        //switch (status) {
+        //        //case 0:
+        //        //    break;
+        //        //case 1:
+        //        //    break;
+        //        //case 2:
+        //        //    //DRing::registerName(accountId, "", name);
+        //        //    /*RingD::instance->*/
+        //        //    registerName(Utils::toPlatformString(accountId), "", Utils::toPlatformString(name));
+        //        //    break;
+        //        //case 3:
+        //        //    break;
+        //        //case 4:
+        //        //    break;
+        //        //}
 
-            }),
-            DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
-            [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
-                MSG_("<RegisteredNameFound>" + name + " : " + address);
-            })
-        };
-        registerConfHandlers(nameRegistrationHandlers);
+        //    }),
+        //    DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
+        //    [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
+        //        //MSG_("<RegisteredNameFound>" + name + " : " + address + " status=" +std::to_string(status));
+        //        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        //        ref new DispatchedHandler([=]() {
+        //            switch (status)
+        //            {
+        //            case 0: // everything went fine. Name/address pair was found.
+        //                registeredNameFound(LookupStatus::SUCCESS);
+        //                break;
+        //            case 1: // provided name is not valid.
+        //                registeredNameFound(LookupStatus::INVALID_NAME);
+        //                break;
+        //            case 2: // everything went fine. Name/address pair was not found.
+        //                registeredNameFound(LookupStatus::NOT_FOUND);
+        //                break;
+        //            case 3: // An error happened
+        //                registeredNameFound(LookupStatus::ERRORR);
+        //                break;
+        //            }
+        //        }));
+        //    })
+        //};
+        //registerConfHandlers(nameRegistrationHandlers);
 
         gnutls_global_init();
 
@@ -712,7 +767,6 @@ RingClientUWP::RingD::startDaemon()
                 }
             });
 
-
             while (daemonRunning) {
                 DRing::pollEvents();
                 dequeueTasks();
@@ -751,7 +805,14 @@ RingD::dequeueTasks()
             ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"RING"));
             ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED
                                       , (task->_upnp)? ring::TRUE_STR : ring::FALSE_STR));
-            DRing::addAccount(ringAccountDetails);
+            ringAccountDetails.insert(std::make_pair(DRing::Account::VolatileProperties::REGISTERED_NAME
+                                      , Utils::toString(task->_registeredName)));
+
+
+            auto newAccountId = DRing::addAccount(ringAccountDetails);
+
+            if (!task->_registeredName->IsEmpty())
+                registerName(Utils::toPlatformString(newAccountId), task->_password, task->_alias);
         }
         break;
         case Request::AddSIPAccount:
@@ -890,6 +951,30 @@ RingD::dequeueTasks()
             bool muted = task->_muted;
             DRing::muteLocalMedia(callId, DRing::Media::Details::MEDIA_TYPE_VIDEO, muted);
         }
+        case Request::LookUpName:
+        {
+            auto alias = task->_alias;
+            DRing::lookupName("", "", Utils::toString(alias));
+            break;
+        }
+        case Request::LookUpAddress:
+        {
+            //DRing::lookupAddress(accountID.toStdString(), nameServiceURL.toStdString(), address.toStdString());
+            break;
+        }
+        case Request::RegisterName:
+        {
+            const wchar_t* toto = task->_accountId->Data();
+            auto accountId = ref new String(toto);// Utils::toString(task->_accountId);
+            auto accountDetails = DRing::getAccountDetails(Utils::toString(accountId));
+
+            if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty())
+                registerName(task->_accountId, task->_password, task->_registeredName);
+            else
+                DRing::registerName(Utils::toString(task->_accountId), Utils::toString(task->_password), Utils::toString(task->_registeredName));
+
+            break;
+        }
         default:
             break;
         }
@@ -939,6 +1024,39 @@ void RingClientUWP::RingD::muteVideo(String ^ callId, bool muted)
 
     task->_callId = callId;
     task->_muted = muted;
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::lookUpName(String ^ name)
+{
+    auto task = ref new RingD::Task(Request::LookUpName);
+    task->_alias = name;
+
+    tasksList_.push(task);
+}
+
+void
+RingD::registerName(String^ accountId, String^ password, String^ username)
+{
+    auto task = ref new RingD::Task(Request::RegisterName);
+    task->_accountId = ref new String(accountId->Data());
+    task->_password = password;
+    task->_alias = username;
+
+    tasksList_.push(task);
+}
+
+std::map<std::string, std::string>
+RingClientUWP::RingD::getVolatileAccountDetails(Account^ account)
+{
+    return DRing::getVolatileAccountDetails(Utils::toString(account->accountID_));
+}
+
+void RingClientUWP::RingD::lookUpAddress(String^ address)
+{
+    auto task = ref new RingD::Task(Request::LookUpAddress);
+    task->_address = address;
 
     tasksList_.push(task);
 }

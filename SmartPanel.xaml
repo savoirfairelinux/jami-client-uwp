@@ -504,6 +504,47 @@
                               TextChanged="_ringAliasTextBox__TextChanged"
                               Margin="10"
                               PlaceholderText="Enter alias"/>
+                    <!-- register account on blockachain -->
+                    <StackPanel Orientation="Horizontal"
+                                            Margin="0,20,0,10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-24pt-black}"
+                                               Text="&#xE167;"/>
+                        <TextBlock Text="Register public username"
+                                               Style="{StaticResource TitleTextBlockStyle}"/>
+                    </StackPanel>
+                    <ToggleSwitch x:Name="_RegisterState_"
+
+                                              IsOn="True"
+                                              Margin="0,10"/> <!--Toggled="_RegisterState__Toggled"-->
+                    <TextBlock x:Name="_whatWilHappen_"
+                                           Margin="0,10,0,0"
+                                           Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="peoples will find you with your username"/>
+                    <HyperlinkButton Content="Learn more"
+                                                 Margin="0,0,0,10"
+                                                 NavigateUri="http://ring.cx"/>
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="_usernameTextBox_"
+                                             Grid.Column="0"
+                                             PlaceholderText="Enter your full name"
+                                             /> <!--KeyUp="_usernameTextBox__KeyUp"-->
+                        <TextBlock x:Name="_usernameValid_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                               Visibility="Collapsed"
+                                               Text="&#xE10B;"/>
+                        <TextBlock x:Name="_usernameInvalid_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                               Text="&#xE10A;"/>
+                        <Button Content="Register public username"/>
+                    </Grid>
                     <!-- account type chooser -->
                     <StackPanel Orientation="Horizontal" Margin="10">
                         <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
@@ -610,6 +651,51 @@
                               FontSize="20"
                               Margin="20,10"
                               PlaceholderText="Enter alias"/>
+                    <!-- register account on blockachain -->
+                    <StackPanel Orientation="Horizontal"
+                                            Margin="0,20,0,10">
+                        <TextBlock Style="{StaticResource TextSegoeStyle-24pt-black}"
+                                               Text="&#xE167;"/>
+                        <TextBlock Text="Register public username"
+                                               Style="{StaticResource TitleTextBlockStyle}"/>
+                    </StackPanel>
+                    <TextBlock x:Name="_whatWilHappenEditionMenu_"
+                                           Margin="0,10,0,0"
+                                           Style="{StaticResource BodyTextBlockStyle}"
+                                           Text="you are already registered"/>
+                    <ToggleSwitch x:Name="_RegisterStateEditionMenu_"
+                                              IsEnabled="False"
+                                              IsOn="True"
+                                              Margin="0,10"/>
+                    <!--Toggled="_RegisterState__Toggled"-->
+                    <HyperlinkButton Content="Learn more"
+                                                 Margin="0,0,0,10"
+                                                 NavigateUri="http://ring.cx"/>
+                    <Grid Margin="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="25"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBox x:Name="_usernameTextBoxEditionMenu_"
+                                             Grid.Column="0"
+                                             PlaceholderText="Enter your full name"
+                                 IsEnabled="True"
+                                  KeyUp="_usernameTextBoxEditionMenu__KeyUp"/>
+                        <TextBlock x:Name="_usernameValidEditionMenu_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                               Visibility="Collapsed"
+                                               Text="&#xE10B;"/>
+                        <TextBlock x:Name="_usernameInvalidEditionMenu_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                               Text="&#xE10A;"/>
+                    </Grid>
+                    <Button x:Name="_registerOnBlockchainEditionMenu_"
+                            Content="Register public username"
+                            Click="_registerOnBlockchainEditionMenu__Click"/>
                     <!-- upnp sub menu. -->
                     <StackPanel x:Name="_upnpStackEditionMenu_">
                         <StackPanel Orientation="Horizontal" Margin="10">
