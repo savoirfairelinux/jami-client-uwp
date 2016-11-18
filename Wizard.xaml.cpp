@@ -4,8 +4,6 @@
 
 #include "MainPage.xaml.h"
 
-#include "gnutls\gnutls.h"
-
 using namespace RingClientUWP::Views;
 
 using namespace Concurrency;
@@ -34,10 +32,7 @@ Wizard::Wizard()
 
 void RingClientUWP::Views::Wizard::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
 {
-    gnutls_global_init();
-    RingD::instance->registerCallbacks();
-    RingD::instance->initDaemon( DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG );
-    Video::VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
+    RingD::instance->init();
 }
 
 void
