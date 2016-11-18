@@ -101,8 +101,8 @@ private:
     /* functions */
     void _accountsMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _accountsMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _settings__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _settings__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _settingsMenu__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _settingsMenu__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _shareMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _shareMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

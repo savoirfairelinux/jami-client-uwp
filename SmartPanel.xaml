@@ -441,12 +441,12 @@
                                       Style="{StaticResource ToggleButtonStyle1}"/>
                     </StackPanel>
                 </StackPanel>
-                <ToggleButton x:Name="_settingsTBtn_"
+                <ToggleButton x:Name="_settingsMenuButton_"
                               Grid.Column="2"
                               VerticalAlignment="Bottom"
                               Content="&#xE115;"
-                              Checked="_settings__Checked"
-                              Unchecked="_settings__Unchecked"
+                              Checked="_settingsMenu__Checked"
+                              Unchecked="_settingsMenu__Unchecked"
                               Style="{StaticResource ToggleButtonStyle1}"/>
             </Grid>
 
@@ -1068,33 +1068,35 @@
                          ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
             </Grid>
             <!-- settings. -->
-            <Grid x:Name="_settings_"
+            <Grid x:Name="_settingsMenu_"
                   Grid.Row="0"
                   Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid x:Name="_videoSettings_"
+                <ScrollViewer>
+                    <Grid x:Name="_videoSettings_"
                       Grid.Row="0">
-                    <StackPanel Margin="10">
-                        <TextBlock Text="Video Device"
+                        <StackPanel Margin="10">
+                            <TextBlock Text="Video Device"
                                    Margin="10"/>
-                        <ComboBox x:Name="_videoDeviceComboBox_"
+                            <ComboBox x:Name="_videoDeviceComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoDeviceComboBox__SelectionChanged">
-                        </ComboBox>
-                        <TextBlock Text="Video Resolution" Margin="10"/>
-                        <ComboBox x:Name="_videoResolutionComboBox_"
+                            </ComboBox>
+                            <TextBlock Text="Video Resolution" Margin="10"/>
+                            <ComboBox x:Name="_videoResolutionComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoResolutionComboBox__SelectionChanged">
-                        </ComboBox>
-                        <TextBlock Text="Video Rate" Margin="10"/>
-                        <ComboBox x:Name="_videoRateComboBox_"
+                            </ComboBox>
+                            <TextBlock Text="Video Rate" Margin="10"/>
+                            <ComboBox x:Name="_videoRateComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoRateComboBox__SelectionChanged">
-                        </ComboBox>
-                    </StackPanel>
-                </Grid>
+                            </ComboBox>
+                        </StackPanel>
+                    </Grid>
+                </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>

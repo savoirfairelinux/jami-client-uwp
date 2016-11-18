@@ -25,8 +25,6 @@
 #include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
 
-#include "gnutls\gnutls.h"
-
 #include "MainPage.xaml.h"
 
 using namespace RingClientUWP;
@@ -133,10 +131,7 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
 void
 RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
-    gnutls_global_init();
-    RingD::instance->registerCallbacks();
-    RingD::instance->initDaemon( DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG );
-    Video::VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
+    RingD::instance->init();
     showLoadingOverlay(true, false);
 }
 
@@ -334,13 +329,18 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         }
         else if (vcm->isSettingsPreviewing) {
             vcm->CleanupCameraAsync()
-                .then([=](task<void> cleanupTask){
-                cleanupTask.get();
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                {
-                    vcm->InitializeCameraAsync(true);
-                }));
+                .then([=](task<void> cleanupCameraTask) {
+                try {
+                    cleanupCameraTask.get();
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+                    {
+                        vcm->InitializeCameraAsync(true);
+                    }));
+                }
+                catch (Exception^ e) {
+                    WriteException(e);
+                }
             });
         }
     }
@@ -416,8 +416,7 @@ MainPage::BeginExtendedExecution()
                 RingDebug::instance->WriteLine("Clean up camera...");
                 Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
                 RingDebug::instance->WriteLine("Hang up calls...");
-                DRing::fini();
-                gnutls_global_init();
+                RingD::instance->deinit();
                 break;
 
             default:

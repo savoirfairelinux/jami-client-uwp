@@ -252,8 +252,6 @@ void RingClientUWP::RingD::placeCall(Contact^ contact)
 
     auto callId2 = DRing::placeCall(accountId2, to2);
 
-
-
     if (callId2.empty()) {
         WNG_("call not created, the daemon didn't return a call Id");
         return;
@@ -671,6 +669,32 @@ RingD::registerCallbacks()
         })
     };
     registerConfHandlers(nameRegistrationHandlers);
+}
+
+void
+RingD::init()
+{
+    if (daemonInitialized_) {
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([=]() {
+            finishCaptureDeviceEnumeration();
+        }));
+        return;
+    }
+
+    gnutls_global_init();
+    RingD::instance->registerCallbacks();
+    RingD::instance->initDaemon( DRing::DRING_FLAG_CONSOLE_LOG | DRing::DRING_FLAG_DEBUG );
+    Video::VideoManager::instance->captureManager()->EnumerateWebcamsAsync();
+
+    daemonInitialized_ = true;
+}
+
+void
+RingD::deinit()
+{
+    DRing::fini();
+    gnutls_global_deinit();
 }
 
 void
@@ -1098,8 +1122,6 @@ Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<
         auto deviceName = Utils::toPlatformString(i.second);
         devicesList->Append(deviceName);
     }
-
-
 
     return devicesList;
 }
