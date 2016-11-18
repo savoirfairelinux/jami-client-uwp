@@ -193,6 +193,8 @@ void RingClientUWP::Views::SmartPanel::unselectContact()
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
 {
+    _settingsMenu__Unchecked(nullptr,nullptr);
+    _settingsMenuButton_->IsChecked = false;
     _shareMenuButton_->IsChecked = false;
     _devicesMenuButton_->IsChecked = false;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
@@ -208,10 +210,16 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ se
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
-void RingClientUWP::Views::SmartPanel::_settings__Checked(Object^ sender, RoutedEventArgs^ e)
+void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, RoutedEventArgs^ e)
 {
+    _accountsMenuButton__Unchecked(nullptr,nullptr);
+    _accountsMenuButton_->IsChecked = false;
+    _shareMenuButton__Unchecked(nullptr,nullptr);
+    _shareMenuButton_->IsChecked = false;
+    _devicesMenuButton__Unchecked(nullptr,nullptr);
+    _devicesMenuButton_->IsChecked = false;
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    _settings_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     auto vcm = Video::VideoManager::instance->captureManager();
     if (!vcm->isInitialized)
         vcm->InitializeCameraAsync(true);
@@ -220,9 +228,9 @@ void RingClientUWP::Views::SmartPanel::_settings__Checked(Object^ sender, Routed
     summonPreviewPage();
 }
 
-void RingClientUWP::Views::SmartPanel::_settings__Unchecked(Object^ sender, RoutedEventArgs^ e)
+void RingClientUWP::Views::SmartPanel::_settingsMenu__Unchecked(Object^ sender, RoutedEventArgs^ e)
 {
-    _settings_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     Video::VideoManager::instance->captureManager()->StopPreviewAsync()
         .then([](task<void> stopPreviewTask)
@@ -257,13 +265,16 @@ void RingClientUWP::Views::SmartPanel::setMode(RingClientUWP::Views::SmartPanel:
 
     _selectedAccountAvatarContainer_->Width = _selectedAccountAvatarContainer_->Height;
     _shaderPhotoboothIcon_->Width = _shaderPhotoboothIcon_->Height;
-    _settingsTBtn_->IsChecked = false;
+    _settingsMenuButton_->IsChecked = false;
     _accountsMenuButton_->IsChecked = false;
     _shareMenuButton_->IsChecked = false;
+    _devicesMenuButton_->IsChecked = false;
 }
 
 void RingClientUWP::Views::SmartPanel::_shareMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    _settingsMenu__Unchecked(nullptr,nullptr);
+    _settingsMenuButton_->IsChecked = false;
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -329,8 +340,6 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuButton__Checked(nullptr, nullptr);
-
-
 }
 
 
@@ -547,8 +556,8 @@ void RingClientUWP::Views::SmartPanel::generateQRcode()
 
         for (int u = 0 ; u < widthBitmap ; u++) {
             for (int v = 0; v < widthBitmap; v++) {
-                int x = (float)u / (float)widthBitmap * (float)widthQrCode;
-                int y = (float)v / (float)widthBitmap * (float)widthQrCode;
+                int x = static_cast<int>((float)u / (float)widthBitmap * (float)widthQrCode);
+                int y = static_cast<int>((float)v / (float)widthBitmap * (float)widthQrCode);
 
                 auto currPixelRow = desc.StartIndex + desc.Stride * u + BYTES_PER_PIXEL * v;
                 row = (p + (y * widthQrCode));
@@ -774,6 +783,9 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Unchecked(Platform::O
 
 void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    _settingsMenu__Unchecked(nullptr,nullptr);
+    _settingsMenuButton_->IsChecked = false;
+
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
@@ -1345,7 +1357,11 @@ SmartPanel::_videoRateComboBox__SelectionChanged(Platform::Object^ sender, Windo
                 .then([=](task<void> cleanupCameraTask) {
                 try {
                     cleanupCameraTask.get();
-                    vcm->InitializeCameraAsync(true);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+                    {
+                        vcm->InitializeCameraAsync(true);
+                    }));
                 }
                 catch (Exception^ e) {
                     WriteException(e);

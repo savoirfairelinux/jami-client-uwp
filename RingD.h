@@ -59,6 +59,14 @@ public:
         }
     }
 
+    property bool daemonInitialized
+    {
+        bool get()
+        {
+            return daemonInitialized_;
+        }
+    }
+
     property bool daemonRunning
     {
         bool get()
@@ -66,6 +74,7 @@ public:
             return daemonRunning_;
         }
     }
+
     property StartingStatus _startingStatus;
 
     void cancelOutGoingCall2(String^ callId); // marche
@@ -85,6 +94,8 @@ internal:
     void registerCallbacks();
     void initDaemon(int flags);
     void startDaemon();
+    void init();
+    void deinit();
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
@@ -209,6 +220,7 @@ private:
     Windows::UI::Core::CoreDispatcher^ dispatcher;
 
     std::string localFolder_;
+    bool daemonInitialized_ = false;
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
