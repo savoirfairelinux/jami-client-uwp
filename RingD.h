@@ -38,7 +38,7 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
-delegate void RegisteredNameFound(LookupStatus status);
+delegate void RegisteredNameFound(LookupStatus status, const std::string& address, const std::string& name);
 delegate void FinishCaptureDeviceEnumeration();
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;

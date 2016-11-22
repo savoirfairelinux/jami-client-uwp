@@ -128,6 +128,7 @@ private:
     void populateVideoRateSettingsComboBox();
     void checkStateAddAccountMenu();
     void checkStateEditionMenu();
+    void ringTxtBxPlaceHolderDelay(String^ placeHolderText, int delayInMilliSeconds);
 
     /* members */
     void _devicesMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -154,11 +155,12 @@ private:
     void Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void _registerOnBlockchainEdition__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _usernameTextBoxEdition__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
-    void OnregisteredNameFound(RingClientUWP::LookupStatus status);
+    void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& address, const std::string& name);
     void _RegisterState__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _usernameTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _deleteAccountEdition__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _RegisterStateEdition__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _ringTxtBx__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
 };
 }
 }
