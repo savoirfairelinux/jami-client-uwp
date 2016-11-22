@@ -675,16 +675,16 @@ RingD::registerCallbacks()
                 switch (status)
                 {
                 case 0: // everything went fine. Name/address pair was found.
-                    registeredNameFound(LookupStatus::SUCCESS);
+                    registeredNameFound(LookupStatus::SUCCESS, address, name);
                     break;
                 case 1: // provided name is not valid.
-                    registeredNameFound(LookupStatus::INVALID_NAME);
+                    registeredNameFound(LookupStatus::INVALID_NAME, address, name);
                     break;
                 case 2: // everything went fine. Name/address pair was not found.
-                    registeredNameFound(LookupStatus::NOT_FOUND);
+                    registeredNameFound(LookupStatus::NOT_FOUND, address, name);
                     break;
                 case 3: // An error happened
-                    registeredNameFound(LookupStatus::ERRORR);
+                    registeredNameFound(LookupStatus::ERRORR, address, name);
                     break;
                 }
             }));
