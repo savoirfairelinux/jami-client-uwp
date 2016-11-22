@@ -83,11 +83,25 @@ public:
         }
     }
 
+    property Visibility _showMe
+    {
+        Visibility get()
+        {
+            return showMe_;
+        }
+        void set(Visibility value)
+        {
+            showMe_ = value;
+            NotifyPropertyChanged("_showMe");
+        }
+    }
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     Visibility hovered_ = Visibility::Collapsed;
+    Visibility showMe_ = Visibility::Visible;
     CallStatus callStatus_;
     String^ callId_;
     bool videoMuted_;

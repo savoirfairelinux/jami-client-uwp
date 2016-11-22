@@ -45,6 +45,7 @@ using namespace Platform::Collections;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
+using namespace Windows::System::Threading;
 
 SmartPanel::SmartPanel()
 {
@@ -237,7 +238,7 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Unchecked(Object^ sender, 
     auto vcm = Video::VideoManager::instance->captureManager();
     if (vcm->deviceList->Size > 0) {
         vcm->StopPreviewAsync()
-            .then([](task<void> stopPreviewTask)
+        .then([](task<void> stopPreviewTask)
         {
             try {
                 stopPreviewTask.get();
@@ -414,15 +415,28 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyDown(Platform::Object^ sen
 {
     /* add contact, test purpose but will be reused later in some way */
     if (e->Key == Windows::System::VirtualKey::Enter && !_ringTxtBx_->Text->IsEmpty()) {
-        ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
-        _ringTxtBx_->Text = "";
+        for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+            if (it->_contact->name_ == _ringTxtBx_->Text) {
+                _smartList_->SelectedItem = it;
+                _ringTxtBx_->Text = "";
+                return;
+            }
+        }
+
+        /* if the string has 40 chars, we simply consider it as a ring id. It has to be improved */
+        if (_ringTxtBx_->Text->Length() == 40) {
+            ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
+            _ringTxtBx_->Text = "";
+        }
+
+
+        RingD::instance->lookUpName(_ringTxtBx_->Text);
     }
 }
 
 void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
-    ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, _ringTxtBx_->Text);
-    _ringTxtBx_->Text = "";
+    RingD::instance->lookUpName(_ringTxtBx_->Text);
 }
 
 void
@@ -699,6 +713,22 @@ void RingClientUWP::Views::SmartPanel::checkStateEditionMenu()
         else
             _acceptAccountModification_->IsEnabled = false;
     }
+}
+
+void RingClientUWP::Views::SmartPanel::ringTxtBxPlaceHolderDelay(String^ placeHolderText, int delayInMilliSeconds)
+{
+    _ringTxtBx_->PlaceholderText = placeHolderText;
+    TimeSpan delay;
+    delay.Duration = 10000 * delayInMilliSeconds;
+    ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
+                                      ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
+    {
+        Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                             ref new DispatchedHandler([this]()
+        {
+            _ringTxtBx_->PlaceholderText = "";
+        }));
+    }), delay);
 }
 
 Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
@@ -1178,38 +1208,72 @@ void RingClientUWP::Views::SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::
 }
 
 
-void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status)
+void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& address, const std::string& name)
 {
-    switch (status)
+    if (_ringTxtBx_->Text->IsEmpty()) // if true, we consider we did the lookup for a new account
+        switch (status)
+        {
+        case LookupStatus::SUCCESS:
+            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+            //_registerOnBlockchainEdition_->IsEnabled = false;
+            break;
+        case LookupStatus::INVALID_NAME:
+            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            //_registerOnBlockchainEdition_->IsEnabled = false;
+            break;
+        case LookupStatus::NOT_FOUND:
+            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            //_registerOnBlockchainEdition_->IsEnabled = true;
+            break;
+        case LookupStatus::ERRORR:
+            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            //_registerOnBlockchainEdition_->IsEnabled = false;
+            break;
+        }
+    else // if false, we consider we are looking for a registered user
     {
-    case LookupStatus::SUCCESS:
-        _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        //_registerOnBlockchainEdition_->IsEnabled = false;
-        break;
-    case LookupStatus::INVALID_NAME:
-        _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        //_registerOnBlockchainEdition_->IsEnabled = false;
-        break;
-    case LookupStatus::NOT_FOUND:
-        _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        //_registerOnBlockchainEdition_->IsEnabled = true;
-        break;
-    case LookupStatus::ERRORR:
-        _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        //_registerOnBlockchainEdition_->IsEnabled = false;
-        break;
+        switch (status) {
+        case LookupStatus::SUCCESS:
+            ContactsViewModel::instance->addNewContact(Utils::toPlatformString(name), Utils::toPlatformString(address));
+            ringTxtBxPlaceHolderDelay("username found and added.", 1500);
+            break;
+        case LookupStatus::INVALID_NAME:
+            ringTxtBxPlaceHolderDelay("username invalid.", 1500);
+            break;
+        case LookupStatus::NOT_FOUND:
+        {
+            ringTxtBxPlaceHolderDelay("username not found.", 1500);
+            break;
+        }
+        case LookupStatus::ERRORR:
+            ringTxtBxPlaceHolderDelay("network error!", 1500);
+            break;
+        }
+
+        _ringTxtBx_->Text = "";
+
+        for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+            if (it->_contact->ringID_ == Utils::toPlatformString(address)) {
+                _smartList_->SelectedItem = it;
+                return;
+            }
+        }
+
+        _smartList_->SelectedItem = nullptr;
+
     }
 
     checkStateAddAccountMenu();
@@ -1359,7 +1423,7 @@ SmartPanel::_videoRateComboBox__SelectionChanged(Platform::Object^ sender, Windo
         vcm->activeDevice->currentResolution()->setActiveRate( resolution->rateList()->GetAt(index) );
         if (vcm->isPreviewing) {
             vcm->CleanupCameraAsync()
-                .then([=](task<void> cleanupCameraTask) {
+            .then([=](task<void> cleanupCameraTask) {
                 try {
                     cleanupCameraTask.get();
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
@@ -1446,4 +1510,29 @@ SmartPanel::populateVideoRateSettingsComboBox()
     }
     if (!rateSelected && resolution->rateList()->Size > 0)
         _videoRateComboBox_->SelectedIndex = 0;
-}
+}
+
+
+
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (e->Key == Windows::System::VirtualKey::Enter ) {
+        RingD::instance->lookUpName(_ringTxtBx_->Text);
+
+        for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+            it->_showMe = Windows::UI::Xaml::Visibility::Visible;
+        }
+        return;
+    }
+
+    for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+        auto str1 = Utils::toString(it->_contact->name_);
+        auto str2 = Utils::toString(_ringTxtBx_->Text);
+
+        if (str1.find(str2) != std::string::npos)
+            it->_showMe = Windows::UI::Xaml::Visibility::Visible;
+        else
+            it->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+    }
+
+}

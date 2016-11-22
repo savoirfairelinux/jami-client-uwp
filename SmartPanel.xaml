@@ -223,7 +223,8 @@
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited" PointerMoved="Grid_PointerMoved">
+            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited" PointerMoved="Grid_PointerMoved"
+                  Visibility="{x:Bind  _showMe, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <!-- row definition for the contact. -->
                     <RowDefinition Height="auto"/>
@@ -1047,18 +1048,21 @@
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="_rowRingTxtBx_"
                                    Height="40"/>
+                    <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
+                <!--Style="{StaticResource addContactTextBoxStyle}"-->
                 <TextBox x:Name="_ringTxtBx_"
                          HorizontalAlignment="Center"
                          VerticalAlignment="Center"
                          Width="320"
                          TextWrapping="Wrap"
-                         Style="{StaticResource addContactTextBoxStyle}"
+
                          KeyDown="_ringTxtBx__KeyDown"
+                         KeyUp="_ringTxtBx__KeyUp"
                          Text=""/>
                 <ListBox x:Name="_smartList_"
-                         Grid.Row="1"
+                         Grid.Row="2"
                          Margin="0"
                          Padding="0"
                          SelectionChanged="_smartList__SelectionChanged"

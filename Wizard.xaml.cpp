@@ -276,7 +276,7 @@ void RingClientUWP::Views::Wizard::_step2button__Click(Platform::Object^ sender,
     _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status)
+void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, const std::string& address, const std::string& name)
 {
     switch (status)
     {
