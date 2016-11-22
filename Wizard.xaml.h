@@ -27,7 +27,7 @@ private:
     void collapseMenus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _step1button__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _step2button__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void OnregisteredNameFound(LookupStatus status);
+    void OnregisteredNameFound(LookupStatus status, const std::string& address, const std::string& name);
     void _password__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _passwordCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void checkState();
