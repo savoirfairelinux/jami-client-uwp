@@ -824,8 +824,15 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Obj
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
-    RingD::instance->askToRefreshKnownDevices(accountId);
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+
+    _deviceId_->Text = account->_deviceId;
+    if (_deviceId_->Text->IsEmpty()) {
+        _deviceId_->Text = "No device id found!";
+        ERR_("device Id not found for account " + Utils::toString(account->_deviceId));
+    }
+
+    RingD::instance->askToRefreshKnownDevices(account->accountID_);
 
     _shareMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
