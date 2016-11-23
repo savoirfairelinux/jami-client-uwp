@@ -91,6 +91,7 @@ internal: // why this property has to be internal and not public ?
 
 internal:
     /* functions */
+    std::string getLocalFolder();
     void registerCallbacks();
     void initDaemon(int flags);
     void startDaemon();
@@ -99,6 +100,7 @@ internal:
     void reloadAccountList();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
+    void sendSIPTextMessageVCF(std::map<std::string, std::string> message);
     void createRINGAccount(String^ alias, String^ archivePassword, bool upnp, String^ registeredName = "");
     void createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername);
     void refuseIncommingCall(String^ call);

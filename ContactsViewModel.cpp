@@ -28,7 +28,6 @@ using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace Windows::UI::Core;
 
-
 using namespace RingClientUWP;
 using namespace ViewModel;
 
@@ -66,7 +65,8 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
-    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
+    RingD::instance->incomingMessage +=
+        ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
 }
 
 Contact^ // refacto : remove "byName"

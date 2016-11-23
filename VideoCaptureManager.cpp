@@ -73,7 +73,8 @@ VideoCaptureManager::MediaCapture_Failed(Capture::MediaCapture^, Capture::MediaC
 {
     std::wstringstream ss;
     ss << "MediaCapture_Failed: 0x" << errorEventArgs->Code << ": " << errorEventArgs->Message->Data();
-    RingDebug::instance->WriteLine(ref new String(ss.str().c_str()));
+    auto mediaDebugString = ref new String(ss.str().c_str());
+    MSG_(mediaDebugString);
 
     if (captureTaskTokenSource)
         captureTaskTokenSource->cancel();
@@ -84,7 +85,7 @@ VideoCaptureManager::MediaCapture_Failed(Capture::MediaCapture^, Capture::MediaC
 task<void>
 VideoCaptureManager::CleanupCameraAsync()
 {
-    RingDebug::instance->WriteLine("CleanupCameraAsync");
+    MSG_("CleanupCameraAsync");
 
     std::vector<task<void>> taskList;
 
@@ -113,7 +114,7 @@ VideoCaptureManager::CleanupCameraAsync()
 task<void>
 VideoCaptureManager::StartPreviewAsync(bool isSettingsPreview)
 {
-    WriteLine("StartPreviewAsync");
+    MSG_("StartPreviewAsync");
     displayRequest->RequestActive();
 
     Windows::UI::Xaml::Controls::CaptureElement^ sink;
@@ -132,7 +133,7 @@ VideoCaptureManager::StartPreviewAsync(bool isSettingsPreview)
             if (isSettingsPreview)
                 isSettingsPreviewing = true;
             startPreviewing();
-            WriteLine("StartPreviewAsync DONE");
+            MSG_("StartPreviewAsync DONE");
         }
         catch (Exception ^e) {
             WriteException(e);
@@ -143,7 +144,7 @@ VideoCaptureManager::StartPreviewAsync(bool isSettingsPreview)
 task<void>
 VideoCaptureManager::StopPreviewAsync()
 {
-    RingDebug::instance->WriteLine("StopPreviewAsync");
+    MSG_("StopPreviewAsync");
 
     if (captureTaskTokenSource)
         captureTaskTokenSource->cancel();
@@ -157,7 +158,7 @@ VideoCaptureManager::StopPreviewAsync()
                 isPreviewing = false;
                 stopPreviewing();
                 displayRequest->RequestRelease();
-                RingDebug::instance->WriteLine("StopPreviewAsync DONE");
+                MSG_("StopPreviewAsync DONE");
             }
             catch (Exception ^e) {
                 WriteException(e);
@@ -172,7 +173,7 @@ VideoCaptureManager::StopPreviewAsync()
 task<void>
 VideoCaptureManager::InitializeCameraAsync(bool isSettingsPreview)
 {
-    RingDebug::instance->WriteLine("InitializeCameraAsync");
+    MSG_("InitializeCameraAsync");
 
     if (captureTaskTokenSource)
         captureTaskTokenSource->cancel();
@@ -192,12 +193,12 @@ VideoCaptureManager::InitializeCameraAsync(bool isSettingsPreview)
             initTask.get();
             SetCaptureSettings();
             isInitialized = true;
-            RingDebug::instance->WriteLine("InitializeCameraAsync DONE");
+            MSG_("InitializeCameraAsync DONE");
             return StartPreviewAsync(isSettingsPreview);
         }
         catch (Exception ^e) {
             WriteException(e);
-            return create_task([]() {});
+            return concurrency::task_from_result();
         }
     });
 }
@@ -218,7 +219,8 @@ VideoCaptureManager::EnumerateWebcamsAsync()
         try {
             devInfoCollection = findTask.get();
             if (devInfoCollection == nullptr || devInfoCollection->Size == 0) {
-                WriteLine("No WebCams found.");
+                MSG_("No WebCams found.");
+                RingD::instance->startDaemon();
             }
             else {
                 std::vector<task<void>> taskList;
@@ -248,7 +250,7 @@ VideoCaptureManager::EnumerateWebcamsAsync()
 task<void>
 VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
 {
-    RingDebug::instance->WriteLine("GetDeviceCaps " + index.ToString());
+    MSG_("GetDeviceCaps " + index.ToString());
     Platform::Agile<Windows::Media::Capture::MediaCapture^> mc;
     mc = ref new MediaCapture();
 
@@ -340,13 +342,13 @@ VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
             }
             for (auto res : device->resolutionList()) {
                 for (auto rate : res->rateList()) {
-                    WriteLine(device->name()    + " " + res->width().ToString()     + "x"      + res->height().ToString()
+                    MSG_(device->name()    + " " + res->width().ToString()     + "x"      + res->height().ToString()
                                                 + " " + rate->value().ToString()    + "FPS "   + rate->format());
                 }
             }
             this->deviceList->Append(device);
             this->activeDevice = deviceList->GetAt(0);
-            WriteLine("GetDeviceCaps DONE");
+            MSG_("GetDeviceCaps DONE");
             DRing::addVideoDevice(Utils::toString(device->name()));
         }
         catch (Platform::Exception^ e) {
@@ -371,7 +373,7 @@ VideoCaptureManager::InitializeCopyFrameDispatcher()
         isRendering = false;
     }
     catch (Exception^ e) {
-        RingDebug::instance->WriteLine(e->ToString());
+        MSG_(e->ToString());
     }
 }
 
@@ -483,7 +485,7 @@ VideoCaptureManager::CopyFrameAsync()
 void
 VideoCaptureManager::SetCaptureSettings()
 {
-    WriteLine("SetCaptureSettings");
+    MSG_("SetCaptureSettings");
     auto res = activeDevice->currentResolution();
     auto vidprops = ref new VideoEncodingProperties;
     vidprops->Width = res->width();
@@ -504,7 +506,7 @@ VideoCaptureManager::SetCaptureSettings()
             settings["size"] = Utils::toString(res->getFriendlyName());
             DRing::applySettings(deviceName, settings);
             DRing::setDefaultDevice(deviceName);
-            WriteLine("SetCaptureSettings DONE");
+            MSG_("SetCaptureSettings DONE");
         }
         catch (Exception^ e) {
             WriteException(e);

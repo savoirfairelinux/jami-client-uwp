@@ -20,59 +20,122 @@
 /* client */
 #include "pch.h"
 
-#include "fileutils.h"
-
 using namespace RingClientUWP;
 
 using namespace Platform;
 using namespace Windows::UI::Core;
 using namespace Windows::Storage;
 
-void
-RingDebug::print(const std::string& message,
-                 const Type& type)
-{
-    /* get the current time */
-    std::time_t currentTime = std::time(nullptr);
-    char timeBuffer[64];
-    ctime_s(timeBuffer, sizeof timeBuffer, &currentTime);
+using namespace std::chrono;
 
-    /* timestamp */
-    auto messageTimestamped = timeBuffer + message;
-    std::wstring wString = std::wstring(message.begin(), message.end());
+std::string
+getDebugHeader(std::string file, int line)
+{
+    auto tid = std::this_thread::get_id();
+
+    seconds s = duration_cast< seconds >(
+        system_clock::now().time_since_epoch()
+    );
+    milliseconds ms = duration_cast< milliseconds >(
+        system_clock::now().time_since_epoch()
+    );
+
+    static uint64_t secs = s.count();
+    static uint64_t millis = ms.count() - (secs * 1000);
+
+    std::ostringstream out;
+    const auto prev_fill = out.fill();
+    out << '[' << secs
+        << '.' << std::right << std::setw(3) << std::setfill('0') << millis << std::left
+        << '|' << std::right << std::setw(5) << std::setfill(' ') << tid << std::left;
+    out.fill(prev_fill);
+    out << "|" << std::setw(32) << (file + ':' + Utils::toString((line.ToString())));
+    out << "] ";
+
+    return out.str();
+}
+
+void
+RingDebug::print(const  std::string& message, const Type& type,
+                        std::string file, int line)
+{
+    std::string _message;
+
+    if (type != Type::DMN)
+        _message = getDebugHeader(file, line) + message;
+    else
+        _message = message;
+
+    std::wstring wString = std::wstring(_message.begin(), _message.end());
 
     /* set message type. */
-    switch (type) {
-    case Type::ERR:
-        wString = L"(EE) " + wString;
-        break;
-    case Type::WNG:
-        wString = L"(WW) " + wString;
-        break;
-        /*case Type::message:*/
-    }
+    wString = (type>Type::WNG)?(L"(EE) "):((type>Type::MSG)?(L"(WW) "):(L"")) + wString;
 
     /* screen it into VS debug console */
     OutputDebugString((wString + L"\n").c_str());
 
     /* fire the event. */
-    auto line = ref new String(wString.c_str(), wString.length());
-    messageToScreen(line);
+    auto msg = ref new String(wString.c_str(), wString.length());
+    messageToScreen(msg);
 
+    /* output to file */
     std::ofstream ofs;
-    ofs.open ("debug.log", std::ofstream::out | std::ofstream::app);
-    ofs << Utils::toString(line) << "\n";
+    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
+    ofs << Utils::toString(msg) << "\n";
     ofs.close();
 }
 
-void RingClientUWP::RingDebug::WriteLine(String^ str)
+void
+RingDebug::print(String^ message, const Type& type,
+                        std::string file, int line)
 {
-    /* screen in visual studio console */
+    /* add header */
+    auto messageTimestamped = Utils::toPlatformString(getDebugHeader(file, line)) + message;
+
+    /* set message type. */
+    messageTimestamped = (type>Type::WNG)?("(EE) "):((type>Type::MSG)?("(WW) "):("")) + messageTimestamped;
+
+    /* screen it into VS debug console */
     std::wstringstream wStringstream;
-    wStringstream << str->Data() << "\n";
+    wStringstream << messageTimestamped->Data() << "\n";
     OutputDebugString(wStringstream.str().c_str());
+
+    /* fire the event. */
+    messageToScreen(messageTimestamped);
+
+    /* output to file */
+    std::ofstream ofs;
+    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
+    ofs << Utils::toString(messageTimestamped) << "\n";
+    ofs.close();
 }
 
-RingClientUWP::RingDebug::RingDebug()
+void
+RingDebug::print(Exception^ e, std::string file, int line)
 {
+    /* add header */
+    auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "0x" + e->HResult.ToString() + ": " + e->Message;
+
+    /* screen it into VS debug console */
+    std::wstringstream wStringstream;
+    wStringstream << message->Data() << "\n";
+    OutputDebugString(wStringstream.str().c_str());
+
+    /* fire the event. */
+    messageToScreen(message);
+
+    /* output to file */
+    std::ofstream ofs;
+    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
+    ofs << Utils::toString(message) << "\n";
+    ofs.close();
 }
+
+RingDebug::RingDebug()
+{
+    /* clean the log file */
+    std::ofstream ofs;
+    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::trunc);
+    ofs.close();
+}
+

@@ -19,6 +19,8 @@
 #pragma once
 #include <pch.h>
 
+#include <random>
+
 using namespace Platform;
 using namespace Platform::Collections;
 using namespace Windows::Foundation;
@@ -32,27 +34,17 @@ namespace RingClientUWP
 {
 namespace Utils
 {
-task<bool>
-fileExists(StorageFolder^ folder, String^ fileName)
+inline int
+fileExists(const std::string& name)
 {
-    return create_task(folder->GetFileAsync(fileName))
-        .then([](task<StorageFile^> taskResult)
-    {
-        bool exists;
-        try {
-            taskResult.get();
-            exists = true;
-        }
-        catch (COMException ^e) {
-            if (e->HResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
-                exists = false;
-            }
-            else {
-                throw;
-            }
-        }
-        return exists;
-    });
+    std::ifstream f(name.c_str());
+    return f.good();
+}
+
+inline int
+fileDelete(const std::string& file)
+{
+    return std::remove(file.c_str());
 }
 
 inline std::string
@@ -260,6 +252,30 @@ findIn(std::vector<T> vec, T val)
         return true;
     return false;
 }
+
+std::string
+genID(long long lower, long long upper)
+{
+    std::random_device r;
+    std::mt19937 gen(r());
+    std::uniform_int_distribution<long long> idgen {lower, upper};
+
+    uint16_t digits = 0;
+    if (upper < 0LL)
+        digits = 1;
+    while (upper) {
+        upper /= 10LL;
+        digits++;
+    }
+
+    std::ostringstream o;
+    o.fill('0');
+    o.width(digits);
+    o << idgen(gen);
+
+    return o.str();
+}
+
 
 } /*namespace Utils*/
 } /*namespace RingClientUWP*/
