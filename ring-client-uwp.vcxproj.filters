@@ -73,6 +73,10 @@
     <ClCompile Include="UserModel.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="PreviewPage.xaml.cpp" />
+    <ClCompile Include="VCardUtils.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -141,6 +145,10 @@
     </ClInclude>
     <ClInclude Include="UserModel.h">
       <Filter>Model</Filter>
+    </ClInclude>
+    <ClInclude Include="PreviewPage.xaml.h" />
+    <ClInclude Include="VCardUtils.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

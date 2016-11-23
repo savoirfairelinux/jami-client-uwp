@@ -32,27 +32,18 @@ namespace RingClientUWP
 {
 namespace Utils
 {
-task<bool>
-fileExists(StorageFolder^ folder, String^ fileName)
+
+inline int
+fileExists(const std::string& name)
 {
-    return create_task(folder->GetFileAsync(fileName))
-        .then([](task<StorageFile^> taskResult)
-    {
-        bool exists;
-        try {
-            taskResult.get();
-            exists = true;
-        }
-        catch (COMException ^e) {
-            if (e->HResult == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND)) {
-                exists = false;
-            }
-            else {
-                throw;
-            }
-        }
-        return exists;
-    });
+    std::ifstream f(name.c_str());
+    return f.good();
+}
+
+inline int
+fileDelete(const std::string& file)
+{
+    return std::remove( file.c_str());
 }
 
 inline std::string

@@ -1,7 +1,7 @@
-﻿#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,42 +16,47 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#include <pch.h>
 
-/* standard system include files. */
-#include <iomanip>
-#include <ppltasks.h>
-#include <queue>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
+using namespace RingClientUWP;
+using namespace VCard;
 
-/* project's globals */
-#include "Globals.h"
+int
+VCardUtils::addChunk(std::map<std::string, std::string> args, std::string payload)
+{
+    const int total         = stoi( args[ "of"   ]);
+    const int part          = stoi( args[ "part" ]);
+    const std::string id    =       args[ "id"   ];
 
-/* required by generated headers. */
-#include "App.xaml.h"
-#include "Account.h"
-#include "AccountListItem.h"
-#include "AccountListItemsViewModel.h"
-#include "AccountsViewModel.h"
-#include "Contact.h"
-#include "ContactsViewModel.h"
-#include "Conversation.h"
-#include "UserModel.h"
-#include "MainPage.xaml.h"
-#include "SmartPanelItem.h"
-#include "SmartPanelItemsViewModel.h"
+    if (part < 1 || part > total)
+        return VCARD_CHUNK_ERROR;
 
-/* ensure to be accessed from anywhere */
-#include "RingD.h"
-#include "RingDebug.h"
-#include "Utils.h"
-#include "UserPreferences.h"
-#include "VCardUtils.h"
+    if (!m_PartsCount)
+        m_PartsCount = total;
 
-/* video headers */
-#include "Video.h"
-#include "VideoCaptureManager.h"
-#include "VideoManager.h"
-#include "VideoRendererManager.h"
+    m_hParts[part] = payload;
+    m_lChunks.emplace_back(m_hParts[part]);
+
+    if (m_hParts.size() == m_PartsCount) {
+        saveToFile();
+        return VCARD_COMPLETE;
+    }
+
+    return VCARD_INCOMPLETE;
+}
+
+void
+VCardUtils::saveToFile()
+{
+    // TODO: use UID
+    std::string vcardFile(Utils::toString("UID" + ".vcard"));
+
+    std::ofstream file(vcardFile);
+    if (file.is_open())
+    {
+        for (const auto& chunk : m_lChunks) {
+            file << chunk;
+        }
+        file.close();
+    }
+}

@@ -221,10 +221,12 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, Ro
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     auto vcm = Video::VideoManager::instance->captureManager();
-    if (!vcm->isInitialized)
-        vcm->InitializeCameraAsync(true);
-    else
-        vcm->StartPreviewAsync(true);
+    if (vcm->deviceList->Size > 0) {
+        if (!vcm->isInitialized)
+            vcm->InitializeCameraAsync(true);
+        else
+            vcm->StartPreviewAsync(true);
+    }
     summonPreviewPage();
 }
 
@@ -232,17 +234,20 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Unchecked(Object^ sender, 
 {
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    Video::VideoManager::instance->captureManager()->StopPreviewAsync()
-        .then([](task<void> stopPreviewTask)
-    {
-        try {
-            stopPreviewTask.get();
-            Video::VideoManager::instance->captureManager()->isSettingsPreviewing = false;
-        }
-        catch (Exception^ e) {
-            WriteException(e);
-        }
-    });
+    auto vcm = Video::VideoManager::instance->captureManager();
+    if (vcm->deviceList->Size > 0) {
+        vcm->StopPreviewAsync()
+            .then([](task<void> stopPreviewTask)
+        {
+            try {
+                stopPreviewTask.get();
+                Video::VideoManager::instance->captureManager()->isSettingsPreviewing = false;
+            }
+            catch (Exception^ e) {
+                WriteException(e);
+            }
+        });
+    }
     hidePreviewPage();
 }
 
@@ -1112,7 +1117,7 @@ void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerR
                     });
                 }
                 catch (Exception^ e) {
-                    RingDebug::instance->print("Exception while saving profile image");
+                    EXC_(e);
                 }
             });
 

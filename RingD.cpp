@@ -113,7 +113,6 @@ RingClientUWP::RingD::reloadAccountList()
             }
 
             sipPassword = ""; // avoid to keep password in memory
-
         }
     }
 
@@ -460,7 +459,45 @@ RingD::registerCallbacks()
 
             for (auto i : payloads) {
                 if (i.first.compare(0, profileSize, PROFILE_VCF) == 0) {
-                    MSG_("VCARD");
+                    MSG_("VCARD chunk");
+                    std::size_t pos0 = i.first.find("id=");
+                    std::size_t pos1 = i.first.find("part=");
+                    unsigned int id = stoi(i.first.substr(pos0 + 3, pos1 - 1));
+                    pos0 = pos1;
+                    pos1 = i.first.find("of=");
+                    unsigned int part = stoi(i.first.substr(pos0 + 5, pos1 - 1));
+                    unsigned int of = stoi(i.first.substr(pos1 + 3, i.first.size()));
+                    MSG_("id = " + id.ToString());
+                    MSG_("part = " + part.ToString());
+                    MSG_("of = " + of.ToString());
+                    static std::string PHOTO;
+                    if (part == 1) {
+                        std::stringstream part(i.second);
+                        std::string line;
+
+                        while (std::getline(part, line)) {
+                            if (line.find("UID:") != std::string::npos)
+                                break;
+                        }
+
+                        uint64_t UID = stoull(line.substr(4));
+                        MSG_("UID = " + UID.ToString());
+
+                        while (std::getline(part, line)) {
+                            if (line.find("PHOTO:") != std::string::npos)
+                                break;
+                        }
+                        PHOTO.append(line.substr(26));
+                    }
+                    else {
+                        if (part == of) {
+                            MSG_("PHOTO = " + PHOTO);
+                            break;
+                        }
+                        else {
+                            PHOTO.append(i.second);
+                        }
+                    }
                     return;
                 }
                 MSG_("payload.first = " + i.first);
@@ -510,7 +547,7 @@ RingD::registerCallbacks()
             if (debugModeOn_)
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                RingDebug::instance->print(toto);
+                DMSG_(toto);
             }));
         })
     };
@@ -633,7 +670,7 @@ RingD::registerCallbacks()
         {
             dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
-                RingDebug::instance->print("KnownDevicesChanged ---> C PAS FINI");
+                MSG_("KnownDevicesChanged ---> C PAS FINI");
             }));
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
@@ -718,22 +755,24 @@ RingD::startDaemon()
         daemonRunning_ = DRing::start();
 
         auto vcm = Video::VideoManager::instance->captureManager();
-        std::string deviceName = DRing::getDefaultDevice();
-        std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
-        int rate = stoi(settings["rate"]);
-        std::string size = settings["size"];
-        std::string::size_type pos = size.find('x');
-        int width = std::stoi(size.substr(0, pos));
-        int height = std::stoi(size.substr(pos + 1, size.length()));
-        for (auto dev : vcm->deviceList) {
-            if (!Utils::toString(dev->name()).compare(deviceName))
-                vcm->activeDevice = dev;
+        if (vcm->deviceList->Size > 0) {
+            std::string deviceName = DRing::getDefaultDevice();
+            std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
+            int rate = stoi(settings["rate"]);
+            std::string size = settings["size"];
+            std::string::size_type pos = size.find('x');
+            int width = std::stoi(size.substr(0, pos));
+            int height = std::stoi(size.substr(pos + 1, size.length()));
+            for (auto dev : vcm->deviceList) {
+                if (!Utils::toString(dev->name()).compare(deviceName))
+                    vcm->activeDevice = dev;
+            }
+            vcm->activeDevice->SetDeviceProperties("", width, height, rate);
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+            ref new DispatchedHandler([=]() {
+                finishCaptureDeviceEnumeration();
+            }));
         }
-        vcm->activeDevice->SetDeviceProperties("", width, height, rate);
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-        ref new DispatchedHandler([=]() {
-            finishCaptureDeviceEnumeration();
-        }));
 
         if (!daemonRunning_) {
             ERR_("\ndaemon didn't start.\n");
@@ -758,17 +797,10 @@ RingD::startDaemon()
             }
 
             /* at this point the config.yml is safe. */
-            Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
-            .then([this](bool token_exists)
-            {
-                if (token_exists) {
-                    StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
-                    task<StorageFile^>(storageFolder->GetFileAsync("creation.token")).then([this](StorageFile^ file)
-                    {
-                        file->DeleteAsync();
-                    });
-                }
-            });
+            std::string tokenFile = localFolder_ + "\\creation.token";
+            if (fileExists(tokenFile)) {
+                fileDelete(tokenFile);
+            }
 
             while (daemonRunning) {
                 DRing::pollEvents();
@@ -784,6 +816,12 @@ RingD::RingD()
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
+}
+
+std::string
+RingD::getLocalFolder()
+{
+    return localFolder_ + Utils::toString("\\");
 }
 
 void

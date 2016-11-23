@@ -91,6 +91,7 @@ internal: // why this property has to be internal and not public ?
 
 internal:
     /* functions */
+    std::string getLocalFolder();
     void registerCallbacks();
     void initDaemon(int flags);
     void startDaemon();

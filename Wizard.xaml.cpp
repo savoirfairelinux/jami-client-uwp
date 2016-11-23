@@ -22,6 +22,8 @@ using namespace Windows::Media::Capture;
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::UI::Xaml::Shapes;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::UI::Core;
 
 Wizard::Wizard()
 {
@@ -108,7 +110,7 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
                     });
                 }
                 catch (Exception^ e) {
-                    RingDebug::instance->print("Exception while saving profile image");
+                    EXC_(e);
                 }
             });
 
