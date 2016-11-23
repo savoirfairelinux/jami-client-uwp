@@ -34,6 +34,7 @@ String^ accountIdAssociatedKey = "accountIdAssociated";
 namespace RingClientUWP
 {
 ref class Conversation;
+
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:

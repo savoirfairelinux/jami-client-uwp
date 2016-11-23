@@ -74,13 +74,13 @@ VideoPage::VideoPage()
                             previousTask.get();
                         }
                         catch (Platform::Exception^ e) {
-                            RingDebug::instance->WriteLine( "Caught exception from WriteFrameAsSoftwareBitmapAsync task.\n" );
+                            MSG_( "Caught exception from WriteFrameAsSoftwareBitmapAsync task.\n" );
                         }
                     });
                 }
             }
             catch(Platform::COMException^ e) {
-                RingDebug::instance->WriteLine(e->ToString());
+                EXC_(e);
             }
         }));
     });

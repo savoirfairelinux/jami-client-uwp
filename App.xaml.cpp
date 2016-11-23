@@ -30,6 +30,7 @@ using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Interop;
 using namespace Windows::UI::Xaml::Media;
 using namespace Windows::UI::ViewManagement;
+using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 
@@ -65,7 +66,7 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }
 
-void RingClientUWP::App::OnsummonWizard()
+void App::OnsummonWizard()
 {
     rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::Wizard::typeid));
 }

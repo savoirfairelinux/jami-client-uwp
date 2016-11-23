@@ -48,6 +48,7 @@
 #include "RingDebug.h"
 #include "Utils.h"
 #include "UserPreferences.h"
+#include "VCardUtils.h"
 
 /* video headers */
 #include "Video.h"

@@ -66,7 +66,8 @@ ContactsViewModel::ContactsViewModel()
             saveContactsToFile();
         }
     });
-    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
+    RingD::instance->incomingMessage +=
+        ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
 }
 
 Contact^ // refacto : remove "byName"
