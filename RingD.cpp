@@ -113,7 +113,6 @@ RingClientUWP::RingD::reloadAccountList()
             }
 
             sipPassword = ""; // avoid to keep password in memory
-
         }
     }
 
@@ -184,6 +183,24 @@ void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
     DRing::sendTextMessage(callId3, payloads, accountId3, true /*not used*/);
     contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_ME, message);
     contact->saveConversationToFile();
+}
+
+// send vcard
+void RingClientUWP::RingD::sendSIPTextMessageVCF(std::map<std::string, std::string> message)
+{
+    /* account id */
+    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+    std::wstring accountId2(accountId->Begin());
+    std::string accountId3(accountId2.begin(), accountId2.end());
+
+    /* call */
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto callId = item->_callId;
+    std::wstring callId2(callId->Begin());
+    std::string callId3(callId2.begin(), callId2.end());
+
+    /* daemon */
+    DRing::sendTextMessage(callId3, message, accountId3, true /*not used*/);
 }
 
 void
@@ -455,12 +472,13 @@ RingD::registerCallbacks()
             auto callId2 = toPlatformString(callId);
             auto from2 = toPlatformString(from);
 
-            const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
-            static const unsigned int profileSize = PROFILE_VCF.size();
+            auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+            auto contact = item->_contact;
 
+            static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
             for (auto i : payloads) {
-                if (i.first.compare(0, profileSize, PROFILE_VCF) == 0) {
-                    MSG_("VCARD");
+                if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
+                    //int res = contact->getVCard()->receiveChunk(i.first, i.second);
                     return;
                 }
                 MSG_("payload.first = " + i.first);
@@ -510,7 +528,7 @@ RingD::registerCallbacks()
             if (debugModeOn_)
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                RingDebug::instance->print(toto);
+                DMSG_(toto);
             }));
         })
     };
@@ -633,7 +651,7 @@ RingD::registerCallbacks()
         {
             dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
-                RingDebug::instance->print("KnownDevicesChanged ---> C PAS FINI");
+                MSG_("KnownDevicesChanged ---> C PAS FINI");
             }));
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::ExportOnRingEnded>([&](const std::string& accountId, int status, const std::string& pin)
@@ -718,22 +736,24 @@ RingD::startDaemon()
         daemonRunning_ = DRing::start();
 
         auto vcm = Video::VideoManager::instance->captureManager();
-        std::string deviceName = DRing::getDefaultDevice();
-        std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
-        int rate = stoi(settings["rate"]);
-        std::string size = settings["size"];
-        std::string::size_type pos = size.find('x');
-        int width = std::stoi(size.substr(0, pos));
-        int height = std::stoi(size.substr(pos + 1, size.length()));
-        for (auto dev : vcm->deviceList) {
-            if (!Utils::toString(dev->name()).compare(deviceName))
-                vcm->activeDevice = dev;
+        if (vcm->deviceList->Size > 0) {
+            std::string deviceName = DRing::getDefaultDevice();
+            std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
+            int rate = stoi(settings["rate"]);
+            std::string size = settings["size"];
+            std::string::size_type pos = size.find('x');
+            int width = std::stoi(size.substr(0, pos));
+            int height = std::stoi(size.substr(pos + 1, size.length()));
+            for (auto dev : vcm->deviceList) {
+                if (!Utils::toString(dev->name()).compare(deviceName))
+                    vcm->activeDevice = dev;
+            }
+            vcm->activeDevice->SetDeviceProperties("", width, height, rate);
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+            ref new DispatchedHandler([=]() {
+                finishCaptureDeviceEnumeration();
+            }));
         }
-        vcm->activeDevice->SetDeviceProperties("", width, height, rate);
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-        ref new DispatchedHandler([=]() {
-            finishCaptureDeviceEnumeration();
-        }));
 
         if (!daemonRunning_) {
             ERR_("\ndaemon didn't start.\n");
@@ -758,17 +778,10 @@ RingD::startDaemon()
             }
 
             /* at this point the config.yml is safe. */
-            Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
-            .then([this](bool token_exists)
-            {
-                if (token_exists) {
-                    StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
-                    task<StorageFile^>(storageFolder->GetFileAsync("creation.token")).then([this](StorageFile^ file)
-                    {
-                        file->DeleteAsync();
-                    });
-                }
-            });
+            std::string tokenFile = localFolder_ + "\\creation.token";
+            if (fileExists(tokenFile)) {
+                fileDelete(tokenFile);
+            }
 
             while (daemonRunning) {
                 DRing::pollEvents();
@@ -784,6 +797,12 @@ RingD::RingD()
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
+}
+
+std::string
+RingD::getLocalFolder()
+{
+    return localFolder_ + Utils::toString("\\");
 }
 
 void

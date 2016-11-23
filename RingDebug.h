@@ -46,10 +46,12 @@ public:
 
     /* functions */
 internal:
-    enum class Type { MSG, WNG, ERR };
-    void print(const std::string& message, const Type& type = Type::MSG);
-
-    void WriteLine(String^ str);
+    enum class Type { DMN, MSG, WNG, ERR };
+    void print(const std::string& message, const Type& type,
+                        std::string file, int line);
+    void print(String^ message, const Type& type,
+                        std::string file, int line);
+    void print(Exception^ e, std::string file, int line);
 
     /* event */
     event debugMessageToScreen^ messageToScreen;
@@ -72,13 +74,19 @@ void WriteException(Exception^ ex)
     OutputDebugString(wStringstream.str().c_str());
 }
 
-#define MSG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
-ref new DispatchedHandler([=]() { RingDebug::instance->print(cstr); }))
+#define DMSG_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
+ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::DMN, __FILE__, __LINE__); }))
 
-#define WNG_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
-ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), RingDebug::Type::WNG); }))
+#define MSG_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
+ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::MSG, __FILE__, __LINE__); }))
 
-#define ERR_(cstr) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
-ref new DispatchedHandler([=]() { RingDebug::instance->print(std::string(cstr), RingDebug::Type::ERR); }))
+#define WNG_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
+ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::WNG, __FILE__, __LINE__); }))
+
+#define ERR_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
+ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::ERR, __FILE__, __LINE__); }))
+
+#define EXC_(e) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
+ref new DispatchedHandler([=]() { RingDebug::instance->print(e, __FILE__, __LINE__); }))
 
 }

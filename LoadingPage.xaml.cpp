@@ -43,54 +43,43 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::System;
+using namespace Utils;
 
 LoadingPage::LoadingPage()
 {
     InitializeComponent();
 
-    Utils::fileExists(ApplicationData::Current->LocalFolder, ".config\\dring.yml")
-    .then([this](bool config_exists)
-    {
-        if (config_exists) {
-            Utils::fileExists(ApplicationData::Current->LocalFolder, "creation.token")
-            .then([this](bool token_exists)
+    std::string configFile = RingD::instance->getLocalFolder() + ".config\\dring.yml";
+    std::string tokenFile = RingD::instance->getLocalFolder() + "creation.token";
+    if (fileExists(configFile)) {
+        if (fileExists(tokenFile)) {
+            /* we have a token, the config has to be considered as corrupted, delete the config, summon the wizard */
+            fileDelete(configFile);
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,
+                ref new Windows::UI::Core::DispatchedHandler([this]()
             {
-                if (token_exists) {
-                    /* we have a token, the config has to be considered as corrupted, summon the wizard */
-
-                    Utils::fileExists(ApplicationData::Current->LocalFolder, ".config\\dring.yml")
-                    .then([this](bool token_exists)
-                    {
-                        if (token_exists) {
-                            StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
-                            task<StorageFile^>(storageFolder->GetFileAsync(".config\\dring.yml")).then([this](StorageFile^ folder)
-                            {
-                                folder->DeleteAsync();
-                            });
-                        }
-                    });
-
-                    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
-                        this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
-                    }));
-                }
-                else {
-                    /* there is no token and we have a config.yml, summon the main page */
-                    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
-                        this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
-                    }));
-                }
-            });
-        }
-        else {
-            /* no config file, create the token and summon the wizard*/
-            StorageFolder^ storageFolder = ApplicationData::Current->LocalFolder;
-
-            storageFolder->CreateFileAsync("creation.token", CreationCollisionOption::ReplaceExisting);
-
-            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this] () {
                 this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
             }));
         }
-    });
+        else {
+            /* there is no token and we have a config.yml, summon the main page */
+            this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,
+                ref new Windows::UI::Core::DispatchedHandler([this]()
+            {
+                this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid));
+            }));
+        }
+    }
+    else {
+        /* no config file, create the token and summon the wizard*/
+        std::ofstream fs;
+        fs.open(tokenFile, std::ios::out);
+        fs.close();
+
+        this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,
+            ref new Windows::UI::Core::DispatchedHandler([this] ()
+        {
+            this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Wizard::typeid));
+        }));
+    }
 }
