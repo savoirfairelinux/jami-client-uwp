@@ -38,6 +38,8 @@ Contact::Contact(String^ name,
                  String^ GUID,
                  unsigned int unreadmessages)
 {
+    //vCard_ = ref new VCardUtils::VCard(this);
+
     name_   = name;
     ringID_ = ringID;
     GUID_   = GUID;
@@ -158,14 +160,15 @@ Contact::saveConversationToFile()
 
     if (_mkdir(Utils::toString(localfolder->Path + "\\" + ".messages\\").c_str())) {
         std::ofstream file(Utils::toString(messagesFile).c_str());
-        if (file.is_open())
-        {
+        if (file.is_open()) {
             file << Utils::toString(StringifyConversation());
             file.close();
         }
     }
 }
 
-
-
-
+//VCardUtils::VCard^
+//Contact::getVCard()
+//{
+//    return vCard_;
+//}
