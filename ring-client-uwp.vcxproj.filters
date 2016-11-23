@@ -73,6 +73,7 @@
     <ClCompile Include="UserModel.cpp">
       <Filter>Model</Filter>
     </ClCompile>
+    <ClCompile Include="PreviewPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -142,6 +143,7 @@
     <ClInclude Include="UserModel.h">
       <Filter>Model</Filter>
     </ClInclude>
+    <ClInclude Include="PreviewPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
@@ -174,9 +176,6 @@
     <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
-    <Image Include="Assets\TESTS\qrcode.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
@@ -196,9 +195,6 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
-    </Image>
-    <Image Include="Assets\qrCodeIcon.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>
