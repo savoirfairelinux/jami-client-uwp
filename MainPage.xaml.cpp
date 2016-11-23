@@ -84,10 +84,10 @@ MainPage::MainPage()
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
                                       ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
-    applicationSuspendingEventToken = Application::Current->Suspending +=
+    /*applicationSuspendingEventToken = Application::Current->Suspending +=
                                           ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
     applicationResumingEventToken = Application::Current->Resuming +=
-                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);*/
 }
 
 void
@@ -237,13 +237,13 @@ void RingClientUWP::MainPage::OnsummonWelcomePage()
 
 void RingClientUWP::MainPage::OnsummonPreviewPage()
 {
-    WriteLine("Show Settings Preview");
+    MSG_("Show Settings Preview");
     _previewFrame_->Visibility = VIS::Visible;
 }
 
 void RingClientUWP::MainPage::OnhidePreviewPage()
 {
-    WriteLine("Hide Settings Preview");
+    MSG_("Hide Settings Preview");
     _previewFrame_->Visibility = VIS::Collapsed;
 }
 
@@ -281,7 +281,7 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
 void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
-    RingDebug::instance->WriteLine("Application_Suspending");
+    MSG_("Application_Suspending");
     if (Frame->CurrentSourcePageType.Name ==
             Interop::TypeName(MainPage::typeid).Name) {
         auto deferral = e->SuspendingOperation->GetDeferral();
@@ -291,17 +291,17 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
                 previousTask.get();
             }
             catch (Exception^ e) {
-                RingDebug::instance->WriteLine("Exception: Extended Execution Begin");
+                MSG_("Exception: Extended Execution Begin");
             }
         })
         .then([this, deferral](task<void> previousTask) {
             try {
                 previousTask.get();
-                RingDebug::instance->WriteLine("deferral->Complete()");
+                MSG_("deferral->Complete()");
                 deferral->Complete();
             }
             catch (Exception^ e) {
-                RingDebug::instance->WriteLine("Exception: Extended Execution");
+                MSG_("Exception: Extended Execution");
                 deferral->Complete();
             }
         });
@@ -313,7 +313,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
 {
     auto vcm = Video::VideoManager::instance->captureManager();
     if (e->Visible) {
-        RingDebug::instance->WriteLine("->Visible");
+        MSG_("->Visible");
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
@@ -345,7 +345,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         }
     }
     else {
-        RingDebug::instance->WriteLine("->Invisible");
+        MSG_("->Invisible");
         bool isInCall = false;
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
@@ -357,7 +357,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         if (isInCall) {
             // TODO
             /*if (RingD::instance->currentCallId) {
-                WriteLine("Pausing call: " + RingD::instance->currentCallId);
+                MSG_("Pausing call: " + RingD::instance->currentCallId);
                 RingD::instance->pauseCall(RingD::instance->currentCallId);
             }*/
             if (vcm->isPreviewing) {
@@ -375,7 +375,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
 
 void MainPage::Application_Resuming(Object^, Object^)
 {
-    RingDebug::instance->WriteLine("Application_Resuming");
+    MSG_("Application_Resuming");
 }
 
 void
@@ -390,7 +390,7 @@ void
 MainPage::ClearExtendedExecution()
 {
     if (session != nullptr) {
-        RingDebug::instance->WriteLine("End Extended Execution");
+        MSG_("End Extended Execution");
         session->Revoked -= sessionRevokedToken;
     }
 }
@@ -412,21 +412,21 @@ MainPage::BeginExtendedExecution()
             {
             case ExtendedExecutionResult::Allowed:
                 session = newSession;
-                RingDebug::instance->WriteLine("Request Extended Execution Allowed");
-                RingDebug::instance->WriteLine("Clean up camera...");
+                MSG_("Request Extended Execution Allowed");
+                MSG_("Clean up camera...");
                 Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
-                RingDebug::instance->WriteLine("Hang up calls...");
+                MSG_("Hang up calls...");
                 RingD::instance->deinit();
                 break;
 
             default:
             case ExtendedExecutionResult::Denied:
-                RingDebug::instance->WriteLine("Request Extended Execution Denied");
+                MSG_("Request Extended Execution Denied");
                 break;
             }
         }
         catch (Exception^ e) {
-            RingDebug::instance->WriteLine("Exception: Extended Execution Request");
+            EXC_(e);
         }
     });
 }
