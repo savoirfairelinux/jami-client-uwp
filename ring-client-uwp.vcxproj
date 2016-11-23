@@ -293,7 +293,6 @@
     <Image Include="Assets\TESTS\logo-ring.scale-200.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-400.png" />
     <Image Include="Assets\TESTS\logo-ring.square-100.png" />
-    <Image Include="Assets\TESTS\qrcode.png" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>

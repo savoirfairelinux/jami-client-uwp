@@ -182,9 +182,6 @@
     <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
-    <Image Include="Assets\TESTS\qrcode.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
