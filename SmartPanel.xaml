@@ -915,34 +915,57 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
+                <ScrollViewer x:Name="_scrollViewerDevicesMenu_"
+                              Grid.Row="0"
+                              MaxHeight="400">
                 <Grid Background="#FFE4F1F9">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <TextBlock Text="Device ID:"
-                               Margin="10"
-                               Grid.Row="0"
-                               HorizontalAlignment="Center"/>
+                    <!-- about this device -->
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="0"
+                                    Margin="10,20">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Margin="0,0,10,0"
+                                       Text="&#xE211;"/>
+                            <TextBlock Text="Your device ID"/>
+                        </StackPanel>
                     <TextBlock x:Name="_deviceId_"
                                Margin="10"
                                Text="[TEXT_MISSING]"
                                TextTrimming="CharacterEllipsis"
+                               FontSize="12"
                                Grid.Row="1"
                                IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
-                    <TextBlock x:Name="_waitingDevicesList_"
+                        <!-- about linked devices -->
+                        <StackPanel Orientation="Horizontal"
+                                    Grid.Row="2"
+                                    Margin="10,20">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Margin="0,0,10,0"
+                                       Text="&#xEBD2;"/>
+                            <TextBlock Text="other linked devices"/>
+                        </StackPanel>
+                        <TextBlock x:Name="_waitingDevicesList_"
                                Text="waiting for devices list..."
-                               Grid.Row="2"
+                               Grid.Row="3"
                                IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
                     <ListBox x:Name="_devicesIdList_"
                              Visibility="Collapsed"
-                         Grid.Row="2"/>
+                             Padding="10,0"
+                             Background="#FFE4F1F9"
+                             Grid.Row="3"/>
                 </Grid>
+                </ScrollViewer>
+                <!-- button to add device. -->
                 <Button x:Name="_addDevice_"
                         Grid.Row="1"
                         VerticalAlignment="Center"
