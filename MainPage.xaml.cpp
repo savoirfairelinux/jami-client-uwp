@@ -187,16 +187,16 @@ RingClientUWP::MainPage::PositionRing()
     double left;
     double top;
     if (bounds.Width < 1200) {
-        _splashProgressRing_->Width = 118;
-        _splashProgressRing_->Height = 118;
-        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 145;
-        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 60;
+        _splashProgressRing_->Width = 280;
+        _splashProgressRing_->Height = 280;
+        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 300;
+        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 100;
     }
     else {
-        _splashProgressRing_->Width = 162;
-        _splashProgressRing_->Height = 162;
-        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 195;
-        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 84;
+        _splashProgressRing_->Width = 384;
+        _splashProgressRing_->Height = 384;
+        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 400;
+        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 135;
     }
     _splashProgressRing_->SetValue(Canvas::LeftProperty, left + _loadingImage_->Width * 0.5);
     _splashProgressRing_->SetValue(Canvas::TopProperty, top + _loadingImage_->Height * 0.5);
@@ -329,7 +329,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         }
         else if (vcm->isSettingsPreviewing) {
             vcm->CleanupCameraAsync()
-                .then([=](task<void> cleanupCameraTask) {
+            .then([=](task<void> cleanupCameraTask) {
                 try {
                     cleanupCameraTask.get();
                     CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
