@@ -1016,7 +1016,8 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
 
     } else { /* otherwise edit the account */
 
-        account->name_ = _accountAliasTextBox_->Text;
+        account->name_ = _accountAliasTextBoxEdition_->Text;
+
         account->_upnpState = _upnpState_->IsOn;
 
         RingD::instance->updateAccount(accountId);
