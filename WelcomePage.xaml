@@ -25,18 +25,34 @@
       NavigationCacheMode="Enabled"
       mc:Ignorable="d">
 
-    <Grid x:Name="_welcomePage_"
-        >
-        <!--<TextBlock x:Uid="_welcomeMsg"
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="1*"/>
+            <RowDefinition Height="1.5*"/>
+            <RowDefinition Height="2*"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="_welcomePage_" Grid.Row="1">
+            <!--<TextBlock x:Uid="_welcomeMsg"
                    x:Name="_welcomeMsg_"
                    Style="{StaticResource TextStyle1}"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Center"
                    TextWrapping="Wrap" />-->
-        <Image x:Name="_welcomeImage_"
-            Source="Assets\TESTS\logo-ring.square-100.png"
-               Width="310"
-               Height="310"/>
+            <Image x:Name="_welcomeImage_"
+                   Source="Assets\Wide310x150Logo.scale-200.png"
+                   Width="310"
+                   HorizontalAlignment="Center"
+                   Height="150"/>
+            <TextBlock Text="Ring is free software for universal communication wich respects the freedoms and privacy of its users."
+                       Foreground="DarkGray"
+                       MaxWidth="410"
+                       TextWrapping="WrapWholeWords"
+                       TextAlignment="Justify"
+                       FontSize="18"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"/>
+        </StackPanel>
     </Grid>
+
 
 </Page>
