@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #pragma once
+
+#include "VCardUtils.h"
 
 namespace RingClientUWP
 {
@@ -44,22 +45,29 @@ public:
     }
 
     /* properties */
-    property int        PREF_ACCOUNT_INDEX;
-    property bool       PREF_PROFILE_PHOTO;
+    property int            PREF_ACCOUNT_INDEX;
+    property uint64_t       PREF_PROFILE_UID;
+    property bool           PREF_PROFILE_HASPHOTO;
+    property String^        PREF_PROFILE_FN;
 
     /* functions */
-    void                save();
-    void                load();
-    String^             Stringify();
-    void                Destringify(String^ data);
+    void                    save();
+    void                    load();
+    String^                 Stringify();
+    void                    Destringify(String^ data);
+    VCardUtils::VCard^      getVCard();
+    void                    saveProfileToVCard();
 
 internal:
+    void                    sendVCard(std::string callID);
 
     /* events */
-    event SelectIndex^ selectIndex;
+    event SelectIndex^      selectIndex;
     event LoadProfileImage^ loadProfileImage;
+
 private:
-    UserPreferences() { PREF_PROFILE_PHOTO = false; };
+    VCardUtils::VCard^ vCard_;
+    UserPreferences();
 
 };
 

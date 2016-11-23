@@ -16,8 +16,9 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #include "pch.h"
+
+#include "base64.h"
 
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
@@ -27,6 +28,13 @@ using namespace Windows::ApplicationModel::Core;
 using namespace RingClientUWP;
 using namespace Platform;
 using namespace Configuration;
+
+UserPreferences::UserPreferences()
+{
+    vCard_ = ref new VCardUtils::VCard(nullptr);
+    PREF_PROFILE_HASPHOTO = false;
+    PREF_PROFILE_UID = stoull(Utils::genID(0LL, 9999999999999LL));
+}
 
 void
 UserPreferences::save()
@@ -40,6 +48,7 @@ UserPreferences::save()
         file << Utils::toString(Stringify());
         file.close();
     }
+    saveProfileToVCard();
 }
 
 void
@@ -54,8 +63,9 @@ UserPreferences::load()
     ref new DispatchedHandler([=]() {
         if (fileContents != nullptr) {
             Destringify(fileContents);
+            saveProfileToVCard();
             selectIndex(PREF_ACCOUNT_INDEX);
-            if (PREF_PROFILE_PHOTO)
+            if (PREF_PROFILE_HASPHOTO)
                 loadProfileImage();
         }
         else
@@ -68,8 +78,9 @@ UserPreferences::Stringify()
 {
     JsonObject^ preferencesObject = ref new JsonObject();
 
-    preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(    PREF_ACCOUNT_INDEX));
-    preferencesObject->SetNamedValue("PREF_PROFILE_PHOTO", JsonValue::CreateBooleanValue(   PREF_PROFILE_PHOTO));
+    preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(        PREF_ACCOUNT_INDEX   ));
+    preferencesObject->SetNamedValue("PREF_PROFILE_HASPHOTO", JsonValue::CreateBooleanValue(    PREF_PROFILE_HASPHOTO));
+    preferencesObject->SetNamedValue("PREF_PROFILE_UID",    JsonValue::CreateNumberValue(       PREF_PROFILE_UID     ));
 
     return preferencesObject->Stringify();
 }
@@ -79,8 +90,38 @@ UserPreferences::Destringify(String^ data)
 {
     JsonObject^ jsonObject = JsonObject::Parse(data);
 
-    PREF_ACCOUNT_INDEX = static_cast<int>(jsonObject->GetNamedNumber(   "PREF_ACCOUNT_INDEX"    ));
-    PREF_PROFILE_PHOTO = jsonObject->GetNamedBoolean(                   "PREF_PROFILE_PHOTO"    );
+    PREF_ACCOUNT_INDEX      = static_cast<int>(jsonObject->GetNamedNumber("PREF_ACCOUNT_INDEX"      ));
+    PREF_PROFILE_HASPHOTO   = jsonObject->GetNamedBoolean(                "PREF_PROFILE_HASPHOTO"   );
+    PREF_PROFILE_UID        = static_cast<uint64_t>(jsonObject->GetNamedNumber( "PREF_PROFILE_UID"  ));
 
     JsonArray^ preferencesList = jsonObject->GetNamedArray("Account.index", ref new JsonArray());
+}
+
+VCardUtils::VCard^
+UserPreferences::getVCard()
+{
+    return vCard_;
+}
+
+void
+UserPreferences::saveProfileToVCard()
+{
+    std::map<std::string, std::string> vcfData;
+    vcfData[VCardUtils::Property::UID] = std::to_string(PREF_PROFILE_UID);
+    std::string imageFile(RingD::instance->getLocalFolder() + "\\.profile\\profile_image.png");
+    std::basic_ifstream<uint8_t> stream(imageFile, std::ios::in | std::ios::binary);
+    auto eos = std::istreambuf_iterator<uint8_t>();
+    auto buffer = std::vector<uint8_t>(std::istreambuf_iterator<uint8_t>(stream), eos);
+    vcfData[VCardUtils::Property::PHOTO] = ring::base64::encode( buffer );
+    vCard_->setData(vcfData);
+    vCard_->saveToFile();
+}
+
+void
+UserPreferences::sendVCard(std::string callID)
+{
+    vCard_->send(callID,
+        (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(PREF_PROFILE_UID) + ".vcard").c_str());
+    /*vCard_->send(callID,
+        (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(4796040057761) + ".vcard").c_str());*/
 }

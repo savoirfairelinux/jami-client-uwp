@@ -179,6 +179,7 @@
     <ClInclude Include="LoadingPage.xaml.h">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
@@ -207,6 +208,9 @@
     <ClInclude Include="UserModel.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
+    <ClInclude Include="VCardUtils.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="Video.h" />
     <ClInclude Include="VideoCaptureManager.h" />
     <ClInclude Include="VideoManager.h" />
@@ -308,6 +312,7 @@
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
@@ -339,6 +344,9 @@
     <ClCompile Include="SmartPanelItemsViewModel.cpp" />
     <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
+    <ClCompile Include="VCardUtils.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="Video.cpp" />
     <ClCompile Include="VideoCaptureManager.cpp" />
     <ClCompile Include="VideoManager.cpp" />

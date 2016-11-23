@@ -1,4 +1,3 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
@@ -17,6 +16,10 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
+
+#include "VCardUtils.h"
+
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
@@ -25,7 +28,7 @@ using namespace Windows::UI::Xaml::Data;
 /* strings required by Windows::Data::Json. Defined here on puprose */
 String^ nameKey = "name";
 String^ ringIDKey = "ringid";
-String^ GUIDKey = "guid";
+String^ GUIDKey = "id";
 String^ unreadMessagesKey = "unreadmessages";
 String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
@@ -34,6 +37,7 @@ String^ accountIdAssociatedKey = "accountIdAssociated";
 namespace RingClientUWP
 {
 ref class Conversation;
+
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
@@ -91,16 +95,20 @@ public:
     }
     property String^ _accountIdAssociated;
 
+    VCardUtils::VCard^ getVCard();
+
 internal:
     void        saveConversationToFile();
     String^     StringifyConversation();
     void        DestringifyConversation(String^ data);
     void        deleteConversationFile();
 
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
+    VCardUtils::VCard^ vCard_;
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;

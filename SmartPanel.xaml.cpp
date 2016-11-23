@@ -17,9 +17,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
 #include "pch.h"
-#include <string> // move it
+#include <string>
+#include <direct.h>
 #include "SmartPanel.xaml.h"
 #include "qrencode.h"
+#include "lodepng.h"
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace Platform;
@@ -221,10 +223,12 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, Ro
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     auto vcm = Video::VideoManager::instance->captureManager();
-    if (!vcm->isInitialized)
-        vcm->InitializeCameraAsync(true);
-    else
-        vcm->StartPreviewAsync(true);
+    if (vcm->deviceList->Size > 0) {
+        if (!vcm->isInitialized)
+            vcm->InitializeCameraAsync(true);
+        else
+            vcm->StartPreviewAsync(true);
+    }
     summonPreviewPage();
 }
 
@@ -232,17 +236,20 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Unchecked(Object^ sender, 
 {
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-    Video::VideoManager::instance->captureManager()->StopPreviewAsync()
-        .then([](task<void> stopPreviewTask)
-    {
-        try {
-            stopPreviewTask.get();
-            Video::VideoManager::instance->captureManager()->isSettingsPreviewing = false;
-        }
-        catch (Exception^ e) {
-            WriteException(e);
-        }
-    });
+    auto vcm = Video::VideoManager::instance->captureManager();
+    if (vcm->deviceList->Size > 0) {
+        vcm->StopPreviewAsync()
+            .then([](task<void> stopPreviewTask)
+        {
+            try {
+                stopPreviewTask.get();
+                Video::VideoManager::instance->captureManager()->isSettingsPreviewing = false;
+            }
+            catch (Exception^ e) {
+                WriteException(e);
+            }
+        });
+    }
     hidePreviewPage();
 }
 
@@ -1079,11 +1086,12 @@ void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerE
 }
 
 
-void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+void
+RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
     cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
-    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
 
     create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
     .then([this](StorageFile^ photoFile)
@@ -1099,28 +1107,18 @@ void RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerR
             auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
             bitmapImage->UriSource = uri;
 
-            StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-            String^ profilefolder = ".profile";
-            create_task(localfolder->CreateFolderAsync(profilefolder,
-                        Windows::Storage::CreationCollisionOption::OpenIfExists))
-            .then([=](StorageFolder^ copytofolder) {
-                try {
-                    create_task(photoFile->CopyAsync(copytofolder))
-                    .then([=](StorageFile^ copiedfile) {
-                        copiedfile->RenameAsync("profile_image.png",
-                                                Windows::Storage::NameCollisionOption::ReplaceExisting);
-                    });
-                }
-                catch (Exception^ e) {
-                    RingDebug::instance->print("Exception while saving profile image");
-                }
-            });
+            unsigned char* buffer;
+            size_t buffSize;
+            lodepng_load_file(&buffer, &buffSize, Utils::toString(photoFile->Path).c_str());
+            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
+            _mkdir(profilePath.c_str());
+            lodepng_save_file(buffer, buffSize, (profilePath + "\\profile_image.png").c_str());
 
-            Configuration::UserPreferences::instance->PREF_PROFILE_PHOTO = true;
-
+            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
             Configuration::UserPreferences::instance->save();
 
             brush->ImageSource = bitmapImage;
+            circle->Fill = brush;
             _selectedAccountAvatar_->ImageSource = bitmapImage;
         }
     });

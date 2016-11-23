@@ -1,7 +1,7 @@
 #include "pch.h"
-
+#include "lodepng.h"
+#include <direct.h>
 #include "Wizard.xaml.h"
-
 #include "MainPage.xaml.h"
 
 using namespace RingClientUWP::Views;
@@ -22,6 +22,8 @@ using namespace Windows::Media::Capture;
 using namespace Windows::Storage;
 using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::UI::Xaml::Shapes;
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::UI::Core;
 
 Wizard::Wizard()
 {
@@ -77,49 +79,39 @@ void
 Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
-    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::JpegXR;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
 
     create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
     .then([this](StorageFile^ photoFile)
     {
         if (photoFile != nullptr) {
-            // maybe it would be possible to move some logics to the style sheet
             auto brush = ref new ImageBrush();
 
             auto circle = ref new Ellipse();
-            circle->Height = 80; // TODO : use some global constant when ready
+            circle->Height = 80;
             circle->Width = 80;
             auto path = photoFile->Path;
             auto uri = ref new Windows::Foundation::Uri(path);
             auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
             bitmapImage->UriSource = uri;
 
-            StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-            String^ profilefolder = ".profile";
-            create_task(localfolder->CreateFolderAsync(profilefolder,
-                        Windows::Storage::CreationCollisionOption::OpenIfExists))
-            .then([=](StorageFolder^ copytofolder) {
-                try {
-                    create_task(photoFile->CopyAsync(copytofolder))
-                    .then([=](StorageFile^ copiedfile) {
-                        copiedfile->RenameAsync("profile_image.png",
-                                                Windows::Storage::NameCollisionOption::ReplaceExisting);
-                    });
-                }
-                catch (Exception^ e) {
-                    RingDebug::instance->print("Exception while saving profile image");
-                }
-            });
+            unsigned char* buffer;
+            size_t buffSize;
+            lodepng_load_file(&buffer, &buffSize, Utils::toString(photoFile->Path).c_str());
+            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
+            _mkdir(profilePath.c_str());
+            lodepng_save_file(buffer, buffSize, (profilePath + "\\profile_image.png").c_str());
 
-            Configuration::UserPreferences::instance->PREF_PROFILE_PHOTO = true;
+            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
+            Configuration::UserPreferences::instance->save();
+            //Configuration::UserPreferences::instance->saveProfileToVCard();
 
             brush->ImageSource = bitmapImage;
             circle->Fill = brush;
             _avatarWebcamCaptureBtn_->Content = circle;
         }
     });
-
 }
 
 void RingClientUWP::Views::Wizard::_addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
