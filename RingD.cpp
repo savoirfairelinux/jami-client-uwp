@@ -210,7 +210,6 @@ RingD::createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname,
     editModeOn_ = true;
 
     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
 
     auto task = ref new RingD::Task(Request::AddSIPAccount);
 
@@ -336,10 +335,9 @@ void RingClientUWP::RingD::updateAccount(String^ accountId)
     editModeOn_ = true;
 
     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
 
     auto task = ref new RingD::Task(Request::UpdateAccount);
-    task->_accountId = accountId;
+    task->_accountId_new = Utils::toString(accountId);
 
     tasksList_.push(task);
 }
@@ -349,7 +347,6 @@ void RingClientUWP::RingD::deleteAccount(String ^ accountId)
     editModeOn_ = true;
 
     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
 
     auto task = ref new RingD::Task(Request::DeleteAccount);
     task->_accountId = accountId;
@@ -500,11 +497,11 @@ RingD::registerCallbacks()
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
                 reloadAccountList();
-                if (editModeOn_) {
+                /*if (editModeOn_) {
                     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                     dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
                     editModeOn_ = false;
-                }
+                }*/
             }));
         }),
         DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
@@ -881,12 +878,18 @@ RingD::dequeueTasks()
         }
         case Request::UpdateAccount:
         {
-            auto accountId = task->_accountId;
-            auto accountId2 = Utils::toString(accountId);
-            auto account = AccountListItemsViewModel::instance->findItem(accountId)->_account;
-            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(accountId2);
+            auto account = AccountListItemsViewModel::instance->findItem(Utils::toPlatformString(task->_accountId_new))->_account;
+            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
             accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
             accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
+
+            if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING")
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+            }));
+
 
             DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
             break;
@@ -895,6 +898,16 @@ RingD::dequeueTasks()
         {
             auto accountId = task->_accountId;
             auto accountId2 = Utils::toString(accountId);
+
+            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
+
+            if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING")
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+            }));
+
 
             DRing::removeAccount(accountId2);
             break;
