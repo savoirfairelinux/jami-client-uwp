@@ -475,13 +475,23 @@
                          Background="#FFE4F1F9"
                          ItemTemplate="{StaticResource AccountListItemsTemplate}"/>
                 </ScrollViewer>
-                <Button x:Name="_addAccountBtn_"
-                        Grid.Row="1"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Content="&#xE948;"
-                        Click="_addAccountBtn__Click"
-                        Style="{StaticResource ButtonStyle6}"/>
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="1">
+                    <!--Style="{StaticResource ButtonStyle6}"-->
+                    <Button x:Name="_addAccountBtn_"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="&#xE948;"
+                            Click="_addAccountBtn__Click"
+                            Style="{StaticResource ButtonStyle5}"/>
+                    <!--Style="{StaticResource ButtonStyle6}"-->
+                    <Button x:Name="_linkThisDeviceBtn_"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="&#xEBD2;"
+                            Click="_linkThisDeviceBtn__Click"
+                            Style="{StaticResource ButtonStyle5}"/>
+                </StackPanel>
             </Grid>
             <!-- account creation menu. -->
             <Grid x:Name="_accountCreationMenuGrid_"
@@ -695,6 +705,92 @@
                     </StackPanel>
                 </Grid>
             </Grid>
+            <!-- add account menu. -->
+            <Grid x:Name="_accountAddMenuGrid_"
+                  Visibility="Collapsed"
+                  Grid.Row="2"
+                  Background="LightBlue">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <StackPanel Orientation="Horizontal"
+                            Background="#FFE4F1F9"
+                            Padding="10"
+                                    Grid.Row="0">
+                    <Button x:Name="_step1button_"
+                            Click="_step1button__Click"
+                            Content="Step 1"/>
+                    <TextBlock Text=">"/>
+                    <Button x:Name="_step2button_"
+                            Click="_step2button__Click"
+                            Content="Step 2"/>
+                </StackPanel>
+                <!-- step 1. -->
+                <StackPanel x:Name="_step1Menu_"
+                                    Background="#FFE4F1F9"
+                                    Padding="10"
+                                    Grid.Row="1">
+                    <TextBlock Text="To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account."
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Justify"/>
+                    <HyperlinkButton Content="Learn more"
+                                                Margin="0,0,0,10"
+                                                NavigateUri="http://ring.cx"/>
+                </StackPanel>
+                <!-- step 2. -->
+                <StackPanel x:Name="_step2Menu_"
+                                    Background="#FFE4F1F9"
+                                    Visibility="Collapsed"
+                                    Grid.Row="1">
+                    <TextBox  x:Name="_PINTextBox_"
+                                    Margin="10"
+                                    GotFocus="_PINTextBox__GotFocus"
+                                    PlaceholderText="Enter PIN"/>
+                    <PasswordBox x:Name="_ArchivePassword_"
+                                    Margin="10"
+                                    PlaceholderText="Enter your password"/>
+                    <TextBlock x:Name="_response_"
+                               Foreground="Red"
+                               HorizontalAlignment="Center"
+                               Text=""/>
+                </StackPanel>
+                <!-- buttons next step and yes/no to add the account. -->
+                <Grid Grid.Row="2">
+                    <StackPanel Orientation="Horizontal"
+                                        Padding="10,0"
+                                        HorizontalAlignment="Center">
+                        <Button x:Name="_nextstep_"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Content="&#xE081;"
+                                        Click="_step2button__Click"
+                                        Style="{StaticResource ButtonStyle2}"/>
+                        <Button x:Name="_addAccountYes_"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Visibility="Collapsed"
+                                        Content="&#xE081;"
+                                        Click="_addAccountYes__Click"
+                                        Style="{StaticResource ButtonStyle5}"/>
+                        <Button x:Name="_addAccountNo_"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Visibility="Collapsed"
+                                        Content="&#xE106;"
+                                        Click="_addAccountNo__Click"
+                                        Style="{StaticResource ButtonStyle5}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <!--<StackPanel Orientation="Horizontal"
+                                Margin="0,20">
+                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                    Margin="0,0,10,0"
+                                    Text="&#xE8EC;"/>
+                <TextBlock Text="Alias"/>
+            </StackPanel>-->
             <!-- account edition menu. -->
             <Grid x:Name="_accountEditionGrid_"
                   Grid.Row="2"
@@ -740,7 +836,7 @@
                                                Style="{StaticResource TextSegoeStyle-20pt-red}"
                                                Text="&#xE10A;"/>
                         </Grid>
-                        <!-- upnp sub menu. -->
+                        <!-- edition sub menu. -->
                         <StackPanel x:Name="_ringStackEdition_">
                             <!-- register account on blockachain -->
                             <StackPanel Orientation="Horizontal"
