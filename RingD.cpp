@@ -88,7 +88,8 @@ RingClientUWP::RingD::reloadAccountList()
                 accountUpdated(account);
             }
             else {
-                RingClientUWP::ViewModel::AccountsViewModel::instance->addRingAccount(alias, ringID, accountId, deviceId, upnpState);
+                if (!ringID.empty())
+                    RingClientUWP::ViewModel::AccountsViewModel::instance->addRingAccount(alias, ringID, accountId, deviceId, upnpState);
             }
         }
         else { /* SIP */
@@ -503,11 +504,22 @@ RingD::registerCallbacks()
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
-                    if (editModeOn_) {
+                    // enleves ce qui suit et utilises des evenements.
+                    registrationStateRegistered();
+                    // mettre a jour le wizard
+                    /*if (editModeOn_) {
                         auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                         dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
                         editModeOn_ = false;
-                    }
+                    }*/
+                }));
+            }
+            else if (state == DRing::Account::States::ERROR_GENERIC) {
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    reloadAccountList();
+                    registrationStateErrorGeneric(account_id);
+                    // ajoute cet event dans le wizard
                 }));
             }
         }),
@@ -893,6 +905,12 @@ RingD::dequeueTasks()
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PIN, pin));
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
             DRing::addAccount(deviceDetails);
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+            }));
         }
         break;
         case Request::GetKnownDevices:

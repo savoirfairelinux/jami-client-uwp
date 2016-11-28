@@ -77,5 +77,7 @@ private:
     void OnpressHangUpCall();
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
     void OncloseMessageTextPage();
+    void OnregistrationStateErrorGeneric(const std::string& accountId);
+    void OnregistrationStateRegistered();
 };
 }

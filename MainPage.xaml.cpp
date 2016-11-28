@@ -84,10 +84,9 @@ MainPage::MainPage()
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
                                       ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
-    /*applicationSuspendingEventToken = Application::Current->Suspending +=
-                                          ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
-    applicationResumingEventToken = Application::Current->Resuming +=
-                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);*/
+    ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+    RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::MainPage::OnregistrationStateErrorGeneric);
+    RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
 }
 
 void
@@ -436,4 +435,16 @@ void RingClientUWP::MainPage::OncloseMessageTextPage()
 {
     auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
     smartPanel->unselectContact();
+}
+
+
+void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string& accountId)
+{
+    showLoadingOverlay(false, false);
+}
+
+
+void RingClientUWP::MainPage::OnregistrationStateRegistered()
+{
+    showLoadingOverlay(false, false);
 }

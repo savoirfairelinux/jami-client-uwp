@@ -69,8 +69,10 @@ SmartPanel::SmartPanel()
             auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
             if (accountsListSize > index)
                 _accountsList_->SelectedIndex = index;
-            else
-                _accountsList_->SelectedIndex = 0;
+            else {
+                if (accountsListSize > 0)
+                    _accountsList_->SelectedIndex = 0;
+            }
         }
     });
     Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
@@ -147,6 +149,8 @@ SmartPanel::SmartPanel()
     RingD::instance->finishCaptureDeviceEnumeration += ref new RingClientUWP::FinishCaptureDeviceEnumeration([this]() {
         populateVideoDeviceSettingsComboBox();
     });
+    RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateErrorGeneric);
+    RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered);
 }
 
 void
@@ -211,6 +215,7 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ se
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountAddMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -733,6 +738,16 @@ void RingClientUWP::Views::SmartPanel::ringTxtBxPlaceHolderDelay(String^ placeHo
     }), delay);
 }
 
+void RingClientUWP::Views::SmartPanel::showLinkThisDeviceStep1()
+{
+    _step1Menu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _step2Menu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    _nextstep_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _addAccountNo_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
 Object ^ RingClientUWP::Views::IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto state = static_cast<CallStatus>(value);
@@ -1211,41 +1226,60 @@ void RingClientUWP::Views::SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::
 
 void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& address, const std::string& name)
 {
-    if (_ringTxtBx_->Text->IsEmpty()) // if true, we consider we did the lookup for a new account
-        switch (status)
-        {
-        case LookupStatus::SUCCESS:
-            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-
-            //_registerOnBlockchainEdition_->IsEnabled = false;
-            break;
-        case LookupStatus::INVALID_NAME:
-            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            //_registerOnBlockchainEdition_->IsEnabled = false;
-            break;
-        case LookupStatus::NOT_FOUND:
-            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            //_registerOnBlockchainEdition_->IsEnabled = true;
-            break;
-        case LookupStatus::ERRORR:
-            _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            //_registerOnBlockchainEdition_->IsEnabled = false;
-            break;
+    if (_ringTxtBx_->Text->IsEmpty()) { // if true, we consider we did the lookup for a new account
+        /* note : this code do both check for edit and creation menu. It doesn't affect the use and it's easier to
+           implement. */
+        auto currentNameEdition = Utils::toString(_usernameTextBoxEdition_->Text);
+        if (currentNameEdition == name) {
+            switch (status)
+            {
+            case LookupStatus::SUCCESS:
+                _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            case LookupStatus::INVALID_NAME:
+                _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            case LookupStatus::NOT_FOUND:
+                _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                break;
+            case LookupStatus::ERRORR:
+                _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            }
+            checkStateEditionMenu();
+            return;
         }
-    else // if false, we consider we are looking for a registered user
-    {
+
+        auto currentNameCreation = Utils::toString(_usernameTextBox_->Text);
+        if (currentNameCreation == name) {
+            switch (status)
+            {
+            case LookupStatus::SUCCESS:
+                _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            case LookupStatus::INVALID_NAME:
+                _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            case LookupStatus::NOT_FOUND:
+                _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                break;
+            case LookupStatus::ERRORR:
+                _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                break;
+            }
+            checkStateAddAccountMenu();
+            return;
+        }
+
+    } else {// if false, we consider we are looking for a registered user
         switch (status) {
         case LookupStatus::SUCCESS:
             ContactsViewModel::instance->addNewContact(Utils::toPlatformString(name), Utils::toPlatformString(address));
@@ -1274,10 +1308,7 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
         }
 
         _smartList_->SelectedItem = nullptr;
-
     }
-
-    checkStateAddAccountMenu();
 }
 
 
@@ -1340,6 +1371,8 @@ void RingClientUWP::Views::SmartPanel::_usernameTextBox__KeyUp(Platform::Object^
 
     _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+
 }
 
 
@@ -1536,4 +1569,69 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
             it->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
     }
 
+}
+
+
+void RingClientUWP::Views::SmartPanel::_linkThisDeviceBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountAddMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+    showLinkThisDeviceStep1();
+}
+
+
+void RingClientUWP::Views::SmartPanel::_step2button__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _step1Menu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _step2Menu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+    _nextstep_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    _addAccountNo_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+    _PINTextBox_->Text = "";
+    _ArchivePassword_->Password = "";
+    _response_->Text = "";
+}
+
+
+void RingClientUWP::Views::SmartPanel::_step1button__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    showLinkThisDeviceStep1();
+}
+
+
+void RingClientUWP::Views::SmartPanel::_addAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _accountsMenuButton_->IsChecked = false;
+    _accountsMenuButton__Unchecked(nullptr, nullptr);
+}
+
+
+void RingClientUWP::Views::SmartPanel::_addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
+        RingD::instance->registerThisDevice(_PINTextBox_->Text, _ArchivePassword_->Password);
+        _ArchivePassword_->Password = "";
+        _PINTextBox_->Text = "";
+    }));
+}
+
+
+void RingClientUWP::Views::SmartPanel::OnregistrationStateErrorGeneric(const std::string& accountId)
+{
+    _response_->Text = "Credentials error or PIN expired.";
+}
+
+
+void RingClientUWP::Views::SmartPanel::_PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _response_->Text = "";
+}
+
+
+void RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered()
+{
+    _addAccountNo__Click(nullptr, nullptr);
 }
