@@ -40,6 +40,8 @@ delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
 delegate void RegisteredNameFound(LookupStatus status, const std::string& address, const std::string& name);
 delegate void FinishCaptureDeviceEnumeration();
+delegate void RegistrationStateErrorGeneric(const std::string& accountId);
+delegate void RegistrationStateRegistered();
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 using namespace std::placeholders;
@@ -134,6 +136,8 @@ internal:
     event IncomingVideoMuted^ incomingVideoMuted;
     event RegisteredNameFound^ registeredNameFound;
     event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
+    event RegistrationStateErrorGeneric^ registrationStateErrorGeneric;
+    event RegistrationStateRegistered^ registrationStateRegistered;
 
 private:
     /* sub classes */
