@@ -38,6 +38,8 @@ private:
     bool isPublic = true;
     bool isUsernameValid; // available
     bool isFullNameValid;
+    void OnregistrationStateErrorGeneric(const std::string &accountId);
+    void _PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 
 }
