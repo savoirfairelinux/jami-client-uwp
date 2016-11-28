@@ -30,6 +30,7 @@ Wizard::Wizard()
     InitializeComponent();
     /* connect to delegates */
     RingD::instance->registeredNameFound += ref new RingClientUWP::RegisteredNameFound(this, &RingClientUWP::Views::Wizard::OnregisteredNameFound);
+    RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::Views::Wizard::OnregistrationStateErrorGeneric);
 }
 
 void RingClientUWP::Views::Wizard::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
@@ -295,3 +296,15 @@ void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, co
     checkState();
 }
 
+
+
+void RingClientUWP::Views::Wizard::OnregistrationStateErrorGeneric(const std::string &accountId)
+{
+    _response_->Text = "Credentials error or PIN expired.";
+}
+
+
+void RingClientUWP::Views::Wizard::_PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _response_->Text = "";
+}

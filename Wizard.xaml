@@ -217,7 +217,7 @@
                                         Click="_step2button__Click"
                                         Content="Step 2"/>
                             </StackPanel>
-                            <!-- add account menu. -->
+                            <!-- step 1. -->
                             <StackPanel x:Name="_step1Menu_"
                                         Background="#FFE4F1F9"
                                         Padding="10"
@@ -229,17 +229,22 @@
                                                  Margin="0,0,0,10"
                                                  NavigateUri="http://ring.cx"/>
                             </StackPanel>
-                            <!-- add account menu. -->
+                            <!-- step 2. -->
                             <StackPanel x:Name="_step2Menu_"
                                         Background="#FFE4F1F9"
                                         Visibility="Collapsed"
                                         Grid.Row="1">
                                 <TextBox  x:Name="_PINTextBox_"
                                       Margin="10"
+                                      GotFocus="_PINTextBox__GotFocus"
                                       PlaceholderText="Enter PIN"/>
                                 <PasswordBox x:Name="_ArchivePassword_"
                                       Margin="10"
                                       PlaceholderText="Enter your password"/>
+                                <TextBlock x:Name="_response_"
+                                           Foreground="Red"
+                                           HorizontalAlignment="Center"
+                                           Text=""/>
                             </StackPanel>
                             <!-- buttons next step and yes/no to add the account. -->
                             <Grid Grid.Row="2">
