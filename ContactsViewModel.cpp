@@ -39,7 +39,7 @@ ContactsViewModel::ContactsViewModel()
     /* connect delegates. */
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ fromRingId, String^ payload) {
-        auto contact = findContactByName(fromRingId);
+        auto contact = findContactByRingId(fromRingId);
 
         if (contact == nullptr)
             contact = addNewContact(fromRingId, fromRingId); // contact checked inside addNewContact.
@@ -80,11 +80,21 @@ ContactsViewModel::findContactByName(String^ name)
     return nullptr;
 }
 
+Contact ^ RingClientUWP::ViewModel::ContactsViewModel::findContactByRingId(String^ ringId)
+{
+    for each (Contact^ contact in contactsList_)
+        if (contact->ringID_ == ringId)
+            return contact;
+
+    return nullptr;
+}
+
 Contact^
 ContactsViewModel::addNewContact(String^ name, String^ ringId)
 {
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
+        //if (contactsList_ && !findContactByName(trimmedName) && !findContactByRingId(ringId)) {
         Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0);
         contactsList_->Append(contact);
         saveContactsToFile();
