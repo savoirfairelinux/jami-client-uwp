@@ -80,7 +80,7 @@ void
 Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::JpegXR;
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Jpeg;
     cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
 
     create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))

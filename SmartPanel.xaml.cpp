@@ -82,7 +82,6 @@ SmartPanel::SmartPanel()
         _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
     ContactsViewModel::instance->contactDataModified += ref new ContactDataModified([this](Contact^ contact){
-        
     });
     AccountsViewModel::instance->updateScrollView += ref new UpdateScrollView([this]() {
         _accountsListScrollView_->UpdateLayout();
@@ -1160,7 +1159,7 @@ void
 RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Jpeg;
     cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
 
     create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
