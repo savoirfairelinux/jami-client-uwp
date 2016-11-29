@@ -88,7 +88,7 @@ SmartPanel::SmartPanel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
         ///auto from = call->from;
-        auto contact = ContactsViewModel::instance->findContactByName(from);
+        auto contact = ContactsViewModel::instance->findContactByRingId(from);
 
         if (contact == nullptr)
             contact = ContactsViewModel::instance->addNewContact(from, from); // contact checked inside addNewContact.
@@ -510,7 +510,21 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     for (auto it : SmartPanelItemsViewModel::instance->itemsList)
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    /// to keep for future use, when we will be able to do several calls.
+    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
+    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+
+    /// for now use this, do not merge with the for loop above, to make easier to remove that part later
+    bool anyCall = false;
+    for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+        if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
+            anyCall = true;
+    }
+
+    if (anyCall == false)
+        item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+
+
 }
 
 
@@ -1199,7 +1213,21 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
     for (auto it : SmartPanelItemsViewModel::instance->itemsList)
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    /// to keep for future use, when we will be able to do several calls.
+    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
+    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+
+    /// for now use this, do not merge with the for loop above, to make easier to remove that part later
+    bool anyCall = false;
+    for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
+        if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
+            anyCall = true;
+    }
+
+    if (anyCall == false)
+        item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+
+
 }
 
 // NAME SERVICE

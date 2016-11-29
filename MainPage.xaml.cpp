@@ -249,6 +249,7 @@ void RingClientUWP::MainPage::OnhidePreviewPage()
 void RingClientUWP::MainPage::OnsummonVideoPage()
 {
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
+    videoPage->chatOpen = false;
     videoPage->updatePageContent();
     showFrame(_videoFrame_);
 }
