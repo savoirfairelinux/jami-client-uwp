@@ -46,6 +46,7 @@ internal:
 
     /* functions */
     Contact^    findContactByName(String^ name);
+    Contact^    findContactByRingId(String^ ringId);
     Contact^    addNewContact(String^ name, String^ ringId);
     void        saveContactsToFile();
     void        openContactsFromFile();
