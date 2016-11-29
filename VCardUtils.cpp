@@ -63,6 +63,12 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
         m_mParts[Property::UID] = _line.substr(4);
 
         while (std::getline(_payload, _line)) {
+            if (_line.find("FN:") != std::string::npos)
+                break;
+        }
+        m_mParts[Property::FN] = _line.substr(3);
+
+        while (std::getline(_payload, _line)) {
             if (_line.find("PHOTO;") != std::string::npos)
                 break;
         }
@@ -76,6 +82,10 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
             m_mParts[Property::PHOTO].append(_line);
             saveToFile();
             decodeBase64ToPNGFile();
+            if (!m_mParts[Property::FN].empty())
+                m_Owner->_displayName = Utils::toPlatformString(m_mParts[Property::FN]);
+            m_Owner->_vcardUID = Utils::toPlatformString(m_mParts[Property::UID]);
+            ViewModel::ContactsViewModel::instance->saveContactsToFile();
             MSG_("VCARD_COMPLETE");
             return VCARD_COMPLETE;
         }
@@ -100,7 +110,7 @@ VCard::send(std::string callID, const char* vCardFile)
     else
         vCard = asString();
     int total = vCard.size() / chunkSize + (vCard.size() % chunkSize ? 1 : 0);
-    std::string idkey = Utils::genID(0LL, 9999999999LL);
+    std::string idkey = Utils::genID(0LL, 99999999LL);
     while ( vCard.size() ) {
         std::map<std::string, std::string> chunk;
         std::stringstream key;
@@ -137,7 +147,7 @@ VCard::asString()
     ret << Property::UID            << Symbols::SEPERATOR2      << m_mParts[Property::UID]
         << Symbols::END_LINE_TOKEN;
 
-    ret << Property::FN             << Symbols::SEPERATOR2      << "Unknown"
+    ret << Property::FN             << Symbols::SEPERATOR2      << m_mParts[Property::FN]
         << Symbols::END_LINE_TOKEN;
 
     ret << Property::PHOTO          << Symbols::SEPERATOR1      << Symbols::PHOTO_ENC
@@ -166,7 +176,8 @@ VCard::decodeBase64ToPNGFile()
             for (auto i : decodedData)
                 file << i;
             file.close();
-            MSG_("Done decodeing and saving VCard Photo to PNG");
+            m_Owner->_avatarImage = Utils::toPlatformString(vcardDir + pngFile);
+            MSG_("Done decoding and saving VCard Photo to PNG");
         }
     }
 }

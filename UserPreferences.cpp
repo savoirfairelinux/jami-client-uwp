@@ -112,6 +112,8 @@ UserPreferences::saveProfileToVCard()
     std::basic_ifstream<uint8_t> stream(imageFile, std::ios::in | std::ios::binary);
     auto eos = std::istreambuf_iterator<uint8_t>();
     auto buffer = std::vector<uint8_t>(std::istreambuf_iterator<uint8_t>(stream), eos);
+    auto accountListItem = ViewModel::AccountListItemsViewModel::instance->_selectedItem;
+    vcfData[VCardUtils::Property::FN] = accountListItem ? Utils::toString(accountListItem->_account->name_) : "Unknown";
     vcfData[VCardUtils::Property::PHOTO] = ring::base64::encode( buffer );
     vCard_->setData(vcfData);
     vCard_->saveToFile();
@@ -122,6 +124,4 @@ UserPreferences::sendVCard(std::string callID)
 {
     vCard_->send(callID,
         (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(PREF_PROFILE_UID) + ".vcard").c_str());
-    /*vCard_->send(callID,
-        (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(4796040057761) + ".vcard").c_str());*/
 }

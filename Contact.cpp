@@ -70,6 +70,9 @@ Contact::Contact(String^ name,
     }
 
     _accountIdAssociated = "";
+    _vcardUID = "";
+    _avatarImage = ref new String(L"ms-appx:///Assets/TESTS/contactAvatar.png");
+    _displayName = "";
 }
 
 void
@@ -89,10 +92,12 @@ Contact::ToJsonObject()
 {
     JsonObject^ contactObject = ref new JsonObject();
     contactObject->SetNamedValue(nameKey, JsonValue::CreateStringValue(name_));
+    contactObject->SetNamedValue(displayNameKey, JsonValue::CreateStringValue(displayName_));
     contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
     contactObject->SetNamedValue(GUIDKey, JsonValue::CreateStringValue(GUID_));
     contactObject->SetNamedValue(unreadMessagesKey, JsonValue::CreateNumberValue(unreadMessages_));
     contactObject->SetNamedValue(accountIdAssociatedKey, JsonValue::CreateStringValue(_accountIdAssociated));
+    contactObject->SetNamedValue(vcardUIDKey, JsonValue::CreateStringValue(_vcardUID));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);

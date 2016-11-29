@@ -140,7 +140,7 @@
                         <ColumnDefinition Width="*"
                                           MinWidth="200"/>
                     </Grid.ColumnDefinitions>
-                    <Image x:Name="_contactAvatar_"
+                    <Image x:Name="_XcontactAvatar_"
                            VerticalAlignment="Center"
                            HorizontalAlignment="Center"
                            Grid.Column="0"
@@ -252,13 +252,17 @@
                             <ColumnDefinition Width="*"
                                               MinWidth="200"/>
                         </Grid.ColumnDefinitions>
-                        <Image x:Name="_contactAvatar_"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               Grid.Column="0"
-                               Width="55"
-                               Height="55"
-                               Source="Assets\TESTS\contactAvatar.png"/>
+                        <Ellipse    Height="50"
+                                    Width="50"
+                                    Grid.Column="0"
+                                    VerticalAlignment="Center"
+                                    HorizontalAlignment="Center"
+                                    Margin="5">
+                            <Ellipse.Fill>
+                                <ImageBrush  x:Name="_contactAvatar_"
+                                        ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
                         <!-- visual notifications. -->
                         <Border x:Name="_visualNotificationVideoChat_"
                             Visibility="Collapsed"

@@ -81,6 +81,9 @@ SmartPanel::SmartPanel()
         auto uri = ref new Windows::Foundation::Uri(image_path);
         _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
+    ContactsViewModel::instance->contactDataModified += ref new ContactDataModified([this](Contact^ contact){
+        
+    });
     AccountsViewModel::instance->updateScrollView += ref new UpdateScrollView([this]() {
         _accountsListScrollView_->UpdateLayout();
         _accountsListScrollView_->ScrollToVerticalOffset(_accountsListScrollView_->ScrollableHeight);
