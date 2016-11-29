@@ -27,12 +27,14 @@ using namespace Windows::UI::Xaml::Data;
 
 /* strings required by Windows::Data::Json. Defined here on puprose */
 String^ nameKey = "name";
+String^ displayNameKey = "displayname";
 String^ ringIDKey = "ringid";
 String^ GUIDKey = "id";
 String^ unreadMessagesKey = "unreadmessages";
 String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
 String^ accountIdAssociatedKey = "accountIdAssociated";
+String^ vcardUIDKey = "vcardUID";
 
 namespace RingClientUWP
 {
@@ -81,6 +83,18 @@ public:
             NotifyPropertyChanged("_unreadMessages");
         }
     }
+    property String^ _avatarImage
+    {
+        String^ get()
+        {
+            return avatarImage_;
+        }
+        void set(String^ value)
+        {
+            avatarImage_ = value;
+            NotifyPropertyChanged("_avatarImage");
+        }
+    }
     property Windows::UI::Xaml::GridLength _contactBarHeight
     {
         Windows::UI::Xaml::GridLength get()
@@ -94,6 +108,19 @@ public:
         }
     }
     property String^ _accountIdAssociated;
+    property String^ _vcardUID;
+    property String^ _displayName
+    {
+        String^ get()
+        {
+            return displayName_;
+        }
+        void set(String^ value)
+        {
+            displayName_ = value;
+            NotifyPropertyChanged("_displayName");
+        }
+    }
 
     VCardUtils::VCard^ getVCard();
 
@@ -112,6 +139,8 @@ private:
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;
+    String^ avatarImage_;
+    String^ displayName_;
     Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
 };
 }

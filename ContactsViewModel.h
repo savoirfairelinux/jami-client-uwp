@@ -28,6 +28,7 @@ namespace RingClientUWP
 /* delegates */
 delegate void ContactAdded(Contact^);
 delegate void ContactDeleted(Contact^);
+delegate void ContactDataModified(Contact^);
 
 namespace ViewModel {
 public ref class ContactsViewModel sealed
@@ -51,6 +52,7 @@ internal:
     String^     Stringify();
     void        Destringify(String^ data);
     void        deleteContact(Contact^ contact);
+    void        modifyContact(Contact^ contact);
 
     /* properties */
     property Vector<Contact^>^ contactsList
@@ -64,6 +66,7 @@ internal:
     /* events */
     event ContactAdded^ contactAdded;
     event ContactDeleted^ contactDeleted;
+    event ContactDataModified^ contactDataModified;
 
 private:
     ContactsViewModel(); // singleton
