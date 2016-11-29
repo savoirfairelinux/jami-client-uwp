@@ -34,7 +34,7 @@ namespace RingClientUWP
 /* delegate */
 delegate void PressHangUpCall();
 delegate void PauseCall();
-delegate void ChatPanelCall();
+delegate void ChatPanelCall(); // nobody use this ?
 delegate void AddContactCall();
 delegate void TransferCall();
 delegate void SwitchMicrophoneStateCall();
@@ -63,7 +63,7 @@ public:
         }
     }
 
-    property bool chatOpen
+    property bool chatOpen // use this with a converter to set the height to 200px for the chatpanel...
     {
         bool get()
         {
