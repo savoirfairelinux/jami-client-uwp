@@ -101,7 +101,7 @@ void
 VCard::send(std::string callID, const char* vCardFile)
 {
     int i = 0;
-    const int chunkSize = 4096;
+    const int chunkSize = 1024;
     std::string vCard;
     if (vCardFile) {
         std::ifstream file(vCardFile);
