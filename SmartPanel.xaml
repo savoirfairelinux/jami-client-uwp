@@ -230,8 +230,6 @@
                     <RowDefinition Height="auto"/>
                     <!-- row definition for the incoming call bar. -->
                     <RowDefinition Height="auto"/>
-                    <!-- row definition for the outgoing call bar. -->
-                    <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <!--helper to detect mouse overing-->
                 <Rectangle Fill="Transparent" Grid.Row="0"/>

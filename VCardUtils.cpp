@@ -68,12 +68,18 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
         }
         m_mParts[Property::FN] = _line.substr(3);
 
+        bool hasPhoto = false;
         while (std::getline(_payload, _line)) {
-            if (_line.find("PHOTO;") != std::string::npos)
+            if (_line.find("PHOTO;") != std::string::npos) {
+                hasPhoto = true;
                 break;
+            }
         }
-        // because android client builds vcard differently (TYPE=PNG: vs PNG:)
-        m_mParts[Property::PHOTO].append(_line.substr(_line.find("PNG:") + 4));
+
+        if (hasPhoto) {
+            // because android client builds vcard differently (TYPE=PNG: vs PNG:)
+            m_mParts[Property::PHOTO].append(_line.substr(_line.find("PNG:") + 4));
+        }
         return VCARD_INCOMPLETE;
     }
     else {
@@ -101,7 +107,7 @@ void
 VCard::send(std::string callID, const char* vCardFile)
 {
     int i = 0;
-    const int chunkSize = 4096;
+    const int chunkSize = 1024;
     std::string vCard;
     if (vCardFile) {
         std::ifstream file(vCardFile);
