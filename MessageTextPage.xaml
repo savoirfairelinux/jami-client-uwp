@@ -135,13 +135,13 @@
 
     <Grid Background="#FFF2F2F2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="90" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0"
                     Background="White"
-                    Height="70"
+                    Height="90"
                     Orientation="Horizontal"
                     Padding="10,10">
             <Image Source="ms-appx:///contact-avatar-test.png" />

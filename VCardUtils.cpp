@@ -100,7 +100,7 @@ VCard::send(std::string callID, const char* vCardFile)
     else
         vCard = asString();
     int total = vCard.size() / chunkSize + (vCard.size() % chunkSize ? 1 : 0);
-    std::string idkey = Utils::genID(0LL, 9999999999LL);
+    std::string idkey = Utils::genID(0LL, 99999999LL);
     while ( vCard.size() ) {
         std::map<std::string, std::string> chunk;
         std::stringstream key;

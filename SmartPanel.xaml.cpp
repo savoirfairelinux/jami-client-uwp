@@ -88,7 +88,7 @@ SmartPanel::SmartPanel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
         ///auto from = call->from;
-        auto contact = ContactsViewModel::instance->findContactByName(from);
+        auto contact = ContactsViewModel::instance->findContactByRingId(from);
 
         if (contact == nullptr)
             contact = ContactsViewModel::instance->addNewContact(from, from); // contact checked inside addNewContact.
@@ -510,7 +510,12 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     for (auto it : SmartPanelItemsViewModel::instance->itemsList)
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    /// to keep for future use, when we will be able to do several calls.
+    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
+    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+
+    /// for now use this :
+    /// ici inplementer la solution de sorte que tous les bouttons de call soient non vivisibles quand un call est en cours
 }
 
 
@@ -1199,7 +1204,9 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
     for (auto it : SmartPanelItemsViewModel::instance->itemsList)
         it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
 
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    /// to keep for future use, when we will be able to do several calls.
+    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
+    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 }
 
 // NAME SERVICE

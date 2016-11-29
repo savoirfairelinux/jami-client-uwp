@@ -44,7 +44,7 @@ struct Symbols {
     constexpr static const char* SEPERATOR1             =   ";";
     constexpr static const char* SEPERATOR2             =   ":";
     constexpr static const char* PHOTO_ENC              =   "ENDCODING=BASE64";
-    constexpr static const char* PHOTO_TYPE             =   "TYPE=JPEG";
+    constexpr static const char* PHOTO_TYPE             =   "TYPE=PNG";
 };
 
 struct Property {

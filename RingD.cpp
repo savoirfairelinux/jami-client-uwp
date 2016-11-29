@@ -401,9 +401,12 @@ RingD::registerCallbacks()
                 incomingCall(accountId2, callId2, from2);
                 stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
 
-                auto contact = ContactsViewModel::instance->findContactByName(from2);
-                auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                item->_callId = callId2;
+                auto contact = ContactsViewModel::instance->findContactByRingId(from2);
+                if (contact) {
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    if (item)
+                        item->_callId = callId2;
+                }
             }));
         }),
         DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
@@ -422,7 +425,7 @@ RingD::registerCallbacks()
             auto state3 = translateCallStatus(state2);
 
             if (state3 == CallStatus::OUTGOING_RINGING ||
-                state3 == CallStatus::INCOMING_RINGING) {
+                    state3 == CallStatus::INCOMING_RINGING) {
                 try {
                     Configuration::UserPreferences::instance->sendVCard(callId);
                 }
@@ -491,7 +494,6 @@ RingD::registerCallbacks()
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
                 {
                     incomingMessage(callId2, payload);
-                    MSG_("message recu :" + i.second);
                 }));
             }
         }),
