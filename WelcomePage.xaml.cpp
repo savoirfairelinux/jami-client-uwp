@@ -44,5 +44,5 @@ WelcomePage::PositionImage()
 void
 WelcomePage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
-    PositionImage();
+    //PositionImage();
 }
