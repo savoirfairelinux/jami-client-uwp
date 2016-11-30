@@ -28,8 +28,8 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
-            <RowDefinition Height="1.5*"/>
             <RowDefinition Height="2*"/>
+            <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
         <StackPanel x:Name="_welcomePage_" Grid.Row="1">
             <!--<TextBlock x:Uid="_welcomeMsg"
@@ -42,9 +42,10 @@
                    Source="Assets\Wide310x150Logo.scale-200.png"
                    Width="310"
                    HorizontalAlignment="Center"
+                   Margin="0 10 0 30"
                    Height="150"/>
             <TextBlock Text="Ring is free software for universal communication wich respects the freedoms and privacy of its users."
-                       Foreground="DarkGray"
+                       Foreground="#707370"
                        MaxWidth="410"
                        TextWrapping="WrapWholeWords"
                        TextAlignment="Justify"
