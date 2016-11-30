@@ -1,6 +1,7 @@
 ﻿/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -48,6 +49,7 @@ using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::System;
 using namespace Concurrency;
+using namespace Windows::System::Threading;
 
 MainPage::MainPage()
 {
@@ -77,14 +79,17 @@ MainPage::MainPage()
     auto messageTextFrame = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
     messageTextFrame->closeMessageTextPage += ref new RingClientUWP::CloseMessageTextPage(this, &RingClientUWP::MainPage::OncloseMessageTextPage);
 
-
-    DisplayInformation^ displayInformation = DisplayInformation::GetForCurrentView();
-    dpiChangedtoken = (displayInformation->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
+    dpiChangedtoken = (DisplayInformation::GetForCurrentView()->DpiChanged += ref new TypedEventHandler<DisplayInformation^,
                        Platform::Object^>(this, &MainPage::DisplayProperties_DpiChanged));
 
     visibilityChangedEventToken = Window::Current->VisibilityChanged +=
                                       ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
-    ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+
+    applicationSuspendingEventToken = Application::Current->Suspending +=
+        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+    applicationResumingEventToken = Application::Current->Resuming +=
+        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::MainPage::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
 }
@@ -150,7 +155,17 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
             _loadingOverlayRect_->Fill = whiteBrush;
             _loadingOverlayRect_->Opacity = 1.0;
         }
-        OnResize(nullptr, nullptr);
+        TimeSpan delay;
+        delay.Duration = 500000;
+        ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
+                                      ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
+        {
+            Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                             ref new DispatchedHandler([this]()
+            {
+                OnResize(nullptr, nullptr);
+            }));
+        }), delay);
     }
     else if (!load) {
         isLoading = false;
@@ -167,10 +182,7 @@ RingClientUWP::MainPage::PositionImage()
     auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
     Windows::Foundation::Uri^ uri;
 
-    if (bounds.Width < 1200)
-        uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/logo-ring.scale-200.png");
-    else
-        uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/logo-ring.scale-150.png");
+    uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/SplashScreen.scale-200.png");
 
     bitmapImage->UriSource = uri;
     img->Source = bitmapImage;
@@ -185,27 +197,26 @@ RingClientUWP::MainPage::PositionRing()
 {
     double left;
     double top;
-    if (bounds.Width < 1200) {
-        _splashProgressRing_->Width = 280;
-        _splashProgressRing_->Height = 280;
-        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 300;
-        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 100;
-    }
-    else {
-        _splashProgressRing_->Width = 384;
-        _splashProgressRing_->Height = 384;
-        left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 - 400;
-        top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 - 135;
-    }
-    _splashProgressRing_->SetValue(Canvas::LeftProperty, left + _loadingImage_->Width * 0.5);
-    _splashProgressRing_->SetValue(Canvas::TopProperty, top + _loadingImage_->Height * 0.5);
+
+    _splashProgressRing_->Width = 144;
+    _splashProgressRing_->Height = 144;
+
+    left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 + 139;
+    top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 + 78;
+
+    _splashProgressRing_->SetValue(Canvas::LeftProperty, left);
+    _splashProgressRing_->SetValue(Canvas::TopProperty, top);
 }
 
 void
 RingClientUWP::MainPage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
-    PositionImage();
-    PositionRing();
+    Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                         ref new DispatchedHandler([this]()
+    {
+        PositionImage();
+        PositionRing();
+    }));
 }
 
 void
@@ -282,7 +293,11 @@ void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
     MSG_("Application_Suspending");
-    if (Frame->CurrentSourcePageType.Name ==
+    auto deferral = e->SuspendingOperation->GetDeferral();
+    MSG_("Hang up calls...");
+    RingD::instance->deinit();
+    deferral->Complete();
+    /*if (Frame->CurrentSourcePageType.Name ==
             Interop::TypeName(MainPage::typeid).Name) {
         auto deferral = e->SuspendingOperation->GetDeferral();
         BeginExtendedExecution()
@@ -305,7 +320,7 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
                 deferral->Complete();
             }
         });
-    }
+    }*/
 }
 
 void
