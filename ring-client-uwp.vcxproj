@@ -179,7 +179,6 @@
     <ClInclude Include="LoadingPage.xaml.h">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="lodepng.h" />
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
@@ -293,7 +292,6 @@
     <Image Include="Assets\TESTS\logo-ring.scale-150.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-200.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-400.png" />
-    <Image Include="Assets\TESTS\logo-ring.square-100.png" />
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
@@ -311,7 +309,6 @@
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClCompile>
-    <ClCompile Include="lodepng.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>

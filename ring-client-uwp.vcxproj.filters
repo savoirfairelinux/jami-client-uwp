@@ -77,9 +77,6 @@
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="lodepng.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -153,9 +150,6 @@
     <ClInclude Include="VCardUtils.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="lodepng.h">
-      <Filter>Common</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
@@ -183,9 +177,6 @@
       <Filter>Assets\TESTS</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-400.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
-    <Image Include="Assets\TESTS\logo-ring.square-100.png">
       <Filter>Assets\TESTS</Filter>
     </Image>
     <Image Include="Assets\LockScreenLogo.scale-200.png">

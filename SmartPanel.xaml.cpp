@@ -21,7 +21,6 @@
 #include <direct.h>
 #include "SmartPanel.xaml.h"
 #include "qrencode.h"
-#include "lodepng.h"
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace Platform;
@@ -1176,12 +1175,15 @@ RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleas
             auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
             bitmapImage->UriSource = uri;
 
-            unsigned char* buffer;
-            size_t buffSize;
-            lodepng_load_file(&buffer, &buffSize, Utils::toString(photoFile->Path).c_str());
+            std::string fileBuffer = Utils::getStringFromFile(Utils::toString(photoFile->Path));
             std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
             _mkdir(profilePath.c_str());
-            lodepng_save_file(buffer, buffSize, (profilePath + "\\profile_image.png").c_str());
+            std::ofstream file((profilePath + "\\profile_image.png"),
+                std::ios::out | std::ios::trunc | std::ios::binary);
+            if (file.is_open()) {
+                file << fileBuffer;
+                file.close();
+            }
 
             Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
             Configuration::UserPreferences::instance->save();
