@@ -1585,20 +1585,20 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
     if (e->Key == Windows::System::VirtualKey::Enter ) {
         RingD::instance->lookUpName(_ringTxtBx_->Text);
 
-        for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
-            it->_showMe = Windows::UI::Xaml::Visibility::Visible;
+        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
         }
         return;
     }
 
-    for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
-        auto str1 = Utils::toString(it->_contact->name_);
+    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+        auto str1 = Utils::toString(item->_contact->name_);
         auto str2 = Utils::toString(_ringTxtBx_->Text);
 
         if (str1.find(str2) != std::string::npos)
-            it->_showMe = Windows::UI::Xaml::Visibility::Visible;
+            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
         else
-            it->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
     }
 
 }
