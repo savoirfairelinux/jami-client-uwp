@@ -174,9 +174,9 @@
                     <Image Name="IncomingVideoImage"
                            Grid.Column="0"
                            Canvas.ZIndex="-1"/>
-                    <TextBlock Name="_MutedVideoIcon_"
+                    <TextBlock Name="_callPaused_"
                                Grid.Column="0"
-                               Text="&#xE767;"
+                               Text="&#xE769;"
                                Foreground="White"
                                FontSize="200"
                                VerticalAlignment="Center"
@@ -299,7 +299,7 @@
                         <Button x:Name="_btnPause_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnPause__Tapped" Visibility="Collapsed">
+                            Tapped="_btnPause__Tapped">
                             <SymbolIcon Symbol="Pause"/>
                         </Button>
                         <Button x:Name="_btnChat_"

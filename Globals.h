@@ -8,6 +8,7 @@ public enum class CallStatus {
     SEARCHING,
     IN_PROGRESS,
     PAUSED,
+    PEER_PAUSED,
     ENDED,
     TERMINATING
 };

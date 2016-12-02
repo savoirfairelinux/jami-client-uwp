@@ -122,13 +122,34 @@ VideoPage::VideoPage()
     RingD::instance->stateChange +=
         ref new StateChange([&](String^ callId, CallStatus state, int code)
     {
-        if (state == CallStatus::ENDED) {
+        switch (state) {
+        case CallStatus::IN_PROGRESS:
+        {
+            for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+                if (it->_callStatus != CallStatus::IN_PROGRESS && it->_callId != callId)
+                    RingD::instance->pauseCall(Utils::toString(it->_callId));
+
+            _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+//            PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            break;
+        }
+        case CallStatus::ENDED:
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
+            break;
+        case CallStatus::PEER_PAUSED:
+        case CallStatus::PAUSED:
+            _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+//            PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            break;
         }
     });
 
     RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::VideoPage::OnincomingMessage);
     RingD::instance->incomingVideoMuted += ref new RingClientUWP::IncomingVideoMuted(this, &RingClientUWP::Views::VideoPage::OnincomingVideoMuted);
+    VideoManager::instance->captureManager()->startPreviewing += ref new RingClientUWP::StartPreviewing(this, &RingClientUWP::Views::VideoPage::OnstartPreviewing);
+    VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
 }
 
 void
@@ -157,6 +178,22 @@ void RingClientUWP::Views::VideoPage::scrollDown()
 {
     _scrollView_->UpdateLayout();
     _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
+}
+
+void RingClientUWP::Views::VideoPage::screenVideo(bool state)
+{
+    if (state) {
+        Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
+        _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    } else {
+        _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    }
+
+
 }
 
 void
@@ -212,11 +249,11 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
 
 void RingClientUWP::Views::VideoPage::_btnPause__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    /*auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     if (item->_callStatus == CallStatus::IN_PROGRESS)
-        RingD::instance->pauseCall(item->_callId);
+        RingD::instance->pauseCall(Utils::toString(item->_callId));
     else if (item->_callStatus == CallStatus::PAUSED)
-        RingD::instance->unPauseCall(item->_callId);*/
+        RingD::instance->unPauseCall(Utils::toString(item->_callId));
 
     pauseCall();
 }
@@ -373,11 +410,23 @@ void RingClientUWP::Views::VideoPage::_btnVideo__Click(Platform::Object^ sender,
 
 void RingClientUWP::Views::VideoPage::OnincomingVideoMuted(Platform::String ^callId, bool state)
 {
-    /*_MutedVideoIcon_->Visibility = (state)
+    /*_callPaused_->Visibility = (state)
                                    ? Windows::UI::Xaml::Visibility::Visible
                                    : Windows::UI::Xaml::Visibility::Collapsed;*/
 
     IncomingVideoImage->Visibility = (state)
                                      ? Windows::UI::Xaml::Visibility::Collapsed
                                      : Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::VideoPage::OnstartPreviewing()
+{
+    PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+}
+
+
+void RingClientUWP::Views::VideoPage::OnstopPreviewing()
+{
+    PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
