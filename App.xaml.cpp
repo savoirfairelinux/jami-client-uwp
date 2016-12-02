@@ -54,19 +54,27 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
             rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
 
         Window::Current->Content = rootFrame;
-        Window::Current->Activate();
-    } else
+    }
+    else {
         rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
+        Window::Current->Content = rootFrame;
+    }
 
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = Colors::LightBlue;
-    ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = Colors::LightBlue;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = Colors::LightBlue;
-    ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = Colors::LightBlue;
+    ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
+    Window::Current->Activate();
+
+    auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
+
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;
+    ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = color;
+    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = color;
+    ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = color;
     ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
     ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }
 
 void App::OnsummonWizard()
 {
+    ApplicationView::GetForCurrentView()->TryResizeView(Size(400, 600));
     rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::Wizard::typeid));
 }
