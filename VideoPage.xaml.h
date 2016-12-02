@@ -76,6 +76,7 @@ public:
     }
 
     void scrollDown();
+    void screenVideo(bool state);
 
 protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
@@ -119,6 +120,8 @@ private:
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
     void _btnVideo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnincomingVideoMuted(Platform::String ^callId, bool state);
+    void OnstartPreviewing();
+    void OnstopPreviewing();
 };
 }
 }

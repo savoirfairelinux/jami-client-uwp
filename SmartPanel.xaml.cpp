@@ -80,7 +80,7 @@ SmartPanel::SmartPanel()
         auto uri = ref new Windows::Foundation::Uri(image_path);
         _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
-    ContactsViewModel::instance->contactDataModified += ref new ContactDataModified([this](Contact^ contact){
+    ContactsViewModel::instance->contactDataModified += ref new ContactDataModified([this](Contact^ contact) {
     });
     AccountsViewModel::instance->updateScrollView += ref new UpdateScrollView([this]() {
         _accountsListScrollView_->UpdateLayout();
@@ -129,6 +129,13 @@ SmartPanel::SmartPanel()
             summonVideoPage();
             break;
         }
+        case CallStatus::PEER_PAUSED:
+        case CallStatus::PAUSED:
+        {
+            _smartList_->SelectedItem = item;
+            summonVideoPage();
+            break;
+        }
         default:
             break;
         }
@@ -152,6 +159,7 @@ SmartPanel::SmartPanel()
     });
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered);
+    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Views::SmartPanel::OncallPlaced);
 }
 
 void
@@ -389,7 +397,9 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
 
     auto contact = item->_contact;
 
-    if (item->_callStatus == CallStatus::IN_PROGRESS) {
+    if (item->_callStatus == CallStatus::IN_PROGRESS
+            || item->_callStatus == CallStatus::PAUSED
+            || item->_callStatus == CallStatus::PEER_PAUSED) {
         if (contact) {
             contact->_unreadMessages = 0;
             ContactsViewModel::instance->saveContactsToFile();
@@ -480,6 +490,11 @@ RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object
         auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
         if (item) {
             auto callId = item->_callId;
+
+            for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+                if (it->_callStatus != CallStatus::IN_PROGRESS)
+                    RingD::instance->pauseCall(Utils::toString(it->_callId));
+
             RingD::instance->acceptIncommingCall(callId);
         }
     }
@@ -497,7 +512,13 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
         if (item) {
             auto contact = item->_contact;
             if (contact)
+            {
+                for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+                    if (it->_callStatus == CallStatus::IN_PROGRESS)
+                        RingD::instance->pauseCall(Utils::toString(it->_callId));
+
                 RingD::instance->placeCall(contact);
+            }
         }
     }
 }
@@ -528,14 +549,14 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 
     /// for now use this, do not merge with the for loop above, to make easier to remove that part later
-    bool anyCall = false;
+    /*bool anyCall = false;
     for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
         if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
             anyCall = true;
     }
 
-    if (anyCall == false)
-        item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    if (anyCall == false)*/
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 
 
 }
@@ -1194,7 +1215,7 @@ RingClientUWP::Views::SmartPanel::_selectedAccountAvatarContainer__PointerReleas
             std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
             _mkdir(profilePath.c_str());
             std::ofstream file((profilePath + "\\profile_image.png"),
-                std::ios::out | std::ios::trunc | std::ios::binary);
+                               std::ios::out | std::ios::trunc | std::ios::binary);
             if (file.is_open()) {
                 file << fileBuffer;
                 file.close();
@@ -1237,14 +1258,14 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
     ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 
     /// for now use this, do not merge with the for loop above, to make easier to remove that part later
-    bool anyCall = false;
+    /*bool anyCall = false;
     for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
         if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
             anyCall = true;
     }
 
-    if (anyCall == false)
-        item->_hovered = Windows::UI::Xaml::Visibility::Visible;
+    if (anyCall == false)*/
+    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
 
 
 }
@@ -1681,4 +1702,9 @@ void RingClientUWP::Views::SmartPanel::_PINTextBox__GotFocus(Platform::Object^ s
 void RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered()
 {
     _addAccountNo__Click(nullptr, nullptr);
+}
+
+void RingClientUWP::Views::SmartPanel::OncallPlaced(Platform::String ^callId)
+{
+    _smartList_->SelectedItem = nullptr;
 }

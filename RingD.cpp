@@ -246,39 +246,31 @@ void RingClientUWP::RingD::acceptIncommingCall(String^ callId)
 void RingClientUWP::RingD::placeCall(Contact^ contact)
 {
     MSG_("!--->> placeCall");
-    auto to = contact->ringID_;
-    String^ accountId;
 
     if (contact->_accountIdAssociated->IsEmpty()) {
-        accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
         MSG_("adding account id to contact");
-        contact->_accountIdAssociated = accountId;
-    }
-    else {
-        accountId = contact->_accountIdAssociated;
+        contact->_accountIdAssociated = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
     }
 
-    auto to2 = Utils::toString(to);
-    auto accountId2 = Utils::toString(accountId);
+    auto task = ref new RingD::Task(Request::PlaceCall);
+    task->_accountId_new = Utils::toString(contact->_accountIdAssociated);
+    task->_ringId_new = Utils::toString(contact->ringID_);
+    tasksList_.push(task);
 
-    auto callId2 = DRing::placeCall(accountId2, to2);
+}
 
-    if (callId2.empty()) {
-        WNG_("call not created, the daemon didn't return a call Id");
-        return;
-    }
+void RingClientUWP::RingD::pauseCall(const std::string & callId)
+{
+    auto task = ref new RingD::Task(Request::PauseCall);
+    task->_callid_new = callId;
+    tasksList_.push(task);
+}
 
-    auto callId = Utils::toPlatformString(callId2);
-
-    _callIdsList->Append(callId);
-
-    //auto con = ContactsViewModel::instance->findContactByName(to);
-    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-    item->_callId = callId;
-    MSG_("$1 place call with id : " + Utils::toString(item->_callId));
-
-    callPlaced(callId);
-
+void RingClientUWP::RingD::unPauseCall(const std::string & callId)
+{
+    auto task = ref new RingD::Task(Request::UnPauseCall);
+    task->_callid_new = callId;
+    tasksList_.push(task);
 }
 
 void RingClientUWP::RingD::cancelOutGoingCall2(String ^ callId)
@@ -294,13 +286,13 @@ void RingClientUWP::RingD::hangUpCall2(String ^ callId)
     tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
 }
 
-void RingClientUWP::RingD::pauseCall(String ^ callId)
+void RingClientUWP::RingD::pauseCall(String ^ callId) // do not use it, rm during refacto
 {
     MSG_("$1 pauseCall : " + Utils::toString(callId));
     tasksList_.push(ref new RingD::Task(Request::PauseCall, callId));
 }
 
-void RingClientUWP::RingD::unPauseCall(String ^ callId)
+void RingClientUWP::RingD::unPauseCall(String ^ callId) // do not use it, rm during refacto
 {
     MSG_("$1 unPauseCall : " + Utils::toString(callId));
     tasksList_.push(ref new RingD::Task(Request::UnPauseCall, callId));
@@ -407,6 +399,24 @@ RingD::registerCallbacks()
                     if (item)
                         item->_callId = callId2;
                 }
+            }));
+        }),
+        DRing::exportable_callback<DRing::CallSignal::PeerHold>([this](
+                    const std::string& callId,
+                    bool state)
+        {
+            // why this cllaback exist ? why are we not using stateChange ?
+            MSG_("<PeerHold>");
+            MSG_("callId = " + callId);
+            MSG_("state = " + Utils::toString(state.ToString()));
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+            {
+                if (state)
+                    stateChange(Utils::toPlatformString(callId), CallStatus::PEER_PAUSED, 0);
+                else
+                    stateChange(Utils::toPlatformString(callId), CallStatus::IN_PROGRESS, 0);
             }));
         }),
         DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
@@ -829,6 +839,21 @@ RingD::dequeueTasks()
         switch (request) {
         case Request::None:
             break;
+        case Request::PlaceCall:
+        {
+            auto callId = DRing::placeCall(task->_accountId_new, task->_ringId_new);
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+
+                auto contact = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
+                auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                item->_callId = Utils::toPlatformString(callId);
+                //MSG_("$1 place call with id : " + Utils::toString(item->_callId));
+
+                callPlaced(Utils::toPlatformString(callId));
+
+            }));
+        }
         case Request::AddRingAccount:
         {
             std::map<std::string, std::string> ringAccountDetails;
@@ -887,12 +912,12 @@ RingD::dequeueTasks()
         break;
         case Request::PauseCall:
         {
-            DRing::hold(Utils::toString(task->_callId));
+            DRing::hold(task->_callid_new);
         }
         break;
         case Request::UnPauseCall:
         {
-            DRing::unhold(Utils::toString(task->_callId));
+            DRing::unhold(task->_callid_new);
         }
         break;
         case Request::RegisterDevice:
@@ -1160,6 +1185,12 @@ RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ stat
 
     if (state == "CONNECTING")
         return CallStatus::SEARCHING;
+
+    if (state == "HOLD")
+        return CallStatus::PAUSED;
+
+    if (state == "PEER_PAUSED")
+        return CallStatus::PEER_PAUSED;
 
 
     return CallStatus::NONE;

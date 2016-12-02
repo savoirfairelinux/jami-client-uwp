@@ -80,5 +80,6 @@ private:
     void OncloseMessageTextPage();
     void OnregistrationStateErrorGeneric(const std::string& accountId);
     void OnregistrationStateRegistered();
+    void OncallPlaced(Platform::String ^callId);
 };
 }
