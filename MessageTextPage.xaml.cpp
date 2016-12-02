@@ -65,18 +65,17 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
 
-
-
     if (!contact) /* should never happen */
         return;
-
 
     /* show the name of contact on the page */
     _title_->Text = contact->name_;
 
     String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
-    auto uri = ref new Windows::Foundation::Uri(image_path);
-    _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
+    if (Utils::fileExists(Utils::toString(image_path))) {
+        auto uri = ref new Windows::Foundation::Uri(image_path);
+        _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
+    }
 
     /* show messages */
     _messagesList_->ItemsSource = contact->_conversation->_messages;
@@ -92,7 +91,6 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
             found = list->IndexOf(item, &index);
             break;
         }
-
 
     if (found)
         _associableAccountsList_->SelectedIndex = index;

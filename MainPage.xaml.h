@@ -57,12 +57,6 @@ private:
     void Application_Resuming(Object^ sender, Object^ args);
     EventRegistrationToken applicationResumingEventToken;
 
-    ExtendedExecutionSession^ session;
-    void SessionRevoked(Object^ sender, ExtendedExecutionRevokedEventArgs^ args);
-    EventRegistrationToken sessionRevokedToken;
-    task<void> BeginExtendedExecution();
-    void ClearExtendedExecution();
-
     // Multi-monitor, DPI, scale factor change, and window resize detection
     void DisplayProperties_DpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
     EventRegistrationToken dpiChangedtoken;

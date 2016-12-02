@@ -99,6 +99,7 @@ internal:
 
 private:
     /* functions */
+    void _smartGridButton__Clicked(Object^ sender, RoutedEventArgs^ e);
     void _accountsMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _accountsMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _settingsMenu__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

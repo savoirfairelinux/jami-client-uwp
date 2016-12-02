@@ -295,7 +295,6 @@
                     <ColumnDefinition x:Name="_selectedAccountAvatarColumn_"
                                       Width="90"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="50"/>
                 </Grid.ColumnDefinitions>
                 <Ellipse
                     x:Name="_selectedAccountAvatarContainer_"
@@ -341,6 +340,11 @@
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">
                         <!--Content="&#xE0A1;-->
+                        <Button x:Name="_smartGridButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="&#xe716;"
+                                      Click="_smartGridButton__Clicked"
+                                      Style="{StaticResource smartGridButtonStyle}"/>
                         <ToggleButton x:Name="_accountsMenuButton_"
                                       VerticalAlignment="Bottom"
                                       Content="&#xE168;"
@@ -363,15 +367,15 @@
                                       Checked="_devicesMenuButton__Checked"
                                       Unchecked="_devicesMenuButton__Unchecked"
                                       Style="{StaticResource ToggleButtonStyle1}"/>
+                        <!-- _settingsMenuButton_ -->
+                        <ToggleButton x:Name="_settingsMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="&#xE115;"
+                                      Checked="_settingsMenu__Checked"
+                                      Unchecked="_settingsMenu__Unchecked"
+                                      Style="{StaticResource ToggleButtonStyle1}"/>
                     </StackPanel>
                 </StackPanel>
-                <ToggleButton x:Name="_settingsMenuButton_"
-                              Grid.Column="2"
-                              VerticalAlignment="Bottom"
-                              Content="&#xE115;"
-                              Checked="_settingsMenu__Checked"
-                              Unchecked="_settingsMenu__Unchecked"
-                              Style="{StaticResource ToggleButtonStyle1}"/>
             </Grid>
 
             <!--sub menus like the accounts list or the share menu are just below, technicaly they are nested inside the
