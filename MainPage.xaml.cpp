@@ -88,12 +88,13 @@ MainPage::MainPage()
                                       ref new WindowVisibilityChangedEventHandler(this, &MainPage::Application_VisibilityChanged);
 
     applicationSuspendingEventToken = Application::Current->Suspending +=
-        ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
+                                          ref new SuspendingEventHandler(this, &MainPage::Application_Suspending);
     applicationResumingEventToken = Application::Current->Resuming +=
-        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
+                                        ref new EventHandler<Object^>(this, &MainPage::Application_Resuming);
 
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::MainPage::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
+    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::MainPage::OncallPlaced);
 }
 
 void
@@ -160,10 +161,10 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
         TimeSpan delay;
         delay.Duration = 10000 * 50;
         ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
-                                      ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
+                                          ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
         {
             Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                             ref new DispatchedHandler([this]()
+                                 ref new DispatchedHandler([this]()
             {
                 OnResize(nullptr, nullptr);
             }));
@@ -255,7 +256,21 @@ void RingClientUWP::MainPage::OnhidePreviewPage()
 
 void RingClientUWP::MainPage::OnsummonVideoPage()
 {
-    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);;
+
+    if (item) {
+        switch (item->_callStatus) {
+        case CallStatus::IN_PROGRESS:
+            videoPage->screenVideo(true);
+            break;
+        case CallStatus::PEER_PAUSED:
+        case CallStatus::PAUSED:
+            videoPage->screenVideo(false);
+            break;
+        }
+    }
+
     videoPage->chatOpen = false;
     videoPage->updatePageContent();
     showFrame(_videoFrame_);
@@ -459,4 +474,10 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
 void RingClientUWP::MainPage::OnregistrationStateRegistered()
 {
     showLoadingOverlay(false, false);
+}
+
+
+void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
+{
+    showFrame(_welcomeFrame_);
 }

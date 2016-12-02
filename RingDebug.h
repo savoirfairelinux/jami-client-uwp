@@ -52,9 +52,9 @@ public:
 internal:
     enum class Type { DMN, MSG, WNG, ERR };
     void print(const std::string& message, const Type& type,
-                        std::string file, int line);
+               std::string file, int line);
     void print(String^ message, const Type& type,
-                        std::string file, int line);
+               std::string file, int line);
     void print(Exception^ e, std::string file, int line);
 
     /* event */

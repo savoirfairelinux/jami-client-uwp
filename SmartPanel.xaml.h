@@ -170,6 +170,7 @@ private:
     void OnregistrationStateErrorGeneric(const std::string& accountId);
     void _PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnregistrationStateRegistered();
+    void OncallPlaced(Platform::String ^callId);
 };
 }
 }
