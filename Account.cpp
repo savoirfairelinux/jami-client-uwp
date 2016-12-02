@@ -42,7 +42,7 @@ Account::Account(String^ name,
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
-    _upnpState = _upnpState;
+    _upnpState = upnpState;
     _sipHostname = sipHostname;
     _sipUsername = sipUsername;
     _sipPassword = sipPassword;
