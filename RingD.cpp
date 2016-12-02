@@ -526,7 +526,16 @@ RingD::registerCallbacks()
                     }*/
                 }));
             }
-            else if (state == DRing::Account::States::ERROR_GENERIC) {
+            else if (state == DRing::Account::States::ERROR_GENERIC
+                     || state == DRing::Account::States::ERROR_AUTH
+                     || state == DRing::Account::States::ERROR_NETWORK
+                     || state == DRing::Account::States::ERROR_HOST
+                     || state == DRing::Account::States::ERROR_CONF_STUN
+                     || state == DRing::Account::States::ERROR_EXIST_STUN
+                     || state == DRing::Account::States::ERROR_SERVICE_UNAVAILABLE
+                     || state == DRing::Account::States::ERROR_NOT_ACCEPTABLE
+                     || state == DRing::Account::States::ERROR_NEED_MIGRATION
+                     || state == DRing::Account::States::REQUEST_TIMEOUT) {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
