@@ -84,7 +84,7 @@
                             <Grid   x:Name="_hamburgerButtonBar_"
                                     Canvas.ZIndex="0"
                                     Grid.Row="0"
-                                    Background="LightBlue"
+                                    Background="#3bc1d3"
                                     Width="320"
                                     HorizontalAlignment="Left">
                                 <Grid.ColumnDefinitions>

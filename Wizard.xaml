@@ -13,7 +13,7 @@
             <StackPanel Width="400">
                 <Rectangle Height="50"/>
                 <StackPanel Height="auto"
-                            Background="LightBlue"
+                            Background="#3bc1d3"
                             Grid.Column="0">
                     <Button x:Name="_showCreateAccountMenuTitle_"
                             Content="Create New Account"
@@ -29,7 +29,7 @@
                             Style="{StaticResource ButtonStyle4}"
                             Click="_showCreateAccountMenuBtn__Click"/>
                     <Grid x:Name="_accountCreationMenuGrid_"
-                          Background="LightBlue"
+                          Background="#3bc1d3"
                           Visibility="Collapsed">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="auto"/>
@@ -181,7 +181,7 @@
                 <Rectangle Height="50"/>
                 <!-- add account. -->
                 <StackPanel Height="auto"
-                        Background="LightBlue"
+                        Background="#3bc1d3"
                         Grid.Column="2">
                     <StackPanel x:Name="addExistingAccountStep1">
                     </StackPanel>
@@ -201,7 +201,7 @@
                                 Click="_showAddAccountMenuBtn__Click"/>
                         <Grid x:Name="_accountAddMenuGrid_"
                           Visibility="Collapsed"
-                          Background="LightBlue">
+                          Background="#3bc1d3">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="30"/>
                                 <RowDefinition Height="auto"/>

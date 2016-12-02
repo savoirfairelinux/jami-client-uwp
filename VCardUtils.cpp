@@ -79,7 +79,12 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
 
         // because android client builds vcard differently (TYPE=PNG: vs PNG:)
         size_t pos = _line.find("PNG:");
-        if (pos != std::string::npos)
+        if (pos == std::string::npos) {
+            pos = _line.find("JPEG:");
+            if (pos != std::string::npos)
+                m_mParts[Property::PHOTO].append(_line.substr(pos + 5));
+        }
+        else
             m_mParts[Property::PHOTO].append(_line.substr(pos + 4));
 
         return VCARD_INCOMPLETE;

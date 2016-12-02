@@ -209,6 +209,8 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ send
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ sender, RoutedEventArgs^ e)
@@ -217,6 +219,8 @@ void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Unchecked(Object^ se
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountAddMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -227,8 +231,10 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, Ro
     _shareMenuButton_->IsChecked = false;
     _devicesMenuButton__Unchecked(nullptr,nullptr);
     _devicesMenuButton_->IsChecked = false;
-    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
     auto vcm = Video::VideoManager::instance->captureManager();
     if (vcm->deviceList->Size > 0) {
         if (!vcm->isInitialized)
@@ -242,7 +248,9 @@ void RingClientUWP::Views::SmartPanel::_settingsMenu__Checked(Object^ sender, Ro
 void RingClientUWP::Views::SmartPanel::_settingsMenu__Unchecked(Object^ sender, RoutedEventArgs^ e)
 {
     _settingsMenu_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
     _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+
     auto vcm = Video::VideoManager::instance->captureManager();
     if (vcm->deviceList->Size > 0) {
         vcm->StopPreviewAsync()
@@ -298,6 +306,8 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Checked(Platform::Objec
     _accountsMenuButton_->IsChecked = false;
     _devicesMenuButton_->IsChecked = false;
 
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
     generateQRcode();
 }
 
@@ -307,6 +317,8 @@ void RingClientUWP::Views::SmartPanel::_shareMenuButton__Unchecked(Platform::Obj
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -845,6 +857,7 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Unchecked(Platform::O
     // refacto : do something better...
     _waitingAndResult_->Text = "Exporting account on the Ring...";
 
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
@@ -873,6 +886,8 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Checked(Platform::Obj
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _accountsMenuButton_->IsChecked = false;
     _shareMenuButton_->IsChecked = false;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
