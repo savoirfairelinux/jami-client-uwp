@@ -71,6 +71,7 @@ RingDebug::print(const  std::string& message, const Type& type,
     /* set message type. */
     wString = (type>Type::WNG)?(L"(EE) "):((type>Type::MSG)?(L"(WW) "):(L"")) + wString;
 
+    String^ msg;
 #if UWP_DBG_VS
     /* screen it into VS debug console */
     OutputDebugString((wString + L"\n").c_str());
@@ -78,7 +79,7 @@ RingDebug::print(const  std::string& message, const Type& type,
 
 #if UWP_DBG_CLIENT
     /* fire the event. */
-    auto msg = ref new String(wString.c_str(), wString.length());
+    msg = ref new String(wString.c_str(), wString.length());
     messageToScreen(msg);
 #endif
 

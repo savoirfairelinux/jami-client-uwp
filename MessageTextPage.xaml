@@ -34,7 +34,7 @@
         <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
         <DataTemplate x:Key="ConversationMessageTemplate"
                       x:DataType="local:ConversationMessage">
-            <Grid Margin="0"
+            <Grid Margin="6,0,12,0"
                   HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="2*" />
@@ -51,6 +51,7 @@
                         <!--Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
                         <TextBlock x:Name="_msgContent_"
                                    TextWrapping="Wrap"
+                                   IsTextSelectionEnabled="True"
                                    Text="{x:Bind Payload}"
                                    Foreground="White"/>
                     </ContentPresenter>
@@ -89,7 +90,7 @@
                                     Margin="{TemplateBinding BorderThickness}"
                                     Opacity="1"
                                     Grid.ColumnSpan="2"
-                                    BorderBrush="LightBlue"
+                                    BorderBrush="#3bc1d3"
                                     BorderThickness="1"
                                     Grid.RowSpan="1"/>
                             <ScrollViewer x:Name="ContentElement"
@@ -111,7 +112,7 @@
                                     Background="Transparent"
                                     Grid.Row="1"
                                     FontFamily="Segoe MDL2 Assets"
-                                    Foreground="LightBlue"
+                                    Foreground="#3bc1d3"
                                     Content="&#xE122;"
                                     IsTabStop="False"
                                     Grid.Column="1"
@@ -139,59 +140,92 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0"
+        <Grid Grid.Row="0"
                     Background="White"
-                    Height="90"
-                    Orientation="Horizontal"
-                    Padding="10,10">
-            <Image Source="ms-appx:///contact-avatar-test.png" />
-            <StackPanel>
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="auto" />
-                    </Grid.ColumnDefinitions>
-                    <TextBlock x:Name="_title_"
-                               Grid.Column="0"
-                               Text="[TEXT MISSING]"
-                               TextWrapping="NoWrap"
-                               VerticalAlignment="Center"
-                               FontSize="20"
-                               Margin="20,0" />
-                    <Button x:Name="_audioCall_"
+                    Height="90">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60" />
+                <RowDefinition Height="30" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="60"/>
+                    <ColumnDefinition Width="280"/>
+                    <ColumnDefinition Width="140"/>
+                </Grid.ColumnDefinitions>
+                <Ellipse Grid.Column="0"
+                         Width="50"
+                         Height="50">
+                    <Ellipse.Fill>
+                        <ImageBrush x:Name="_contactBarAvatar_"
+                                ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
+                    </Ellipse.Fill>
+                </Ellipse>
+                <TextBlock  x:Name="_title_"
                             Grid.Column="1"
-                            Click="_audioCall__Click"
-                            Content="audio call"/>
-                    <Button x:Name="_videoCall_"
-                            Click="_videoCall__Click"
+                            Text="[TEXT MISSING]"
+                            TextWrapping="NoWrap"
+                            TextTrimming="CharacterEllipsis"
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            Margin="6" />
+                <ComboBox   x:Name="_associableAccountsList_"
                             Grid.Column="2"
-                            Content="video call"/>
-                </Grid>
-                <StackPanel Orientation="Horizontal">
-                    <ComboBox x:Name="_associableAccountsList_">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="local:Account">
-                                <StackPanel Orientation="Horizontal">
-                                    <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
-                                </StackPanel>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                    <Button x:Name="_deleteContact_"
-                            Content="delete"
-                            Click="_deleteContact__Click"/>
-                    <Button x:Name="_clearConversation_"
-                            Content="clear conversation"
-                            Click="_clearConversation__Click"/>
-                </StackPanel>
-            </StackPanel>
-
-        </StackPanel>
+                            Margin="6,14,6,6"
+                            Visibility="Collapsed">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate x:DataType="local:Account">
+                            <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+            <Grid Grid.Row="1">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="_videoCall_"
+                    Click="_videoCall__Click"
+                    Grid.Column="0"
+                    Content="&#xE714;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="14"
+                    Style="{StaticResource ButtonStyle4}"
+                    Margin="6,2,6,6"/>
+                <Button x:Name="_audioCall_"
+                    Grid.Column="1"
+                    Click="_audioCall__Click"
+                    Content="&#xE13A;"
+                    FontSize="14"
+                    FontFamily="Segoe MDL2 Assets"
+                    Style="{StaticResource ButtonStyle4}"
+                    Margin="6,2,6,6"/>
+                <Button x:Name="_clearConversation_"
+                    Grid.Column="2"
+                    Click="_clearConversation__Click"
+                    Content="&#xE894;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="14"
+                    Style="{StaticResource ButtonStyle4}"
+                    Margin="6,2,6,6"/>
+                <Button x:Name="_deleteContact_"
+                    Grid.Column="3"
+                    Click="_deleteContact__Click"
+                    Content="&#xE74D;"
+                    FontFamily="Segoe MDL2 Assets"
+                    FontSize="14"
+                    Style="{StaticResource ButtonStyle4}"
+                    Margin="6,2,6,6"/>
+            </Grid>
+        </Grid>
         <ScrollViewer x:Name="_scrollView_"
-                       BorderThickness="0,1,0,0"
-                       BorderBrush="LightBlue"
-                       Grid.Row="1">
+                       BorderThickness="0,0,0,0"
+                       BorderBrush="#3bc1d3"
+                       Grid.Row="1"
+                       ScrollViewer.VerticalScrollBarVisibility="Auto">
             <StackPanel>
                 <ListBox x:Name="_messagesList_"
                          Margin="0"

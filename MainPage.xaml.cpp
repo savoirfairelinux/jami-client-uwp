@@ -55,6 +55,8 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
+    ApplicationView::GetForCurrentView()->TryResizeView(Size(1024, 768));
+
     UserModel::instance->getUserData();
 
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
@@ -156,7 +158,7 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
             _loadingOverlayRect_->Opacity = 1.0;
         }
         TimeSpan delay;
-        delay.Duration = 500000;
+        delay.Duration = 10000 * 50;
         ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
                                       ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
         {
@@ -167,7 +169,7 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
             }));
         }), delay);
     }
-    else if (!load) {
+    else if (!load && isLoading) {
         isLoading = false;
         _fadeOutStoryboard_->Begin();
     }
@@ -181,12 +183,6 @@ RingClientUWP::MainPage::PositionImage()
     auto img = ref new Image();
     auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
     Windows::Foundation::Uri^ uri;
-
-    uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/SplashScreen.scale-200.png");
-
-    bitmapImage->UriSource = uri;
-    img->Source = bitmapImage;
-    _loadingImage_->Source = img->Source;
 
     _loadingImage_->SetValue(Canvas::LeftProperty, bounds.Width * 0.5 - _loadingImage_->Width * 0.5);
     _loadingImage_->SetValue(Canvas::TopProperty, bounds.Height * 0.5 - _loadingImage_->Height * 0.5);

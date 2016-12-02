@@ -19,7 +19,7 @@
 
 #define UWP_DBG_CLIENT      0
 #define UWP_DBG_VS          1
-#define UWP_DBG_FILE        0
+#define UWP_DBG_FILE        1
 
 using namespace Windows::Storage;
 

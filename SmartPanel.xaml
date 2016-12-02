@@ -94,7 +94,7 @@
             <Grid Margin="0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
-                    <ColumnDefinition Width="290"/>
+                    <ColumnDefinition Width="280"/>
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0"
                         Margin="5,0"
@@ -113,10 +113,14 @@
                         FontSize="20"
                         Foreground="White"
                         Background="Transparent"
+                        BorderThickness="0"
+                        Padding="0,4,0,2"
+                        Margin="0,0,12,0"
+                        Width="28"
                         Visibility="{x:Bind _isSelected, Converter={StaticResource _AccountSelectedToVisibility_}, Mode=OneWay}"
                         Grid.Column="1">
                     <Button.RenderTransform>
-                        <TranslateTransform X="-5" Y="-5"/>
+                        <TranslateTransform Y="-10"/>
                     </Button.RenderTransform>
                 </Button>
                 <StackPanel Grid.Column="1">
@@ -277,7 +281,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <!-- drop down menus. -->
-        <Grid Background="LightBlue">
+        <Grid Background="#3bc1d3">
             <Grid.RowDefinitions>
                 <!-- where the selected account is shown. -->
                 <RowDefinition x:Name="_selectedAccountRow_"
@@ -332,7 +336,8 @@
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
                                Text="[TEXT MISSING]"
-                               Margin="10"
+                               Margin="10,0,0,10"
+                               TextTrimming="CharacterEllipsis"
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">
                         <!--Content="&#xE0A1;-->
@@ -377,7 +382,7 @@
                   MaxHeight="350"
                   Grid.Row="1"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -415,7 +420,7 @@
             <Grid x:Name="_accountCreationMenuGrid_"
                   Grid.Row="2"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -627,7 +632,7 @@
             <Grid x:Name="_accountAddMenuGrid_"
                   Visibility="Collapsed"
                   Grid.Row="2"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="auto"/>
@@ -713,7 +718,7 @@
             <Grid x:Name="_accountEditionGrid_"
                   Grid.Row="2"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -881,7 +886,7 @@
             <Grid x:Name="_shareMenuGrid_"
                   Grid.Row="2"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -894,7 +899,7 @@
                     </Grid.RowDefinitions>
                     <Grid Background="white"
                           Margin="10"
-                          MaxHeight="150"
+                          MaxHeight="140"
                           MaxWidth="140"
                           Padding="5">
                         <Image x:Name="_selectedAccountQrCode_"
@@ -924,14 +929,11 @@
             <Grid x:Name="_devicesMenuGrid_"
                   Grid.Row="2"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer x:Name="_scrollViewerDevicesMenu_"
-                              Grid.Row="0"
-                              MaxHeight="400">
                 <Grid Background="#FFE4F1F9">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
@@ -942,14 +944,14 @@
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <!-- about this device -->
-                        <StackPanel Orientation="Horizontal"
+                    <StackPanel Orientation="Horizontal"
                                     Grid.Row="0"
                                     Margin="10,20">
-                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                        Margin="0,0,10,0"
                                        Text="&#xE211;"/>
-                            <TextBlock Text="Your device ID"/>
-                        </StackPanel>
+                        <TextBlock Text="Your device ID"/>
+                    </StackPanel>
                     <TextBlock x:Name="_deviceId_"
                                Margin="10"
                                Text="[TEXT_MISSING]"
@@ -958,16 +960,16 @@
                                Grid.Row="1"
                                IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
-                        <!-- about linked devices -->
-                        <StackPanel Orientation="Horizontal"
+                    <!-- about linked devices -->
+                    <StackPanel Orientation="Horizontal"
                                     Grid.Row="2"
                                     Margin="10,20">
-                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                        <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                        Margin="0,0,10,0"
                                        Text="&#xEBD2;"/>
-                            <TextBlock Text="other linked devices"/>
-                        </StackPanel>
-                        <TextBlock x:Name="_waitingDevicesList_"
+                        <TextBlock Text="other linked devices"/>
+                    </StackPanel>
+                    <TextBlock x:Name="_waitingDevicesList_"
                                Text="waiting for devices list..."
                                Grid.Row="3"
                                IsTextSelectionEnabled="True"
@@ -978,7 +980,6 @@
                              Background="#FFE4F1F9"
                              Grid.Row="3"/>
                 </Grid>
-                </ScrollViewer>
                 <!-- button to add device. -->
                 <Button x:Name="_addDevice_"
                         Grid.Row="1"
@@ -992,7 +993,7 @@
             <Grid x:Name="_addingDeviceGrid_"
                   Grid.Row="2"
                   Visibility="Collapsed"
-                  Background="LightBlue">
+                  Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -1038,7 +1039,7 @@
             <Grid x:Name="_waitingForPin_"
                 Grid.Row="2"
                 Visibility="Collapsed"
-                Background="LightBlue">
+                Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
@@ -1112,11 +1113,12 @@
                                 Background="Transparent"
                                 Grid.Column="1"
                                 FontFamily="Segoe MDL2 Assets"
-                                Foreground="LightBlue"
+                                Foreground="#3bc1d3"
                                 Content=" &#xE1E2;"
                                 Click="_ringTxtBx__Click"
                                 BorderThickness="0"
                                 Visibility="Visible"
+                                IsTabStop="False"
                                 FontSize="20"
                                 Width="38"
                                 Margin="6"
@@ -1140,11 +1142,13 @@
             <!-- settings. -->
             <Grid x:Name="_settingsMenu_"
                   Grid.Row="0"
-                  Visibility="Collapsed">
+                  Visibility="Collapsed"
+                  Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer>
+                <ScrollViewer
+                    ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <Grid x:Name="_videoSettings_"
                       Grid.Row="0">
                         <StackPanel Margin="10">

@@ -21,13 +21,13 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <!-- general -->
-    <Style x:Key="GridLightBlue" TargetType="Grid">
+    <Style x:Key="Grid#3bc1d3" TargetType="Grid">
         <Setter Property="Background"
-                Value="#FFE4F1F9"/>
+                Value="#3bc1d3"/>
     </Style>
-    <Style x:Key="StackLightBlue" TargetType="StackPanel">
+    <Style x:Key="Stack#3bc1d3" TargetType="StackPanel">
         <Setter Property="Background"
-                Value="#FFE4F1F9"/>
+                Value="#3bc1d3"/>
     </Style>
     <Style x:Key="TextStyle1"
            TargetType="TextBlock">
@@ -181,6 +181,8 @@
                 Value="Segoe MDL2 Assets"/>
         <Setter Property="Foreground"
                 Value="White"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="HamburgerButtonStyle"
            TargetType="Button">
@@ -194,6 +196,8 @@
                 Value="White"/>
         <Setter Property="Background"
                 Value="Transparent"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle2"
         TargetType="Button">
@@ -206,7 +210,9 @@
         <Setter Property="Foreground"
             Value="White"/>
         <Setter Property="Background"
-            Value="Transparent"/>
+            Value="#3bc1d3"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle3"
            TargetType="Button">
@@ -222,13 +228,17 @@
                 Value="120"/>
         <Setter Property="FontSize"
                 Value="70"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle4"
            TargetType="Button">
         <Setter Property="Foreground"
                 Value="White"/>
         <Setter Property="Background"
-                Value="LightBlue"/>
+                Value="#3bc1d3"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle5"
         TargetType="Button">
@@ -241,7 +251,9 @@
         <Setter Property="Foreground"
             Value="White"/>
         <Setter Property="Background"
-            Value="Transparent"/>
+            Value="#3bc1d3"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle6"
         TargetType="Button">
@@ -255,6 +267,8 @@
             Value="White"/>
         <Setter Property="Background"
             Value="Transparent"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ButtonStyle7"
         TargetType="Button">
@@ -268,6 +282,8 @@
             Value="White"/>
         <Setter Property="Background"
             Value="Transparent"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="ToggleButtonStyle1"
            TargetType="ToggleButton">
@@ -281,6 +297,8 @@
                 Value="White"/>
         <Setter Property="Background"
                 Value="Transparent"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
     </Style>
     <Style x:Key="TextBoxStyle2"
            TargetType="TextBox">
@@ -369,7 +387,7 @@
 
     <Style x:Key="BorderStyle1"
            TargetType="Border">
-        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="Background" Value="#3bc1d3"/>
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Width" Value="25"/>
         <Setter Property="Height" Value="23"/>
@@ -385,7 +403,7 @@
     </Style>
     <Style x:Key="BorderStyle3"
            TargetType="Border">
-        <Setter Property="Background" Value="LightBlue"/>
+        <Setter Property="Background" Value="#3bc1d3"/>
         <Setter Property="CornerRadius" Value="6"/>
         <Setter Property="Width" Value="28"/>
         <Setter Property="Height" Value="50"/>
@@ -397,7 +415,7 @@
        TargetType="ListBoxItem">
         <Setter Property="HorizontalAlignment" Value="Stretch" />
         <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-        <Setter Property="Margin" Value="20,0,40,0"/>
+        <Setter Property="Margin" Value="0,0,2,0"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="ListBoxItem">
@@ -423,7 +441,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType ="Button">
                     <Grid>
-                        <Ellipse Name ="OuterRing" Width ="30" Height ="30" Fill ="LightBlue"/>
+                        <Ellipse Name ="OuterRing" Width ="30" Height ="30" Fill ="#3bc1d3"/>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                     </Grid>
                 </ControlTemplate>
