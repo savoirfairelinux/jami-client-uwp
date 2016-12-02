@@ -109,6 +109,8 @@ internal:
     void refuseIncommingCall(String^ call);
     void acceptIncommingCall(String^ call);
     void placeCall(Contact^ contact);
+    void pauseCall(const std::string& callId);
+    void unPauseCall(const std::string& callId);
     /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
     CallStatus translateCallStatus(String^ state);
     String^ getUserName();
@@ -163,6 +165,7 @@ private:
         RefuseIncommingCall,
         AcceptIncommingCall,
         CancelOutGoingCall,
+        PlaceCall,
         HangUpCall,
         PauseCall,
         UnPauseCall,
@@ -217,6 +220,8 @@ private:
         std::string _accountId_new;
         std::string _password_new;
         std::string _publicUsername_new;
+        std::string _callid_new;
+        std::string _ringId_new;
     };
 
     /* functions */
