@@ -40,6 +40,8 @@ using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
 using namespace Windows::UI::Core;
 
+using namespace Windows::UI::Popups;
+
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
@@ -71,6 +73,10 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
 
     /* show the name of contact on the page */
     _title_->Text = contact->name_;
+
+    String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
+    auto uri = ref new Windows::Foundation::Uri(image_path);
+    _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
 
     /* show messages */
     _messagesList_->ItemsSource = contact->_conversation->_messages;
@@ -138,10 +144,9 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
 
 Object ^ RingClientUWP::Views::BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto settings = ref new Windows::UI::ViewManagement::UISettings();
-    auto color = settings->GetColorValue(Windows::UI::ViewManagement::UIColorType::Accent);
-
-    return ((bool)value) ? ref new SolidColorBrush(color) : ref new SolidColorBrush(Windows::UI::Colors::LightBlue);
+    auto color1 = Windows::UI::ColorHelper::FromArgb(255, 0, 76, 96);
+    auto color2 = Windows::UI::ColorHelper::FromArgb(255, 58, 192, 210);
+    return ((bool)value) ? ref new SolidColorBrush(color1) : ref new SolidColorBrush(color2);
 }
 
 // we only do OneWay so the next function is not used
@@ -185,10 +190,20 @@ void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Obje
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
 
-    closeMessageTextPage();
+    auto messageDialog = ref new MessageDialog("Are you sure you want to remove this contact?", "Remove Contact");
 
-    ContactsViewModel::instance->deleteContact(contact);
-    SmartPanelItemsViewModel::instance->removeItem(item);
+    messageDialog->Commands->Append(ref new UICommand("Cancel", ref new UICommandInvokedHandler([this](IUICommand^ command)
+    {})));
+    messageDialog->Commands->Append(ref new UICommand("Remove", ref new UICommandInvokedHandler([=](IUICommand^ command)
+    {
+        closeMessageTextPage();
+        ContactsViewModel::instance->deleteContact(contact);
+        SmartPanelItemsViewModel::instance->removeItem(item);
+    })));
+
+    messageDialog->DefaultCommandIndex = 1;
+
+    messageDialog->ShowAsync();
 }
 
 
