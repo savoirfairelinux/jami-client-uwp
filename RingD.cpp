@@ -880,7 +880,7 @@ RingD::dequeueTasks()
             auto newAccountId = DRing::addAccount(ringAccountDetails);
 
             if (!task->_registeredName->IsEmpty())
-                registerName_new(newAccountId, Utils::toString(task->_password), Utils::toString(task->_alias));
+                registerName_new(newAccountId, Utils::toString(task->_password), Utils::toString(task->_registeredName));
         }
         break;
         case Request::AddSIPAccount:
