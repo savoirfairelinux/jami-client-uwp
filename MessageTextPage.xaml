@@ -136,89 +136,96 @@
 
     <Grid Background="#FFF2F2F2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="90" />
+            <RowDefinition Height="61" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
                     Background="White"
-                    Height="90">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="60" />
-                <RowDefinition Height="30" />
-            </Grid.RowDefinitions>
-            <Grid Grid.Row="0">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="60"/>
-                    <ColumnDefinition Width="280"/>
-                    <ColumnDefinition Width="140"/>
-                </Grid.ColumnDefinitions>
-                <Ellipse Grid.Column="0"
-                         Width="50"
-                         Height="50">
-                    <Ellipse.Fill>
-                        <ImageBrush x:Name="_contactBarAvatar_"
-                                ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
-                    </Ellipse.Fill>
-                </Ellipse>
-                <TextBlock  x:Name="_title_"
-                            Grid.Column="1"
-                            Text="[TEXT MISSING]"
-                            TextWrapping="NoWrap"
-                            TextTrimming="CharacterEllipsis"
-                            VerticalAlignment="Center"
-                            FontSize="18"
-                            Margin="6" />
-                <ComboBox   x:Name="_associableAccountsList_"
-                            Grid.Column="2"
-                            Margin="6,14,6,6"
-                            Visibility="Collapsed">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate x:DataType="local:Account">
-                            <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </Grid>
-            <Grid Grid.Row="1">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                    <ColumnDefinition Width="auto"/>
-                </Grid.ColumnDefinitions>
-                <Button x:Name="_videoCall_"
-                    Click="_videoCall__Click"
-                    Grid.Column="0"
-                    Content="&#xE714;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="14"
-                    Style="{StaticResource ButtonStyle4}"
-                    Margin="6,2,6,6"/>
-                <Button x:Name="_audioCall_"
-                    Grid.Column="1"
-                    Click="_audioCall__Click"
-                    Content="&#xE13A;"
-                    FontSize="14"
-                    FontFamily="Segoe MDL2 Assets"
-                    Style="{StaticResource ButtonStyle4}"
-                    Margin="6,2,6,6"/>
-                <Button x:Name="_clearConversation_"
-                    Grid.Column="2"
-                    Click="_clearConversation__Click"
-                    Content="&#xE894;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="14"
-                    Style="{StaticResource ButtonStyle4}"
-                    Margin="6,2,6,6"/>
-                <Button x:Name="_deleteContact_"
-                    Grid.Column="3"
-                    Click="_deleteContact__Click"
-                    Content="&#xE74D;"
-                    FontFamily="Segoe MDL2 Assets"
-                    FontSize="14"
-                    Style="{StaticResource ButtonStyle4}"
-                    Margin="6,2,6,6"/>
+                    Height="61">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <Ellipse Grid.Column="0"
+                             Width="50"
+                             Height="50">
+                <Ellipse.Fill>
+                    <ImageBrush x:Name="_contactBarAvatar_"
+                                        ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Grid Grid.Column="1">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="31" />
+                    <RowDefinition Height="30" />
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="280"/>
+                            <ColumnDefinition Width="auto"/>
+                        </Grid.ColumnDefinitions>
+                    </Grid>
+                    <TextBlock  x:Name="_title_"
+                                Grid.Column="0"
+                                Text="[TEXT MISSING]"
+                                TextWrapping="NoWrap"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Margin="4,0,4,0" />
+                    <ComboBox   x:Name="_associableAccountsList_"
+                                Grid.Column="1"
+                                Margin="6,14,6,6"
+                                Visibility="Collapsed">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate x:DataType="local:Account">
+                                <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Grid>
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="auto"/>
+                    </Grid.ColumnDefinitions>
+                    <Button x:Name="_videoCall_"
+                        Click="_videoCall__Click"
+                        Grid.Column="0"
+                        Content="&#xE714;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="14"
+                        Style="{StaticResource ButtonStyle4}"
+                        Margin="6,2,6,6"/>
+                    <Button x:Name="_audioCall_"
+                        Grid.Column="1"
+                        Click="_audioCall__Click"
+                        Content="&#xE13A;"
+                        FontSize="14"
+                        FontFamily="Segoe MDL2 Assets"
+                        Style="{StaticResource ButtonStyle4}"
+                        Margin="6,2,6,6"/>
+                    <Button x:Name="_clearConversation_"
+                        Grid.Column="2"
+                        Click="_clearConversation__Click"
+                        Content="&#xE894;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="14"
+                        Style="{StaticResource ButtonStyle4}"
+                        Margin="6,2,6,6"/>
+                    <Button x:Name="_deleteContact_"
+                        Grid.Column="3"
+                        Click="_deleteContact__Click"
+                        Content="&#xE74D;"
+                        FontFamily="Segoe MDL2 Assets"
+                        FontSize="14"
+                        Style="{StaticResource ButtonStyle4}"
+                        Margin="6,2,6,6"/>
+                </Grid>
             </Grid>
         </Grid>
         <ScrollViewer x:Name="_scrollView_"

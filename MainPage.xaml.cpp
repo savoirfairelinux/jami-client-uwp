@@ -290,33 +290,10 @@ MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingE
 {
     MSG_("Application_Suspending");
     auto deferral = e->SuspendingOperation->GetDeferral();
+    Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
     MSG_("Hang up calls...");
     RingD::instance->deinit();
     deferral->Complete();
-    /*if (Frame->CurrentSourcePageType.Name ==
-            Interop::TypeName(MainPage::typeid).Name) {
-        auto deferral = e->SuspendingOperation->GetDeferral();
-        BeginExtendedExecution()
-        .then([=](task<void> previousTask) {
-            try {
-                previousTask.get();
-            }
-            catch (Exception^ e) {
-                MSG_("Exception: Extended Execution Begin");
-            }
-        })
-        .then([this, deferral](task<void> previousTask) {
-            try {
-                previousTask.get();
-                MSG_("deferral->Complete()");
-                deferral->Complete();
-            }
-            catch (Exception^ e) {
-                MSG_("Exception: Extended Execution");
-                deferral->Complete();
-            }
-        });
-    }*/
 }
 
 void
@@ -388,60 +365,6 @@ void MainPage::Application_Resuming(Object^, Object^)
 {
     MSG_("Application_Resuming");
 }
-
-void
-MainPage::SessionRevoked(Object^ sender, ExtendedExecutionRevokedEventArgs^ args)
-{
-    Dispatcher->RunAsync(CoreDispatcherPriority::High, ref new DispatchedHandler([=]() {
-        ClearExtendedExecution();
-    }));
-}
-
-void
-MainPage::ClearExtendedExecution()
-{
-    if (session != nullptr) {
-        MSG_("End Extended Execution");
-        session->Revoked -= sessionRevokedToken;
-    }
-}
-
-task<void>
-MainPage::BeginExtendedExecution()
-{
-    ClearExtendedExecution();
-
-    auto newSession = ref new ExtendedExecutionSession();
-    newSession->Reason = ExtendedExecutionReason::SavingData;
-    newSession->Description = "Extended Execution";
-    sessionRevokedToken = (newSession->Revoked += ref new TypedEventHandler<Object^,
-                           ExtendedExecutionRevokedEventArgs^>(this, &MainPage::SessionRevoked));
-    return create_task(newSession->RequestExtensionAsync())
-    .then([=](ExtendedExecutionResult result) {
-        try {
-            switch (result)
-            {
-            case ExtendedExecutionResult::Allowed:
-                session = newSession;
-                MSG_("Request Extended Execution Allowed");
-                MSG_("Clean up camera...");
-                Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
-                MSG_("Hang up calls...");
-                RingD::instance->deinit();
-                break;
-
-            default:
-            case ExtendedExecutionResult::Denied:
-                MSG_("Request Extended Execution Denied");
-                break;
-            }
-        }
-        catch (Exception^ e) {
-            EXC_(e);
-        }
-    });
-}
-
 
 void RingClientUWP::MainPage::OncloseMessageTextPage()
 {

@@ -288,7 +288,22 @@
     <Style x:Key="ToggleButtonStyle1"
            TargetType="ToggleButton">
         <Setter Property="Width"
-                Value="50"/>
+                Value="46"/>
+        <Setter Property="Height"
+                Value="30"/>
+        <Setter Property="FontFamily"
+                Value="Segoe MDL2 Assets"/>
+        <Setter Property="Foreground"
+                Value="White"/>
+        <Setter Property="Background"
+                Value="Transparent"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
+    </Style>
+    <Style x:Key="smartGridButtonStyle"
+           TargetType="Button">
+        <Setter Property="Width"
+                Value="46"/>
         <Setter Property="Height"
                 Value="30"/>
         <Setter Property="FontFamily"

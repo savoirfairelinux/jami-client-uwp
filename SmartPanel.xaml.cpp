@@ -120,6 +120,17 @@ SmartPanel::SmartPanel()
         case CallStatus::NONE:
         case CallStatus::ENDED:
         {
+            bool isInCall = false;
+            for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+                if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
+                    isInCall = true;
+                    RingD::instance->currentCallId = item->_callId;
+                    break;
+                }
+            }
+            if (!isInCall)
+                _settingsMenuButton_->Visibility = VIS::Visible;
+
             item->_callId = "";
             break;
         }
@@ -135,7 +146,6 @@ SmartPanel::SmartPanel()
 
     });
     RingD::instance->devicesListRefreshed += ref new RingClientUWP::DevicesListRefreshed(this, &RingClientUWP::Views::SmartPanel::OndevicesListRefreshed);
-
 
     ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
         auto smartPanelItem = ref new SmartPanelItem();
@@ -197,6 +207,20 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
 void RingClientUWP::Views::SmartPanel::unselectContact()
 {
     _smartList_->SelectedItem = nullptr;
+}
+
+void RingClientUWP::Views::SmartPanel::_smartGridButton__Clicked(Object^ sender, RoutedEventArgs^ e)
+{
+    _accountsMenuButton__Unchecked(nullptr,nullptr);
+    _accountsMenuButton_->IsChecked = false;
+    _shareMenuButton__Unchecked(nullptr,nullptr);
+    _shareMenuButton_->IsChecked = false;
+    _devicesMenuButton__Unchecked(nullptr,nullptr);
+    _devicesMenuButton_->IsChecked = false;
+    _settingsMenu__Unchecked(nullptr,nullptr);
+    _settingsMenuButton_->IsChecked = false;
+
+    _smartGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Checked(Object^ sender, RoutedEventArgs^ e)
@@ -492,6 +516,8 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
     if (button) {
         /* force to hide the button, avoid attempting to call several times... */
         button->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+
+        _settingsMenuButton_->Visibility = VIS::Collapsed;
 
         auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
         if (item) {
