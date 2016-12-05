@@ -320,11 +320,26 @@
                             Tapped="_btnSwitch__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Switch"/>
                         </Button>
+                        <!--Tapped="_btnMicrophone__Tapped"-->
                         <Button x:Name="_btnMicrophone_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Tapped="_btnMicrophone__Tapped" Visibility="Collapsed">
-                            <SymbolIcon Symbol="Microphone"/>
+                            Click="_btnMicrophone__Click">
+                            <Grid>
+                                <SymbolIcon Symbol="Microphone"/>
+                                <TextBlock x:Name="_txbkMicrophoneMuted_"
+                                           Text="&#xE25B;"
+                                           FontSize="16"
+                                           IsHitTestVisible="True"
+                                           Visibility="Collapsed"
+                                           Foreground="Red"
+                                           FontWeight="Bold"
+                                           FontFamily="Segoe MDL2 Assets">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform X="1" Y="2"/>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </Grid>
                         </Button>
                         <Button x:Name="_btnVideo_"
                             PointerEntered="btnAny_entered"

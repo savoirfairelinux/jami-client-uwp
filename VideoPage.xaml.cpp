@@ -150,6 +150,7 @@ VideoPage::VideoPage()
     RingD::instance->incomingVideoMuted += ref new RingClientUWP::IncomingVideoMuted(this, &RingClientUWP::Views::VideoPage::OnincomingVideoMuted);
     VideoManager::instance->captureManager()->startPreviewing += ref new RingClientUWP::StartPreviewing(this, &RingClientUWP::Views::VideoPage::OnstartPreviewing);
     VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
+    RingD::instance->audioMuted += ref new RingClientUWP::AudioMuted(this, &RingClientUWP::Views::VideoPage::OnaudioMuted);
 }
 
 void
@@ -288,6 +289,13 @@ void RingClientUWP::Views::VideoPage::_btnSwitch__Tapped(Platform::Object^ sende
 void RingClientUWP::Views::VideoPage::_btnMicrophone__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
     switchMicrophoneStateCall();
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    auto state = !item->_audioMuted;
+    item->_audioMuted = state;
+
+    // refacto : compare how video and audios are muted, then decide which solution is best.
+    RingD::instance->muteAudio(Utils::toString(item->_callId), state); // nb : muteAudio == setMuteAudio
 }
 
 
@@ -429,4 +437,24 @@ void RingClientUWP::Views::VideoPage::OnstartPreviewing()
 void RingClientUWP::Views::VideoPage::OnstopPreviewing()
 {
     PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::VideoPage::_btnMicrophone__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    switchMicrophoneStateCall();
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    auto state = !item->_audioMuted;
+    item->_audioMuted = state;
+
+    // refacto : compare how video and audios are muted, then decide which solution is best.
+    RingD::instance->muteAudio(Utils::toString(item->_callId), state); // nb : muteAudio == setMuteAudio
+}
+
+
+void RingClientUWP::Views::VideoPage::OnaudioMuted(const std::string &callId, bool state)
+{
+    _txbkMicrophoneMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
+                                        : Windows::UI::Xaml::Visibility::Collapsed;
 }
