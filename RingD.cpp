@@ -419,6 +419,21 @@ RingD::registerCallbacks()
                     stateChange(Utils::toPlatformString(callId), CallStatus::IN_PROGRESS, 0);
             }));
         }),
+        DRing::exportable_callback<DRing::CallSignal::AudioMuted>([this](
+                    const std::string& callId,
+                    bool state)
+        {
+            // why this cllaback exist ? why are we not using stateChange ?
+            MSG_("<AudioMuted>");
+            MSG_("callId = " + callId);
+            MSG_("state = " + Utils::toString(state.ToString()));
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+            {
+                audioMuted(callId, state);
+            }));
+        }),
         DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
                     const std::string& callId,
                     const std::string& state,
@@ -1045,6 +1060,12 @@ RingD::dequeueTasks()
             bool muted = task->_muted;
             DRing::muteLocalMedia(callId, DRing::Media::Details::MEDIA_TYPE_VIDEO, muted);
         }
+        case Request::MuteAudio:
+        {
+            DRing::muteLocalMedia(task->_callid_new
+                                  , DRing::Media::Details::MEDIA_TYPE_AUDIO
+                                  , task->_audioMuted_new);
+        }
         case Request::LookUpName:
         {
             auto alias = task->_alias;
@@ -1125,6 +1146,16 @@ void RingClientUWP::RingD::muteVideo(String ^ callId, bool muted)
 
     task->_callId = callId;
     task->_muted = muted;
+
+    tasksList_.push(task);
+}
+
+void RingClientUWP::RingD::muteAudio(const std::string& callId, bool muted)
+{
+    auto task = ref new RingD::Task(Request::MuteAudio);
+
+    task->_callid_new = callId;
+    task->_audioMuted_new = muted;
 
     tasksList_.push(task);
 }
