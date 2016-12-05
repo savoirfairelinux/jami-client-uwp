@@ -43,6 +43,7 @@ delegate void FinishCaptureDeviceEnumeration();
 delegate void RegistrationStateErrorGeneric(const std::string& accountId);
 delegate void RegistrationStateRegistered();
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
+delegate void AudioMuted(const std::string& callId, bool state);
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 using namespace std::placeholders;
@@ -129,6 +130,7 @@ internal:
     void killCall(String^ callId);
     void switchDebug();
     void muteVideo(String^ callId, bool muted);
+    void muteAudio(const std::string& callId, bool muted);
     void lookUpName(String^ name);
     void registerName(String^ accountId, String^ password, String^ username);
     void registerName_new(const std::string& accountId, const std::string& password, const std::string& username);
@@ -155,6 +157,7 @@ internal:
     event RegistrationStateErrorGeneric^ registrationStateErrorGeneric;
     event RegistrationStateRegistered^ registrationStateRegistered;
     event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
+    event AudioMuted^ audioMuted;
 
 private:
     /* sub classes */
@@ -178,6 +181,7 @@ private:
         KillCall,
         switchDebug,
         MuteVideo,
+        MuteAudio,
         LookUpName,
         LookUpAddress,
         RegisterName
@@ -222,6 +226,7 @@ private:
         std::string _publicUsername_new;
         std::string _callid_new;
         std::string _ringId_new;
+        bool _audioMuted_new;
     };
 
     /* functions */

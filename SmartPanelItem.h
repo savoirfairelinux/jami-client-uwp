@@ -75,13 +75,15 @@ public:
             NotifyPropertyChanged("_callStatus");
         }
     }
-    property bool _videoMuted
+    property bool _videoMuted // refacto : add set and remove void muteVideo(bool state);
     {
         bool get()
         {
             return videoMuted_;
         }
     }
+
+    property bool _audioMuted;
 
     property Visibility _showMe
     {
