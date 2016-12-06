@@ -452,7 +452,7 @@ RingD::registerCallbacks()
             if (state3 == CallStatus::OUTGOING_RINGING ||
                     state3 == CallStatus::INCOMING_RINGING) {
                 try {
-                    Configuration::UserPreferences::instance->sendVCard(callId);
+                    //Configuration::UserPreferences::instance->sendVCard(callId);
                 }
                 catch (Exception^ e) {
                     EXC_(e);
@@ -539,6 +539,13 @@ RingD::registerCallbacks()
                         dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(false, false);
                         editModeOn_ = false;
                     }*/
+                    setLoadingStatusText("Registration successful", "#ff00ff00");
+                }));
+            }
+            else if (state == DRing::Account::States::TRYING) {
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                    ref new DispatchedHandler([=]() {
+                    setLoadingStatusText("Attempting to register account...", "#ff00f0f0");
                 }));
             }
             else if (state == DRing::Account::States::ERROR_GENERIC
@@ -555,6 +562,7 @@ RingD::registerCallbacks()
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                     registrationStateErrorGeneric(account_id);
+                    setLoadingStatusText(Utils::toPlatformString("Failed to register account: " + state), "#ffff0000");
                     // ajoute cet event dans le wizard
                 }));
             }
@@ -572,13 +580,16 @@ RingD::registerCallbacks()
                 }*/
             }));
         }),
-        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
+        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& msg)
         {
-            if (debugModeOn_)
+            if (debugModeOn_) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                DMSG_(toto);
-            }));
+                    ref new DispatchedHandler([=]() {
+                    std::string displayMsg = msg.substr(56);
+                    setLoadingStatusText(Utils::toPlatformString(displayMsg.substr(0,40) + "..."), "#ff000000");
+                    DMSG_(msg);
+                }));
+            }
         })
     };
     registerCallHandlers(callHandlers);
