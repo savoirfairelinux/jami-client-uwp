@@ -276,6 +276,15 @@ genID(long long lower, long long upper)
     return o.str();
 }
 
+Windows::UI::Color
+ColorFromString(String^ s)
+{
+    int a,r,g,b;
+    if (sscanf_s(Utils::toString(s).c_str(), "#%2x%2x%2x%2x", &a, &r, &g, &b) == 4)
+        return Windows::UI::ColorHelper::FromArgb(a, r, g, b);
+    else
+        return Windows::UI::ColorHelper::FromArgb(255, 0, 0, 0);
+}
 
 } /*namespace Utils*/
 } /*namespace RingClientUWP*/

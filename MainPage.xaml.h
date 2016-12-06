@@ -44,8 +44,6 @@ protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
     virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
 
-    void PositionImage();
-    void PositionRing();
     void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 
 private:
