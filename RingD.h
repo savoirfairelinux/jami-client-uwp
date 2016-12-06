@@ -18,10 +18,16 @@
 **************************************************************************/
 #include <dring.h>
 
+#include "Ringtone.h"
+
 using namespace concurrency;
+
+using namespace Windows::UI::Notifications;
+using namespace Windows::Data::Xml::Dom;
 
 namespace RingClientUWP
 {
+
 // its ok to keep this enum here and to use it with the wizard, because in pch.h headers are a-z sorted,
 // but it would be much more consistent to move this enum in globals.h when merged
 
@@ -83,6 +89,7 @@ public:
         }
     }
 
+    property bool isInBackground;
     property StartingStatus _startingStatus;
 
     void cancelOutGoingCall2(String^ callId); // marche
@@ -252,6 +259,7 @@ private:
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     bool editModeOn_ = false;
     bool debugModeOn_ = true;
+    Ringtone^ ringtone_;
 
     std::map<std::string, SharedCallback> callHandlers;
     std::map<std::string, SharedCallback> getAppPathHandler;

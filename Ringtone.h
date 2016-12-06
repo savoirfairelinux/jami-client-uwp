@@ -1,7 +1,7 @@
-﻿#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: J�ger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,31 +16,35 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "App.g.h"
+#pragma once
 
-using namespace Windows::ApplicationModel::Activation;
-using namespace Windows::UI::Xaml::Controls;
-using namespace Windows::ApplicationModel;
-using namespace Windows::ApplicationModel::Background;
+using namespace Platform;
+
+using namespace Windows::Media::Audio;
+using namespace Windows::Media::Core;
+using namespace Windows::Media::Playback;
 
 namespace RingClientUWP
 {
 
-ref class App sealed
+public ref class Ringtone sealed
 {
-protected:
-    virtual void OnLaunched(LaunchActivatedEventArgs^ e) override;
-    virtual void OnActivated(IActivatedEventArgs^ e) override;
 
-    void App_EnteredBackground(Platform::Object^ sender, EnteredBackgroundEventArgs^ e);
-    void App_LeavingBackground(Platform::Object^ sender, LeavingBackgroundEventArgs^ e);
-
-internal:
-    App();
+public:
+    Ringtone(String^ fileName);
+    void Start();
+    void Stop();
 
 private:
-    Frame^ rootFrame;
-    void OnsummonWizard();
+    AudioFileInputNode^ _fileInputNode;
+    AudioGraph^ _graph;
+    AudioDeviceOutputNode^ _deviceOutputNode;
+    MediaPlayer^ mp;
+    String^ fileName_;
+
+    task<void> CreateGraph();
+    task<void> CreateDefaultDeviceOutputNode();
+    task<void> CreateFileInputNode();
 };
 
 }
