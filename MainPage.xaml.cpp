@@ -358,10 +358,27 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
 void RingClientUWP::MainPage::OnregistrationStateRegistered()
 {
     showLoadingOverlay(false, false);
+
+    /* do not connect those delegates before initial registration on dht is fine.
+       Otherwise your going to mess with the wizard */
+    RingD::instance->nameRegistred += ref new RingClientUWP::NameRegistred(this, &RingClientUWP::MainPage::OnnameRegistred);
+    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &RingClientUWP::MainPage::OnvolatileDetailsChanged);
 }
 
 
 void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
 {
     showFrame(_welcomeFrame_);
+}
+
+
+void RingClientUWP::MainPage::OnnameRegistred(bool status)
+{
+    showLoadingOverlay(false, false);
+}
+
+
+void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details)
+{
+    showLoadingOverlay(false, false);
 }

@@ -365,6 +365,8 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
     _RegisterStateEdition_->IsOn = true;
     _accountAliasTextBox_->Text = "";
     _usernameTextBox_->Text = "";
+
+    checkStateAddAccountMenu();
 }
 
 void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
@@ -696,7 +698,8 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
     if (isRingAccountType) {
         bool isPublic = _RegisterState_->IsOn;
 
-        bool isUsernameValid = (_usernameValid_->Visibility == Windows::UI::Xaml::Visibility::Visible) ? true : false;
+        bool isUsernameValid = (_usernameValid_->Visibility == Windows::UI::Xaml::Visibility::Visible
+                                && !_usernameTextBox_->Text->IsEmpty()) ? true : false;
 
         bool isPasswordValid = (_ringPasswordBoxAccountCreation_->Password->IsEmpty()) ? false : true;
 
@@ -723,6 +726,13 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
             _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         }
 
+        if (isUsernameValid) {
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        } else {
+            _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        }
 
         if (isPublic)
             if (isUsernameValid && isAccountAlias && isRingPasswordCheck && isPasswordValid)
@@ -1119,7 +1129,14 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
 
         account->name_ = _accountAliasTextBoxEdition_->Text;
 
-        account->_upnpState = _upnpState_->IsOn;
+        if (account->accountType_ == "RING") {
+            account->_upnpState = _upnpState_->IsOn;
+        }
+        else {
+            account->_sipHostname = _sipHostnameEdition_->Text;
+            account->_sipUsername = _sipUsernameEditionTextBox_->Text;
+            account->_sipPassword = _sipPasswordEdition_->Password;
+        }
 
         RingD::instance->updateAccount(accountId);
     }
