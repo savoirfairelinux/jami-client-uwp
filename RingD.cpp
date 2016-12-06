@@ -47,6 +47,7 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
+
 using namespace Windows::System;
 
 void
@@ -366,6 +367,52 @@ void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePass
 }
 
 void
+ShowCallToast(String^ callId, String^ from = nullptr)
+{
+    String^ payload =
+        "<toast scenario='incomingCall'> "
+            "<visual> "
+                "<binding template='ToastGeneric'>"
+                    "<text>GNU Ring - Incoming call"+ (from?(" from " + from):"") +"</text>"
+                "</binding>"
+            "</visual>"
+            /*"<actions>"
+                "<action arguments = '" + callId + "' content = 'Accept' />"
+            "</actions>"*/
+            "<audio src='ms-appx:///Assets/default.wav' loop='true'/>"
+        "</toast>";
+
+    auto doc = ref new XmlDocument();
+    doc->LoadXml(payload);
+
+    auto toast = ref new ToastNotification(doc);
+    ToastNotificationManager::CreateToastNotifier()->Show(toast);
+}
+
+void
+ShowMsgToast(String^ from, String^ payload)
+{
+    String^ xml =
+        "<toast scenario='incomingMessage'> "
+            "<visual> "
+                "<binding template='ToastGeneric'>"
+                    "<text>" + from + " : " + payload + "</text>"
+                "</binding>"
+            "</visual>"
+            "<actions>"
+                "<action arguments = '" + from + "'/>"
+            "</actions>"
+            "<audio src='ms-appx:///Assets/message_notification_sound.wav' loop='false'/>"
+        "</toast>";
+
+    auto doc = ref new XmlDocument();
+    doc->LoadXml(xml);
+
+    auto toast = ref new ToastNotification(doc);
+    ToastNotificationManager::CreateToastNotifier()->Show(toast);
+}
+
+void
 RingD::registerCallbacks()
 {
     dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
@@ -469,15 +516,30 @@ RingD::registerCallbacks()
             if (state3 == CallStatus::OUTGOING_RINGING ||
                     state3 == CallStatus::INCOMING_RINGING) {
                 try {
-                    //Configuration::UserPreferences::instance->sendVCard(callId);
+                    Configuration::UserPreferences::instance->sendVCard(callId);
                 }
                 catch (Exception^ e) {
                     EXC_(e);
                 }
             }
 
-            if (state3 == CallStatus::ENDED)
+            if (state3 == CallStatus::INCOMING_RINGING) {
+                if (isInBackground) {
+                    ringtone_->Start();
+                    ShowCallToast(callId2);
+                }
+                else
+                    ringtone_->Start();
+            }
+
+            if (state3 == CallStatus::IN_PROGRESS) {
+                ringtone_->Stop();
+            }
+
+            if (state3 == CallStatus::ENDED) {
                 DRing::hangUp(callId); // solve a bug in the daemon API.
+                ringtone_->Stop();
+            }
 
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                 CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
@@ -881,6 +943,7 @@ RingD::startDaemon()
 
 RingD::RingD()
 {
+    ringtone_ = ref new Ringtone("default.wav");
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
