@@ -30,6 +30,16 @@
 #include "Globals.h"
 
 /* required by generated headers. */
+#include "App.g.h"
+
+namespace RingClientUWP
+{
+    partial ref class App
+    {
+    protected:
+        virtual void OnBackgroundActivated(Windows::ApplicationModel::Activation::BackgroundActivatedEventArgs^ args) override;
+    };
+}
 #include "App.xaml.h"
 #include "Account.h"
 #include "AccountListItem.h"
@@ -50,8 +60,11 @@
 #include "UserPreferences.h"
 #include "VCardUtils.h"
 
-/* video headers */
+/* video */
 #include "Video.h"
 #include "VideoCaptureManager.h"
 #include "VideoManager.h"
 #include "VideoRendererManager.h"
+
+/* audio */
+#include "Ringtone.h"

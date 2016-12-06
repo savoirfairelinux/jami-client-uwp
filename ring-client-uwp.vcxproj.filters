@@ -77,6 +77,12 @@
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Ringtone.cpp">
+      <Filter>Media\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="BackgroundActivity.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -148,6 +154,12 @@
     </ClInclude>
     <ClInclude Include="PreviewPage.xaml.h" />
     <ClInclude Include="VCardUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Ringtone.h">
+      <Filter>Media\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="BackgroundActivity.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
@@ -315,5 +327,10 @@
     <Filter Include="Views">
       <UniqueIdentifier>{b81596e4-e16c-4537-9631-65655360cbf4}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\default.wav">
+      <Filter>Assets</Filter>
+    </Media>
   </ItemGroup>
 </Project>
