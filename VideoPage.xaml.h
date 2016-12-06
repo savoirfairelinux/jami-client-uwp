@@ -124,6 +124,7 @@ private:
     void OnstopPreviewing();
     void _btnMicrophone__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnaudioMuted(const std::string &callId, bool state);
+    void OnvideoMuted(const std::string &callId, bool state);
 };
 }
 }

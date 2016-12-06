@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
+<Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+         xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+         xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3"
+         IgnorableNamespaces="uap uap3 mp">
   <Identity Name="Savoir-faireLinux.GNURing" Publisher="CN=8121A5F7-3CA1-4CAA-92B2-4F595B011941" Version="1.1.12.0" />
   <mp:PhoneIdentity PhoneProductId="2385953f-9019-423d-aa82-d1bbacfa258b" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
@@ -8,7 +12,7 @@
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
   </Dependencies>
   <Resources>
     <Resource Language="x-generate" />
@@ -20,6 +24,14 @@
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
+      <Extensions>
+        <Extension  Category="windows.backgroundTasks"
+                    EntryPoint="RingClientUWP.BackgroundActivity">
+          <BackgroundTasks>
+            <Task Type="systemEvent" />
+          </BackgroundTasks>
+        </Extension>
+      </Extensions>
     </Application>
   </Applications>
   <Capabilities>
@@ -27,6 +39,7 @@
     <Capability Name="internetClientServer" />
     <Capability Name="internetClient" />
     <Capability Name="privateNetworkClientServer" />
+    <uap3:Capability Name="backgroundMediaPlayback"/>
     <uap:Capability Name="userAccountInformation" />
     <DeviceCapability Name="microphone" />
     <DeviceCapability Name="webcam" />

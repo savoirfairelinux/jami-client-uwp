@@ -45,6 +45,7 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
+
 using namespace Windows::System;
 
 void
@@ -364,6 +365,30 @@ void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePass
 }
 
 void
+ShowToast(String^ msg, String^ subMsg = nullptr)
+{
+    String^ payload =
+        "<toast scenario='incomingCall'> "
+            "<visual> "
+                "<binding template='ToastGeneric'>"
+                    "<text>GNU Ring - Incoming call</text>"
+                "</binding>"
+            "</visual>"
+            "<actions>"
+                "<action arguments = '" + msg + "' content = 'ACCEPT' />"
+                "<action activationType = 'background' arguments = '" + msg + "' content = 'REFUSE' />"
+            "</actions>"
+            "<audio src='ms-appx:///Assets/default.wav' loop='true'/>"
+        "</toast>";
+
+    auto doc = ref new XmlDocument();
+    doc->LoadXml(payload);
+
+    auto toast = ref new ToastNotification(doc);
+    ToastNotificationManager::CreateToastNotifier()->Show(toast);
+}
+
+void
 RingD::registerCallbacks()
 {
     dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
@@ -434,6 +459,21 @@ RingD::registerCallbacks()
                 audioMuted(callId, state);
             }));
         }),
+        DRing::exportable_callback<DRing::CallSignal::VideoMuted>([this](
+                    const std::string& callId,
+                    bool state)
+        {
+            // why this cllaback exist ? why are we not using stateChange ?
+            MSG_("<VideoMuted>");
+            MSG_("callId = " + callId);
+            MSG_("state = " + Utils::toString(state.ToString()));
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+            {
+                videoMuted(callId, state);
+            }));
+        }),
         DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
                     const std::string& callId,
                     const std::string& state,
@@ -452,15 +492,29 @@ RingD::registerCallbacks()
             if (state3 == CallStatus::OUTGOING_RINGING ||
                     state3 == CallStatus::INCOMING_RINGING) {
                 try {
-                    //Configuration::UserPreferences::instance->sendVCard(callId);
+                    Configuration::UserPreferences::instance->sendVCard(callId);
                 }
                 catch (Exception^ e) {
                     EXC_(e);
                 }
             }
 
-            if (state3 == CallStatus::ENDED)
+            if (state3 == CallStatus::INCOMING_RINGING) {
+                if (isInBackground) {
+                    ShowToast(callId2);
+                }
+                else
+                    ringtone_->Start();
+            }
+
+            if (state3 == CallStatus::IN_PROGRESS) {
+                ringtone_->Stop();
+            }
+
+            if (state3 == CallStatus::ENDED) {
                 DRing::hangUp(callId); // solve a bug in the daemon API.
+                ringtone_->Stop();
+            }
 
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                 CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
@@ -544,7 +598,7 @@ RingD::registerCallbacks()
             }
             else if (state == DRing::Account::States::TRYING) {
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                    ref new DispatchedHandler([=]() {
+                ref new DispatchedHandler([=]() {
                     setLoadingStatusText("Attempting to register account...", "#ff00f0f0");
                 }));
             }
@@ -584,7 +638,7 @@ RingD::registerCallbacks()
         {
             if (debugModeOn_) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
-                    ref new DispatchedHandler([=]() {
+                ref new DispatchedHandler([=]() {
                     std::string displayMsg = msg.substr(56);
                     setLoadingStatusText(Utils::toPlatformString(displayMsg.substr(0,40) + "..."), "#ff000000");
                     DMSG_(msg);
@@ -860,6 +914,7 @@ RingD::startDaemon()
 
 RingD::RingD()
 {
+    ringtone_ = ref new Ringtone("default.wav");
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
@@ -1013,12 +1068,16 @@ RingD::dequeueTasks()
         {
             auto account = AccountListItemsViewModel::instance->findItem(Utils::toPlatformString(task->_accountId_new))->_account;
             std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
+            std::map<std::string, std::string> accountDetailsOld(accountDetails);
 
 
 
             accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
 
             if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
+                if (accountDetails == accountDetailsOld)
+                    break;
+
                 accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
@@ -1031,7 +1090,6 @@ RingD::dequeueTasks()
                 accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
                 accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
             }
-
 
             DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
             break;
