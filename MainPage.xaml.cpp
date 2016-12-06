@@ -95,6 +95,13 @@ MainPage::MainPage()
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::MainPage::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::MainPage::OncallPlaced);
+
+    RingD::instance->setLoadingStatusText += ref new SetLoadingStatusText([this](String^ statusText, String^ color){
+        _loadingStatus_->Text = statusText;
+        auto col = Utils::ColorFromString(color);
+        auto brush = ref new Windows::UI::Xaml::Media::SolidColorBrush(col);
+        _loadingStatus_->Foreground = brush;
+    });
 }
 
 void
@@ -158,17 +165,6 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
             _loadingOverlayRect_->Fill = whiteBrush;
             _loadingOverlayRect_->Opacity = 1.0;
         }
-        TimeSpan delay;
-        delay.Duration = 10000 * 50;
-        ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
-                                          ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
-        {
-            Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                                 ref new DispatchedHandler([this]()
-            {
-                OnResize(nullptr, nullptr);
-            }));
-        }), delay);
     }
     else if (!load && isLoading) {
         isLoading = false;
@@ -177,43 +173,8 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
 }
 
 void
-RingClientUWP::MainPage::PositionImage()
-{
-    bounds = ApplicationView::GetForCurrentView()->VisibleBounds;
-
-    auto img = ref new Image();
-    auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
-    Windows::Foundation::Uri^ uri;
-
-    _loadingImage_->SetValue(Canvas::LeftProperty, bounds.Width * 0.5 - _loadingImage_->Width * 0.5);
-    _loadingImage_->SetValue(Canvas::TopProperty, bounds.Height * 0.5 - _loadingImage_->Height * 0.5);
-}
-
-void
-RingClientUWP::MainPage::PositionRing()
-{
-    double left;
-    double top;
-
-    _splashProgressRing_->Width = 144;
-    _splashProgressRing_->Height = 144;
-
-    left = bounds.Width * 0.5 - _loadingImage_->Width * 0.5 + 139;
-    top = bounds.Height * 0.5 - _loadingImage_->Height * 0.5 + 78;
-
-    _splashProgressRing_->SetValue(Canvas::LeftProperty, left);
-    _splashProgressRing_->SetValue(Canvas::TopProperty, top);
-}
-
-void
 RingClientUWP::MainPage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
-    Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                         ref new DispatchedHandler([this]()
-    {
-        PositionImage();
-        PositionRing();
-    }));
 }
 
 void
@@ -397,10 +358,27 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
 void RingClientUWP::MainPage::OnregistrationStateRegistered()
 {
     showLoadingOverlay(false, false);
+
+    /* do not connect those delegates before initial registration on dht is fine.
+       Otherwise your going to mess with the wizard */
+    RingD::instance->nameRegistred += ref new RingClientUWP::NameRegistred(this, &RingClientUWP::MainPage::OnnameRegistred);
+    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &RingClientUWP::MainPage::OnvolatileDetailsChanged);
 }
 
 
 void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
 {
     showFrame(_welcomeFrame_);
+}
+
+
+void RingClientUWP::MainPage::OnnameRegistred(bool status)
+{
+    showLoadingOverlay(false, false);
+}
+
+
+void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details)
+{
+    showLoadingOverlay(false, false);
 }

@@ -44,8 +44,6 @@ protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
     virtual void OnKeyDown(KeyRoutedEventArgs^ e) override;
 
-    void PositionImage();
-    void PositionRing();
     void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
 
 private:
@@ -61,6 +59,7 @@ private:
     void DisplayProperties_DpiChanged(Windows::Graphics::Display::DisplayInformation^ sender, Platform::Object^ args);
     EventRegistrationToken dpiChangedtoken;
     Rect bounds;
+    bool editionMode = false;
 
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
@@ -75,5 +74,7 @@ private:
     void OnregistrationStateErrorGeneric(const std::string& accountId);
     void OnregistrationStateRegistered();
     void OncallPlaced(Platform::String ^callId);
+    void OnnameRegistred(bool status);
+    void OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details);
 };
 }
