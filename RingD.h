@@ -18,10 +18,16 @@
 **************************************************************************/
 #include <dring.h>
 
+#include "Ringtone.h"
+
 using namespace concurrency;
+
+using namespace Windows::UI::Notifications;
+using namespace Windows::Data::Xml::Dom;
 
 namespace RingClientUWP
 {
+
 // its ok to keep this enum here and to use it with the wizard, because in pch.h headers are a-z sorted,
 // but it would be much more consistent to move this enum in globals.h when merged
 
@@ -45,6 +51,7 @@ delegate void RegistrationStateRegistered();
 delegate void SetLoadingStatusText(String^ statusText, String^ color);
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
+delegate void VideoMuted(const std::string& callId, bool state);
 delegate void NameRegistred(bool status);
 delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
 
@@ -82,6 +89,7 @@ public:
         }
     }
 
+    property bool isInBackground;
     property StartingStatus _startingStatus;
 
     void cancelOutGoingCall2(String^ callId); // marche
@@ -162,6 +170,7 @@ internal:
     event SetLoadingStatusText^ setLoadingStatusText;
     event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
     event AudioMuted^ audioMuted;
+    event VideoMuted^ videoMuted;
     event NameRegistred^ nameRegistred;
     event VolatileDetailsChanged^ volatileDetailsChanged;
 
@@ -250,6 +259,7 @@ private:
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     bool editModeOn_ = false;
     bool debugModeOn_ = true;
+    Ringtone^ ringtone_;
 
     std::map<std::string, SharedCallback> callHandlers;
     std::map<std::string, SharedCallback> getAppPathHandler;

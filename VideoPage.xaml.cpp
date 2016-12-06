@@ -151,6 +151,7 @@ VideoPage::VideoPage()
     VideoManager::instance->captureManager()->startPreviewing += ref new RingClientUWP::StartPreviewing(this, &RingClientUWP::Views::VideoPage::OnstartPreviewing);
     VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
     RingD::instance->audioMuted += ref new RingClientUWP::AudioMuted(this, &RingClientUWP::Views::VideoPage::OnaudioMuted);
+    RingD::instance->videoMuted += ref new RingClientUWP::VideoMuted(this, &RingClientUWP::Views::VideoPage::OnvideoMuted);
 }
 
 void
@@ -457,4 +458,11 @@ void RingClientUWP::Views::VideoPage::OnaudioMuted(const std::string &callId, bo
 {
     _txbkMicrophoneMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
                                         : Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bool state)
+{
+    _txbkVideoMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
+                                   : Windows::UI::Xaml::Visibility::Collapsed;
 }

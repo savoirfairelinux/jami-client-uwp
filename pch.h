@@ -50,8 +50,11 @@
 #include "UserPreferences.h"
 #include "VCardUtils.h"
 
-/* video headers */
+/* video */
 #include "Video.h"
 #include "VideoCaptureManager.h"
 #include "VideoManager.h"
 #include "VideoRendererManager.h"
+
+/* audio */
+#include "Ringtone.h"

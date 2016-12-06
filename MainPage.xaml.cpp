@@ -145,7 +145,23 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
 void
 RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
+    auto iter = BackgroundTaskRegistration::AllTasks->First();
+    auto hascur = iter->HasCurrent;
+    while (hascur)
+    {
+        auto cur = iter->Current->Value;
+        cur->Unregister(true);
+        hascur = iter->MoveNext();
+    }
+    BackgroundExecutionManager::RequestAccessAsync();
+    BackgroundTaskBuilder^ builder = ref new BackgroundTaskBuilder();
+    builder->Name = "CallRefusalBackgroundTask";
+    //builder->TaskEntryPoint = "RingClientUWP.BackgroundActivity";
+    builder->SetTrigger(ref new ToastNotificationActionTrigger());
+    BackgroundTaskRegistration^ registration = builder->Register();
+
     RingD::instance->init();
+
     showLoadingOverlay(true, false);
 }
 
