@@ -532,7 +532,7 @@
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                         Margin="0,0,10,0"
                                        Text="&#xE8D7;"/>
-                                <TextBlock Text="Archive password"/>
+                                <TextBlock Text="Password"/>
                             </StackPanel>
                             <Grid Margin="10">
                                 <Grid.ColumnDefinitions>
