@@ -744,6 +744,12 @@ RingD::registerCallbacks()
                     break;
                 }
             }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::VolatileDetailsChanged>(
+        [this](const std::string& accountId, const std::map<std::string, std::string>& details) {
+            ref new DispatchedHandler([=]() {
+                volatileDetailsChanged(accountId, details);
+            });
         })
     };
     registerConfHandlers(nameRegistrationHandlers);
@@ -1007,15 +1013,24 @@ RingD::dequeueTasks()
         {
             auto account = AccountListItemsViewModel::instance->findItem(Utils::toPlatformString(task->_accountId_new))->_account;
             std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
-            accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
+
+
+
             accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
 
-            if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING")
+            if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
+                accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
-            }));
+                    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
+                    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
+                }));
+            }
+            else {
+                accountDetails[DRing::Account::ConfProperties::HOSTNAME] = Utils::toString(account->_sipHostname);
+                accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
+                accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
+            }
 
 
             DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
@@ -1091,11 +1106,18 @@ RingD::dequeueTasks()
         case Request::RegisterName:
         {
             auto accountDetails = DRing::getAccountDetails(task->_accountId_new);
+            bool result;
 
             if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty())
                 registerName_new(task->_accountId_new, task->_password_new, task->_publicUsername_new);
             else
-                DRing::registerName(task->_accountId_new, task->_password_new, task->_publicUsername_new);
+                result = DRing::registerName(task->_accountId_new, task->_password_new, task->_publicUsername_new);
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                nameRegistred(result);
+            }));
+
 
             //const wchar_t* toto = task->_accountId->Data();
             //auto accountId = ref new String(toto);// Utils::toString(task->_accountId);
