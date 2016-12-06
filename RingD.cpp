@@ -452,7 +452,7 @@ RingD::registerCallbacks()
             if (state3 == CallStatus::OUTGOING_RINGING ||
                     state3 == CallStatus::INCOMING_RINGING) {
                 try {
-                    Configuration::UserPreferences::instance->sendVCard(callId);
+                    //Configuration::UserPreferences::instance->sendVCard(callId);
                 }
                 catch (Exception^ e) {
                     EXC_(e);
@@ -572,12 +572,13 @@ RingD::registerCallbacks()
                 }*/
             }));
         }),
-        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& toto)
+        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& msg)
         {
             if (debugModeOn_)
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
-                DMSG_(toto);
+                setLoadingStatusText(Utils::toPlatformString(msg.substr(56)));
+                DMSG_(msg);
             }));
         })
     };

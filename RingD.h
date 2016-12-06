@@ -42,6 +42,7 @@ delegate void RegisteredNameFound(LookupStatus status, const std::string& addres
 delegate void FinishCaptureDeviceEnumeration();
 delegate void RegistrationStateErrorGeneric(const std::string& accountId);
 delegate void RegistrationStateRegistered();
+delegate void SetLoadingStatusText(String^ statusText);
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
 
@@ -156,6 +157,7 @@ internal:
     event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
     event RegistrationStateErrorGeneric^ registrationStateErrorGeneric;
     event RegistrationStateRegistered^ registrationStateRegistered;
+    event SetLoadingStatusText^ setLoadingStatusText;
     event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
     event AudioMuted^ audioMuted;
 
