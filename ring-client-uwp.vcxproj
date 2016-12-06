@@ -272,6 +272,9 @@
     <None Include="..\restbed\dependency\openssl\out32dll\ssleay32.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
+    <None Include="Assets\ringtones\konga.ul">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
+    </None>
     <None Include="ring-client-uwp_StoreKey.pfx" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
@@ -363,6 +366,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\ringtones\default.wav" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

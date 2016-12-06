@@ -240,6 +240,9 @@
     </None>
     <None Include="Package.StoreAssociation.xml" />
     <None Include="ring-client-uwp_StoreKey.pfx" />
+    <None Include="Assets\ringtones\konga.ul">
+      <Filter>Assets\ringtones</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
@@ -315,5 +318,13 @@
     <Filter Include="Views">
       <UniqueIdentifier>{b81596e4-e16c-4537-9631-65655360cbf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Assets\ringtones">
+      <UniqueIdentifier>{bfbd259c-229f-457d-8dce-afdf124f176e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Media Include="Assets\ringtones\default.wav">
+      <Filter>Assets\ringtones</Filter>
+    </Media>
   </ItemGroup>
 </Project>
