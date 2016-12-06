@@ -38,6 +38,9 @@ App::App()
 {
     InitializeComponent(); // summon partial class, form generated files trough App.xaml
 
+    this->EnteredBackground += ref new EnteredBackgroundEventHandler(this, &App::App_EnteredBackground);
+    this->LeavingBackground += ref new LeavingBackgroundEventHandler(this, &App::App_LeavingBackground);
+
     /* connect to delegate */
     RingD::instance->summonWizard += ref new RingClientUWP::SummonWizard(this, &RingClientUWP::App::OnsummonWizard);
 }
@@ -77,4 +80,26 @@ void App::OnsummonWizard()
 {
     ApplicationView::GetForCurrentView()->TryResizeView(Size(400, 600));
     rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::Wizard::typeid));
+}
+
+void App::App_EnteredBackground(Platform::Object^ sender, EnteredBackgroundEventArgs^ e)
+{
+    MSG_("App_EnteredBackground");
+    RingD::instance->isInBackground = true;
+}
+
+void App::App_LeavingBackground(Platform::Object^ sender, LeavingBackgroundEventArgs^ e)
+{
+    MSG_("App_LeavingBackground");
+    RingD::instance->isInBackground = false;
+}
+
+void App::OnActivated(IActivatedEventArgs^ e)
+{
+    if (e->Kind == ActivationKind::ToastNotification) {
+        auto toastArgs = safe_cast<ToastNotificationActivatedEventArgs^>(e);
+        std::string args = Utils::toString(toastArgs->Argument);
+        if (!args.empty())
+            RingD::instance->acceptIncommingCall(Utils::toPlatformString(args));
+    }
 }

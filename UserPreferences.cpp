@@ -80,7 +80,7 @@ UserPreferences::Stringify()
 
     preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(        PREF_ACCOUNT_INDEX   ));
     preferencesObject->SetNamedValue("PREF_PROFILE_HASPHOTO", JsonValue::CreateBooleanValue(    PREF_PROFILE_HASPHOTO));
-    preferencesObject->SetNamedValue("PREF_PROFILE_UID",    JsonValue::CreateNumberValue(       PREF_PROFILE_UID     ));
+    preferencesObject->SetNamedValue("PREF_PROFILE_UID",    JsonValue::CreateNumberValue(static_cast<double>(PREF_PROFILE_UID)));
 
     return preferencesObject->Stringify();
 }
