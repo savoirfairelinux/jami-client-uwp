@@ -175,6 +175,8 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
 void
 RingClientUWP::MainPage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
+    bounds = ApplicationView::GetForCurrentView()->VisibleBounds;
+    // 766 x 534
 }
 
 void

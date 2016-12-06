@@ -240,6 +240,7 @@ private:
     Windows::UI::Core::CoreDispatcher^ dispatcher;
 
     std::string localFolder_;
+    std::string ringtoneFile_;
     bool daemonInitialized_ = false;
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;

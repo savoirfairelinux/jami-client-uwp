@@ -855,6 +855,13 @@ RingD::startDaemon()
 RingD::RingD()
 {
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+    auto ringtoneURI = ref new Uri("ms-appx:///Assets/ringtones/default.wav");
+    /*Windows::Storage::StorageFile::GetFileFromApplicationUriAsync(ringtoneURI)->Completed =
+        ref new AsyncOperationCompletedHandler<StorageFile^>([=](IAsyncOperation<StorageFile^> ^AsOp, AsyncStatus s) {
+        StorageFile^ file = AsOp->GetResults();
+        ringtoneFile_ = Utils::toString(file->Path);
+        MSG_(ringtoneFile_);
+    });*/
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
 }
