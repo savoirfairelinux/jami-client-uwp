@@ -434,6 +434,21 @@ RingD::registerCallbacks()
                 audioMuted(callId, state);
             }));
         }),
+        DRing::exportable_callback<DRing::CallSignal::VideoMuted>([this](
+                    const std::string& callId,
+                    bool state)
+        {
+            // why this cllaback exist ? why are we not using stateChange ?
+            MSG_("<VideoMuted>");
+            MSG_("callId = " + callId);
+            MSG_("state = " + Utils::toString(state.ToString()));
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+            {
+                videoMuted(callId, state);
+            }));
+        }),
         DRing::exportable_callback<DRing::CallSignal::StateChange>([this](
                     const std::string& callId,
                     const std::string& state,
