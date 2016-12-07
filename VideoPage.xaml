@@ -341,12 +341,26 @@
                                 </TextBlock>
                             </Grid>
                         </Button>
+                        <!--Tapped="_btnVideo__Tapped"-->
                         <Button x:Name="_btnVideo_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"
-                            Click="_btnVideo__Click"
-                            Tapped="_btnVideo__Tapped">
-                            <SymbolIcon Symbol="Video"/>
+                            Click="_btnVideo__Click">
+                            <Grid>
+                                <SymbolIcon Symbol="Video"/>
+                                <TextBlock x:Name="_txbkVideoMuted_"
+                                           Text="&#xE25B;"
+                                           FontSize="16"
+                                           IsHitTestVisible="True"
+                                           Visibility="Collapsed"
+                                           Foreground="Red"
+                                           FontWeight="Bold"
+                                           FontFamily="Segoe MDL2 Assets">
+                                    <TextBlock.RenderTransform>
+                                        <TranslateTransform X="1" Y="2"/>
+                                    </TextBlock.RenderTransform>
+                                </TextBlock>
+                            </Grid>
                         </Button>
                         <Button x:Name="_btnMemo_"
                             PointerEntered="btnAny_entered"
