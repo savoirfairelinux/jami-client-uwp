@@ -136,13 +136,13 @@
 
     <Grid Background="#FFF2F2F2">
         <Grid.RowDefinitions>
-            <RowDefinition Height="61" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Grid.Row="0"
                     Background="White"
-                    Height="61">
+                    Height="auto">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="60"/>
                 <ColumnDefinition Width="auto"/>
@@ -157,7 +157,8 @@
             </Ellipse>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="31" />
+                    <RowDefinition Height="25" />
+                    <RowDefinition Height="25" />
                     <RowDefinition Height="30" />
                 </Grid.RowDefinitions>
                 <Grid Grid.Row="0">
@@ -169,7 +170,7 @@
                     </Grid>
                     <TextBlock  x:Name="_title_"
                                 Grid.Column="0"
-                                Text="[TEXT MISSING]"
+                                Text=""
                                 TextWrapping="NoWrap"
                                 TextTrimming="CharacterEllipsis"
                                 VerticalAlignment="Center"
@@ -186,7 +187,14 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
                 </Grid>
-                <Grid Grid.Row="1">
+                <TextBlock  x:Name="_profilName_"
+                            Grid.Row="1"
+                            Text=""
+                            FontStyle="Italic"
+                            VerticalAlignment="Center"
+                            FontSize="16"
+                            Margin="4,0,4,0" />
+                <Grid Grid.Row="2">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto"/>
                         <ColumnDefinition Width="auto"/>
