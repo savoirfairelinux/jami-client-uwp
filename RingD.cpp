@@ -906,7 +906,9 @@ RingD::dequeueTasks()
                 item->_callId = Utils::toPlatformString(callId);
                 //MSG_("$1 place call with id : " + Utils::toString(item->_callId));
 
-                callPlaced(Utils::toPlatformString(callId));
+                /* if for any reason there is no callid, do not propagate the event*/
+                if (!callId.empty())
+                    callPlaced(Utils::toPlatformString(callId));
 
             }));
         }
@@ -1118,7 +1120,7 @@ RingD::dequeueTasks()
         }
         case Request::LookUpAddress:
         {
-            //DRing::lookupAddress(accountID.toStdString(), nameServiceURL.toStdString(), address.toStdString());
+            DRing::lookupAddress("", "", Utils::toString(task->_address));
             break;
         }
         case Request::RegisterName:
@@ -1129,12 +1131,14 @@ RingD::dequeueTasks()
             if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty())
                 registerName_new(task->_accountId_new, task->_password_new, task->_publicUsername_new);
             else
+            {
                 result = DRing::registerName(task->_accountId_new, task->_password_new, task->_publicUsername_new);
 
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-            ref new DispatchedHandler([=]() {
-                nameRegistred(result);
-            }));
+                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                    nameRegistred(result);
+                }));
+            }
 
 
             //const wchar_t* toto = task->_accountId->Data();

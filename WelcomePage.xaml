@@ -28,28 +28,26 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="1*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="2*"/>
             <RowDefinition Height="2*"/>
             <RowDefinition Height="1*"/>
         </Grid.RowDefinitions>
-        <StackPanel x:Name="_welcomePage_" Grid.Row="1">
-            <!--<TextBlock x:Uid="_welcomeMsg"
-                   x:Name="_welcomeMsg_"
-                   Style="{StaticResource TextStyle1}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center"
-                   TextWrapping="Wrap" />-->
-            <Image x:Name="_welcomeImage_"
+        <StackPanel Grid.Row="1">
+        <Image x:Name="_welcomeImage_"
+
                    Source="Assets\Wide310x150Logo.scale-200.png"
                    Width="310"
                    HorizontalAlignment="Center"
                    Margin="0 10 0 30"
                    Height="150"/>
-            <TextBlock Text="Ring is free software for universal communication wich respects the freedoms and privacy of its users."
+        <TextBlock Text="Ring is free software for universal communication wich respects the freedoms and privacy of its users."
                        Foreground="#707370"
-                       MaxWidth="410"
-                       TextWrapping="WrapWholeWords"
+                       MaxWidth="500"
+                       Width="310"
+                       TextWrapping="Wrap"
                        TextAlignment="Justify"
-                       FontSize="18"
+                       FontSize="12"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"/>
         </StackPanel>

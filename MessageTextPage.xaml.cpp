@@ -42,6 +42,7 @@ using namespace Windows::UI::Core;
 
 using namespace Windows::UI::Popups;
 
+// refacto : the message text page should be
 MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
@@ -69,11 +70,16 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
         return;
 
     /* show the name of contact on the page */
-    _title_->Text = contact->name_;
+    _title_->Text = contact->_name;
+    _profilName_->Text = contact->_displayName;
 
     String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
     if (Utils::fileExists(Utils::toString(image_path))) {
         auto uri = ref new Windows::Foundation::Uri(image_path);
+        _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
+    }
+    else {
+        auto uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/contactAvatar.png");
         _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
     }
 

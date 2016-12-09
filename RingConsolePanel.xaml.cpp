@@ -151,7 +151,7 @@ void RingConsolePanel::sendCommand()
         auto list = ContactsViewModel::instance->contactsList;
         MSG_("list of calls returned by the daemon :");
         for (auto contact : list) {
-            MSG_("name : " + Utils::toString(contact->name_));
+            MSG_("name : " + Utils::toString(contact->_name));
             MSG_("ringId : " + Utils::toString(contact->ringID_));
         }
         return;

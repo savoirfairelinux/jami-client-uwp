@@ -80,6 +80,13 @@ public:
     CollapseEmptyString();
 };
 
+public ref class ContactStatusNotification sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    ContactStatusNotification();
+};
+
 public ref class SmartPanel sealed
 {
 public:
@@ -172,6 +179,16 @@ private:
     void _PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnregistrationStateRegistered();
     void OncallPlaced(Platform::String ^callId);
+
+    enum class MenuOpen {
+        CONTACTS_LIST,
+        ACCOUNTS_LIST,
+        SHARE,
+        DEVICE,
+        SETTINGS
+    };
+
+    MenuOpen menuOpen;
 };
 }
 }
