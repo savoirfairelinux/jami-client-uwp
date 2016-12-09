@@ -20,4 +20,9 @@ public enum class LookupStatus {
     ERRORR // one cannot simply use ERROR
 };
 
+public enum class ContactStatus {
+    WAITING_FOR_ACTIVATION, // waiting for lookup
+    READY
+};
+
 }

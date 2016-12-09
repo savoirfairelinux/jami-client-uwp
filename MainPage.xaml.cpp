@@ -96,7 +96,7 @@ MainPage::MainPage()
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::MainPage::OncallPlaced);
 
-    RingD::instance->setLoadingStatusText += ref new SetLoadingStatusText([this](String^ statusText, String^ color){
+    RingD::instance->setLoadingStatusText += ref new SetLoadingStatusText([this](String^ statusText, String^ color) {
         _loadingStatus_->Text = statusText;
         auto col = Utils::ColorFromString(color);
         auto brush = ref new Windows::UI::Xaml::Media::SolidColorBrush(col);

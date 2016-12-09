@@ -51,6 +51,8 @@ ContactsViewModel::ContactsViewModel()
             return;
         }
 
+        RingD::instance->lookUpAddress(fromRingId);
+
         contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
         /* save contacts conversation to disk */
@@ -67,6 +69,9 @@ ContactsViewModel::ContactsViewModel()
     });
     RingD::instance->incomingMessage +=
         ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
+
+    RingD::instance->registeredNameFound += ref new RingClientUWP::RegisteredNameFound(this, &RingClientUWP::ViewModel::ContactsViewModel::OnregisteredNameFound);
+
 }
 
 Contact^ // refacto : remove "byName"
@@ -74,7 +79,7 @@ ContactsViewModel::findContactByName(String^ name)
 {
     auto trimmedName = Utils::Trim(name);
     for each (Contact^ contact in contactsList_)
-        if (contact->name_ == trimmedName)
+        if (contact->_name == trimmedName)
             return contact;
 
     return nullptr;
@@ -90,12 +95,12 @@ Contact ^ RingClientUWP::ViewModel::ContactsViewModel::findContactByRingId(Strin
 }
 
 Contact^
-ContactsViewModel::addNewContact(String^ name, String^ ringId)
+ContactsViewModel::addNewContact(String^ name, String^ ringId, ContactStatus contactStatus)
 {
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
         //if (contactsList_ && !findContactByName(trimmedName) && !findContactByRingId(ringId)) {
-        Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0);
+        Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0, contactStatus);
         contactsList_->Append(contact);
         saveContactsToFile();
         contactAdded(contact);
@@ -178,13 +183,13 @@ ContactsViewModel::Destringify(String^ data)
                 accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
                 vcardUID = contactObject->GetNamedString(vcardUIDKey);
             }
-            auto contact = ref new Contact(name, ringid, guid, unreadmessages);
+            auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
             contact->_vcardUID = vcardUID;
             std::string contactImageFile = RingD::instance->getLocalFolder() + ".vcards\\"
-                + Utils::toString(contact->_vcardUID) + ".png";
+                                           + Utils::toString(contact->_vcardUID) + ".png";
             if (Utils::fileExists(contactImageFile)) {
                 contact->_avatarImage = Utils::toPlatformString(contactImageFile);
             }
@@ -233,10 +238,23 @@ void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::St
             saveContactsToFile();
         }
     }
+
 }
 
 void
 ContactsViewModel::modifyContact(Contact^ contact)
 {
     contactDataModified(contact);
+}
+
+
+void RingClientUWP::ViewModel::ContactsViewModel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name)
+{
+    if (status == LookupStatus::SUCCESS) {
+        for each (Contact^ contact in contactsList_)
+            if (contact->ringID_ == Utils::toPlatformString(address)) {
+                contact->_name = Utils::toPlatformString(name);
+                saveContactsToFile();
+            }
+    }
 }

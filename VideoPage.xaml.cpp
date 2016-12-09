@@ -169,7 +169,7 @@ void RingClientUWP::Views::VideoPage::updatePageContent()
     if (!contact)
         return;
 
-    _callee_->Text = contact->name_;
+    _callee_->Text = contact->_name;
 
     _messagesList_->ItemsSource = contact->_conversation->_messages;
 
