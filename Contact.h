@@ -43,7 +43,7 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ name, String^ ringID, String^ GUID, unsigned int unreadmessages);
+    Contact(String^ name, String^ ringID, String^ GUID, unsigned int unreadmessages, ContactStatus contactStatus);
     JsonObject^ ToJsonObject();
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -122,6 +122,19 @@ public:
         }
     }
 
+    property ContactStatus _contactStatus
+    {
+        ContactStatus get()
+        {
+            return contactStatus_;
+        }
+        void set(ContactStatus value)
+        {
+            contactStatus_ = value;
+            NotifyPropertyChanged("_contactStatus");
+        }
+    }
+
     VCardUtils::VCard^ getVCard();
 
 internal:
@@ -142,6 +155,7 @@ private:
     String^ avatarImage_;
     String^ displayName_;
     Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
+    ContactStatus contactStatus_;
 };
 }
 

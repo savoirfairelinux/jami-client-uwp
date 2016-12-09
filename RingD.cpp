@@ -741,6 +741,7 @@ RingD::registerCallbacks()
         DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
         [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
             //MSG_("<RegisteredNameFound>" + name + " : " + address + " status=" +std::to_string(status));
+            Sleep(5000);
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
             ref new DispatchedHandler([=]() {
                 switch (status)

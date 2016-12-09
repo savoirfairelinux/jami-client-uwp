@@ -90,12 +90,12 @@ Contact ^ RingClientUWP::ViewModel::ContactsViewModel::findContactByRingId(Strin
 }
 
 Contact^
-ContactsViewModel::addNewContact(String^ name, String^ ringId)
+ContactsViewModel::addNewContact(String^ name, String^ ringId, ContactStatus contactStatus)
 {
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
         //if (contactsList_ && !findContactByName(trimmedName) && !findContactByRingId(ringId)) {
-        Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0);
+        Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0, contactStatus);
         contactsList_->Append(contact);
         saveContactsToFile();
         contactAdded(contact);
@@ -178,13 +178,13 @@ ContactsViewModel::Destringify(String^ data)
                 accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
                 vcardUID = contactObject->GetNamedString(vcardUIDKey);
             }
-            auto contact = ref new Contact(name, ringid, guid, unreadmessages);
+            auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
             contact->_vcardUID = vcardUID;
             std::string contactImageFile = RingD::instance->getLocalFolder() + ".vcards\\"
-                + Utils::toString(contact->_vcardUID) + ".png";
+                                           + Utils::toString(contact->_vcardUID) + ".png";
             if (Utils::fileExists(contactImageFile)) {
                 contact->_avatarImage = Utils::toPlatformString(contactImageFile);
             }

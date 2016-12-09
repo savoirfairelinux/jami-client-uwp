@@ -36,6 +36,7 @@
         <views:AccountTypeToSourceImage x:Key="_AccountTypeToSourceImage_" />
         <views:AccountSelectedToVisibility x:Key="_AccountSelectedToVisibility_" />
         <views:CollapseEmptyString x:Key="_CollapseEmptyString_" />
+        <views:ContactStatusNotification x:Key="_ContactStatusNotification_" />
 
         <!-- template for contacts. -->
         <DataTemplate x:Key="ContactTemplate"
@@ -152,7 +153,14 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <!--helper to detect mouse overing-->
-                <Rectangle Fill="Transparent" Grid.Row="0"/>
+                <Rectangle Fill="White"
+                           Grid.Row="0"
+                           Canvas.ZIndex="2"
+                           Opacity="0.6"
+                           Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"/>
+                <ProgressBar Canvas.ZIndex="3"
+                             Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"
+                             IsIndeterminate="True"/>
                 <!-- contact. -->
                 <Grid Grid.Row="0">
                     <Grid.ColumnDefinitions>
@@ -207,6 +215,7 @@
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <!-- name of the contact. -->
+                            <!-- (XXX) Foreground="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"-->
                             <TextBlock  x:Name="_contactName_"
                                     Grid.Row="0"
                                     Text="{x:Bind _contact.name_}"
@@ -381,10 +390,15 @@
             <!--sub menus like the accounts list or the share menu are just below, technicaly they are nested inside the
             same row. To summon them we use the visibility of their own grid, by linking it to a toggle button-->
 
+
+
+
+        </Grid>
+        <!-- smartList and settings. -->
+        <Grid Grid.Row="1">
             <!-- accounts menu. -->
             <Grid x:Name="_accountsMenuGrid_"
-                  MaxHeight="350"
-                  Grid.Row="1"
+                  Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
@@ -420,17 +434,183 @@
                             Style="{StaticResource ButtonStyle5}"/>
                 </StackPanel>
             </Grid>
-            <!-- account creation menu. -->
-            <Grid x:Name="_accountCreationMenuGrid_"
-                  Grid.Row="2"
+            <!-- account edition menu. -->
+            <Grid x:Name="_accountEditionGrid_"
+                  Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer Grid.Row="0"
-                              MaxHeight="400">
+                <ScrollViewer x:Name="_scrollViewerEditionMenu_"
+                              Grid.Row="0">
+                    <StackPanel Orientation="Vertical"
+                                Padding="10,0"
+                                Grid.Row="0"
+                                Background="#FFE4F1F9">
+                        <!-- alias sub menu. -->
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="0,20">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Margin="0,0,10,0"
+                                       Text="&#xE8EC;"/>
+                            <TextBlock Text="Alias"/>
+                        </StackPanel>
+                        <Grid Margin="10,0,10,10">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="25"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBox  x:Name="_accountAliasTextBoxEdition_"
+                                      Grid.Column="0"
+                                      TextChanged="_accountAliasTextBoxEdition__TextChanged"
+                                      PlaceholderText="Enter alias"/>
+                            <TextBlock x:Name="_accountAliasValidEdition_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                               Visibility="Collapsed"
+                                               Text="&#xE10B;"/>
+                            <TextBlock x:Name="_accountAliasInvalidEdition_"
+                                               Grid.Column="1"
+                                               Padding="10,0"
+                                               Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                               Text="&#xE10A;"/>
+                        </Grid>
+                        <!-- edition sub menu. -->
+                        <StackPanel x:Name="_ringStackEdition_">
+                            <!-- register account on blockachain -->
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="0,20">
+                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                           Margin="0,0,10,0"
+                                           Text="&#xE167;"/>
+                                <TextBlock Text="Register public username"/>
+                            </StackPanel>
+                            <ToggleSwitch x:Name="_RegisterStateEdition_"
+                                      IsOn="True"
+                                      Toggled="_RegisterStateEdition__Toggled"
+                                      Margin="0,10"/>
+                            <TextBlock x:Name="_whatWilHappenEdition_"
+                                       Margin="0,10,0,0"
+                                       Style="{StaticResource BodyTextBlockStyle}"
+                                       Text="peoples will find you with your username"/>
+                            <HyperlinkButton Content="Learn more"
+                                             Margin="0,0,0,10"
+                                             NavigateUri="http://ring.cx"/>
+                            <Grid Margin="10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="25"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="_usernameTextBoxEdition_"
+                                         Grid.Column="0"
+                                         PlaceholderText="Enter your full name"
+                                         KeyUp="_usernameTextBoxEdition__KeyUp"/>
+                                <TextBlock x:Name="_usernameValidEdition_"
+                                                   Grid.Column="1"
+                                                   Padding="10,0"
+                                                   Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                                   Visibility="Collapsed"
+                                                   Text="&#xE10B;"/>
+                                <TextBlock x:Name="_usernameInvalidEdition_"
+                                                   Grid.Column="1"
+                                                   Padding="10,0"
+                                                   Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                                   Text="&#xE10A;"/>
+                            </Grid>
+                            <Button x:Name="_registerOnBlockchainEdition_"
+                                Content="register"
+                                Visibility="Collapsed"
+                                Click="_registerOnBlockchainEdition__Click"/>
+                            <StackPanel Orientation="Horizontal" Margin="10">
+                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Text="&#xE15E;"/>
+                                <TextBlock Text="UPnP" Margin="10"/>
+                            </StackPanel>
+                            <ToggleSwitch x:Name="_upnpState_"
+                                      Margin="20,10"/>
+                        </StackPanel>
+                        <!-- SIP parameters. -->
+                        <StackPanel x:Name="_sipAccountStackEdition_"
+                                Visibility="Collapsed">
+                            <StackPanel Orientation="Horizontal"
+                                    Margin="10">
+                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                       Text="&#xE717;"/>
+                                <TextBlock Text="SIP account parameters"
+                                       Margin="10"/>
+                            </StackPanel>
+                            <TextBox  x:Name="_sipHostnameEdition_"
+                                  Margin="10"
+                                  PlaceholderText="Enter hostname"/>
+                            <TextBox  x:Name="_sipUsernameEditionTextBox_"
+                                  Margin="10"
+                                  PlaceholderText="Enter username"/>
+                            <PasswordBox x:Name="_sipPasswordEdition_"
+                                     Margin="10"
+                                     PlaceholderText="Enter password"/>
+                        </StackPanel>
+                        <!-- delete account sub menu. -->
+                        <StackPanel Orientation="Horizontal" Margin="10">
+                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE74D;"/>
+                            <TextBlock Text="Delete account" Margin="10"/>
+                        </StackPanel>
+                        <ToggleSwitch x:Name="_deleteAccountEdition_"
+                                      Toggled="_deleteAccountEdition__Toggled"
+                                      Margin="20,10"/>
+                        <TextBlock x:Name="_whatWilHappendeleteRingAccountEdition_"
+                                   Margin="0,10,0,0"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="Red"
+                                   Visibility="Collapsed"
+                                   Text="Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted."/>
+                        <TextBlock x:Name="_whatWilHappendeleteSipAccountEdition_"
+                                   Margin="0,10,0,0"
+                                   Style="{StaticResource BodyTextBlockStyle}"
+                                   Foreground="Red"
+                                   Visibility="Collapsed"
+                                   Text="Your account will be deleted from this computer."/>
+                        <HyperlinkButton x:Name="_learnMoreDeleteAccountEdition_"
+                                         Content="Learn more"
+                                         Visibility="Collapsed"
+                                         Margin="0,0,0,10"
+                                         NavigateUri="http://ring.cx"/>
+                    </StackPanel>
+                </ScrollViewer>
+                <!-- buttons yes/no to accept the modification. -->
+                <Grid Grid.Row="1">
+                    <StackPanel Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                        <Button x:Name="_acceptAccountModification_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE081;"
+                                Click="_acceptAccountModification__Click"
+                                Style="{StaticResource ButtonStyle5}"/>
+                        <Button x:Name="_cancelAccountModification_"
+                                Grid.Row="1"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                Content="&#xE106;"
+                                Click="_cancelAccountModification__Click"
+                                Style="{StaticResource ButtonStyle5}"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+            <!-- account creation menu. -->
+            <Grid x:Name="_accountCreationMenuGrid_"
+                  Grid.Row="0"
+                  Visibility="Collapsed"
+                  Background="#3bc1d3">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <ScrollViewer Grid.Row="0">
                     <StackPanel Orientation="Vertical"
                                 Padding="10,0"
                                 Background="#FFE4F1F9">
@@ -635,7 +815,7 @@
             <!-- add account menu. -->
             <Grid x:Name="_accountAddMenuGrid_"
                   Visibility="Collapsed"
-                  Grid.Row="2"
+                  Grid.Row="0"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
@@ -711,184 +891,9 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-            <!--<StackPanel Orientation="Horizontal"
-                                Margin="0,20">
-                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                    Margin="0,0,10,0"
-                                    Text="&#xE8EC;"/>
-                <TextBlock Text="Alias"/>
-            </StackPanel>-->
-            <!-- account edition menu. -->
-            <Grid x:Name="_accountEditionGrid_"
-                  Grid.Row="2"
-                  Visibility="Collapsed"
-                  Background="#3bc1d3">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="30"/>
-                </Grid.RowDefinitions>
-                <ScrollViewer x:Name="_scrollViewerEditionMenu_"
-                              Grid.Row="0"
-                              MaxHeight="400">
-                    <StackPanel Orientation="Vertical"
-                                Padding="10,0"
-                                Grid.Row="0"
-                                Background="#FFE4F1F9">
-                        <!-- alias sub menu. -->
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,20">
-                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                       Margin="0,0,10,0"
-                                       Text="&#xE8EC;"/>
-                            <TextBlock Text="Alias"/>
-                        </StackPanel>
-                        <Grid Margin="10,0,10,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="25"/>
-                            </Grid.ColumnDefinitions>
-                            <TextBox  x:Name="_accountAliasTextBoxEdition_"
-                                      Grid.Column="0"
-                                      TextChanged="_accountAliasTextBoxEdition__TextChanged"
-                                      PlaceholderText="Enter alias"/>
-                            <TextBlock x:Name="_accountAliasValidEdition_"
-                                               Grid.Column="1"
-                                               Padding="10,0"
-                                               Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                            <TextBlock x:Name="_accountAliasInvalidEdition_"
-                                               Grid.Column="1"
-                                               Padding="10,0"
-                                               Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
-                        </Grid>
-                        <!-- edition sub menu. -->
-                        <StackPanel x:Name="_ringStackEdition_">
-                            <!-- register account on blockachain -->
-                            <StackPanel Orientation="Horizontal"
-                                        Margin="0,20">
-                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                           Margin="0,0,10,0"
-                                           Text="&#xE167;"/>
-                                <TextBlock Text="Register public username"/>
-                            </StackPanel>
-                            <ToggleSwitch x:Name="_RegisterStateEdition_"
-                                      IsOn="True"
-                                      Toggled="_RegisterStateEdition__Toggled"
-                                      Margin="0,10"/>
-                            <TextBlock x:Name="_whatWilHappenEdition_"
-                                       Margin="0,10,0,0"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="peoples will find you with your username"/>
-                            <HyperlinkButton Content="Learn more"
-                                             Margin="0,0,0,10"
-                                             NavigateUri="http://ring.cx"/>
-                            <Grid Margin="10">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="25"/>
-                                </Grid.ColumnDefinitions>
-                                <TextBox x:Name="_usernameTextBoxEdition_"
-                                         Grid.Column="0"
-                                         PlaceholderText="Enter your full name"
-                                         KeyUp="_usernameTextBoxEdition__KeyUp"/>
-                                <TextBlock x:Name="_usernameValidEdition_"
-                                                   Grid.Column="1"
-                                                   Padding="10,0"
-                                                   Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                                   Visibility="Collapsed"
-                                                   Text="&#xE10B;"/>
-                                <TextBlock x:Name="_usernameInvalidEdition_"
-                                                   Grid.Column="1"
-                                                   Padding="10,0"
-                                                   Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                                   Text="&#xE10A;"/>
-                            </Grid>
-                            <Button x:Name="_registerOnBlockchainEdition_"
-                                Content="register"
-                                Visibility="Collapsed"
-                                Click="_registerOnBlockchainEdition__Click"/>
-                            <StackPanel Orientation="Horizontal" Margin="10">
-                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                       Text="&#xE15E;"/>
-                                <TextBlock Text="UPnP" Margin="10"/>
-                            </StackPanel>
-                            <ToggleSwitch x:Name="_upnpState_"
-                                      Margin="20,10"/>
-                        </StackPanel>
-                        <!-- SIP parameters. -->
-                        <StackPanel x:Name="_sipAccountStackEdition_"
-                                Visibility="Collapsed">
-                            <StackPanel Orientation="Horizontal"
-                                    Margin="10">
-                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                       Text="&#xE717;"/>
-                                <TextBlock Text="SIP account parameters"
-                                       Margin="10"/>
-                            </StackPanel>
-                            <TextBox  x:Name="_sipHostnameEdition_"
-                                  Margin="10"
-                                  PlaceholderText="Enter hostname"/>
-                            <TextBox  x:Name="_sipUsernameEditionTextBox_"
-                                  Margin="10"
-                                  PlaceholderText="Enter username"/>
-                            <PasswordBox x:Name="_sipPasswordEdition_"
-                                     Margin="10"
-                                     PlaceholderText="Enter password"/>
-                        </StackPanel>
-                        <!-- delete account sub menu. -->
-                        <StackPanel Orientation="Horizontal" Margin="10">
-                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                   Text="&#xE74D;"/>
-                            <TextBlock Text="Delete account" Margin="10"/>
-                        </StackPanel>
-                        <ToggleSwitch x:Name="_deleteAccountEdition_"
-                                      Toggled="_deleteAccountEdition__Toggled"
-                                      Margin="20,10"/>
-                        <TextBlock x:Name="_whatWilHappendeleteRingAccountEdition_"
-                                   Margin="0,10,0,0"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   Foreground="Red"
-                                   Visibility="Collapsed"
-                                   Text="Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted."/>
-                        <TextBlock x:Name="_whatWilHappendeleteSipAccountEdition_"
-                                   Margin="0,10,0,0"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   Foreground="Red"
-                                   Visibility="Collapsed"
-                                   Text="Your account will be deleted from this computer."/>
-                        <HyperlinkButton x:Name="_learnMoreDeleteAccountEdition_"
-                                         Content="Learn more"
-                                         Visibility="Collapsed"
-                                         Margin="0,0,0,10"
-                                         NavigateUri="http://ring.cx"/>
-                    </StackPanel>
-                </ScrollViewer>
-                <!-- buttons yes/no to accept the modification. -->
-                <Grid Grid.Row="1">
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
-                        <Button x:Name="_acceptAccountModification_"
-                                Grid.Row="1"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Content="&#xE081;"
-                                Click="_acceptAccountModification__Click"
-                                Style="{StaticResource ButtonStyle5}"/>
-                        <Button x:Name="_cancelAccountModification_"
-                                Grid.Row="1"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                Content="&#xE106;"
-                                Click="_cancelAccountModification__Click"
-                                Style="{StaticResource ButtonStyle5}"/>
-                    </StackPanel>
-                </Grid>
-            </Grid>
             <!-- share menu. -->
             <Grid x:Name="_shareMenuGrid_"
-                  Grid.Row="2"
+                  Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
@@ -897,13 +902,14 @@
                 </Grid.RowDefinitions>
                 <Grid Background="#FFE4F1F9">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto"/>
+                        <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
                     <Grid Background="white"
                           Margin="10"
                           MaxHeight="140"
+                          Grid.Row="0"
                           MaxWidth="140"
                           Padding="5">
                         <Image x:Name="_selectedAccountQrCode_"
@@ -914,7 +920,7 @@
                            Height="200"/>
                     </Grid>
                     <TextBlock x:Name="_ringId_"
-                               Padding="5"
+                               Padding="1"
                                Style="{StaticResource TextStyle4}"
                                Text=""
                                Grid.Row="1"
@@ -931,7 +937,7 @@
             </Grid>
             <!-- devices menu. -->
             <Grid x:Name="_devicesMenuGrid_"
-                  Grid.Row="2"
+                  Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
@@ -995,7 +1001,7 @@
             </Grid>
             <!-- add device (pin generator) menu. -->
             <Grid x:Name="_addingDeviceGrid_"
-                  Grid.Row="2"
+                  Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
@@ -1041,7 +1047,7 @@
             </Grid>
             <!-- waiting for a PIN. -->
             <Grid x:Name="_waitingForPin_"
-                Grid.Row="2"
+                Grid.Row="0"
                 Visibility="Collapsed"
                 Background="#3bc1d3">
                 <Grid.RowDefinitions>
@@ -1074,10 +1080,6 @@
                     </StackPanel>
                 </Grid>
             </Grid>
-
-        </Grid>
-        <!-- smartList and settings. -->
-        <Grid Grid.Row="1">
             <!-- contacts + calls => smartpanelitems. -->
             <Grid x:Name="_smartGrid_"
                   Grid.Row="0">

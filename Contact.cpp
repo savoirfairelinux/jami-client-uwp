@@ -36,7 +36,8 @@ using namespace ViewModel;
 Contact::Contact(String^ name,
                  String^ ringID,
                  String^ GUID,
-                 unsigned int unreadmessages)
+                 unsigned int unreadmessages,
+                 ContactStatus contactStatus)
 {
     vCard_ = ref new VCardUtils::VCard(this);
 
@@ -73,6 +74,8 @@ Contact::Contact(String^ name,
     _vcardUID = "";
     _avatarImage = ref new String(L"ms-appx:///Assets/TESTS/contactAvatar.png");
     _displayName = "";
+
+    contactStatus_ = contactStatus;
 }
 
 void
