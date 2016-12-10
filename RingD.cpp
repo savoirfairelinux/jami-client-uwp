@@ -518,7 +518,11 @@ RingD::registerCallbacks()
             auto from2 = toPlatformString(from);
 
             auto item = SmartPanelItemsViewModel::instance->findItem(callId2);
-            auto contact = item->_contact;
+            Contact^ contact;
+            if (item)
+                contact = item->_contact;
+            else
+                WNG_("item not found!");
 
             static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
             for (auto i : payloads) {

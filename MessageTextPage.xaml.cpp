@@ -149,7 +149,7 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
 Object ^ RingClientUWP::Views::BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto color1 = Windows::UI::ColorHelper::FromArgb(255, 0, 76, 96);
-    auto color2 = Windows::UI::ColorHelper::FromArgb(255, 58, 192, 210);
+    auto color2 = Windows::UI::ColorHelper::FromArgb(255, 58, 192, 210); // refacto : defines colors used by the application as globals
     return ((bool)value) ? ref new SolidColorBrush(color1) : ref new SolidColorBrush(color2);
 }
 
