@@ -364,6 +364,10 @@
     </Style>
 
     <!-- smartlist -->
+    <!--<Style x:Key="smartListStyle" TargetType="ListBox">
+        <Setter Property="Background" Value="#FFE4F1F9"/>
+        <Setter Property="" Value="#FFE4F1F9"/>
+    </Style>-->
     <Style x:Key="contactsListBoxStyle" TargetType="ListBoxItem">
         <Setter Property="MinWidth" Value="{StaticResource SplitViewCompactPaneThemeLength}"/>
         <Setter Property="Height" Value="auto"/>
@@ -456,7 +460,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType ="Button">
                     <Grid>
-                        <Ellipse Name ="OuterRing" Width ="30" Height ="30" Fill ="#3bc1d3"/>
+                        <Ellipse Name ="OuterRing" Width ="30" Height ="30" Fill ="#004c60"/>
                         <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="White"/>
                     </Grid>
                 </ControlTemplate>

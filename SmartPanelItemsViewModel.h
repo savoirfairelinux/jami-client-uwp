@@ -66,6 +66,12 @@ internal:
         {
             oldItem_ = currentItem_;
             currentItem_ = value;
+
+            if (oldItem_ != nullptr)
+                oldItem_->_isSelected = false;
+
+            if (currentItem_ != nullptr)
+                currentItem_->_isSelected = true;
         }
     }
 

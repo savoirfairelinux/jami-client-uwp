@@ -37,6 +37,7 @@
         <views:AccountSelectedToVisibility x:Key="_AccountSelectedToVisibility_" />
         <views:CollapseEmptyString x:Key="_CollapseEmptyString_" />
         <views:ContactStatusNotification x:Key="_ContactStatusNotification_" />
+        <views:boolToVisibility x:Key="_boolToVisibility_" />
 
         <!-- template for contacts. -->
         <DataTemplate x:Key="ContactTemplate"
@@ -144,7 +145,10 @@
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <Grid PointerEntered="Grid_PointerEntered" PointerExited="Grid_PointerExited" PointerMoved="Grid_PointerMoved"
+            <Grid PointerReleased="Grid_PointerReleased"
+                  PointerEntered="Grid_PointerEntered"
+                  PointerExited="Grid_PointerExited"
+                  PointerMoved="Grid_PointerMoved"
                   Visibility="{x:Bind  _showMe, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <!-- row definition for the contact. -->
@@ -152,8 +156,18 @@
                     <!-- row definition for the incoming call bar. -->
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
-                <!--helper to detect mouse overing-->
+                <!-- the first rectangle helps to detect mouse overing-->
                 <Rectangle Fill="Transparent"
+                           Grid.Row="0"/>
+                <!-- the two next rectangles offer a better visibility correlation between the call button and the
+                     backgrounds. Using them, avoid some visual bugs -->
+                <!-- the second rectangle controls the background for a selected item -->
+                <Rectangle Fill="#3bc1d3"
+                           Visibility="{x:Bind _isSelected, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
+                           Grid.Row="0"/>
+                <!-- the thirs rectangle controls the background for an hovered item -->
+                <Rectangle Fill="#ced9e1"
+                           Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                            Grid.Row="0"/>
                 <!-- curtain over item with contact not ready (e.g. lookup is in progress) -->
                 <Rectangle Fill="White"
@@ -218,7 +232,6 @@
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <!-- name of the contact. -->
-                            <!-- (XXX) Foreground="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"-->
                             <TextBlock  x:Name="_contactName_"
                                     Grid.Row="0"
                                     Text="{x:Bind _contact._name, Mode=OneWay}"
@@ -226,7 +239,7 @@
                             </TextBlock>
                             <!-- call button. -->
                             <Button Grid.Row="0"
-                                    Visibility="{x:Bind _hovered, Mode=OneWay}"
+                                    Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                                     Click="_callContact__Click"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Left"
@@ -398,7 +411,8 @@
 
         </Grid>
         <!-- smartList and settings. -->
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1"
+              Background="#FFE4F1F9">
             <!-- accounts menu. -->
             <Grid x:Name="_accountsMenuGrid_"
                   Grid.Row="0"
@@ -1140,9 +1154,10 @@
                 </Grid>
                 <ListBox    x:Name="_smartList_"
                             Grid.Row="2"
+                            Background="Transparent"
                             Margin="0"
-                            Padding="0"
                             SelectionChanged="_smartList__SelectionChanged"
+                            Padding="0"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                             ScrollViewer.HorizontalScrollMode="Enabled"
                             ItemContainerStyle="{StaticResource contactsListBoxStyle}"
