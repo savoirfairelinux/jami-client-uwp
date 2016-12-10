@@ -417,45 +417,14 @@ void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^
     _accountsMenuButton__Unchecked(nullptr,nullptr);
 }
 
+/* using the usual selection behaviour doesn't allow us to deselect by simple click. The selection is managed
+   by Grid_PointerReleased */
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
-    auto listbox = dynamic_cast<ListBox^>(sender);
-    auto item = dynamic_cast<SmartPanelItem^>(listbox->SelectedItem);
-
-    if (item)
-        if (item->_contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
-            listbox->SelectedItem = nullptr;
-            return;
-        }
-
-    SmartPanelItemsViewModel::instance->_selectedItem = item;
-
-    if (!item) {
-        summonWelcomePage();
-        return;
-    }
-
-    auto contact = item->_contact;
-
-    if (item->_callStatus == CallStatus::IN_PROGRESS
-            || item->_callStatus == CallStatus::PAUSED
-            || item->_callStatus == CallStatus::PEER_PAUSED) {
-        if (contact) {
-            contact->_unreadMessages = 0;
-            ContactsViewModel::instance->saveContactsToFile();
-        }
-
-        summonVideoPage();
-        return;
-    }
-
-    if (contact) {
-        summonMessageTextPage();
-        contact->_unreadMessages = 0;
-        ContactsViewModel::instance->saveContactsToFile();
-        return;
-    }
+    auto listbox = dynamic_cast<ListBox^>(sender); // same as _smartList_
+    listbox->SelectedItem = nullptr;
+    return;
 }
 
 void
@@ -585,24 +554,11 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    for (auto it : SmartPanelItemsViewModel::instance->itemsList)
-        it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
-
-    /// to keep for future use, when we will be able to do several calls.
-    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
-    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
-
-    /// for now use this, do not merge with the for loop above, to make easier to remove that part later
-    /*bool anyCall = false;
     for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
-        if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
-            anyCall = true;
+        it->_isHovered = false;
     }
 
-    if (anyCall == false)*/
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
-
-
+    item->_isHovered = true;
 }
 
 
@@ -611,8 +567,10 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ send
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
-    for each (auto it in SmartPanelItemsViewModel::instance->itemsList)
-        item->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
+    // to avoid visual bug, do it on the whole list
+    for each (auto it in SmartPanelItemsViewModel::instance->itemsList) {
+        it->_isHovered = false;
+    }
 }
 
 
@@ -1311,23 +1269,9 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sende
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
 
     for (auto it : SmartPanelItemsViewModel::instance->itemsList)
-        it->_hovered = Windows::UI::Xaml::Visibility::Collapsed;
+        it->_isHovered = false;
 
-    /// to keep for future use, when we will be able to do several calls.
-    ///if (item->_callStatus == CallStatus::NONE || item->_callStatus == CallStatus::ENDED)
-    ///    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
-
-    /// for now use this, do not merge with the for loop above, to make easier to remove that part later
-    /*bool anyCall = false;
-    for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
-        if (it->_callStatus != CallStatus::NONE && it->_callStatus != CallStatus::ENDED)
-            anyCall = true;
-    }
-
-    if (anyCall == false)*/
-    item->_hovered = Windows::UI::Xaml::Visibility::Visible;
-
-
+    item->_isHovered = true;
 }
 
 // NAME SERVICE
@@ -1815,4 +1759,74 @@ Object ^ RingClientUWP::Views::ContactStatusNotification::ConvertBack(Object ^ v
 }
 
 RingClientUWP::Views::ContactStatusNotification::ContactStatusNotification()
+{}
+
+
+/* if you changed the name of Grid_PointerReleased, be sure to change it in the comment about the selection */
+void RingClientUWP::Views::SmartPanel::Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    auto grid = dynamic_cast<Grid^>(sender);
+    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+
+    if (item) {
+        /* if the contact is not yet ready to be used, typically when we are waiting a lookup from the blockachin*/
+        auto contact = item->_contact;
+
+        if (contact == nullptr)
+        {
+            ERR_("SmartPanelIem without contact");
+            return;
+        }
+
+        if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
+            //_smartList_->SelectedItem = nullptr;
+            return;
+        }
+
+        /* if the contact was already selected, just do a deselection and live the message text page*/
+        if (item == SmartPanelItemsViewModel::instance->_selectedItem)
+        {
+            //_smartList_->SelectedItem = nullptr;
+            SmartPanelItemsViewModel::instance->_selectedItem = nullptr;
+            summonWelcomePage();
+            return;
+        }
+
+        /* we set the current selected item */
+        SmartPanelItemsViewModel::instance->_selectedItem = item;
+
+        /* at this point we check if a call is in progress with the current selected contact*/
+        if (item->_callStatus == CallStatus::IN_PROGRESS
+                || item->_callStatus == CallStatus::PAUSED
+                || item->_callStatus == CallStatus::PEER_PAUSED) {
+            if (contact) {
+                contact->_unreadMessages = 0;
+                ContactsViewModel::instance->saveContactsToFile();
+            }
+
+            summonVideoPage();
+            return;
+        }
+
+        /* else, summont the message text page*/
+        summonMessageTextPage();
+        contact->_unreadMessages = 0;
+        ContactsViewModel::instance->saveContactsToFile();
+    }
+}
+
+Object ^ RingClientUWP::Views::boolToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    if (static_cast<bool>(value))
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object ^ RingClientUWP::Views::boolToVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::boolToVisibility::boolToVisibility()
 {}
