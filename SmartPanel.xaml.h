@@ -87,6 +87,13 @@ public:
     ContactStatusNotification();
 };
 
+public ref class boolToVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    boolToVisibility();
+};
+
 public ref class SmartPanel sealed
 {
 public:
@@ -189,6 +196,7 @@ private:
     };
 
     MenuOpen menuOpen;
+    void Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 };
 }
 }
