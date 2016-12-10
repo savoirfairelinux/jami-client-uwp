@@ -33,30 +33,6 @@ public:
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
     property Contact^ _contact;
-    /*property Call^ _call
-    {
-        Call^ get()
-        {
-            return call_;
-        }
-        void set(Call^ value)
-        {
-            call_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("_call"));
-        }
-    }*/
-    property Visibility _hovered
-    {
-        Visibility get()
-        {
-            return hovered_;
-        }
-        void set(Visibility value)
-        {
-            hovered_ = value;
-            NotifyPropertyChanged("_hovered");
-        }
-    }
 
     property String^ _callId; /*{
         String^ get() {
@@ -98,15 +74,52 @@ public:
         }
     }
 
+    property bool _isSelected
+    {
+        bool get()
+        {
+            return isSelected_;
+        }
+        void set(bool value)
+        {
+            isSelected_ = value;
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered
+    {
+        bool get()
+        {
+            return isHovered_;
+        }
+        void set(bool value)
+        {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
+            NotifyPropertyChanged("_isCallable");
+        }
+    }
+
+    property bool _isCallable
+    {
+        bool get()
+        {
+            return ((callStatus_ == CallStatus::ENDED || callStatus_ == CallStatus::NONE) && isHovered_)? true : false;
+        }
+    }
+
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Visibility hovered_ = Visibility::Collapsed;
     Visibility showMe_ = Visibility::Visible;
     CallStatus callStatus_;
     String^ callId_;
     bool videoMuted_;
+    bool isSelected_;
+    bool isHovered_;
 
     void OncallPlaced(Platform::String ^callId);
 };
