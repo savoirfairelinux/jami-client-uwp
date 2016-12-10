@@ -47,6 +47,7 @@ internal:
     unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
     void removeItem(SmartPanelItem^ item);
+    void moveItemToTheTop(SmartPanelItem^ item);
 
     property Vector<SmartPanelItem^>^ itemsList
     {

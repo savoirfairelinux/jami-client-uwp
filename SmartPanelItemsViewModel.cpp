@@ -84,3 +84,16 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::removeItem(SmartPanelIt
     if (itemsList->IndexOf(item, &index))
         itemsList->RemoveAt(index);
 }
+
+void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartPanelItem ^ item)
+{
+    unsigned int index;
+
+    if (itemsList->IndexOf(item, &index)) {
+        if (index != 0) {
+            itemsList->RemoveAt(index);
+            itemsList->InsertAt(0, item);
+            item->_isHovered = false;
+        }
+    }
+}
