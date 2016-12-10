@@ -197,6 +197,7 @@ private:
 
     MenuOpen menuOpen;
     void Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload);
 };
 }
 }

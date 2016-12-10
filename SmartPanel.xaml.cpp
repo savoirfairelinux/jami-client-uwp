@@ -104,6 +104,14 @@ SmartPanel::SmartPanel()
         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_callId = callId;
 
+        /* move the item of the top of the list */
+        unsigned int index;
+        if (_smartList_->Items->IndexOf(item, &index)) {
+            SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
+            _smartList_->UpdateLayout();
+            _smartList_->ScrollIntoView(item);
+        }
+
     });
     RingD::instance->stateChange += ref new StateChange([this](String^ callId, CallStatus state, int code) {
 
@@ -136,14 +144,14 @@ SmartPanel::SmartPanel()
         }
         case CallStatus::IN_PROGRESS:
         {
-            _smartList_->SelectedItem = item;
+            SmartPanelItemsViewModel::instance->_selectedItem = item;
             summonVideoPage();
             break;
         }
         case CallStatus::PEER_PAUSED:
         case CallStatus::PAUSED:
         {
-            _smartList_->SelectedItem = item;
+            SmartPanelItemsViewModel::instance->_selectedItem = item;
             summonVideoPage();
             break;
         }
@@ -170,6 +178,7 @@ SmartPanel::SmartPanel()
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered);
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Views::SmartPanel::OncallPlaced);
+    RingD::instance->incomingAccountMessage += ref new RingClientUWP::IncomingAccountMessage(this, &RingClientUWP::Views::SmartPanel::OnincomingAccountMessage);
 
     menuOpen = MenuOpen::CONTACTS_LIST;
 }
@@ -214,9 +223,10 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
 
 }
 
+// refacto : rm me
 void RingClientUWP::Views::SmartPanel::unselectContact()
 {
-    _smartList_->SelectedItem = nullptr;
+    // _smartList_->SelectedItem = nullptr;
 }
 
 void RingClientUWP::Views::SmartPanel::_smartGridButton__Clicked(Object^ sender, RoutedEventArgs^ e)
@@ -531,6 +541,14 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
                         RingD::instance->pauseCall(Utils::toString(it->_callId));
 
                 RingD::instance->placeCall(contact);
+
+                /* move the item of the top of the list */
+                unsigned int index;
+                if (_smartList_->Items->IndexOf(item, &index)) {
+                    SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
+                    _smartList_->UpdateLayout();
+                    _smartList_->ScrollIntoView(item);
+                }
             }
         }
     }
@@ -573,17 +591,17 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ send
     }
 }
 
-
+// refacto : rm
 void RingClientUWP::Views::SmartPanel::_contactItem__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-    auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
+    /*auto listBoxItem = dynamic_cast<ListBoxItem^>(sender);
     auto smartPanelItem = dynamic_cast<SmartPanelItem^>(listBoxItem->DataContext);
 
     if (_smartList_->SelectedItem != smartPanelItem)
         _smartList_->SelectedItem = smartPanelItem;
     else
         _smartList_->SelectedItem = nullptr;
-
+    */
 }
 
 void RingClientUWP::Views::SmartPanel::generateQRcode()
@@ -1642,10 +1660,9 @@ SmartPanel::populateVideoRateSettingsComboBox()
 void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
     if (e->Key == Windows::System::VirtualKey::Enter) {
-        /// (XXX) RingD::instance->lookUpName(_ringTxtBx_->Text);
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_contact->_name == _ringTxtBx_->Text) {
-                _smartList_->SelectedItem = item;
+                SmartPanelItemsViewModel::instance->_selectedItem = item;
                 return;
             }
         }
@@ -1740,7 +1757,7 @@ void RingClientUWP::Views::SmartPanel::OnregistrationStateRegistered()
 
 void RingClientUWP::Views::SmartPanel::OncallPlaced(Platform::String ^callId)
 {
-    _smartList_->SelectedItem = nullptr;
+    SmartPanelItemsViewModel::instance->_selectedItem = nullptr;
 }
 
 Object ^ RingClientUWP::Views::ContactStatusNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
@@ -1779,14 +1796,12 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerReleased(Platform::Object^ se
         }
 
         if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
-            //_smartList_->SelectedItem = nullptr;
             return;
         }
 
         /* if the contact was already selected, just do a deselection and live the message text page*/
         if (item == SmartPanelItemsViewModel::instance->_selectedItem)
         {
-            //_smartList_->SelectedItem = nullptr;
             SmartPanelItemsViewModel::instance->_selectedItem = nullptr;
             summonWelcomePage();
             return;
@@ -1830,3 +1845,18 @@ Object ^ RingClientUWP::Views::boolToVisibility::ConvertBack(Object ^ value, Win
 
 RingClientUWP::Views::boolToVisibility::boolToVisibility()
 {}
+
+
+void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload)
+{
+    auto contact = ContactsViewModel::instance->findContactByRingId(from);
+    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+
+    /* move the item of the top of the list */
+    unsigned int index;
+    if (_smartList_->Items->IndexOf(item, &index)) {
+        SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
+        _smartList_->UpdateLayout();
+        _smartList_->ScrollIntoView(item);
+    }
+}
