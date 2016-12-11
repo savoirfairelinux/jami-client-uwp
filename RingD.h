@@ -48,6 +48,7 @@ delegate void AudioMuted(const std::string& callId, bool state);
 delegate void VideoMuted(const std::string& callId, bool state);
 delegate void NameRegistred(bool status);
 delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
+delegate void HungUp(const std::string& peerNumber, Windows::Foundation::DateTime dateTime);
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 using namespace std::placeholders;
@@ -166,6 +167,7 @@ internal:
     event VideoMuted^ videoMuted;
     event NameRegistred^ nameRegistred;
     event VolatileDetailsChanged^ volatileDetailsChanged;
+    event HungUp^ hungUp;
 
 private:
     /* sub classes */

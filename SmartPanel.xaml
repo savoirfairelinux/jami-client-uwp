@@ -228,27 +228,33 @@
 
                         <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="40"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <!-- name of the contact. -->
-                            <TextBlock  x:Name="_contactName_"
-                                    Grid.Row="0"
-                                    Text="{x:Bind _contact._name, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis">
-                            </TextBlock>
+                            <StackPanel Grid.Row="0">
+                                <TextBlock  x:Name="_contactName_"
+                                            Text="{x:Bind _contact._name, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis">
+                                </TextBlock>
+                                <TextBlock  x:Name="_contactLastTime_"
+                                            FontStyle="Italic"
+                                            Foreground="#333333"
+                                            FontSize="10"
+                                            Text="{x:Bind _contact._lastTime, Mode=OneWay}"/>
+                            </StackPanel>
                             <!-- call button. -->
+                            <!-- Style="{StaticResource roundButtonTemplate}" old style, keep it until refacto -->
                             <Button Grid.Row="0"
                                     Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                                     Click="_callContact__Click"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Left"
-                                    Margin="10,0"
-                                    Style="{StaticResource roundButtonTemplate}"
+                                    Style="{StaticResource ButtonStyleForCallBar}"
                                     FontFamily="Segoe MDL2 Assets"
                                     Content="&#xE116;">
                                 <Button.RenderTransform>
-                                    <TranslateTransform X="90" Y="25"/>
+                                    <TranslateTransform X="0" Y="18"/>
                                 </Button.RenderTransform>
                             </Button>
                         </Grid>

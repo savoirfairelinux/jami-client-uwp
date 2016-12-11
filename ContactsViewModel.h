@@ -77,6 +77,7 @@ private:
 
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
     void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name);
+    void OnhungUp(const std::string &peerNumber, Windows::Foundation::DateTime dateTime);
 };
 }
 }
