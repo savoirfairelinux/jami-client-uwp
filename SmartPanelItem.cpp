@@ -35,6 +35,7 @@ SmartPanelItem::SmartPanelItem()
     videoMuted_ = false;
     isSelected_ = false;
     isHovered_ = false;
+    _callStatus = CallStatus::NONE;
 
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Controls::SmartPanelItem::OncallPlaced);
 }

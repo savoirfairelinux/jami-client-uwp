@@ -122,14 +122,12 @@ SmartPanel::SmartPanel()
             return;
         }
 
-        item->_callStatus = state;
-
         switch (state) {
         case CallStatus::NONE:
         case CallStatus::ENDED:
         {
             bool isInCall = false;
-            for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            for (auto item : SmartPanelItemsViewModel::instance->itemsList) { // WTF!!! item instead of it!!!! (XXX)
                 if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
                     isInCall = true;
                     RingD::instance->currentCallId = item->_callId;
@@ -138,8 +136,6 @@ SmartPanel::SmartPanel()
             }
             if (!isInCall)
                 _settingsMenuButton_->Visibility = VIS::Visible;
-
-            item->_callId = "";
             break;
         }
         case CallStatus::IN_PROGRESS:
@@ -541,8 +537,9 @@ SmartPanel::_callContact__Click(Platform::Object^ sender, Windows::UI::Xaml::Rou
                         RingD::instance->pauseCall(Utils::toString(it->_callId));
 
                 if (item->_callStatus == CallStatus::ENDED || item->_callStatus == CallStatus::NONE) {
-                    item->_callStatus == CallStatus::OUTGOING_REQUESTED;
+                    item->_callStatus = CallStatus::OUTGOING_REQUESTED;
                     RingD::instance->placeCall(contact);
+                    item->_contact->_lastTime = "looking for " + item->_contact->_name + ".";
                 }
 
                 /* move the item of the top of the list */
@@ -1863,3 +1860,26 @@ void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String
         _smartList_->ScrollIntoView(item);
     }
 }
+
+Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto callStatus = static_cast<CallStatus>(value);
+
+
+    if (callStatus == CallStatus::INCOMING_RINGING
+            || callStatus == CallStatus::OUTGOING_REQUESTED
+            || callStatus == CallStatus::OUTGOING_RINGING
+            || callStatus == CallStatus::SEARCHING)
+        return  Windows::UI::Xaml::Visibility::Visible;
+    else
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+
+}
+
+Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::CallStatusToSpinnerVisibility::CallStatusToSpinnerVisibility()
+{}

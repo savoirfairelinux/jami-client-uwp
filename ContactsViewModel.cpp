@@ -167,6 +167,7 @@ ContactsViewModel::Destringify(String^ data)
     unsigned int    unreadmessages;
     String^			accountIdAssociated;
     String^         vcardUID;
+    String^			lastTime;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (unsigned int i = 0; i < contactlist->Size; i++) {
@@ -182,12 +183,18 @@ ContactsViewModel::Destringify(String^ data)
                 unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
                 accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
                 vcardUID = contactObject->GetNamedString(vcardUIDKey);
+
+                if (contactObject->HasKey(lastTimeKey))
+                    lastTime = contactObject->GetNamedString(lastTimeKey);
             }
             auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
             contact->_vcardUID = vcardUID;
+            if (lastTime)
+                contact->_lastTime = lastTime;
+
             std::string contactImageFile = RingD::instance->getLocalFolder() + ".vcards\\"
                                            + Utils::toString(contact->_vcardUID) + ".png";
             if (Utils::fileExists(contactImageFile)) {
