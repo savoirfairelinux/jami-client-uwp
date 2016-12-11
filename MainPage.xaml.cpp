@@ -232,7 +232,6 @@ void RingClientUWP::MainPage::OnsummonVideoPage()
         }
     }
 
-    videoPage->chatOpen = false;
     videoPage->updatePageContent();
     showFrame(_videoFrame_);
 }

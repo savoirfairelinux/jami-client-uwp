@@ -256,8 +256,6 @@
                             </Border>-->
                             <Border x:Name="_visualNotificationNewMessage_"
                                     Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
-                                    BorderThickness="2"
-                                    BorderBrush="White"
                                     Style="{StaticResource BorderStyle2}">
                                 <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
                                            Style="{StaticResource TextStyle3}"/>

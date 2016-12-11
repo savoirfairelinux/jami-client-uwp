@@ -63,18 +63,6 @@ public:
         }
     }
 
-    property bool chatOpen // use this with a converter to set the height to 200px for the chatpanel...
-    {
-        bool get()
-        {
-            return chatOpen_;
-        }
-        void set(bool value)
-        {
-            chatOpen_ = value;
-        }
-    }
-
     void scrollDown();
     void screenVideo(bool state);
 
@@ -95,7 +83,6 @@ internal:
 
 private:
     bool barFading_;
-    bool chatOpen_;
 
     void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);

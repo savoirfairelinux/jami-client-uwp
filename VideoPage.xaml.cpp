@@ -136,6 +136,10 @@ VideoPage::VideoPage()
         }
         case CallStatus::ENDED:
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
+
+            /* "close" the chat panel */
+            _rowChatBx_->Height = 0;
+
             break;
         case CallStatus::PEER_PAUSED:
         case CallStatus::PAUSED:
@@ -267,15 +271,13 @@ void RingClientUWP::Views::VideoPage::_btnPause__Tapped(Platform::Object^ sender
 
 void RingClientUWP::Views::VideoPage::_btnChat__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    chatOpen = !chatOpen;
-    _rowChatBx_->Height = (chatOpen) ? 200 : 0;
-    /*if (chatOpen) {
+    if (_rowChatBx_->Height == 0) {
         _rowChatBx_->Height = 200;
-        chatPanelCall();
+        SmartPanelItemsViewModel::instance->_selectedItem->_contact->_unreadMessages = 0;
     }
     else {
         _rowChatBx_->Height = 0;
-    }*/
+    }
 }
 
 
@@ -395,19 +397,8 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 
 void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
-    if (!chatOpen) {
+    if (_rowChatBx_->Height == 0)
         _rowChatBx_->Height = 200;
-        chatOpen = true;
-    }
-
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-
-    //if (item)
-    //    if (item->_callId != callId) {
-    //        SmartPanelItemsViewModel::instance->findItem(callId)->_contact->_unreadMessages++;
-    //        //item->_contact->_unreadMessages++;
-    //    }
-
 
     scrollDown();
 }
