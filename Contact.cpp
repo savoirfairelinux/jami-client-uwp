@@ -76,7 +76,7 @@ Contact::Contact(String^ name,
     _displayName = "";
 
     contactStatus_ = contactStatus;
-    lastTime_ = "never";
+    lastTime_ = "never called.";
 }
 
 void
