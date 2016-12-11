@@ -25,6 +25,7 @@ using namespace Windows::Data::Json;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace Windows::UI::Core;
+using namespace Windows::Globalization::DateTimeFormatting;
 
 
 using namespace RingClientUWP;
@@ -33,6 +34,7 @@ using namespace ViewModel;
 SmartPanelItemsViewModel::SmartPanelItemsViewModel()
 {
     itemsList_ = ref new Vector<SmartPanelItem^>();
+    RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange);
 }
 
 SmartPanelItem^
@@ -95,5 +97,57 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartP
             itemsList->InsertAt(0, item);
             item->_isHovered = false;
         }
+    }
+}
+
+void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+{
+    auto item = SmartPanelItemsViewModel::instance->findItem(callId);
+
+    if (!item) {
+        WNG_("item not found");
+        return;
+    }
+
+    item->_callStatus = state;
+
+    Windows::Globalization::Calendar^ calendar = ref new Windows::Globalization::Calendar();
+    Windows::Foundation::DateTime dateTime = calendar->GetDateTime();
+    auto timestampFormatter = ref new DateTimeFormatter("day month year hour minute second");
+
+    switch (state) {
+    case CallStatus::ENDED:
+    {
+        item->_contact->_lastTime = "Last call : " + timestampFormatter->Format(dateTime) + ".";
+        ContactsViewModel::instance->saveContactsToFile();
+        break;
+    }
+    case CallStatus::IN_PROGRESS:
+    {
+        item->_contact->_lastTime = "in progress.";
+        break;
+    }
+    case CallStatus::PEER_PAUSED:
+    {
+        item->_contact->_lastTime = "paused by "+ item->_contact->_name+".";
+        break;
+    }
+    case CallStatus::PAUSED:
+    {
+        item->_contact->_lastTime = "paused.";
+        break;
+    }
+    case CallStatus::OUTGOING_REQUESTED:
+    case CallStatus::OUTGOING_RINGING:
+    case CallStatus::SEARCHING:
+    {
+        item->_contact->_lastTime = "looking for " + item->_contact->_name + ".";
+        break;
+    }
+    case CallStatus::INCOMING_RINGING:
+        item->_contact->_lastTime = "incoming call from " + item->_contact->_name + ".";
+        break;
+    default:
+        break;
     }
 }

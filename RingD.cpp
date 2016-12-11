@@ -20,6 +20,8 @@
 
 /* daemon */
 #include <dring.h>
+#include "dring/call_const.h"
+
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
@@ -969,7 +971,9 @@ RingD::dequeueTasks()
         case Request::HangUpCall:
         {
             auto callId = task->_callId;
+
             DRing::hangUp(Utils::toString(callId));
+
         }
         break;
         case Request::PauseCall:

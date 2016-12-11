@@ -3,6 +3,7 @@ namespace RingClientUWP
 /* public enumerations. */
 public enum class CallStatus {
     NONE,
+    OUTGOING_REQUESTED,
     INCOMING_RINGING,
     OUTGOING_RINGING,
     SEARCHING,
