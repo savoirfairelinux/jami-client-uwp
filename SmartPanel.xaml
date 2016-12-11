@@ -159,19 +159,23 @@
                 </Grid.RowDefinitions>
                 <!-- the first rectangle helps to detect mouse overing-->
                 <Rectangle Fill="Transparent"
+                           Width="320"
                            Grid.Row="0"/>
                 <!-- the two next rectangles offer a better visibility correlation between the call button and the
                      backgrounds. Using them, avoid some visual bugs -->
                 <!-- the second rectangle controls the background for a selected item -->
                 <Rectangle Fill="#3bc1d3"
+                           Width="320"
                            Visibility="{x:Bind _isSelected, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                            Grid.Row="0"/>
                 <!-- the thirs rectangle controls the background for an hovered item -->
                 <Rectangle Fill="#ced9e1"
+                           Width="320"
                            Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                            Grid.Row="0"/>
                 <!-- curtain over item with contact not ready (e.g. lookup is in progress) -->
                 <Rectangle Fill="White"
+                           Width="320"
                            Grid.Row="0"
                            Canvas.ZIndex="2"
                            Opacity="0.6"
@@ -229,7 +233,7 @@
 
                         <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="40"/>
+                                <RowDefinition Height="60"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
                             <!-- name of the contact. -->
@@ -242,33 +246,62 @@
                                     <TextBlock  x:Name="_contactLastTime_"
                                                 FontStyle="Italic"
                                                 Foreground="#333333"
+                                                MaxWidth="200"
+                                                TextTrimming="CharacterEllipsis"
                                                 FontSize="10"
                                                 Text="{x:Bind _contact._lastTime, Mode=OneWay}"/>
                                     <ProgressBar Foreground="#333333"
-                                                 Width="100"
+                                                 HorizontalAlignment="Right"
+                                                 Width="150"
                                                  Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusToSpinnerVisibility_}, Mode=OneWay}"
                                                  IsIndeterminate="True"/>
                                 </StackPanel>
-                            </StackPanel>
-                            <!-- call button. -->
-                            <!-- Style="{StaticResource roundButtonTemplate}" old style, keep it until refacto -->
-                            <Button Grid.Row="0"
+                                <!-- call action buttons. -->
+                                <!-- Style="{StaticResource roundButtonTemplate}" old style, keep it until refacto -->
+                                <Button Grid.Row="0"
                                     Visibility="{x:Bind _isCallable, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
                                     Click="_callContact__Click"
                                     VerticalAlignment="Bottom"
                                     HorizontalAlignment="Left"
                                     Style="{StaticResource ButtonStyleForCallBar}"
                                     FontFamily="Segoe MDL2 Assets"
-                                    Content="&#xE116;">
-                                <Button.RenderTransform>
-                                    <TranslateTransform X="0" Y="18"/>
-                                </Button.RenderTransform>
-                            </Button>
+                                    Content="&#xE116;"/>
+                                <StackPanel Orientation="Horizontal"
+                                            Visibility="Visible"
+                                            Grid.Row="0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Right">
+                                    <Button x:Name="_acceptIncomingCallBtn_"
+                                            Click="_acceptIncomingCallBtn__Click"
+                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Content="&#xE10B;"/>
+                                    <Button x:Name="_rejectIncomingCallBtn_"
+                                            Click="_rejectIncomingCallBtn__Click"
+                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Content="&#xE10A;"/>
+                                </StackPanel>
+                                <Button x:Name="_cancelCallBtn_"
+                                        Click="_cancelCallBtn__Click"
+                                        Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
+                                        VerticalAlignment="Bottom"
+                                        HorizontalAlignment="Right"
+                                        Style="{StaticResource ButtonStyleForCallBar}"
+                                        FontFamily="Segoe MDL2 Assets"
+                                        Content="&#xE10A;"/>
+                            </StackPanel>
                         </Grid>
                     </Grid>
                 </Grid>
-                <!-- call bar. -->
-                <Grid Width="320"
+                <!-- old call bar.KEEP FOR DEBUG -->
+                <!--<Grid Width="320"
                       Grid.Row="1"
                       HorizontalAlignment="Left"
                       Background="DarkGray">
@@ -276,14 +309,14 @@
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                     </Grid.RowDefinitions>
-                    <!-- KEEP _CallStatus_ FOR DEBUG -->
-                    <!--<TextBlock x:Name="_CallStatus_"
+
+                    <TextBlock x:Name="_CallStatus_"
                            Grid.Row="0"
                            Foreground="White"
                            Text="{x:Bind _callStatus, Mode=OneWay}"
                            Visibility="{x:Bind _callStatus, Converter={StaticResource _HasAnActiveCall_}, Mode=OneWay}"
                            HorizontalAlignment="Center">
-                    </TextBlock>-->
+                    </TextBlock>
                     <StackPanel Orientation="Horizontal"
                                 Visibility="Visible"
                                 Grid.Row="1"
@@ -307,7 +340,7 @@
                             HorizontalAlignment="Center"
                             Content="Cancel"/>
                     </StackPanel>
-                </Grid>
+                </Grid>-->
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -1173,7 +1206,8 @@
                             SelectionChanged="_smartList__SelectionChanged"
                             Padding="0"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
-                            ScrollViewer.HorizontalScrollMode="Enabled"
+                            ScrollViewer.HorizontalScrollMode="Disabled"
+                            MaxWidth="320"
                             ItemContainerStyle="{StaticResource contactsListBoxStyle}"
                             ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
             </Grid>

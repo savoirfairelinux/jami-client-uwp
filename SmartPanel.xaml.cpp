@@ -847,7 +847,9 @@ Object ^ RingClientUWP::Views::OutGoingVisibility::Convert(Object ^ value, Windo
 {
     auto state = static_cast<CallStatus>(value);
 
-    if (state == CallStatus::SEARCHING || state == CallStatus::OUTGOING_RINGING)
+    if (state == CallStatus::SEARCHING
+            || state == CallStatus::OUTGOING_RINGING
+            || state == CallStatus::OUTGOING_REQUESTED)
         return  Windows::UI::Xaml::Visibility::Visible;
     else
         return  Windows::UI::Xaml::Visibility::Collapsed;
