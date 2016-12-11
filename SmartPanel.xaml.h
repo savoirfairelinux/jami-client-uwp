@@ -94,6 +94,13 @@ public:
     boolToVisibility();
 };
 
+public ref class CallStatusToSpinnerVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, Windows::UI::Xaml::Interop::TypeName  targetType, Object^ parameter, String^ language);
+    CallStatusToSpinnerVisibility();
+};
+
 public ref class SmartPanel sealed
 {
 public:

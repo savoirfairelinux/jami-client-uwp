@@ -76,6 +76,7 @@ Contact::Contact(String^ name,
     _displayName = "";
 
     contactStatus_ = contactStatus;
+    lastTime_ = "never";
 }
 
 void
@@ -101,6 +102,7 @@ Contact::ToJsonObject()
     contactObject->SetNamedValue(unreadMessagesKey, JsonValue::CreateNumberValue(unreadMessages_));
     contactObject->SetNamedValue(accountIdAssociatedKey, JsonValue::CreateStringValue(_accountIdAssociated));
     contactObject->SetNamedValue(vcardUIDKey, JsonValue::CreateStringValue(_vcardUID));
+    contactObject->SetNamedValue(lastTimeKey, JsonValue::CreateStringValue(_lastTime));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);

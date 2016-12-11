@@ -81,8 +81,7 @@ private:
     Vector<SmartPanelItem^>^ itemsList_;
     SmartPanelItem^ currentItem_;
     SmartPanelItem^ oldItem_;
-
-
+    void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
 }
 }
