@@ -467,5 +467,14 @@
             </Setter.Value>
         </Setter>
     </Style>
+    <Style x:Key="ButtonStyleForCallBar"
+           TargetType="Button">
+        <Setter Property="Foreground"
+                Value="White"/>
+        <Setter Property="Background"
+                Value="#004c60"/>
+        <Setter Property="BorderThickness"
+                Value="0"/>
+    </Style>
 
 </ResourceDictionary>
