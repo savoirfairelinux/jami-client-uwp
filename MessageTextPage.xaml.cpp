@@ -72,6 +72,7 @@ RingClientUWP::Views::MessageTextPage::updatePageContent()
     /* show the name of contact on the page */
     _title_->Text = contact->_name;
     _profilName_->Text = contact->_displayName;
+    contact->_unreadMessages = 0;
 
     String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
     if (Utils::fileExists(Utils::toString(image_path))) {
