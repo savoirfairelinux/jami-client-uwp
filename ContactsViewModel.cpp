@@ -27,6 +27,7 @@ using namespace Windows::Data::Json;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 using namespace Windows::UI::Core;
+using namespace Windows::Globalization::DateTimeFormatting;
 
 using namespace RingClientUWP;
 using namespace ViewModel;
@@ -71,6 +72,7 @@ ContactsViewModel::ContactsViewModel()
         ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage);
 
     RingD::instance->registeredNameFound += ref new RingClientUWP::RegisteredNameFound(this, &RingClientUWP::ViewModel::ContactsViewModel::OnregisteredNameFound);
+    RingD::instance->hungUp += ref new RingClientUWP::HungUp(this, &RingClientUWP::ViewModel::ContactsViewModel::OnhungUp);
 
 }
 
@@ -167,6 +169,7 @@ ContactsViewModel::Destringify(String^ data)
     unsigned int    unreadmessages;
     String^			accountIdAssociated;
     String^         vcardUID;
+    String^			lastTime;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (unsigned int i = 0; i < contactlist->Size; i++) {
@@ -182,12 +185,18 @@ ContactsViewModel::Destringify(String^ data)
                 unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
                 accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
                 vcardUID = contactObject->GetNamedString(vcardUIDKey);
+
+                if (contactObject->HasKey(lastTimeKey))
+                    lastTime = contactObject->GetNamedString(lastTimeKey);
             }
             auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
             contact->_vcardUID = vcardUID;
+            if (lastTime)
+                contact->_lastTime = lastTime;
+
             std::string contactImageFile = RingD::instance->getLocalFolder() + ".vcards\\"
                                            + Utils::toString(contact->_vcardUID) + ".png";
             if (Utils::fileExists(contactImageFile)) {
@@ -257,4 +266,20 @@ void RingClientUWP::ViewModel::ContactsViewModel::OnregisteredNameFound(RingClie
                 saveContactsToFile();
             }
     }
+}
+
+
+void RingClientUWP::ViewModel::ContactsViewModel::OnhungUp(const std::string &peerNumber, Windows::Foundation::DateTime dateTime)
+{
+    // refacto : string....
+    auto contact = findContactByRingId(Utils::TrimRingId2(Utils::toPlatformString(peerNumber)));
+
+    auto timestampFormatter = ref new DateTimeFormatter("day month year hour minute second");
+
+    if (contact)
+        contact->_lastTime = timestampFormatter->Format(dateTime);
+    else
+        WNG_("contact " + peerNumber + " not found");
+
+    saveContactsToFile();
 }

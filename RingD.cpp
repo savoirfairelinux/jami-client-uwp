@@ -20,6 +20,8 @@
 
 /* daemon */
 #include <dring.h>
+#include "dring/call_const.h"
+
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
@@ -969,7 +971,18 @@ RingD::dequeueTasks()
         case Request::HangUpCall:
         {
             auto callId = task->_callId;
+            auto callDetails = DRing::getCallDetails(Utils::toString(callId));
+            auto peerNumber = callDetails[DRing::Call::Details::PEER_NUMBER];
+
             DRing::hangUp(Utils::toString(callId));
+
+            Windows::Globalization::Calendar^ calendar = ref new Windows::Globalization::Calendar();
+            Windows::Foundation::DateTime dateTime = calendar->GetDateTime();
+
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+            ref new DispatchedHandler([=]() {
+                hungUp(peerNumber, dateTime);
+            }));
         }
         break;
         case Request::PauseCall:

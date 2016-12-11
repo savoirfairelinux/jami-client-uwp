@@ -35,6 +35,8 @@ String^ contactKey = "contact";
 String^ contactListKey = "contactlist";
 String^ accountIdAssociatedKey = "accountIdAssociated";
 String^ vcardUIDKey = "vcardUID";
+String^ lastTimeKey = "lastTime";
+
 
 namespace RingClientUWP
 {
@@ -146,6 +148,20 @@ public:
         }
     }
 
+    property String^ _lastTime
+    {
+        String^ get()
+        {
+            return lastTime_;
+        }
+        void set(String^ value)
+        {
+            lastTime_ = value;
+            NotifyPropertyChanged("_lastTime");
+        }
+    }
+
+
     VCardUtils::VCard^ getVCard();
 
 internal:
@@ -168,6 +184,7 @@ private:
     Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
     ContactStatus contactStatus_;
     String^ name_;
+    String^ lastTime_;
 };
 }
 
