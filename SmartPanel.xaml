@@ -39,6 +39,8 @@
         <views:ContactStatusNotification x:Key="_ContactStatusNotification_" />
         <views:boolToVisibility x:Key="_boolToVisibility_" />
         <views:CallStatusToSpinnerVisibility x:Key="_CallStatusToSpinnerVisibility_" />
+        <views:CallStatusForIncomingCallAnimatedEllipse x:Key="_CallStatusForIncomingCallAnimatedEllipse_" />
+        <views:CallStatusForIncomingCallStaticEllipse x:Key="_CallStatusForIncomingCallStaticEllipse_" />
 
         <!-- template for contacts. -->
         <DataTemplate x:Key="ContactTemplate"
@@ -200,44 +202,78 @@
                             <ColumnDefinition Width="*"
                                               MinWidth="200"/>
                         </Grid.ColumnDefinitions>
-                        <Ellipse    Height="50"
-                                    Width="50"
-                                    Grid.Column="0"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Margin="5">
-                            <Ellipse.Fill>
-                                <ImageBrush  x:Name="_contactAvatar_"
-                                        ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
-                            </Ellipse.Fill>
-                        </Ellipse>
-                        <!-- visual notifications. -->
-                        <Border x:Name="_visualNotificationVideoChat_"
-                            Visibility="Collapsed"
-                            Style="{StaticResource BorderStyle1}">
-                            <TextBlock Text="&#xE8AA;"
-                                   Style="{StaticResource TextSegoeStyle1}"/>
-                            <Border.RenderTransform>
-                                <TranslateTransform X="17" Y="-14"/>
-                            </Border.RenderTransform>
-                        </Border>
-                        <Border x:Name="_visualNotificationNewMessage_"
-                            Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
-                            Style="{StaticResource BorderStyle2}">
-                            <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
-                                   Style="{StaticResource TextStyle3}"/>
-                            <Border.RenderTransform>
-                                <TranslateTransform X="-17" Y="-14"/>
-                            </Border.RenderTransform>
-                        </Border>
+                        <StackPanel Grid.Column="0">
+                            <!-- so far, I haven't fond any way to make a nested animation, inside a datatemplate, starting with the begin method from the code.
+                            I use a black magic workaround with two ellipses... -->
+                            <Ellipse x:Name="_incomingCallAnimatedEllipse_"
+                                Height="50"
+                                     Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallAnimatedEllipse_}, Mode=OneWay}"
+                                        Width="50"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Margin="5">
+                                <Ellipse.Fill>
+                                    <ImageBrush  x:Name="_contactAvatar2_"
+                                            ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                                </Ellipse.Fill>
+                                <Ellipse.Triggers>
+                                    <EventTrigger>
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="_toto_">
+                                                <DoubleAnimation Storyboard.TargetName="_incomingCallAnimatedEllipse_"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1"
+                                                             AutoReverse="True"
+                                                             RepeatBehavior="Forever"
+                                                             To="0"
+                                                             Duration="0:0:1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Ellipse.Triggers>
+                            </Ellipse>
+                            <Ellipse Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallStaticEllipse_}, Mode=OneWay}"
+
+                                Height="50"
+                                        Width="50"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Margin="5">
+                                <Ellipse.Fill>
+                                    <ImageBrush  x:Name="_contactAvatar_"
+                                            ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <!-- visual notifications. -->
+                            <!--<Border x:Name="_visualNotificationVideoChat_"
+                                Visibility="Collapsed"
+                                Style="{StaticResource BorderStyle1}">
+                                <TextBlock Text="&#xE8AA;"
+                                       Style="{StaticResource TextSegoeStyle1}"/>
+                                <Border.RenderTransform>
+                                    <TranslateTransform X="17" Y="-14"/>
+                                </Border.RenderTransform>
+                            </Border>-->
+                            <Border x:Name="_visualNotificationNewMessage_"
+                                    Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
+                                    BorderThickness="2"
+                                    BorderBrush="White"
+                                    Style="{StaticResource BorderStyle2}">
+                                <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
+                                           Style="{StaticResource TextStyle3}"/>
+                                <Border.RenderTransform>
+                                    <TranslateTransform X="-17" Y="-58"/>
+                                </Border.RenderTransform>
+                            </Border>
+                        </StackPanel>
 
                         <Grid Grid.Column="1">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="60"/>
                                 <RowDefinition Height="30"/>
                             </Grid.RowDefinitions>
-                            <!-- name of the contact. -->
                             <StackPanel Grid.Row="0">
+                                <!-- name of the contact. -->
                                 <TextBlock  x:Name="_contactName_"
                                             Text="{x:Bind _contact._name, Mode=OneWay}"
                                             TextTrimming="CharacterEllipsis">
