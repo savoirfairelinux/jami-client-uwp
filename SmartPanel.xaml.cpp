@@ -512,6 +512,7 @@ RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object
                 if (it->_callStatus != CallStatus::IN_PROGRESS)
                     RingD::instance->pauseCall(Utils::toString(it->_callId));
 
+
             RingD::instance->acceptIncommingCall(callId);
         }
     }
@@ -1867,7 +1868,6 @@ Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::Convert(Object ^ v
 {
     auto callStatus = static_cast<CallStatus>(value);
 
-
     if (callStatus == CallStatus::INCOMING_RINGING
             || callStatus == CallStatus::OUTGOING_REQUESTED
             || callStatus == CallStatus::OUTGOING_RINGING
@@ -1875,7 +1875,6 @@ Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::Convert(Object ^ v
         return  Windows::UI::Xaml::Visibility::Visible;
     else
         return  Windows::UI::Xaml::Visibility::Collapsed;
-
 }
 
 Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
@@ -1884,4 +1883,44 @@ Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::ConvertBack(Object
 }
 
 RingClientUWP::Views::CallStatusToSpinnerVisibility::CallStatusToSpinnerVisibility()
+{}
+
+Object ^ RingClientUWP::Views::CallStatusForIncomingCallAnimatedEllipse::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto callStatus = static_cast<CallStatus>(value);
+
+    if (callStatus == CallStatus::INCOMING_RINGING) {
+        return  Windows::UI::Xaml::Visibility::Visible;
+    }
+    else {
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+    }
+}
+
+Object ^ RingClientUWP::Views::CallStatusForIncomingCallAnimatedEllipse::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::CallStatusForIncomingCallAnimatedEllipse::CallStatusForIncomingCallAnimatedEllipse()
+{}
+
+Object ^ RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto callStatus = static_cast<CallStatus>(value);
+
+    if (callStatus == CallStatus::INCOMING_RINGING) {
+        return  Windows::UI::Xaml::Visibility::Collapsed;
+    }
+    else {
+        return  Windows::UI::Xaml::Visibility::Visible;
+    }
+}
+
+Object ^ RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::CallStatusForIncomingCallStaticEllipse()
 {}
