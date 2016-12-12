@@ -277,6 +277,9 @@
     <Page Include="PreviewPage.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="AboutPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">

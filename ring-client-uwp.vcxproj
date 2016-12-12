@@ -168,6 +168,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="AboutPage.xaml.h">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="Account.h" />
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
@@ -231,6 +234,7 @@
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="AboutPage.xaml" />
     <Page Include="LoadingPage.xaml" />
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
@@ -299,6 +303,9 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AboutPage.xaml.cpp">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </ClCompile>
     <ClCompile Include="Account.cpp" />
     <ClCompile Include="AccountListItem.cpp" />
     <ClCompile Include="AccountListItemsViewModel.cpp" />
