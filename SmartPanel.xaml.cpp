@@ -1960,3 +1960,34 @@ Object ^ RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::ConvertBa
 
 RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::CallStatusForIncomingCallStaticEllipse()
 {}
+
+
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+        if (item->_contact->_name == _ringTxtBx_->Text || item->_contact->ringID_ == _ringTxtBx_->Text) {
+            SmartPanelItemsViewModel::instance->_selectedItem = item;
+            summonMessageTextPage();
+        }
+
+        auto contact = ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
+        RingD::instance->lookUpName(_ringTxtBx_->Text);
+
+        _ringTxtBx_->Text = "";
+
+        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+        }
+        return;
+    }
+
+    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+        auto str1 = Utils::toString(item->_contact->_name);
+        auto str2 = Utils::toString(_ringTxtBx_->Text);
+
+        if (str1.find(str2) != std::string::npos)
+            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+        else
+            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+    }
+}
