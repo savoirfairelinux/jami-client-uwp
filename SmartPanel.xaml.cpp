@@ -1316,7 +1316,6 @@ void RingClientUWP::Views::SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::
     checkStateEditionMenu();
 }
 
-// (XXX) il ne faudrait plus de ringtextbox dans cette fonction, elle devrait etre vider avant de receveoir le resultat
 void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& address, const std::string& name)
 {
     if (menuOpen == MenuOpen::ACCOUNTS_LIST) { // if true, we did the lookup for a new account
@@ -1381,16 +1380,53 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
 
         switch (status) {
         case LookupStatus::SUCCESS:
+        {
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = Utils::toPlatformString(address);
                 ringTxtBxPlaceHolderDelay("username found and added.", 5000);
                 ContactsViewModel::instance->saveContactsToFile();
             }
-            break;
+            else {
+                /* in that case we delete a possible suroggate */
+                for each (Contact^ co in ContactsViewModel::instance->contactsList) {
+                    if (co->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION
+                            && co->_name == Utils::toPlatformString(name)) {
+                        auto item = SmartPanelItemsViewModel::instance->findItem(co);
+                        ContactsViewModel::instance->deleteContact(co);
+                        SmartPanelItemsViewModel::instance->removeItem(item);
+                    }
+
+                }
+
+            }
+
+            /* open the text message page */
+            auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+            SmartPanelItemsViewModel::instance->_selectedItem = item;
+            summonMessageTextPage();
+        }
+        break;
         case LookupStatus::INVALID_NAME:
             if (name.length() == 40) {
-                ringTxtBxPlaceHolderDelay("ring id added.", 5000); // (XXX) on devrait valider que ce soit bien une clee ring
+
+                /* first we check if some contact is registred with this ring id */
+                auto contactAlreadyRecorded = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(name));
+                if (contactAlreadyRecorded) {
+                    ringTxtBxPlaceHolderDelay("you already have a contact with this ring id.", 5000);
+                    /* delete the contact added recently */
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    ContactsViewModel::instance->deleteContact(contact);
+                    SmartPanelItemsViewModel::instance->removeItem(item);
+
+                    /* open the message text with the contact already recorder*/
+                    item = SmartPanelItemsViewModel::instance->findItem(contactAlreadyRecorded);
+                    SmartPanelItemsViewModel::instance->_selectedItem = item;
+                    summonMessageTextPage();
+                    break;
+                }
+
+                ringTxtBxPlaceHolderDelay("ring id added.", 5000); // refacto : we should check if it's an actual ring id
                 contact->ringID_ = Utils::toPlatformString(name);
                 contact->_contactStatus = ContactStatus::READY;
                 ContactsViewModel::instance->saveContactsToFile();
@@ -1664,9 +1700,9 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
 {
     if (e->Key == Windows::System::VirtualKey::Enter) {
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            if (item->_contact->_name == _ringTxtBx_->Text) {
+            if (item->_contact->_name == _ringTxtBx_->Text || item->_contact->ringID_ == _ringTxtBx_->Text) {
                 SmartPanelItemsViewModel::instance->_selectedItem = item;
-                return;
+                summonMessageTextPage();
             }
         }
 
