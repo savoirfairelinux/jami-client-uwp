@@ -99,6 +99,7 @@ SmartPanel::SmartPanel()
             return;
         }
 
+        RingD::instance->lookUpAddress(from);
         contact->_accountIdAssociated = accountId;
 
         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
@@ -1403,8 +1404,11 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
 
             /* open the text message page */
             auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-            SmartPanelItemsViewModel::instance->_selectedItem = item;
-            summonMessageTextPage();
+
+            if (item->_callStatus != CallStatus::INCOMING_RINGING) {// refacto : do something better
+                SmartPanelItemsViewModel::instance->_selectedItem = item;
+                summonMessageTextPage();
+            }
         }
         break;
         case LookupStatus::INVALID_NAME:
@@ -1421,8 +1425,11 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
 
                     /* open the message text with the contact already recorder*/
                     item = SmartPanelItemsViewModel::instance->findItem(contactAlreadyRecorded);
-                    SmartPanelItemsViewModel::instance->_selectedItem = item;
-                    summonMessageTextPage();
+
+                    if (item->_callStatus != CallStatus::INCOMING_RINGING) { // refacto : do something better
+                        SmartPanelItemsViewModel::instance->_selectedItem = item;
+                        summonMessageTextPage();
+                    }
                     break;
                 }
 
