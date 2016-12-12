@@ -100,7 +100,7 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
             std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
             _mkdir(profilePath.c_str());
             std::ofstream file((profilePath + "\\profile_image.png"),
-                std::ios::out | std::ios::trunc | std::ios::binary);
+                               std::ios::out | std::ios::trunc | std::ios::binary);
             if (file.is_open()) {
                 file << fileBuffer;
                 file.close();

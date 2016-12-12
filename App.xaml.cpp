@@ -60,7 +60,10 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
         Window::Current->Content = rootFrame;
     }
 
-    ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
+    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
+    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
+        = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;
+
     Window::Current->Activate();
 
     auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
@@ -75,6 +78,5 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
 
 void App::OnsummonWizard()
 {
-    ApplicationView::GetForCurrentView()->TryResizeView(Size(400, 600));
     rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::Wizard::typeid));
 }
