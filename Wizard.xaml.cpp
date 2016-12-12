@@ -100,7 +100,7 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
             std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
             _mkdir(profilePath.c_str());
             std::ofstream file((profilePath + "\\profile_image.png"),
-                std::ios::out | std::ios::trunc | std::ios::binary);
+                               std::ios::out | std::ios::trunc | std::ios::binary);
             if (file.is_open()) {
                 file << fileBuffer;
                 file.close();
@@ -118,6 +118,11 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
 
 void RingClientUWP::Views::Wizard::_addAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+    if (_PINTextBox_->Text->IsEmpty() || _ArchivePassword_->Password->IsEmpty()) {
+        _addAccountYes_->IsEnabled = false;
+        return;
+    }
+
     RingD::instance->_startingStatus = StartingStatus::REGISTERING_THIS_DEVICE;
 
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
@@ -302,10 +307,29 @@ void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, co
 void RingClientUWP::Views::Wizard::OnregistrationStateErrorGeneric(const std::string &accountId)
 {
     _response_->Text = "Credentials error or PIN expired.";
+    _addAccountYes_->IsEnabled = false;
 }
 
 
 void RingClientUWP::Views::Wizard::_PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _response_->Text = "";
+}
+
+
+void RingClientUWP::Views::Wizard::_ArchivePassword__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (_PINTextBox_->Text->IsEmpty() || _ArchivePassword_->Password->IsEmpty())
+        _addAccountYes_->IsEnabled = false;
+    else
+        _addAccountYes_->IsEnabled = true;
+}
+
+
+void RingClientUWP::Views::Wizard::_PINTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (_PINTextBox_->Text->IsEmpty() || _ArchivePassword_->Password->IsEmpty())
+        _addAccountYes_->IsEnabled = false;
+    else
+        _addAccountYes_->IsEnabled = true;
 }
