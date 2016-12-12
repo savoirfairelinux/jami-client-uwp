@@ -12,14 +12,20 @@
         <Grid>
             <StackPanel Width="400">
                 <Rectangle Height="50"/>
+                <Image x:Name="_welcomeImage_"
+                       Source="Assets\Wide310x150Logo.scale-200.png"
+                       Width="310"
+                       HorizontalAlignment="Center"
+                       Margin="0 10 0 30"
+                       Height="150"/>
                 <StackPanel Height="auto"
                             Background="#3bc1d3"
                             Grid.Column="0">
                     <Button x:Name="_showCreateAccountMenuTitle_"
                             Content="Create New Account"
                             Foreground="White"
-                            FontSize="30"
                             Click="collapseMenus"
+                            Style="{StaticResource ButtonStyle8}"
                             Visibility="Collapsed"
                             HorizontalAlignment="Center"/>
                     <Button x:Name="_showCreateAccountMenuBtn_"
@@ -190,7 +196,7 @@
                                 Content="Add Existing Account"
                                 Foreground="White"
                                 Visibility="Collapsed"
-                                FontSize="30"
+                                Style="{StaticResource ButtonStyle8}"
                                 Click="collapseMenus"
                                 HorizontalAlignment="Center"/>
                         <Button x:Name="_showAddAccountMenuBtn_"
@@ -210,10 +216,14 @@
                             <StackPanel Orientation="Horizontal"
                                         Grid.Row="0">
                                 <Button x:Name="_step1button_"
+                                        Style="{StaticResource ButtonStyle4}"
                                         Content="Step 1"
                                         Click="_step1button__Click"/>
-                                <TextBlock Text=">"/>
+                                <TextBlock Text=">"
+                                           VerticalAlignment="Center"
+                                           Style="{StaticResource TextStyle7}"/>
                                 <Button x:Name="_step2button_"
+                                        Style="{StaticResource ButtonStyle4}"
                                         Click="_step2button__Click"
                                         Content="Step 2"/>
                             </StackPanel>
@@ -237,9 +247,11 @@
                                 <TextBox  x:Name="_PINTextBox_"
                                       Margin="10"
                                       GotFocus="_PINTextBox__GotFocus"
+                                          KeyUp="_PINTextBox__KeyUp"
                                       PlaceholderText="Enter PIN"/>
                                 <PasswordBox x:Name="_ArchivePassword_"
                                       Margin="10"
+                                             KeyUp="_ArchivePassword__KeyUp"
                                       PlaceholderText="Enter your password"/>
                                 <TextBlock x:Name="_response_"
                                            Foreground="Red"
@@ -263,6 +275,7 @@
                                             Visibility="Collapsed"
                                             Content="&#xE081;"
                                             Click="_addAccountYes__Click"
+                                            IsEnabled="False"
                                             Style="{StaticResource ButtonStyle2}"/>
                                 </StackPanel>
                             </Grid>

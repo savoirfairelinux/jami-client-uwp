@@ -55,8 +55,6 @@ MainPage::MainPage()
 {
     InitializeComponent();
 
-    ApplicationView::GetForCurrentView()->TryResizeView(Size(1024, 768));
-
     UserModel::instance->getUserData();
 
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);

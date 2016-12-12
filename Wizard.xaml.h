@@ -40,6 +40,8 @@ private:
     bool isFullNameValid;
     void OnregistrationStateErrorGeneric(const std::string &accountId);
     void _PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _ArchivePassword__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+    void _PINTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
 };
 
 }
