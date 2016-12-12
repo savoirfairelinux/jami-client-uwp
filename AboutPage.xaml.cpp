@@ -16,28 +16,38 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#pragma once
+#include "pch.h"
 
-#include "WelcomePage.g.h"
+#include "AboutPage.xaml.h"
 
-namespace RingClientUWP
+using namespace RingClientUWP;
+using namespace RingClientUWP::Views;
+
+using namespace Windows::UI::ViewManagement;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml::Controls;
+
+AboutPage::AboutPage()
 {
-
-delegate void SummonAboutPage();
-
-namespace Views
-{
-public ref class WelcomePage sealed
-{
-public:
-    WelcomePage();
-protected:
-    void PositionImage();
-    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
-private:
-    void _aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-internal:
-    event SummonAboutPage^ summonAboutPage;
+    InitializeComponent();
 };
+
+void RingClientUWP::Views::AboutPage::_aboutBasicButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _aboutNavGrid_->SetRow(_aboutScrollViewer_, 1);
+    _aboutNavGrid_->SetRow(_creditsScrollViewer_, 0);
 }
+
+
+void RingClientUWP::Views::AboutPage::_aboutCreditsButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    _aboutNavGrid_->SetRow(_aboutScrollViewer_, 0);
+    _aboutNavGrid_->SetRow(_creditsScrollViewer_, 1);
+}
+
+
+void RingClientUWP::Views::AboutPage::_aboutCloseButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
+    rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(MainPage::typeid), true);
 }

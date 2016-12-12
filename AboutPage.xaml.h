@@ -18,26 +18,20 @@
 **************************************************************************/
 #pragma once
 
-#include "WelcomePage.g.h"
+#include "AboutPage.g.h"
 
 namespace RingClientUWP
 {
-
-delegate void SummonAboutPage();
-
 namespace Views
 {
-public ref class WelcomePage sealed
+public ref class AboutPage sealed
 {
 public:
-    WelcomePage();
-protected:
-    void PositionImage();
-    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
+    AboutPage();
 private:
-    void _aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-internal:
-    event SummonAboutPage^ summonAboutPage;
+    void _aboutBasicButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _aboutCreditsButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _aboutCloseButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }

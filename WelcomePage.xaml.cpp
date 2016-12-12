@@ -19,9 +19,14 @@
 #include "pch.h"
 
 #include "WelcomePage.xaml.h"
+#include "AboutPage.xaml.h"
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+
+using namespace Windows::UI::ViewManagement;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml::Controls;
 
 WelcomePage::WelcomePage()
 {
@@ -45,4 +50,35 @@ void
 WelcomePage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
     //PositionImage();
+}
+
+void RingClientUWP::Views::WelcomePage::_aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    // new window?
+    /*auto currentAV = ApplicationView::GetForCurrentView();
+    auto newAV = CoreApplication::CreateNewView();
+    newAV->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+        ref new DispatchedHandler([=]()
+    {
+        auto newWindow = Window::Current;
+        auto newAppView = ApplicationView::GetForCurrentView();
+        newAppView->Title = "About";
+
+        auto frame = ref new Windows::UI::Xaml::Controls::Frame();
+        frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
+        newWindow->Content = frame;
+        newWindow->Activate();
+
+        ApplicationViewSwitcher::TryShowAsStandaloneAsync(
+                        newAppView->Id,
+                        ViewSizePreference::UseMinimum,
+                        currentAV->Id,
+                        ViewSizePreference::UseMinimum);
+
+        RingD::instance->isInAbout = true;
+        newAppView->TryResizeView(Size(200, 200));
+    }));*/
+
+    auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
+    rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
 }
