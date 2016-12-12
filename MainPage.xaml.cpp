@@ -343,8 +343,8 @@ void MainPage::Application_Resuming(Object^, Object^)
 
 void RingClientUWP::MainPage::OncloseMessageTextPage()
 {
-    auto smartPanel = dynamic_cast<SmartPanel^>(_smartPanel_->Content);
-    smartPanel->unselectContact();
+    SmartPanelItemsViewModel::instance->_selectedItem = nullptr;
+    showFrame(_welcomeFrame_);
 }
 
 
