@@ -1390,7 +1390,24 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
             break;
         case LookupStatus::INVALID_NAME:
             if (name.length() == 40) {
-                ringTxtBxPlaceHolderDelay("ring id added.", 5000); // (XXX) on devrait valider que ce soit bien une clee ring
+
+                /* first we check if some contact is registred with this ring id */
+                auto contactAlreadyRecorded = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(name));
+                if (contactAlreadyRecorded) {
+                    ringTxtBxPlaceHolderDelay("you already have a contact with this ring id.", 5000);
+                    /* delete the contact added recently */
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    ContactsViewModel::instance->deleteContact(contact);
+                    SmartPanelItemsViewModel::instance->removeItem(item);
+
+                    /* open the message text with the contact already recorder*/
+                    item = SmartPanelItemsViewModel::instance->findItem(contactAlreadyRecorded);
+                    SmartPanelItemsViewModel::instance->_selectedItem = item;
+                    summonMessageTextPage();
+                    break;
+                }
+
+                ringTxtBxPlaceHolderDelay("ring id added.", 5000); // refacto : we should check if it's an actual ring id
                 contact->ringID_ = Utils::toPlatformString(name);
                 contact->_contactStatus = ContactStatus::READY;
                 ContactsViewModel::instance->saveContactsToFile();
@@ -1666,7 +1683,7 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_contact->_name == _ringTxtBx_->Text) {
                 SmartPanelItemsViewModel::instance->_selectedItem = item;
-                return;
+                summonMessageTextPage();
             }
         }
 
