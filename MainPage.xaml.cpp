@@ -25,6 +25,7 @@
 #include "VideoPage.xaml.h"
 #include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
+#include "AboutPage.xaml.h"
 
 #include "MainPage.xaml.h"
 
@@ -76,6 +77,7 @@ MainPage::MainPage()
     smartPanel->summonPreviewPage += ref new RingClientUWP::SummonPreviewPage(this, &RingClientUWP::MainPage::OnsummonPreviewPage);
     smartPanel->hidePreviewPage += ref new RingClientUWP::HidePreviewPage(this, &RingClientUWP::MainPage::OnhidePreviewPage);
     smartPanel->summonVideoPage += ref new RingClientUWP::SummonVideoPage(this, &RingClientUWP::MainPage::OnsummonVideoPage);
+
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
     videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
     auto messageTextFrame = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
@@ -145,24 +147,11 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
 void
 RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 {
-    auto iter = BackgroundTaskRegistration::AllTasks->First();
-    auto hascur = iter->HasCurrent;
-    while (hascur)
-    {
-        auto cur = iter->Current->Value;
-        cur->Unregister(true);
-        hascur = iter->MoveNext();
+    bool fromAboutPage = (e->Parameter != nullptr) ? safe_cast<bool>(e->Parameter) : false;
+    if (!fromAboutPage) {
+        RingD::instance->init();
+        showLoadingOverlay(true, false);
     }
-    BackgroundExecutionManager::RequestAccessAsync();
-    BackgroundTaskBuilder^ builder = ref new BackgroundTaskBuilder();
-    builder->Name = "CallRefusalBackgroundTask";
-    //builder->TaskEntryPoint = "RingClientUWP.BackgroundActivity";
-    builder->SetTrigger(ref new ToastNotificationActionTrigger());
-    BackgroundTaskRegistration^ registration = builder->Register();
-
-    RingD::instance->init();
-
-    showLoadingOverlay(true, false);
 }
 
 void
