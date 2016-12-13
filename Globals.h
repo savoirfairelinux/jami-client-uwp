@@ -26,4 +26,5 @@ public enum class ContactStatus {
     READY
 };
 
+constexpr bool DEBUG_ON = false;
 }

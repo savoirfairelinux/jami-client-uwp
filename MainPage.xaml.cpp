@@ -107,10 +107,11 @@ MainPage::MainPage()
 void
 MainPage::OnKeyDown(KeyRoutedEventArgs^ e)
 {
-    if (e->Key == VirtualKey::F5) {
-        _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
-        _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
-    }
+    if (DEBUG_ON)
+        if (e->Key == VirtualKey::F5) {
+            _outerSplitView_->OpenPaneLength = Window::Current->Bounds.Width;
+            _outerSplitView_->IsPaneOpen = !_outerSplitView_->IsPaneOpen;
+        }
 }
 
 void RingClientUWP::MainPage::_toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
