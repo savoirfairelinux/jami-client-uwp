@@ -142,7 +142,7 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>STATICLIB;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>

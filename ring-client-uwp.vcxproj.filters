@@ -80,6 +80,7 @@
     <ClCompile Include="Ringtone.cpp">
       <Filter>Media\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="AboutPage.xaml.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -156,6 +157,7 @@
     <ClInclude Include="Ringtone.h">
       <Filter>Media\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="AboutPage.xaml.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
