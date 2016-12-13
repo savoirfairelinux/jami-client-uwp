@@ -63,6 +63,7 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
         Window::Current->Content = rootFrame;
     }
 
+    ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
         = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;

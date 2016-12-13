@@ -114,7 +114,7 @@
                                 <Button x:Name="_toggleSmartBoxButton_"
                                         Grid.Row="0"
                                         FontWeight="Bold"
-                                        FontSize="30"
+                                        FontSize="26"
                                         Content="&#xE700;"
                                         Click="_toggleSmartBoxButton__Click"
                                         FontFamily="Segoe MDL2 Assets"
