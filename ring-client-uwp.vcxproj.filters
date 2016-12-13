@@ -206,7 +206,13 @@
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
       <Filter>Assets</Filter>
     </Image>
-    <Image Include="Assets\qrCodeIcon.png">
+    <Image Include="Assets\qrCodeIconBlack.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\qrCodeIconWhite.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\HamburgerIcon.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

@@ -281,8 +281,10 @@
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png" />
     <Image Include="Assets\AccountTypeSIP.png" />
+    <Image Include="Assets\HamburgerIcon.png" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
-    <Image Include="Assets\qrCodeIcon.png" />
+    <Image Include="Assets\qrCodeIconBlack.png" />
+    <Image Include="Assets\qrCodeIconWhite.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
