@@ -121,7 +121,6 @@ public ref class SmartPanel sealed
 public:
     SmartPanel();
     void updatePageContent();
-    void unselectContact();
 
 internal:
     enum class Mode { Minimized, Normal };
@@ -135,19 +134,11 @@ internal:
 
 private:
     /* functions */
-    void _smartGridButton__Clicked(Object^ sender, RoutedEventArgs^ e);
-    void _accountsMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _accountsMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _settingsMenu__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _settingsMenu__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _shareMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _shareMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _addAccountBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
     void _accountList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
-    void _ringTxtBx__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _rejectIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _acceptIncomingCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -155,7 +146,6 @@ private:
     void _cancelCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-    void _contactItem__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void generateQRcode();
     void _videoDeviceComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^);
     void _videoResolutionComboBox__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^);
@@ -169,8 +159,6 @@ private:
     void showLinkThisDeviceStep1();
 
     /* members */
-    void _devicesMenuButton__Unchecked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _devicesMenuButton__Checked(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _addDevice__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OndevicesListRefreshed(Platform::Collections::Vector<Platform::String ^, std::equal_to<Platform::String ^>, true> ^devicesList);
     void _pinGeneratorYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -217,10 +205,19 @@ private:
         SETTINGS
     };
 
+    void selectMenu(MenuOpen menu);
     MenuOpen menuOpen;
+
     void Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload);
     void _ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _contactsListMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _accountsMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _shareMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _devicesMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _settingsMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _passwordForPinGenerator__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+    void requestPin();
 };
 }
 }

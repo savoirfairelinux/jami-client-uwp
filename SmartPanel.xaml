@@ -391,7 +391,7 @@
             <Grid.RowDefinitions>
                 <!-- where the selected account is shown. -->
                 <RowDefinition x:Name="_selectedAccountRow_"
-                               Height="90"/>
+                               Height="60"/>
                 <!-- where the drop down menus are shown. -->
                 <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
@@ -399,13 +399,13 @@
             <Grid Grid.Row="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition x:Name="_selectedAccountAvatarColumn_"
-                                      Width="90"/>
+                                      Width="60"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <Ellipse
                     x:Name="_selectedAccountAvatarContainer_"
-                    Height="80"
-                    Width="80"
+                    Height="50"
+                    Width="50"
                     Grid.Column="0"
                     Stroke="White"
                     StrokeThickness="3"
@@ -422,8 +422,8 @@
                 <Ellipse
                     x:Name="_shaderPhotoboothIcon_"
                     Visibility="Collapsed"
-                    Height="80"
-                    Width="80"
+                    Height="50"
+                    Width="50"
                     Grid.Column="0"
                     IsHitTestVisible="False"
                     Fill="Black"
@@ -440,55 +440,58 @@
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
-                               Text="[TEXT MISSING]"
-                               Margin="10,0,0,10"
+                               Text="the wizard will be sumoned..."
+                               Margin="10"
+                               VerticalAlignment="Center"
                                TextTrimming="CharacterEllipsis"
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">
-                        <!--Content="&#xE0A1;-->
-                        <Button x:Name="_smartGridButton_"
+                        <!-- contacts list -->
+                        <ToggleButton x:Name="_contactsListMenuButton_"
                                       VerticalAlignment="Bottom"
                                       Content="&#xe716;"
-                                      Click="_smartGridButton__Clicked"
-                                      Style="{StaticResource smartGridButtonStyle}"/>
+                                      Click="_contactsListMenuButton__Click"
+                                      Style="{StaticResource ToggleButtonStyle2}"/>
+                        <!-- account menu -->
                         <ToggleButton x:Name="_accountsMenuButton_"
                                       VerticalAlignment="Bottom"
+                                      Click="_accountsMenuButton__Click"
                                       Content="&#xE168;"
-                                      Checked="_accountsMenuButton__Checked"
-                                      Unchecked="_accountsMenuButton__Unchecked"
-                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                                      Style="{StaticResource ToggleButtonStyle2}"/>
                         <!-- _shareMenuButton_ -->
                         <ToggleButton x:Name="_shareMenuButton_"
                                       VerticalAlignment="Bottom"
-                                      Checked="_shareMenuButton__Checked"
-                                      Unchecked="_shareMenuButton__Unchecked"
-                                      Style="{StaticResource ToggleButtonStyle1}">
-                            <Image Source="Assets/qrCodeIcon.png"
-                                   Stretch="Uniform"/>
+                                      Click="_shareMenuButton__Click"
+                                      Style="{StaticResource ToggleButtonStyle2}">
+                            <StackPanel>
+                                <Image x:Name="_qrCodeIconWhite_"
+                                       Source="Assets/qrCodeIconWhite.png"
+                                       Visibility="Visible"
+                                       Stretch="None"/>
+                                <Image x:Name="_qrCodeIconBlack_"
+                                       Visibility="Collapsed"
+                                       Source="Assets/qrCodeIconBlack.png"
+                                       Stretch="None"/>
+                            </StackPanel>
                         </ToggleButton>
                         <!-- _devicesMenuButton_ -->
                         <ToggleButton x:Name="_devicesMenuButton_"
                                       VerticalAlignment="Bottom"
+                                      Click="_devicesMenuButton__Click"
                                       Content="&#xE836;"
-                                      Checked="_devicesMenuButton__Checked"
-                                      Unchecked="_devicesMenuButton__Unchecked"
-                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                                      Style="{StaticResource ToggleButtonStyle2}"/>
                         <!-- _settingsMenuButton_ -->
                         <ToggleButton x:Name="_settingsMenuButton_"
+                                      Click="_settingsMenuButton__Click"
                                       VerticalAlignment="Bottom"
                                       Content="&#xE115;"
-                                      Checked="_settingsMenu__Checked"
-                                      Unchecked="_settingsMenu__Unchecked"
-                                      Style="{StaticResource ToggleButtonStyle1}"/>
+                                      Style="{StaticResource ToggleButtonStyle2}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
 
             <!--sub menus like the accounts list or the share menu are just below, technicaly they are nested inside the
             same row. To summon them we use the visibility of their own grid, by linking it to a toggle button-->
-
-
-
 
         </Grid>
         <!-- smartList and settings. -->
@@ -916,8 +919,7 @@
                   Grid.Row="0"
                   Background="#3bc1d3">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
                 <StackPanel Orientation="Horizontal"
@@ -936,7 +938,7 @@
                 <StackPanel x:Name="_step1Menu_"
                                     Background="#FFE4F1F9"
                                     Padding="10"
-                                    Grid.Row="1">
+                                    Grid.Row="0">
                     <TextBlock Text="To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account."
                                         TextWrapping="Wrap"
                                         TextAlignment="Justify"/>
@@ -948,7 +950,7 @@
                 <StackPanel x:Name="_step2Menu_"
                                     Background="#FFE4F1F9"
                                     Visibility="Collapsed"
-                                    Grid.Row="1">
+                                    Grid.Row="0">
                     <TextBox  x:Name="_PINTextBox_"
                                     Margin="10"
                                     GotFocus="_PINTextBox__GotFocus"
@@ -962,7 +964,7 @@
                                Text=""/>
                 </StackPanel>
                 <!-- buttons next step and yes/no to add the account. -->
-                <Grid Grid.Row="2">
+                <Grid Grid.Row="1">
                     <StackPanel Orientation="Horizontal"
                                         Padding="10,0"
                                         HorizontalAlignment="Center">
@@ -1120,6 +1122,7 @@
                     <PasswordBox x:Name="_passwordForPinGenerator_"
                                  Margin="10"
                                  Grid.Row="1"
+                                 KeyUp="_passwordForPinGenerator__KeyUp"
                                  PlaceholderText="Enter your password"/>
                 </Grid>
                 <!-- buttons yes/no to generate a PIN. -->
@@ -1209,7 +1212,6 @@
                                 Foreground="Black"
                                 Background="White"
                                 TextWrapping="Wrap"
-                                KeyDown="_ringTxtBx__KeyDown"
                                 KeyUp="_ringTxtBx__KeyUp"
                                 Text="">
                     </TextBox>
