@@ -214,6 +214,11 @@
     <Image Include="Assets\qrCodeIconWhite.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\StoreLogo.scale-125.png" />
+    <Image Include="Assets\StoreLogo.scale-150.png" />
+    <Image Include="Assets\StoreLogo.scale-100.png" />
+    <Image Include="Assets\StoreLogo.scale-200.png" />
+    <Image Include="Assets\StoreLogo.scale-400.png" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
