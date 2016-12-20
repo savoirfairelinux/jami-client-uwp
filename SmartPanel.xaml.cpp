@@ -22,6 +22,7 @@
 #include "SmartPanel.xaml.h"
 #include "qrencode.h"
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
+#include "callmanager_interface.h"
 
 using namespace Platform;
 
@@ -127,15 +128,8 @@ SmartPanel::SmartPanel()
         case CallStatus::NONE:
         case CallStatus::ENDED:
         {
-            bool isInCall = false;
-            for (auto item : SmartPanelItemsViewModel::instance->itemsList) { // WTF!!! item instead of it!!!! (XXX)
-                if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
-                    isInCall = true;
-                    RingD::instance->currentCallId = item->_callId;
-                    break;
-                }
-            }
-            if (!isInCall)
+            auto callsList = DRing::getCallList();
+            if (callsList.empty())
                 _settingsMenuButton_->Visibility = VIS::Visible;
             break;
         }
@@ -347,6 +341,7 @@ RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object
                 if (it->_callStatus != CallStatus::IN_PROGRESS)
                     RingD::instance->pauseCall(Utils::toString(it->_callId));
 
+            _settingsMenuButton_->Visibility = VIS::Collapsed;
 
             RingD::instance->acceptIncommingCall(callId);
         }
