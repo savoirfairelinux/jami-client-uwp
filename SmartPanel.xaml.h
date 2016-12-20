@@ -157,6 +157,7 @@ private:
     void checkStateEditionMenu();
     void ringTxtBxPlaceHolderDelay(String^ placeHolderText, int delayInMilliSeconds);
     void showLinkThisDeviceStep1();
+    void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 
     /* members */
     void _addDevice__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
