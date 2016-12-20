@@ -267,12 +267,12 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
 void
 MainPage::Application_Suspending(Object^, Windows::ApplicationModel::SuspendingEventArgs^ e)
 {
-    MSG_("Application_Suspending");
+    /*MSG_("Application_Suspending");
     auto deferral = e->SuspendingOperation->GetDeferral();
     Video::VideoManager::instance->captureManager()->CleanupCameraAsync();
     MSG_("Hang up calls...");
     RingD::instance->deinit();
-    deferral->Complete();
+    deferral->Complete();*/
 }
 
 void
