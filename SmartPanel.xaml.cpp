@@ -115,42 +115,7 @@ SmartPanel::SmartPanel()
         }
 
     });
-    RingD::instance->stateChange += ref new StateChange([this](String^ callId, CallStatus state, int code) {
-
-        auto item = SmartPanelItemsViewModel::instance->findItem(callId);
-
-        if (!item) {
-            WNG_("item not found");
-            return;
-        }
-
-        switch (state) {
-        case CallStatus::NONE:
-        case CallStatus::ENDED:
-        {
-            auto callsList = DRing::getCallList();
-            if (callsList.empty())
-                _settingsMenuButton_->Visibility = VIS::Visible;
-            break;
-        }
-        case CallStatus::IN_PROGRESS:
-        {
-            SmartPanelItemsViewModel::instance->_selectedItem = item;
-            summonVideoPage();
-            break;
-        }
-        case CallStatus::PEER_PAUSED:
-        case CallStatus::PAUSED:
-        {
-            SmartPanelItemsViewModel::instance->_selectedItem = item;
-            summonVideoPage();
-            break;
-        }
-        default:
-            break;
-        }
-
-    });
+    RingD::instance->stateChange += ref new StateChange(this, &SmartPanel::OnstateChange);
     RingD::instance->devicesListRefreshed += ref new RingClientUWP::DevicesListRefreshed(this, &RingClientUWP::Views::SmartPanel::OndevicesListRefreshed);
 
     ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
@@ -172,6 +137,43 @@ SmartPanel::SmartPanel()
     RingD::instance->incomingAccountMessage += ref new RingClientUWP::IncomingAccountMessage(this, &RingClientUWP::Views::SmartPanel::OnincomingAccountMessage);
 
     selectMenu(MenuOpen::CONTACTS_LIST);
+}
+
+void
+SmartPanel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+{
+    auto item = SmartPanelItemsViewModel::instance->findItem(callId);
+
+    if (!item) {
+        WNG_("item not found");
+        return;
+    }
+
+    switch (state) {
+    case CallStatus::NONE:
+    case CallStatus::ENDED:
+    {
+        auto callsList = DRing::getCallList();
+            if (callsList.empty())
+                _settingsMenuButton_->Visibility = VIS::Visible;
+        break;
+    }
+    case CallStatus::IN_PROGRESS:
+    {
+        SmartPanelItemsViewModel::instance->_selectedItem = item;
+        summonVideoPage();
+        break;
+    }
+    case CallStatus::PEER_PAUSED:
+    case CallStatus::PAUSED:
+    {
+        SmartPanelItemsViewModel::instance->_selectedItem = item;
+        summonVideoPage();
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 void
