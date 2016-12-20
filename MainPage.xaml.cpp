@@ -289,8 +289,6 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
             }
         }
         if (isInCall) {
-            /*if (RingD::instance->currentCallId)
-                RingD::instance->unPauseCall(RingD::instance->currentCallId);*/
             vcm->InitializeCameraAsync(false);
             vcm->videoFrameCopyInvoker->Start();
         }
@@ -322,11 +320,6 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
             }
         }
         if (isInCall) {
-            // TODO
-            /*if (RingD::instance->currentCallId) {
-                MSG_("Pausing call: " + RingD::instance->currentCallId);
-                RingD::instance->pauseCall(RingD::instance->currentCallId);
-            }*/
             if (vcm->isPreviewing) {
                 vcm->StopPreviewAsync();
                 if (vcm->captureTaskTokenSource)
