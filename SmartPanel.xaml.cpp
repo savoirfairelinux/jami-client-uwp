@@ -347,6 +347,7 @@ RingClientUWP::Views::SmartPanel::_acceptIncomingCallBtn__Click(Platform::Object
                 if (it->_callStatus != CallStatus::IN_PROGRESS)
                     RingD::instance->pauseCall(Utils::toString(it->_callId));
 
+            _settingsMenuButton_->Visibility = VIS::Collapsed;
 
             RingD::instance->acceptIncommingCall(callId);
         }
