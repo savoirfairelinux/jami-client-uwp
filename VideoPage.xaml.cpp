@@ -361,20 +361,8 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
         byte* data;
         unsigned capacity;
         byteAccess->GetBuffer(&data, &capacity);
-
         auto desc = buffer->GetPlaneDescription(0);
-
-        for (int row = 0; row < desc.Height; row++)
-        {
-            for (int col = 0; col < desc.Width; col++)
-            {
-                auto currPixel = desc.StartIndex + desc.Stride * row + BYTES_PER_PIXEL * col;
-
-                data[currPixel + 0] = buf[currPixel + 0];
-                data[currPixel + 1] = buf[currPixel + 1];
-                data[currPixel + 2] = buf[currPixel + 2];
-            }
-        }
+        std::memcpy(data, buf, static_cast<size_t>(capacity));
     }
     delete reference;
     delete buffer;

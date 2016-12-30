@@ -94,7 +94,7 @@ internal:
     DispatcherTimer^ videoFrameCopyInvoker;
     task<void> CopyFrameAsync();
     void CopyFrame(Object^ sender, Object^ e);
-    void InitializeCopyFrameDispatcher();
+    void InitializeCopyFrameDispatcher(unsigned frameRate);
 
     event StartPreviewing^ startPreviewing;
     event StopPreviewing^ stopPreviewing;

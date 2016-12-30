@@ -22,6 +22,8 @@
 #include "SmartPanel.xaml.h"
 
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
+#include <algorithm>
+#include <chrono>
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
@@ -58,7 +60,7 @@ VideoCaptureManager::VideoCaptureManager():
 })
 {
     deviceList = ref new Vector<Device^>();
-    InitializeCopyFrameDispatcher();
+    InitializeCopyFrameDispatcher(30);
     captureTaskTokenSource = new cancellation_token_source();
 }
 
@@ -358,11 +360,11 @@ VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
 }
 
 void
-VideoCaptureManager::InitializeCopyFrameDispatcher()
+VideoCaptureManager::InitializeCopyFrameDispatcher(unsigned frameRate)
 {
     try {
         TimeSpan timeSpan;
-        timeSpan.Duration = static_cast<long long>(1e7) / 30; // framerate
+        timeSpan.Duration = static_cast<long long>(1e7) / frameRate;
 
         if (videoFrameCopyInvoker != nullptr)
             delete(videoFrameCopyInvoker);
@@ -437,23 +439,10 @@ VideoCaptureManager::CopyFrameAsync()
                         byte* data;
                         unsigned capacity;
                         byteAccess->GetBuffer(&data, &capacity);
-
                         auto desc = buffer->GetPlaneDescription(0);
-
                         byte* buf = (byte*)DRing::obtainFrame(capacity);
-
-                        if (buf) {
-                            for (int row = 0; row < desc.Height; row++) {
-                                for (int col = 0; col < desc.Width; col++) {
-                                    auto currPixel = desc.StartIndex + desc.Stride * row
-                                                     + BYTES_PER_PIXEL * col;
-                                    buf[currPixel + 0] = data[currPixel + 0];
-                                    buf[currPixel + 1] = data[currPixel + 1];
-                                    buf[currPixel + 2] = data[currPixel + 2];
-                                }
-                            }
-                        }
-
+                        if (buf)
+                            std::memcpy(buf, data, static_cast<size_t>(capacity));
                         DRing::releaseFrame((void*)buf);
                     }
                     delete reference;

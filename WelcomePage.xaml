@@ -41,7 +41,7 @@
                        HorizontalAlignment="Center"
                        Margin="0 10 0 30"
                        Height="150"/>
-            <TextBlock Text="Ring is free software for universal communication wich respects the freedoms and privacy of its users."
+            <TextBlock Text="Ring is free software for universal communication which respects the freedoms and privacy of its users."
                            Foreground="#707370"
                            MaxWidth="500"
                            Width="310"
@@ -50,6 +50,10 @@
                            FontSize="12"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"/>
+            <HyperlinkButton    Content="Privacy Policy"
+                                FontSize="12"
+                                NavigateUri="https://ring.cx/en/about/privacy-and-anonymity"
+                                HorizontalAlignment="Center"/>
             <Button x:Name="_aboutButton_"
                     Margin="0,48,0,0"
                     BorderThickness="0"
