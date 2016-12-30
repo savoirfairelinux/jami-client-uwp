@@ -947,6 +947,7 @@ RingD::RingD()
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
+    WriteLine("XBOX: " + isOnXBox.ToString());
 }
 
 std::string

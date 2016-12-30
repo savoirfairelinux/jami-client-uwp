@@ -19,6 +19,7 @@
 #include <dring.h>
 
 #include "Ringtone.h"
+#include "Utils.h"
 
 using namespace concurrency;
 
@@ -86,6 +87,16 @@ public:
         bool get()
         {
             return daemonRunning_;
+        }
+    }
+
+    property bool isOnXBox
+    {
+        bool get()
+        {
+            auto dev = Utils::toString(Windows::System::Profile::AnalyticsInfo::VersionInfo->DeviceFamily);
+            std::transform(dev.begin(), dev.end(), dev.begin(), ::tolower);
+            return !dev.compare("windows.xbox");
         }
     }
 
