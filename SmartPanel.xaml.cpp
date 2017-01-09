@@ -121,7 +121,8 @@ SmartPanel::SmartPanel()
     ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
-        SmartPanelItemsViewModel::instance->itemsList->Append(smartPanelItem);
+        contact->_lastTime;
+        SmartPanelItemsViewModel::instance->itemsList->InsertAt(0, smartPanelItem);
     });
 
     RingD::instance->exportOnRingEnded += ref new RingClientUWP::ExportOnRingEnded(this, &RingClientUWP::Views::SmartPanel::OnexportOnRingEnded);
@@ -154,8 +155,8 @@ SmartPanel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus st
     case CallStatus::ENDED:
     {
         auto callsList = DRing::getCallList();
-            if (callsList.empty())
-                _settingsMenuButton_->Visibility = VIS::Visible;
+        if (callsList.empty())
+            _settingsMenuButton_->Visibility = VIS::Visible;
         break;
     }
     case CallStatus::IN_PROGRESS:

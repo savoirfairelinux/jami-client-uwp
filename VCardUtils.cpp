@@ -56,11 +56,17 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
 
         m_mParts.clear();
 
+        bool foundUID = false;
         while (std::getline(_payload, _line)) {
-            if (_line.find("UID:") != std::string::npos)
+            if (_line.find("UID:") != std::string::npos) {
+                foundUID =  true;
                 break;
+            }
         }
-        m_mParts[Property::UID] = _line.substr(4);
+        if (foundUID)
+            m_mParts[Property::UID] = _line.substr(4);
+        else
+            m_mParts[Property::UID] = Utils::genID(0LL, 9999999999999LL);
 
         bool fnFound = false;
         while (std::getline(_payload, _line)) {
