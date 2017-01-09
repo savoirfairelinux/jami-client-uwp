@@ -454,7 +454,7 @@ RingD::registerCallbacks()
                     const std::string& callId,
                     bool state)
         {
-            // why this cllaback exist ? why are we not using stateChange ?
+            // why does this callback exist ? why are we not using stateChange ?
             MSG_("<PeerHold>");
             MSG_("callId = " + callId);
             MSG_("state = " + Utils::toString(state.ToString()));
@@ -472,7 +472,7 @@ RingD::registerCallbacks()
                     const std::string& callId,
                     bool state)
         {
-            // why this cllaback exist ? why are we not using stateChange ?
+            // why does this callback exist ? why are we not using stateChange ?
             MSG_("<AudioMuted>");
             MSG_("callId = " + callId);
             MSG_("state = " + Utils::toString(state.ToString()));
@@ -536,7 +536,8 @@ RingD::registerCallbacks()
                 ringtone_->Stop();
             }
 
-            if (state3 == CallStatus::ENDED) {
+            if (state3 == CallStatus::ENDED ||
+                (state3 == CallStatus::NONE && code == 106) ) {
                 DRing::hangUp(callId); // solve a bug in the daemon API.
                 ringtone_->Stop();
             }
@@ -580,6 +581,8 @@ RingD::registerCallbacks()
 
             auto callId2 = toPlatformString(callId);
             auto from2 = toPlatformString(from);
+
+            from2 = Utils::TrimRingId2(from2);
 
             auto item = SmartPanelItemsViewModel::instance->findItem(callId2);
             Contact^ contact;
@@ -680,7 +683,7 @@ RingD::registerCallbacks()
     getAppPathHandler =
     {
         DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>
-        ([this](std::vector<std::string>* paths) {
+        ([this](const std::string& name, std::vector<std::string>* paths) {
             paths->emplace_back(localFolder_);
         })
     };
@@ -731,40 +734,21 @@ RingD::registerCallbacks()
     using namespace Video;
     outgoingVideoHandlers =
     {
-        DRing::exportable_callback<DRing::VideoSignal::GetCameraInfo>
-        ([this](const std::string& device,
-        std::vector<std::string> *formats,
-        std::vector<unsigned> *sizes,
-        std::vector<unsigned> *rates) {
-            MSG_("<GetCameraInfo>");
-            auto device_list = VideoManager::instance->captureManager()->deviceList;
-
-            for (unsigned int i = 0; i < device_list->Size; i++) {
-                auto dev = device_list->GetAt(i);
-                if (device == Utils::toString(dev->name())) {
-                    Vector<Video::Resolution^>^ resolutions = dev->resolutionList();
-                    for (auto res : resolutions) {
-                        formats->emplace_back(Utils::toString(res->activeRate()->format()));
-                        sizes->emplace_back(res->width());
-                        sizes->emplace_back(res->height());
-                        for (auto rate : res->rateList()) {
-                            rates->emplace_back(rate->value());
-                        }
-                    }
-                }
-            }
+        DRing::exportable_callback<DRing::VideoSignal::DeviceAdded>
+        ([this](const std::string& device) {
+            MSG_("<DeviceAdded>");
         }),
-        DRing::exportable_callback<DRing::VideoSignal::SetParameters>
-        ([&](const std::string& device,
-             std::string format,
-             const int width,
-             const int height,
-        const int rate) {
+        DRing::exportable_callback<DRing::VideoSignal::ParametersChanged>
+        ([&](const std::string& device) {
             dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
-                MSG_("<SetParameters>");
+                MSG_("<ParametersChanged>");
+                auto settings = DRing::getDeviceParams(device);
                 VideoManager::instance->captureManager()->activeDevice->SetDeviceProperties(
-                    Utils::toPlatformString(format),width,height,rate);
+                    Utils::toPlatformString(settings["format"]),
+                    stoi(settings["width"]),
+                    stoi(settings["height"]),
+                    stoi(settings["rate"]));
             }));
         }),
         DRing::exportable_callback<DRing::VideoSignal::StartCapture>
