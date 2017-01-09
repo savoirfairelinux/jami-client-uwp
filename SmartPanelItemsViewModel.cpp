@@ -89,11 +89,19 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::removeItem(SmartPanelIt
 
 void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartPanelItem ^ item)
 {
-    unsigned int index;
+    unsigned int spi_index, cl_index;
 
-    if (itemsList->IndexOf(item, &index)) {
-        if (index != 0) {
-            itemsList->RemoveAt(index);
+    if (itemsList->IndexOf(item, &spi_index)) {
+        if (spi_index != 0) {
+
+            auto contactList = ContactsViewModel::instance->contactsList;
+            auto contactListItem = ContactsViewModel::instance->findContactByName(item->_contact->_name);
+            contactList->IndexOf(contactListItem, &cl_index);
+            contactList->RemoveAt(cl_index);
+            contactList->Append(contactListItem);
+            ContactsViewModel::instance->saveContactsToFile();
+
+            itemsList->RemoveAt(spi_index);
             itemsList->InsertAt(0, item);
             item->_isHovered = false;
         }

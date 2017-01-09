@@ -72,7 +72,7 @@
                                 VerticalScrollBarVisibility="Hidden">
                     <StackPanel MaxWidth="500"
                                 Width="310">
-                        <TextBlock  Text="Ring version: 2016/12/29"
+                        <TextBlock  Text="Ring version: 2017/1/3"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
                                      Margin="0,0,0,24"

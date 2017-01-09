@@ -146,7 +146,7 @@ ContactsViewModel::Stringify()
 {
     JsonArray^ jsonArray = ref new JsonArray();
 
-    for (unsigned int i = 0; i < contactsList_->Size; i++) {
+    for (int i = contactsList_->Size - 1; i >= 0; i--) {
         jsonArray->Append(contactsList_->GetAt(i)->ToJsonObject());
     }
 
@@ -170,7 +170,7 @@ ContactsViewModel::Destringify(String^ data)
     String^			lastTime;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
-    for (unsigned int i = 0; i < contactlist->Size; i++) {
+    for (int i = contactlist->Size - 1; i >= 0; i--) {
         IJsonValue^ contact = contactlist->GetAt(i);
         if (contact->ValueType == JsonValueType::Object) {
             JsonObject^ jsonContactObject = contact->GetObject();
