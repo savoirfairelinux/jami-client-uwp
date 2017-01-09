@@ -351,7 +351,25 @@ VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
             this->deviceList->Append(device);
             this->activeDevice = deviceList->GetAt(0);
             MSG_("GetDeviceCaps DONE");
-            DRing::addVideoDevice(Utils::toString(device->name()));
+
+            std::vector<std::map<std::string, std::string>> devInfo;
+            Vector<Video::Resolution^>^ resolutions = device->resolutionList();
+            for (auto& res : resolutions) {
+                for (auto& rate : res->rateList()) {
+                    std::map<std::string, std::string> setting;
+                    setting["format"] = Utils::toString(rate->format());
+                    setting["width"] = Utils::toString(res->width().ToString());
+                    setting["height"] = Utils::toString(res->height().ToString());
+                    setting["rate"] = Utils::toString(rate->value().ToString());
+                    devInfo.emplace_back(std::move(setting));
+                    MSG_("<DeviceAdded> : info - "
+                        + rate->format()
+                        + ":" + res->width().ToString()
+                        + "x" + res->height().ToString() + " " + rate->value().ToString()
+                    );
+                }
+            }
+            DRing::addVideoDevice(Utils::toString(device->name()), &devInfo);
         }
         catch (Platform::Exception^ e) {
             WriteException(e);
@@ -413,7 +431,6 @@ VideoCaptureManager::CopyFrameAsync()
     MediaProperties::VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(allprops->GetAt(0));
     String^ format = vidprops->Subtype;
 
-    // for now, only bgra
     auto videoFrame = ref new VideoFrame(BitmapPixelFormat::Bgra8, videoFrameWidth, videoFrameHeight);
 
     try {
@@ -428,23 +445,22 @@ VideoCaptureManager::CopyFrameAsync()
                 isRendering = true;
                 auto bitmap = currentFrame->SoftwareBitmap;
                 if (bitmap->BitmapPixelFormat == BitmapPixelFormat::Bgra8) {
-                    const int BYTES_PER_PIXEL = 4;
 
                     BitmapBuffer^ buffer = bitmap->LockBuffer(BitmapBufferAccessMode::ReadWrite);
                     IMemoryBufferReference^ reference = buffer->CreateReference();
-
                     Microsoft::WRL::ComPtr<IMemoryBufferByteAccess> byteAccess;
+
                     if (SUCCEEDED(reinterpret_cast<IUnknown*>(reference)->QueryInterface(
                                       IID_PPV_ARGS(&byteAccess)))) {
                         byte* data;
                         unsigned capacity;
                         byteAccess->GetBuffer(&data, &capacity);
-                        auto desc = buffer->GetPlaneDescription(0);
                         byte* buf = (byte*)DRing::obtainFrame(capacity);
                         if (buf)
                             std::memcpy(buf, data, static_cast<size_t>(capacity));
                         DRing::releaseFrame((void*)buf);
                     }
+
                     delete reference;
                     delete buffer;
                 }
