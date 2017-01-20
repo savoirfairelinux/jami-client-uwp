@@ -666,7 +666,7 @@ RingD::registerCallbacks()
                 }*/
             }));
         }),
-        DRing::exportable_callback<DRing::Debug::MessageSend>([&](const std::string& msg)
+        DRing::exportable_callback<DRing::DebugSignal::MessageSend>([&](const std::string& msg)
         {
             if (debugModeOn_) {
                 dispatcher->RunAsync(CoreDispatcherPriority::High,
@@ -689,7 +689,7 @@ RingD::registerCallbacks()
     };
     registerCallHandlers(getAppPathHandler);
 
-    getAppUserNameHandler =
+    /*getAppUserNameHandler =
     {
         DRing::exportable_callback<DRing::ConfigurationSignal::GetAppUserName>
         ([this](std::vector<std::string>* unames) {
@@ -699,7 +699,7 @@ RingD::registerCallbacks()
                 UserModel::instance->lastName));
         })
     };
-    registerCallHandlers(getAppUserNameHandler);
+    registerCallHandlers(getAppUserNameHandler);*/
 
     incomingVideoHandlers =
     {

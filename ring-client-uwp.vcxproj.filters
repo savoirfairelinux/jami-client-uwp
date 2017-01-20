@@ -227,35 +227,35 @@
     <None Include="ring-client-uwp_StoreKey.pfx" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\restbed\dependency\openssl\out32dll\libeay32.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\restbed\dependency\openssl\out32dll\ssleay32.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
     <None Include="Package.StoreAssociation.xml" />
     <None Include="ring-client-uwp_StoreKey.pfx" />
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\libeay32.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
