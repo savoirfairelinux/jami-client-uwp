@@ -174,7 +174,9 @@
                     <!-- video -->
                     <Image Name="IncomingVideoImage"
                            Grid.Column="0"
-                           Canvas.ZIndex="-1"/>
+                           Canvas.ZIndex="-1"
+                           DoubleTapped="IncomingVideoImage_DoubleTapped"
+                           />
                     <TextBlock Name="_callPaused_"
                                Grid.Column="0"
                                Text="&#xE769;"

@@ -60,7 +60,7 @@ VideoCaptureManager::VideoCaptureManager():
 })
 {
     deviceList = ref new Vector<Device^>();
-    InitializeCopyFrameDispatcher(30);
+    InitializeCopyFrameDispatcher(60);
     captureTaskTokenSource = new cancellation_token_source();
 }
 
