@@ -20,6 +20,7 @@
 #include "LoadingPage.xaml.h"
 #include "MainPage.xaml.h"
 #include "Wizard.xaml.h"
+#include "VideoPage.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;

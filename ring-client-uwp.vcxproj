@@ -147,7 +147,7 @@
       <CompileAsWinRT>true</CompileAsWinRT>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\build\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\build\bin\x64;$(SolutionDir)..\ring-daemon\contrib\build\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)x64\Release-Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\build\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\build\bin\x64;$(SolutionDir)..\ring-daemon\contrib\build\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)x64\Release-Lib;$(SolutionDir)contrib\qrencode-win32\vc8\qrcodelib\x64\Release-Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <ProjectReference>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
@@ -266,6 +266,9 @@
     </None>
     <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
       <DeploymentContent>true</DeploymentContent>
+    </None>
+    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\postproc-54.dll">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
       <DeploymentContent>true</DeploymentContent>
