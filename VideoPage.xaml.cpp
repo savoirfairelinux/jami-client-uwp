@@ -250,6 +250,8 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
 
     if (item) {
         RingD::instance->hangUpCall2(item->_callId);
+        if (Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->IsFullScreen)
+            RingD::instance->raiseToggleFullScreen();
         pressHangUpCall();
     }
     else
@@ -448,4 +450,10 @@ void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bo
 {
     _txbkVideoMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
                                    : Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::VideoPage::IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
+{
+    RingD::instance->raiseToggleFullScreen();
 }
