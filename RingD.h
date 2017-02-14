@@ -54,6 +54,7 @@ delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
 delegate void VideoMuted(const std::string& callId, bool state);
 delegate void NameRegistred(bool status);
+delegate void ToggleFullScreen(bool state);
 delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
@@ -139,6 +140,8 @@ internal:
     String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
 
+    void raiseToggleFullScreen();
+
     void hangUpCall2(String^ callId);
     void pauseCall(String ^ callId);
     void unPauseCall(String ^ callId);
@@ -183,6 +186,7 @@ internal:
     event AudioMuted^ audioMuted;
     event VideoMuted^ videoMuted;
     event NameRegistred^ nameRegistred;
+    event ToggleFullScreen^ toggleFullScreen;
     event VolatileDetailsChanged^ volatileDetailsChanged;
 
 private:

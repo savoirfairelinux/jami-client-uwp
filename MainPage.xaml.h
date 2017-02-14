@@ -64,6 +64,7 @@ private:
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
     void OnsummonMessageTextPage();
+    void OnToggleFullScreen(bool state);
     void OnsummonWelcomePage();
     void OnsummonPreviewPage();
     void OnhidePreviewPage();

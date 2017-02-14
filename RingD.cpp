@@ -47,12 +47,20 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
+using namespace Windows::UI::ViewManagement;
 
 using namespace Windows::System;
+
+bool isPathRelative(const std::string& path)
+{
+    return !path.empty() && path.find(":") == std::string::npos;
+}
 
 void
 RingClientUWP::RingD::reloadAccountList()
 {
+    MSG_(isPathRelative("users\blah.file").ToString());
+    MSG_(isPathRelative("C:\\users\blah.file").ToString());
     //RingClientUWP::ViewModel::AccountsViewModel::instance->clearAccountList();
 
     std::vector<std::string> accountList = DRing::getAccountList();
@@ -593,13 +601,13 @@ RingD::registerCallbacks()
 
             static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
             for (auto i : payloads) {
+                MSG_(i.first);
                 if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
                     MSG_("payload.first = " + i.first);
                     MSG_("payload.second = " + i.second);
                     int res = contact->getVCard()->receiveChunk(i.first, i.second);
                     return;
                 }
-
                 auto payload = Utils::toPlatformString(i.second);
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
@@ -1343,7 +1351,6 @@ RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ stat
     if (state == "PEER_PAUSED")
         return CallStatus::PEER_PAUSED;
 
-
     return CallStatus::NONE;
 }
 
@@ -1366,4 +1373,23 @@ Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<
     }
 
     return devicesList;
+}
+
+void RingClientUWP::RingD::raiseToggleFullScreen()
+{
+    ApplicationView^ view = ApplicationView::GetForCurrentView();
+    if (view->IsFullScreenMode) {
+        view->ExitFullScreenMode();
+        toggleFullScreen(false);
+        MSG_("Successfully exited fullscreen");
+    }
+    else {
+        if (view->TryEnterFullScreenMode()) {
+            MSG_("Successfully entered fullscreen");
+            toggleFullScreen(true);
+        }
+        else {
+            ERR_("Unsuccessfully entered fullscreen");
+        }
+    }
 }
