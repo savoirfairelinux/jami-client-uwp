@@ -135,12 +135,17 @@ VideoPage::VideoPage()
             break;
         }
         case CallStatus::ENDED:
+        {
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
+
+            if (Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->IsFullScreen)
+                RingD::instance->raiseToggleFullScreen();
 
             /* "close" the chat panel */
             _rowChatBx_->Height = 0;
 
             break;
+        }
         case CallStatus::PEER_PAUSED:
         case CallStatus::PAUSED:
             _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
@@ -250,6 +255,8 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
 
     if (item) {
         RingD::instance->hangUpCall2(item->_callId);
+        if (Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->IsFullScreen)
+            RingD::instance->raiseToggleFullScreen();
         pressHangUpCall();
     }
     else
@@ -448,4 +455,10 @@ void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bo
 {
     _txbkVideoMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
                                    : Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+
+void RingClientUWP::Views::VideoPage::IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
+{
+    RingD::instance->raiseToggleFullScreen();
 }
