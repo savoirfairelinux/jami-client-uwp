@@ -78,6 +78,7 @@ MainPage::MainPage()
 
     auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
     videoPage->pressHangUpCall += ref new RingClientUWP::PressHangUpCall(this, &RingClientUWP::MainPage::OnpressHangUpCall);
+
     auto messageTextFrame = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
     messageTextFrame->closeMessageTextPage += ref new RingClientUWP::CloseMessageTextPage(this, &RingClientUWP::MainPage::OncloseMessageTextPage);
 
@@ -102,6 +103,8 @@ MainPage::MainPage()
         auto brush = ref new Windows::UI::Xaml::Media::SolidColorBrush(col);
         _loadingStatus_->Foreground = brush;
     });
+
+    RingD::instance->toggleFullScreen += ref new RingClientUWP::ToggleFullScreen(this, &RingClientUWP::MainPage::OnToggleFullScreen);
 }
 
 void
@@ -377,4 +380,18 @@ void RingClientUWP::MainPage::OnnameRegistred(bool status)
 void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details)
 {
     showLoadingOverlay(false, false);
+}
+
+void RingClientUWP::MainPage::OnToggleFullScreen(bool state)
+{
+    static bool openState;
+    if (state == true) {
+        openState = _innerSplitView_->IsPaneOpen;
+        _innerSplitView_->IsPaneOpen = false;
+        _innerSplitView_->CompactPaneLength = 0;
+    }
+    else {
+        _innerSplitView_->IsPaneOpen = openState;
+        _innerSplitView_->CompactPaneLength = 60;
+    }
 }
