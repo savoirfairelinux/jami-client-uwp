@@ -64,6 +64,13 @@ VideoCaptureManager::VideoCaptureManager():
     captureTaskTokenSource = new cancellation_token_source();
 }
 
+double
+VideoCaptureManager::aspectRatio()
+{
+    auto resolution = activeDevice->currentResolution();
+    return static_cast<double>(resolution->width()) / static_cast<double>(resolution->height());
+}
+
 Map<String^,String^>^
 VideoCaptureManager::getSettings(String^ device)
 {

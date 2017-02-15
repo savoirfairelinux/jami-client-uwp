@@ -21,13 +21,15 @@
 #include "VideoPage.g.h"
 #include "MessageTextPage.xaml.h"
 
+using namespace Platform;
+using namespace Concurrency;
 using namespace Windows::Media::Capture;
 using namespace Windows::UI::Xaml::Navigation;
-
 using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Devices::Enumeration;
-
+using namespace Windows::UI::Xaml::Input;
 
 namespace RingClientUWP
 {
@@ -51,16 +53,9 @@ public:
     VideoPage();
     void updatePageContent();
 
-    property bool barFading
-    {
-        bool get()
-        {
-            return barFading_;
-        }
-        void set(bool value)
-        {
-            barFading_ = value;
-        }
+    property bool barFading {
+        bool get(){ return barFading_; }
+        void set(bool value) { barFading_ = value; }
     }
 
     void scrollDown();
@@ -84,35 +79,56 @@ internal:
 private:
     bool barFading_;
 
-    void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
-    void sendMessage();
+    // For transforming the preview image
+    double userPreviewHeightModifier = 0.0;
+    bool isResizingPreview = false;
+    int lastQuadrant = 0;
+    int quadrant = 0;
+    TransformGroup^ PreviewImage_transforms;
+    MatrixTransform^ PreviewImage_previousTransform;
+    CompositeTransform^ PreviewImage_deltaTransform;
 
     Concurrency::task<void> WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, int height);
-
-    void Button_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _btnCancel__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _btnHangUp__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnPause__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnChat__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnAddFriend__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnSwitch__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnMicrophone__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnMemo__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnHQ__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _btnVideo__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void _videoControl__PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-    void btnAny_entered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-    void btnAny_exited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
-    void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
-    void _btnVideo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void OnincomingVideoMuted(Platform::String ^callId, bool state);
+    void _sendBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
+    void _messageTextBox__KeyDown(Object^ sender, KeyRoutedEventArgs^ e);
+    void sendMessage();
+    void Button_Click(Object^ sender, RoutedEventArgs^ e);
+    void _btnCancel__Click(Object^ sender, RoutedEventArgs^ e);
+    void _btnHangUp__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnPause__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnChat__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnAddFriend__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnSwitch__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnMicrophone__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnMemo__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnHQ__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _btnVideo__Tapped(Object^ sender, TappedRoutedEventArgs^ e);
+    void _videoControl__PointerMoved(Object^ sender, PointerRoutedEventArgs^ e);
+    void btnAny_entered(Object^ sender, PointerRoutedEventArgs^ e);
+    void btnAny_exited(Object^ sender, PointerRoutedEventArgs^ e);
+    void _btnVideo__Click(Object^ sender, RoutedEventArgs^ e);
+    void _btnMicrophone__Click(Object^ sender, RoutedEventArgs^ e);
+    void IncomingVideoImage_DoubleTapped(Object^ sender, DoubleTappedRoutedEventArgs^ e);
+    void OnincomingMessage(String ^callId, String ^payload);
+    void OnincomingVideoMuted(String ^callId, bool state);
     void OnstartPreviewing();
     void OnstopPreviewing();
-    void _btnMicrophone__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
-    void IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e);
+
+    // For transforming the preview image
+    void computeQuadrant();
+    void arrangeResizer();
+    void anchorPreview();
+    void updatePreviewFrameDimensions();
+    void InitManipulationTransforms();
+    void PreviewImage_ManipulationDelta(Object^ sender, ManipulationDeltaRoutedEventArgs^ e);
+    void PreviewImage_ManipulationCompleted(Object^ sender, ManipulationCompletedRoutedEventArgs^ e);
+    void PreviewImageResizer_ManipulationDelta(Object^ sender, ManipulationDeltaRoutedEventArgs^ e);
+    void PreviewImageResizer_ManipulationCompleted(Object^ sender, ManipulationCompletedRoutedEventArgs^ e);
+    void PreviewImage_PointerReleased(Object^ sender, PointerRoutedEventArgs^ e);
+    void PreviewImageResizer_PointerEntered(Object^ sender, PointerRoutedEventArgs^ e);
+    void PreviewImageResizer_PointerExited(Object^ sender, PointerRoutedEventArgs^ e);
 };
 }
 }

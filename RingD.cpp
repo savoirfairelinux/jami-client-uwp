@@ -275,6 +275,11 @@ void RingClientUWP::RingD::unPauseCall(const std::string & callId)
     tasksList_.push(task);
 }
 
+void RingClientUWP::RingD::raiseWindowResized()
+{
+    windowResized();
+}
+
 void RingClientUWP::RingD::cancelOutGoingCall2(String ^ callId)
 {
     MSG_("$1 cancelOutGoingCall2 : " + Utils::toString(callId));
@@ -950,7 +955,7 @@ RingD::dequeueTasks()
             break;
         case Request::PlaceCall:
         {
-            auto callId = DRing::placeCall(task->_accountId_new, "ring:" + task->_ringId_new);
+            auto callId = DRing::placeCall(task->_accountId_new, std::string("ring:" + task->_ringId_new));
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
 
@@ -1367,21 +1372,28 @@ Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<
     return devicesList;
 }
 
-void RingClientUWP::RingD::raiseToggleFullScreen()
+void RingClientUWP::RingD::setFullScreenMode()
 {
-    ApplicationView^ view = ApplicationView::GetForCurrentView();
-    if (view->IsFullScreenMode) {
-        view->ExitFullScreenMode();
-        toggleFullScreen(false);
-        MSG_("Successfully exited fullscreen");
+    if (ApplicationView::GetForCurrentView()->TryEnterFullScreenMode()) {
+        MSG_("TryEnterFullScreenMode succeeded");
+        fullScreenToggled(true);
     }
     else {
-        if (view->TryEnterFullScreenMode()) {
-            MSG_("Successfully entered fullscreen");
-            toggleFullScreen(true);
-        }
-        else {
-            ERR_("Unsuccessfully entered fullscreen");
-        }
+        ERR_("TryEnterFullScreenMode failed");
     }
+}
+
+void RingClientUWP::RingD::setWindowedMode()
+{
+    ApplicationView::GetForCurrentView()->ExitFullScreenMode();
+    MSG_("ExitFullScreenMode");
+    fullScreenToggled(false);
+}
+
+void RingClientUWP::RingD::toggleFullScreen()
+{
+    if (isFullScreen)
+        setWindowedMode();
+    else
+        setFullScreenMode();
 }
