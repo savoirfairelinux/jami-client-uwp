@@ -30,6 +30,9 @@ namespace ViewModel {
 
 public ref class SmartPanelItemsViewModel sealed
 {
+public:
+    bool isInCall();
+
 internal:
     /* singleton */
     static property SmartPanelItemsViewModel^ instance
