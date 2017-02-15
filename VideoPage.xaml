@@ -152,7 +152,7 @@
             <Frame x:Name="_chatPanel_"/>
         </SplitView.Pane>
         <SplitView.Content>
-            <Grid>
+            <Grid x:Name="_videoContent_">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition x:Name="_rowChatBx_" Height="0"/>
@@ -189,12 +189,23 @@
                                Canvas.ZIndex="-1"/>
 
                     <!--camera preview-->
-                    <CaptureElement Name="PreviewImage"
-                                    Width="200"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right"
-                                    Stretch="Uniform"
-                                    Grid.Column="0"/>
+                    <Canvas   Name="PreviewImageRect">
+                        <Rectangle Name="PreviewImageResizer"
+                                   Fill="Aqua"
+                                   Width="20"
+                                   Height="20"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Canvas.ZIndex="99999"
+                                   ManipulationMode="TranslateY"/>
+                        <CaptureElement Name="PreviewImage"
+                                        HorizontalAlignment="Right"
+                                        VerticalAlignment="Bottom"
+                                        Stretch="Uniform"
+                                        Width="20"
+                                        Height="20"
+                                        ManipulationMode="All"/>
+                    </Canvas>
 
                     <StackPanel x:Name="_controlsBar_"
                             HorizontalAlignment="Center"
