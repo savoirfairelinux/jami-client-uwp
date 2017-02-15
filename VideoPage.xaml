@@ -125,7 +125,6 @@
                                           IsTabStop="False"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ZoomMode="Disabled" />
-
                             <Button x:Name="_sendBtn_"
                                     Background="Transparent"
                                     BorderThickness="0"
@@ -152,7 +151,7 @@
             <Frame x:Name="_chatPanel_"/>
         </SplitView.Pane>
         <SplitView.Content>
-            <Grid>
+            <Grid x:Name="_videoContent_">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition x:Name="_rowChatBx_" Height="0"/>
@@ -162,6 +161,7 @@
                         PointerMoved="_videoControl__PointerMoved">
                     <StackPanel x:Name="_headerBar_"
                                 Background="{StaticResource SemiTransparentBlack}"
+                                Canvas.ZIndex="99999"
                                 HorizontalAlignment="Stretch"
                                 VerticalAlignment="Top"
                                 Height="50">
@@ -189,12 +189,23 @@
                                Canvas.ZIndex="-1"/>
 
                     <!--camera preview-->
-                    <CaptureElement Name="PreviewImage"
-                                    Width="200"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right"
-                                    Stretch="Uniform"
-                                    Grid.Column="0"/>
+                    <Canvas   Name="PreviewImageRect"
+                              HorizontalAlignment="Right"
+                              VerticalAlignment="Bottom"
+                              PointerReleased="PreviewImage_PointerReleased">
+                        <Polygon Name="PreviewImageResizer"
+                                   Visibility="Collapsed"
+                                   Fill="#FF3BC1D3"
+                                   Points="0,0,20,0,0,20"
+                                   Canvas.ZIndex="99999"
+                                   ManipulationMode="TranslateY"/>
+                        <CaptureElement Name="PreviewImage"
+                                        Visibility="Collapsed"
+                                        Stretch="Uniform"
+                                        Width="20"
+                                        Height="20"
+                                        ManipulationMode="All"/>
+                    </Canvas>
 
                     <StackPanel x:Name="_controlsBar_"
                             HorizontalAlignment="Center"
@@ -323,7 +334,6 @@
                             Tapped="_btnSwitch__Tapped" Visibility="Collapsed">
                             <SymbolIcon Symbol="Switch"/>
                         </Button>
-                        <!--Tapped="_btnMicrophone__Tapped"-->
                         <Button x:Name="_btnMicrophone_"
                             PointerEntered="btnAny_entered"
                             PointerExited="btnAny_exited"

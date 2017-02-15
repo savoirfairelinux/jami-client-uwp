@@ -50,6 +50,8 @@ using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Media::Capture;
 using namespace Windows::Devices::Sensors;
 
+using namespace Windows::UI::Input;
+
 VideoPage::VideoPage()
 {
     InitializeComponent();
@@ -89,9 +91,17 @@ VideoPage::VideoPage()
         ref new StartPreviewing([this]()
     {
         PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Visible;
         PreviewImage->FlowDirection = VideoManager::instance->captureManager()->mirroringPreview ?
                                       Windows::UI::Xaml::FlowDirection::RightToLeft :
                                       Windows::UI::Xaml::FlowDirection::LeftToRight;
+
+        double aspectRatio = VideoManager::instance->captureManager()->aspectRatio();
+
+        PreviewImage->Height = ( _videoContent_->ActualHeight / 4 );
+        PreviewImage->Width = PreviewImage->Height * aspectRatio;
+        PreviewImageRect->Width = PreviewImage->Width;
+        PreviewImageRect->Height = PreviewImage->Height;
     });
 
     VideoManager::instance->captureManager()->stopPreviewing +=
@@ -99,6 +109,7 @@ VideoPage::VideoPage()
     {
         PreviewImage->Source = nullptr;
         PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     });
 
     VideoManager::instance->captureManager()->getSink +=
@@ -111,6 +122,11 @@ VideoPage::VideoPage()
         ref new ClearRenderTarget([this]()
     {
         IncomingVideoImage->Source = nullptr;
+    });
+
+    RingD::instance->windowResized +=
+        ref new WindowResized([&]()
+    {
     });
 
     RingD::instance->incomingAccountMessage +=
@@ -138,8 +154,8 @@ VideoPage::VideoPage()
         {
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
 
-            if (Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->IsFullScreen)
-                RingD::instance->raiseToggleFullScreen();
+            if (RingD::instance->isFullScreen)
+                RingD::instance->setWindowedMode();
 
             /* "close" the chat panel */
             _rowChatBx_->Height = 0;
@@ -161,6 +177,19 @@ VideoPage::VideoPage()
     VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
     RingD::instance->audioMuted += ref new RingClientUWP::AudioMuted(this, &RingClientUWP::Views::VideoPage::OnaudioMuted);
     RingD::instance->videoMuted += ref new RingClientUWP::VideoMuted(this, &RingClientUWP::Views::VideoPage::OnvideoMuted);
+
+    InitManipulationTransforms();
+
+    PreviewImage->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &VideoPage::PreviewImage_ManipulationDelta);
+    PreviewImage->ManipulationCompleted += ref new ManipulationCompletedEventHandler(this, &VideoPage::PreviewImage_ManipulationCompleted);
+
+    PreviewImageResizer->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &VideoPage::PreviewImageResizer_ManipulationDelta);
+
+    PreviewImage->ManipulationMode =
+        ManipulationModes::TranslateX |
+        ManipulationModes::TranslateY;
+
+    PreviewImageResizer->ManipulationMode = ManipulationModes::TranslateY;
 }
 
 void
@@ -185,6 +214,59 @@ void RingClientUWP::Views::VideoPage::updatePageContent()
     scrollDown();
 }
 
+void
+VideoPage::updatePreviewFrameDimensions()
+{
+    double aspectRatio = VideoManager::instance->captureManager()->aspectRatio();
+
+    TransformGroup^ transforms = ref new TransformGroup();
+
+    double scaleValue = 1 + userPreviewHeightModifier / PreviewImage->Height;
+
+    if (scaleValue > 1.75)
+        scaleValue = 1.75;
+    else if (scaleValue < 0.5)
+        scaleValue = 0.5;
+
+    userPreviewHeightModifier = PreviewImage->Height * (scaleValue - 1);
+
+    ScaleTransform^ scale = ref new ScaleTransform();
+    scale->ScaleX = scaleValue;
+    scale->ScaleY = scaleValue;
+
+    TranslateTransform^ translate = ref new TranslateTransform();
+    switch (quadrant)
+    {
+    case 0:
+        translate->Y = -userPreviewHeightModifier;
+        translate->X = translate->Y * aspectRatio;
+        break;
+    case 1:
+        translate->Y = -userPreviewHeightModifier;
+        translate->X = 0;
+        break;
+    case 2:
+        translate->Y = 0;
+        translate->X = 0;
+        break;
+    case 3:
+        translate->Y = 0;
+        translate->X = -userPreviewHeightModifier * aspectRatio;
+        break;
+    default:
+        break;
+    }
+
+    transforms->Children->Append(scale);
+    transforms->Children->Append(translate);
+
+    PreviewImage->RenderTransform = transforms;
+
+    PreviewImageResizer->RenderTransform = translate;
+
+    arrangeResizer();
+}
+
 void RingClientUWP::Views::VideoPage::scrollDown()
 {
     _scrollView_->UpdateLayout();
@@ -198,10 +280,12 @@ void RingClientUWP::Views::VideoPage::screenVideo(bool state)
         _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
         PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Visible;
     } else {
         _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         IncomingVideoImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 
 
@@ -254,6 +338,8 @@ void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sende
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
     if (item) {
+        PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         RingD::instance->hangUpCall2(item->_callId);
         pressHangUpCall();
     }
@@ -420,12 +506,14 @@ void RingClientUWP::Views::VideoPage::OnincomingVideoMuted(Platform::String ^cal
 void RingClientUWP::Views::VideoPage::OnstartPreviewing()
 {
     PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Visible;
+    PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
 
 void RingClientUWP::Views::VideoPage::OnstopPreviewing()
 {
     PreviewImage->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    PreviewImageResizer->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
@@ -458,5 +546,160 @@ void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bo
 
 void RingClientUWP::Views::VideoPage::IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
 {
-    RingD::instance->raiseToggleFullScreen();
+    RingD::instance->toggleFullScreen();
+    anchorPreview();
+}
+
+
+void RingClientUWP::Views::VideoPage::InitManipulationTransforms()
+{
+    PreviewImage_transforms = ref new TransformGroup();
+    PreviewImage_previousTransform = ref new MatrixTransform();
+    PreviewImage_previousTransform->Matrix = Matrix::Identity;
+    PreviewImage_deltaTransform = ref new CompositeTransform();
+
+    PreviewImage_transforms->Children->Append(PreviewImage_previousTransform);
+    PreviewImage_transforms->Children->Append(PreviewImage_deltaTransform);
+
+    PreviewImageRect->RenderTransform = PreviewImage_transforms;
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
+{
+    PreviewImageRect->RenderTransform = PreviewImage_transforms;
+
+    PreviewImage_previousTransform->Matrix = PreviewImage_transforms->Value;
+
+    PreviewImage_deltaTransform->TranslateX = e->Delta.Translation.X;
+    PreviewImage_deltaTransform->TranslateY = e->Delta.Translation.Y;
+
+    computeQuadrant();
+}
+
+void
+RingClientUWP::Views::VideoPage::computeQuadrant()
+{
+    // Compute center coordinate of _videoContent_
+    Point centerOfVideoFrame = Point(   static_cast<float>(_videoContent_->ActualWidth) / 2,
+                                        static_cast<float>(_videoContent_->ActualHeight) / 2        );
+
+    // Compute the center coordinate of PreviewImage relative to _videoContent_
+    Point centerOfPreview = Point( static_cast<float>(PreviewImage->ActualWidth) / 2,
+                                   static_cast<float>(PreviewImage->ActualHeight) / 2 );
+    UIElement^ container = dynamic_cast<UIElement^>(VisualTreeHelper::GetParent(_videoContent_));
+    GeneralTransform^ transform = PreviewImage->TransformToVisual(container);
+    Point relativeCenterOfPreview = transform->TransformPoint(centerOfPreview);
+
+    // Compute the difference between the center of _videoContent_
+    // and the relative scaled center of PreviewImageRect
+    Point diff = Point( centerOfVideoFrame.X - relativeCenterOfPreview.X,
+                        centerOfVideoFrame.Y - relativeCenterOfPreview.Y    );
+
+    lastQuadrant = quadrant;
+    if (diff.X > 0)
+        quadrant = diff.Y > 0 ? 2 : 1;
+    else
+        quadrant = diff.Y > 0 ? 3 : 0;
+
+    if (lastQuadrant != quadrant) {
+        arrangeResizer();
+    }
+}
+
+void
+RingClientUWP::Views::VideoPage::arrangeResizer()
+{
+    double scaleValue = (userPreviewHeightModifier + PreviewImage->Height) / PreviewImage->Height;
+    float scaledWidth = static_cast<float>(scaleValue * PreviewImage->ActualWidth);
+    float scaledHeight = static_cast<float>(scaleValue * PreviewImage->ActualHeight);
+
+    float rSize = 20;
+    float xOffset, yOffset;
+    PointCollection^ resizeTrianglePoints = ref new PointCollection();
+    switch (quadrant)
+    {
+    case 0:
+        xOffset = 0;
+        yOffset = 0;
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset));
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
+        break;
+    case 1:
+        xOffset = scaledWidth - rSize;
+        yOffset = 0;
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset));
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset + rSize));
+        break;
+    case 2:
+        xOffset = scaledWidth - rSize;
+        yOffset = scaledHeight - rSize;
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset + rSize));
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
+        break;
+    case 3:
+        xOffset = 0;
+        yOffset = scaledHeight - rSize;
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
+        resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset + rSize));
+        resizeTrianglePoints->Append(Point(xOffset,         yOffset));
+        break;
+    default:
+        break;
+    }
+    PreviewImageResizer->Points = resizeTrianglePoints;
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationCompleted(Platform::Object^ sender, ManipulationCompletedRoutedEventArgs^ e)
+{
+    anchorPreview();
+    updatePreviewFrameDimensions();
+}
+
+void RingClientUWP::Views::VideoPage::anchorPreview()
+{
+    PreviewImage_previousTransform->Matrix = Matrix::Identity;
+    PreviewImageRect->RenderTransform =  nullptr;
+
+    switch (quadrant)
+    {
+    case 0:
+        PreviewImageRect->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Right;
+        PreviewImageRect->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Bottom;
+        break;
+    case 1:
+        PreviewImageRect->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left;
+        PreviewImageRect->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Bottom;
+        break;
+    case 2:
+        PreviewImageRect->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left;
+        PreviewImageRect->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Top;
+        break;
+    case 3:
+        PreviewImageRect->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Right;
+        PreviewImageRect->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Top;
+        break;
+    default:
+        break;
+    };
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImageResizer_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
+{
+    if (quadrant > 1)
+        userPreviewHeightModifier += e->Delta.Translation.Y;
+    else
+        userPreviewHeightModifier -= e->Delta.Translation.Y;
+
+    updatePreviewFrameDimensions();
+}
+
+void
+VideoPage::PreviewImage_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    // For some reason, PreviewImage_ManipulationCompleted doesn't always fire when it should
+    anchorPreview();
+    updatePreviewFrameDimensions();
 }

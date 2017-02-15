@@ -113,6 +113,29 @@ private:
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
     void IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e);
+
+    // For transforming the preview image
+    double userPreviewHeightModifier = 0.0;
+
+    int lastQuadrant = 0;
+    int quadrant = 0;
+
+    void computeQuadrant();
+    void arrangeResizer();
+    void anchorPreview();
+
+    void updatePreviewFrameDimensions();
+    void InitManipulationTransforms();
+
+    void PreviewImage_ManipulationDelta(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
+    void PreviewImage_ManipulationCompleted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
+    void PreviewImageResizer_ManipulationDelta(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
+    //void PreviewImage_CancelDirectManipulations(Platform::Object^ sender, Windows::UI::Xaml::Input::ca);
+
+    Windows::UI::Xaml::Media::TransformGroup^ PreviewImage_transforms;
+    Windows::UI::Xaml::Media::MatrixTransform^ PreviewImage_previousTransform;
+    Windows::UI::Xaml::Media::CompositeTransform^ PreviewImage_deltaTransform;
+    void PreviewImage_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 };
 }
 }
