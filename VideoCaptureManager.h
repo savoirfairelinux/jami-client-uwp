@@ -40,12 +40,16 @@ namespace Video
 
 public ref class VideoCaptureManager sealed
 {
+public:
+    double aspectRatio();
+
 internal:
     property bool isPreviewing
     {
         bool get() { return isPreviewing_; }
         void set(bool value) { isPreviewing_ = value; }
     }
+
     property bool isSettingsPreviewing
     {
         bool get() { return isSettingsPreviewing_; }

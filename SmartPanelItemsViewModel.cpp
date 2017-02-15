@@ -37,6 +37,19 @@ SmartPanelItemsViewModel::SmartPanelItemsViewModel()
     RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange);
 }
 
+bool
+SmartPanelItemsViewModel::isInCall()
+{
+    bool isInCall = false;
+    for (auto item : itemsList) {
+        if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
+            isInCall = true;
+            break;
+        }
+    }
+    return isInCall;
+}
+
 SmartPanelItem^
 SmartPanelItemsViewModel::findItem(String^ callId)
 {
