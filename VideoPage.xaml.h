@@ -84,6 +84,8 @@ internal:
 private:
     bool barFading_;
 
+    bool isDraggingPreview_ = false;
+
     void _sendBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void sendMessage();
@@ -113,6 +115,19 @@ private:
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
     void IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e);
+
+    // For transforming the preview image
+    void InitManipulationTransforms();
+
+    void PreviewImage_ManipulationDelta(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
+    void PreviewImage_ManipulationCompleted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
+    void PreviewImageResizer_ManipulationDelta(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationDeltaRoutedEventArgs^ e);
+    void PreviewImageResizer_ManipulationCompleted(Platform::Object^ sender, Windows::UI::Xaml::Input::ManipulationCompletedRoutedEventArgs^ e);
+
+    Windows::UI::Xaml::Media::TransformGroup^ PreviewImage_transforms;
+    Windows::UI::Xaml::Media::MatrixTransform^ PreviewImage_previousTransform;
+    Windows::UI::Xaml::Media::CompositeTransform^ PreviewImage_deltaTransform;
+
 };
 }
 }
