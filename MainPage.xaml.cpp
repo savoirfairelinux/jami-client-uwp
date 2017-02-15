@@ -104,7 +104,7 @@ MainPage::MainPage()
         _loadingStatus_->Foreground = brush;
     });
 
-    RingD::instance->toggleFullScreen += ref new RingClientUWP::ToggleFullScreen(this, &RingClientUWP::MainPage::OnToggleFullScreen);
+    RingD::instance->fullScreenToggled += ref new RingClientUWP::FullScreenToggled(this, &RingClientUWP::MainPage::OnFullScreenToggled);
 }
 
 void
@@ -182,6 +182,7 @@ RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
 void
 RingClientUWP::MainPage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
 {
+    RingD::instance->raiseWindowResized();
 }
 
 void
@@ -382,7 +383,7 @@ void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accoun
     showLoadingOverlay(false, false);
 }
 
-void RingClientUWP::MainPage::OnToggleFullScreen(bool state)
+void RingClientUWP::MainPage::OnFullScreenToggled(bool state)
 {
     static bool openState;
     if (state == true) {

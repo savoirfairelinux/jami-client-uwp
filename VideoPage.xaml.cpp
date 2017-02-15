@@ -50,6 +50,8 @@ using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace Windows::Media::Capture;
 using namespace Windows::Devices::Sensors;
 
+using namespace Windows::UI::Input;
+
 VideoPage::VideoPage()
 {
     InitializeComponent();
@@ -92,6 +94,7 @@ VideoPage::VideoPage()
         PreviewImage->FlowDirection = VideoManager::instance->captureManager()->mirroringPreview ?
                                       Windows::UI::Xaml::FlowDirection::RightToLeft :
                                       Windows::UI::Xaml::FlowDirection::LeftToRight;
+        updatePreviewFrameDimensions();
     });
 
     VideoManager::instance->captureManager()->stopPreviewing +=
@@ -111,6 +114,12 @@ VideoPage::VideoPage()
         ref new ClearRenderTarget([this]()
     {
         IncomingVideoImage->Source = nullptr;
+    });
+
+    RingD::instance->windowResized +=
+        ref new WindowResized([&]()
+    {
+        updatePreviewFrameDimensions();
     });
 
     RingD::instance->incomingAccountMessage +=
@@ -138,8 +147,8 @@ VideoPage::VideoPage()
         {
             Video::VideoManager::instance->rendererManager()->raiseClearRenderTarget();
 
-            if (Windows::UI::ViewManagement::ApplicationView::GetForCurrentView()->IsFullScreen)
-                RingD::instance->raiseToggleFullScreen();
+            if (RingD::instance->isFullScreen)
+                RingD::instance->setWindowedMode();
 
             /* "close" the chat panel */
             _rowChatBx_->Height = 0;
@@ -161,6 +170,20 @@ VideoPage::VideoPage()
     VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
     RingD::instance->audioMuted += ref new RingClientUWP::AudioMuted(this, &RingClientUWP::Views::VideoPage::OnaudioMuted);
     RingD::instance->videoMuted += ref new RingClientUWP::VideoMuted(this, &RingClientUWP::Views::VideoPage::OnvideoMuted);
+
+    InitManipulationTransforms();
+
+    PreviewImage->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &VideoPage::PreviewImage_ManipulationDelta);
+    PreviewImage->ManipulationCompleted += ref new ManipulationCompletedEventHandler(this, &VideoPage::PreviewImage_ManipulationCompleted);
+
+    PreviewImageResizer->ManipulationDelta += ref new ManipulationDeltaEventHandler(this, &VideoPage::PreviewImageResizer_ManipulationDelta);
+    PreviewImageResizer->ManipulationCompleted += ref new ManipulationCompletedEventHandler(this, &VideoPage::PreviewImageResizer_ManipulationCompleted);
+
+    PreviewImage->ManipulationMode =
+        ManipulationModes::TranslateX |
+        ManipulationModes::TranslateY;
+
+    PreviewImageResizer->ManipulationMode = ManipulationModes::TranslateY;
 }
 
 void
@@ -183,6 +206,21 @@ void RingClientUWP::Views::VideoPage::updatePageContent()
     _messagesList_->ItemsSource = contact->_conversation->_messages;
 
     scrollDown();
+}
+
+void
+VideoPage::updatePreviewFrameDimensions()
+{
+    auto resolution = VideoManager::instance->captureManager()->activeDevice->currentResolution();
+    double aspectRatio = static_cast<double>(resolution->width()) / static_cast<double>(resolution->height());
+    PreviewImage->Height = userPreviewHeightModifier + ( _videoContent_->ActualHeight / 4 );
+    PreviewImage->Width = PreviewImage->Height * aspectRatio;
+
+    TranslateTransform^ translate = ref new TranslateTransform();
+    translate->Y = - userPreviewHeightModifier;
+    translate->X = translate->Y * aspectRatio;
+
+    PreviewImage->RenderTransform = translate;
 }
 
 void RingClientUWP::Views::VideoPage::scrollDown()
@@ -458,5 +496,71 @@ void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bo
 
 void RingClientUWP::Views::VideoPage::IncomingVideoImage_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
 {
-    RingD::instance->raiseToggleFullScreen();
+    RingD::instance->toggleFullScreen();
+}
+
+
+void RingClientUWP::Views::VideoPage::InitManipulationTransforms()
+{
+    PreviewImage_transforms = ref new TransformGroup();
+    PreviewImage_previousTransform = ref new MatrixTransform();
+    PreviewImage_previousTransform->Matrix = Matrix::Identity;
+    PreviewImage_deltaTransform = ref new CompositeTransform();
+
+    PreviewImage_transforms->Children->Append(PreviewImage_previousTransform);
+    PreviewImage_transforms->Children->Append(PreviewImage_deltaTransform);
+
+    PreviewImageRect->RenderTransform = PreviewImage_transforms;
+}
+
+void
+VideoPage::DebugMetrics()
+{
+    auto previewRectWidth = PreviewImageRect->ActualWidth;
+    auto previewRectHeight = PreviewImageRect->ActualHeight;
+    auto previewWidth = PreviewImage->ActualWidth;
+    auto previewHeight = PreviewImage->ActualHeight;
+
+    MSG_("PR: [" + previewRectWidth.ToString() + ", " + previewRectHeight.ToString() + "]");
+    MSG_("PI: [" + previewWidth.ToString() + ", " + previewHeight.ToString() + "]");
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
+{
+    PreviewImage_previousTransform->Matrix = PreviewImage_transforms->Value;
+
+    //DebugMetrics();
+
+    PreviewImage_deltaTransform->TranslateX = e->Delta.Translation.X;
+    PreviewImage_deltaTransform->TranslateY = e->Delta.Translation.Y;
+
+    // clip scale to frame
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationCompleted(Platform::Object^ sender, ManipulationCompletedRoutedEventArgs^ e)
+{
+    // snap oversized
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImageResizer_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
+{
+    //PreviewImage_previousTransform->Matrix = PreviewImage_transforms->Value;
+
+    DebugMetrics();
+
+    userPreviewHeightModifier -= e->Delta.Translation.Y;
+
+    updatePreviewFrameDimensions();
+
+    MSG_("userScaleValue: " + userPreviewHeightModifier.ToString());
+
+    //PreviewImage_deltaTransform->ScaleX = previewImageScale;
+    //PreviewImage_deltaTransform->ScaleY = previewImageScale;
+
+    // clip translation to frame
+}
+
+void RingClientUWP::Views::VideoPage::PreviewImageResizer_ManipulationCompleted(Platform::Object^ sender, ManipulationCompletedRoutedEventArgs^ e)
+{
+    // magnetic snap
 }
