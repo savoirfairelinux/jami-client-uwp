@@ -12,7 +12,8 @@ public enum class CallStatus {
     PEER_PAUSED,
     ENDED,
     TERMINATING,
-    CONNECTED
+    CONNECTED,
+    HUNGUP
 };
 
 public enum class LookupStatus {

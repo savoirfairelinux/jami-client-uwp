@@ -535,6 +535,10 @@ RingD::registerCallbacks()
                 ringtone_->Stop();
             }
 
+            if (state3 == CallStatus::HUNGUP) {
+                DRing::hangUp(callId);
+            }
+
             if (state3 == CallStatus::ENDED ||
                 (state3 == CallStatus::NONE && code == 106) ) {
                 DRing::hangUp(callId); // solve a bug in the daemon API.
@@ -1342,6 +1346,9 @@ RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ stat
     if (state == "PEER_PAUSED")
         return CallStatus::PEER_PAUSED;
 
+    if (state == "HUNGUP")
+        return CallStatus::HUNGUP;
+
     return CallStatus::NONE;
 }
 
@@ -1366,21 +1373,28 @@ Vector<String^>^ RingClientUWP::RingD::translateKnownRingDevices(const std::map<
     return devicesList;
 }
 
-void RingClientUWP::RingD::raiseToggleFullScreen()
+void RingClientUWP::RingD::setFullScreenMode()
 {
-    ApplicationView^ view = ApplicationView::GetForCurrentView();
-    if (view->IsFullScreenMode) {
-        view->ExitFullScreenMode();
-        toggleFullScreen(false);
-        MSG_("Successfully exited fullscreen");
+    if (ApplicationView::GetForCurrentView()->TryEnterFullScreenMode()) {
+        MSG_("TryEnterFullScreenMode succeeded");
+        fullScreenToggled(true);
     }
     else {
-        if (view->TryEnterFullScreenMode()) {
-            MSG_("Successfully entered fullscreen");
-            toggleFullScreen(true);
-        }
-        else {
-            ERR_("Unsuccessfully entered fullscreen");
-        }
+        ERR_("TryEnterFullScreenMode failed");
     }
+}
+
+void RingClientUWP::RingD::setWindowedMode()
+{
+    ApplicationView::GetForCurrentView()->ExitFullScreenMode();
+    MSG_("ExitFullScreenMode");
+    fullScreenToggled(false);
+}
+
+void RingClientUWP::RingD::toggleFullScreen()
+{
+    if (isFullScreen)
+        setWindowedMode();
+    else
+        setFullScreenMode();
 }

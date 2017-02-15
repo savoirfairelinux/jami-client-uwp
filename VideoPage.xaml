@@ -189,12 +189,25 @@
                                Canvas.ZIndex="-1"/>
 
                     <!--camera preview-->
-                    <CaptureElement Name="PreviewImage"
-                                    Width="200"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Right"
-                                    Stretch="Uniform"
-                                    Grid.Column="0"/>
+                    <Grid   Name="PreviewImageRect"
+                            Width="200"
+                            Height="150">
+                        <Rectangle Name="PreviewImageResizer"
+                                   Fill="Aqua"
+                                   Width="20"
+                                   Height="20"
+                                   HorizontalAlignment="Left"
+                                   VerticalAlignment="Top"
+                                   Canvas.ZIndex="99999"
+                                   ManipulationMode="TranslateY"/>
+                        <CaptureElement Name="PreviewImage"
+                                        Width="200"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Right"
+                                        Stretch="Uniform"
+                                        Grid.Column="0"
+                                        ManipulationMode="All"/>
+                    </Grid>
 
                     <StackPanel x:Name="_controlsBar_"
                             HorizontalAlignment="Center"

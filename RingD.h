@@ -25,6 +25,7 @@ using namespace concurrency;
 
 using namespace Windows::UI::Notifications;
 using namespace Windows::Data::Xml::Dom;
+using namespace Windows::UI::ViewManagement;
 
 namespace RingClientUWP
 {
@@ -54,7 +55,7 @@ delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
 delegate void VideoMuted(const std::string& callId, bool state);
 delegate void NameRegistred(bool status);
-delegate void ToggleFullScreen(bool state);
+delegate void FullScreenToggled(bool state);
 delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
@@ -88,6 +89,14 @@ public:
         bool get()
         {
             return daemonRunning_;
+        }
+    }
+
+    property bool isFullScreen
+    {
+        bool get()
+        {
+            return ApplicationView::GetForCurrentView()->IsFullScreenMode;
         }
     }
 
@@ -140,7 +149,9 @@ internal:
     String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
 
-    void raiseToggleFullScreen();
+    void toggleFullScreen();
+    void setWindowedMode();
+    void setFullScreenMode();
 
     void hangUpCall2(String^ callId);
     void pauseCall(String ^ callId);
@@ -186,7 +197,7 @@ internal:
     event AudioMuted^ audioMuted;
     event VideoMuted^ videoMuted;
     event NameRegistred^ nameRegistred;
-    event ToggleFullScreen^ toggleFullScreen;
+    event FullScreenToggled^ fullScreenToggled;
     event VolatileDetailsChanged^ volatileDetailsChanged;
 
 private:
