@@ -44,6 +44,8 @@ internal:
     /* functions */
     SmartPanelItem^ findItem(String^ callId);
     SmartPanelItem^ findItem(Contact^ contact);
+    SmartPanelItem^ findItemByRingID(String^ ringID);
+
     unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
     void removeItem(SmartPanelItem^ item);

@@ -93,6 +93,11 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
         else
             m_mParts[Property::PHOTO].append(_line.substr(pos + 4));
 
+        if (_of == 1) {
+            completeReception();
+            MSG_("VCARD_COMPLETE");
+            return VCARD_COMPLETE;
+        }
         return VCARD_INCOMPLETE;
     }
     else {
@@ -110,12 +115,7 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
             if (fnFound)
                 m_mParts[Property::FN] = _line.substr(3);
 
-            saveToFile();
-            decodeBase64ToPNGFile();
-            if (!m_mParts[Property::FN].empty())
-                m_Owner->_displayName = Utils::toPlatformString(m_mParts[Property::FN]);
-            m_Owner->_vcardUID = Utils::toPlatformString(m_mParts[Property::UID]);
-            ViewModel::ContactsViewModel::instance->saveContactsToFile();
+            completeReception();
             MSG_("VCARD_COMPLETE");
             return VCARD_COMPLETE;
         }
@@ -125,6 +125,17 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
         }
     }
     return VCARD_CHUNK_ERROR;
+}
+
+void
+VCard::completeReception()
+{
+    saveToFile();
+    decodeBase64ToPNGFile();
+    if (!m_mParts[Property::FN].empty())
+        m_Owner->_displayName = Utils::toPlatformString(m_mParts[Property::FN]);
+    m_Owner->_vcardUID = Utils::toPlatformString(m_mParts[Property::UID]);
+    ViewModel::ContactsViewModel::instance->saveContactsToFile();
 }
 
 void
