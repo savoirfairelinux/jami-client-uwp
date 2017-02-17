@@ -70,6 +70,16 @@ SmartPanelItemsViewModel::findItem(Contact^ contact)
     return nullptr;
 }
 
+SmartPanelItem^
+SmartPanelItemsViewModel::findItemByRingID(String^ ringID)
+{
+    for each (SmartPanelItem^ item in itemsList)
+        if (item->_contact->ringID_ == ringID)
+            return item;
+
+    return nullptr;
+}
+
 unsigned int
 SmartPanelItemsViewModel::getIndex(String^ callId)
 {

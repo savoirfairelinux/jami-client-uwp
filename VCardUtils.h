@@ -69,6 +69,7 @@ internal:
     void                    decodeBase64ToPNGFile();
     void                    encodePNGToBase64();
 
+    void                    completeReception();
     void                    setData(std::map<std::string, std::string> data);
 
 private:

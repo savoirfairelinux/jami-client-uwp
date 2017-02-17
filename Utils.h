@@ -129,9 +129,11 @@ TrimRingId(Platform::String^ s)
 
 /* fix some issue in the daemon -->  remove "@..." */
 Platform::String^
-
 TrimRingId2(Platform::String^ s)
 {
+    if (toString(s).find("@") == std::string::npos)
+        return s;
+
     const WCHAR* first = s->Begin();
     const WCHAR* last = s->End();
 

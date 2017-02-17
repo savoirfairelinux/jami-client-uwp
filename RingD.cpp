@@ -417,6 +417,43 @@ ShowMsgToast(String^ from, String^ payload)
 }
 
 void
+RingD::HandleIncomingMessage(   const std::string& callId,
+                                const std::string& accountId,
+                                const std::string& from,
+                                const std::map<std::string, std::string>& payloads)
+{
+    auto callId2 = toPlatformString(callId);
+    auto accountId2 = toPlatformString(accountId);
+    auto from2 = toPlatformString(from);
+    from2 = Utils::TrimRingId2(from2);
+
+    auto item = SmartPanelItemsViewModel::instance->findItemByRingID(from2);
+    Contact^ contact;
+
+    static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
+    for (auto i : payloads) {
+        if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
+            if (item) {
+                contact = item->_contact;
+                contact->getVCard()->receiveChunk(i.first, i.second);
+            }
+            else
+                WNG_("item not found!");
+            return;
+        }
+        auto payload = Utils::toPlatformString(i.second);
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+            CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+        {
+            if (!accountId2->IsEmpty())
+                incomingAccountMessage(accountId2, from2, payload);
+            else if (!callId2->IsEmpty())
+                incomingMessage(callId2, payload);
+        }));
+    }
+}
+
+void
 RingD::registerCallbacks()
 {
     dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
@@ -561,18 +598,7 @@ RingD::registerCallbacks()
             MSG_("accountId = " + accountId);
             MSG_("from = " + from);
 
-            auto accountId2 = toPlatformString(accountId);
-            auto from2 = toPlatformString(from);
-
-            for (auto i : payloads) {
-                MSG_("payload = " + i.second);
-                auto payload = Utils::toPlatformString(i.second);
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                {
-                    incomingAccountMessage(accountId2, from2, payload);
-                }));
-            }
+            HandleIncomingMessage("", accountId, from, payloads);
         }),
         DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
                     const std::string& callId,
@@ -583,34 +609,7 @@ RingD::registerCallbacks()
             MSG_("callId = " + callId);
             MSG_("from = " + from);
 
-            auto callId2 = toPlatformString(callId);
-            auto from2 = toPlatformString(from);
-
-            from2 = Utils::TrimRingId2(from2);
-
-            auto item = SmartPanelItemsViewModel::instance->findItem(callId2);
-            Contact^ contact;
-            if (item)
-                contact = item->_contact;
-            else
-                WNG_("item not found!");
-
-            static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
-            for (auto i : payloads) {
-                MSG_(i.first);
-                if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
-                    MSG_("payload.first = " + i.first);
-                    MSG_("payload.second = " + i.second);
-                    int res = contact->getVCard()->receiveChunk(i.first, i.second);
-                    return;
-                }
-                auto payload = Utils::toPlatformString(i.second);
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                {
-                    incomingMessage(callId2, payload);
-                }));
-            }
+            HandleIncomingMessage(callId, "", from, payloads);
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
                     const std::string& account_id, const std::string& state,

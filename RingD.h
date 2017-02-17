@@ -150,6 +150,10 @@ internal:
     CallStatus translateCallStatus(String^ state);
     String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
+    void HandleIncomingMessage( const std::string& callId,
+                                const std::string& accountId,
+                                const std::string& from,
+                                const std::map<std::string, std::string>& payloads);
 
     void toggleFullScreen();
     void setWindowedMode();
