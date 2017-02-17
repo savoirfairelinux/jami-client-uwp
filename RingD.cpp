@@ -560,7 +560,8 @@ RingD::registerCallbacks()
             auto from2 = toPlatformString(from);
 
             for (auto i : payloads) {
-                MSG_("payload = " + i.second);
+                if (i.first.compare(0, VCardUtils::PROFILE_VCF.size(), VCardUtils::PROFILE_VCF) == 0)
+                    return;
                 auto payload = Utils::toPlatformString(i.second);
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                     CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
@@ -590,12 +591,8 @@ RingD::registerCallbacks()
             else
                 WNG_("item not found!");
 
-            static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
             for (auto i : payloads) {
-                MSG_(i.first);
-                if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
-                    MSG_("payload.first = " + i.first);
-                    MSG_("payload.second = " + i.second);
+                if (i.first.compare(0, VCardUtils::PROFILE_VCF.size(), VCardUtils::PROFILE_VCF) == 0) {
                     int res = contact->getVCard()->receiveChunk(i.first, i.second);
                     return;
                 }
