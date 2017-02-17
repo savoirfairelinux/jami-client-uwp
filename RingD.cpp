@@ -559,15 +559,28 @@ RingD::registerCallbacks()
             auto accountId2 = toPlatformString(accountId);
             auto from2 = toPlatformString(from);
 
-            for (auto i : payloads) {
-                MSG_("payload = " + i.second);
-                auto payload = Utils::toPlatformString(i.second);
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                {
-                    incomingAccountMessage(accountId2, from2, payload);
-                }));
+            from2 = Utils::TrimRingId2(from2);
+
+            auto item = SmartPanelItemsViewModel::instance->findItemByRingID(from2);
+            Contact^ contact;
+            if (item) {
+                contact = item->_contact;
+                static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
+                for (auto i : payloads) {
+                    if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
+                        contact->getVCard()->receiveChunk(i.first, i.second);
+                        return;
+                    }
+                    auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+                    {
+                        incomingAccountMessage(accountId2, from2, payload);
+                    }));
+                }
             }
+            else
+                WNG_("item not found!");
         }),
         DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
                     const std::string& callId,
@@ -585,27 +598,24 @@ RingD::registerCallbacks()
 
             auto item = SmartPanelItemsViewModel::instance->findItem(callId2);
             Contact^ contact;
-            if (item)
+            if (item) {
                 contact = item->_contact;
+                static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
+                for (auto i : payloads) {
+                    if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
+                        contact->getVCard()->receiveChunk(i.first, i.second);
+                        return;
+                    }
+                    auto payload = Utils::toPlatformString(i.second);
+                    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+                        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+                    {
+                        incomingMessage(callId2, payload);
+                    }));
+                }
+            }
             else
                 WNG_("item not found!");
-
-            static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
-            for (auto i : payloads) {
-                MSG_(i.first);
-                if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
-                    MSG_("payload.first = " + i.first);
-                    MSG_("payload.second = " + i.second);
-                    int res = contact->getVCard()->receiveChunk(i.first, i.second);
-                    return;
-                }
-                auto payload = Utils::toPlatformString(i.second);
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                    CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-                {
-                    incomingMessage(callId2, payload);
-                }));
-            }
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
                     const std::string& account_id, const std::string& state,
