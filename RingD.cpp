@@ -950,7 +950,7 @@ RingD::dequeueTasks()
             break;
         case Request::PlaceCall:
         {
-            auto callId = DRing::placeCall(task->_accountId_new, task->_ringId_new);
+            auto callId = DRing::placeCall(task->_accountId_new, "ring:" + task->_ringId_new);
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
 
@@ -965,6 +965,7 @@ RingD::dequeueTasks()
 
             }));
         }
+        break;
         case Request::AddRingAccount:
         {
             std::map<std::string, std::string> ringAccountDetails;
