@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1acb0d3e_5ea4d456",
+        "filename": "RingD.cpp",
+        "patchSetId": 3
+      },
+      "lineNbr": 953,
+      "author": {
+        "id": 3
+      },
+      "writtenOn": "2017-02-21T18:39:27Z",
+      "side": 1,
+      "message": "task-\u003e_ringId_new is a std::string, so why create a new std::string() on the \u0027+\u0027 result?",
+      "range": {
+        "startLine": 953,
+        "startChar": 65,
+        "endLine": 953,
+        "endChar": 105
+      },
+      "revId": "efbae2b8aece3342ddd5144391fdc912832bd0db",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    }
+  ]
+}
