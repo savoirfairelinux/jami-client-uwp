@@ -1,0 +1,7 @@
+Verified+1: Jenkins CI <jenkins@ring-packaging.cx>
+Code-Review+2: Guillaume Roguez <guillaume.roguez@savoirfairelinux.com>
+Submitted-by: Guillaume Roguez <guillaume.roguez@savoirfairelinux.com>
+Submitted-at: Tue, 21 Feb 2017 14:15:59 -0500
+Reviewed-on: https://gerrit-ring.savoirfairelinux.com/6137
+Project: ring-client-uwp
+Branch: refs/heads/master
