@@ -1,6 +1,7 @@
 ﻿/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -20,7 +21,6 @@
 #include "LoadingPage.xaml.h"
 #include "MainPage.xaml.h"
 #include "Wizard.xaml.h"
-#include "VideoPage.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Foundation;
@@ -64,6 +64,12 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
         Window::Current->Content = rootFrame;
     }
 
+    activateWindow();
+}
+
+void
+App::activateWindow()
+{
     ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
     Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
@@ -97,13 +103,25 @@ void App::App_LeavingBackground(Platform::Object^ sender, LeavingBackgroundEvent
     MSG_("App_LeavingBackground");
     RingD::instance->isInBackground = false;
 }
-
+using namespace Windows::UI::Popups;
 void App::OnActivated(IActivatedEventArgs^ e)
 {
+    // Handle ToastNotification activation
     if (e->Kind == ActivationKind::ToastNotification) {
         auto toastArgs = safe_cast<ToastNotificationActivatedEventArgs^>(e);
         std::string args = Utils::toString(toastArgs->Argument);
         if (!args.empty())
             RingD::instance->acceptIncommingCall(Utils::toPlatformString(args));
+    }
+
+    // Handle URI activation
+    if (e->Kind == Windows::ApplicationModel::Activation::ActivationKind::Protocol) {
+        Frame^ rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
+        if (rootFrame == nullptr) {
+            rootFrame = ref new Frame();
+            Window::Current->Content = rootFrame;
+        }
+        rootFrame->Navigate(TypeName(MainPage::typeid));
+        activateWindow();
     }
 }
