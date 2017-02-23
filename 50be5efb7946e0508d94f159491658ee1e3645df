@@ -1,0 +1,123 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "fab9d9a7_4a2bb3eb",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "You could write this in oneline:\n\nscaleValue \u003d scaleValue \u003e 1.75 ? 1.75 : (scaleValue \u003c 0.5 ? 0.5 : scaleValue);\n\nor also:\n\nscaleValue \u003d std::max(std::min(1.75, scaleValue), 0.5);\n\nI prefer the latter.",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_aa1cafc2",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "If this variable (constant) has a particular meaning, may be comment on it?",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_4a7973fb",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "Do you have max line width convention? This line is quite long ;)",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_eaf4e788",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "Aren\u0027t properties supposed to have first letter as capital letter? As per [1], I would guess so. What\u0027s your conventions?\n\nThis is not part of your patch, but I thought I\u0027d write this here.\n\n[1]: https://msdn.microsoft.com/en-us/library/hh755807.aspx",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_8af1ab97",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "Also, C# has shorthand properties [1]. I\u0027m not sure if it exists in C++/CX, but if it does, it\u0027d be better as the property def is trivial.\n\n[1]: http://stackoverflow.com/questions/687340/c-sharp-shorthand-property-question#687349",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_ca3ec329",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "Wouldn\u0027t it better if those member variables would not be declared between sets of function declaration. May be group those up with `barFading`?",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_0a35bb45",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 100
+      },
+      "writtenOn": "2017-02-23T21:07:03Z",
+      "side": 1,
+      "message": "May be stringdoc? For instance, I don\u0027t have any idea what arrangeResizer does. Also, is the name explicit enough? The answer depends on the missing documentation.",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    }
+  ]
+}
