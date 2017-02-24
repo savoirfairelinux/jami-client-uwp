@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "fab9d9a7_2a40bf55",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab9d9a7_4a2bb3eb",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab9d9a7_aa1cafc2",
         "filename": "VideoPage.xaml.cpp",
         "patchSetId": 11
@@ -30,6 +48,24 @@
       "writtenOn": "2017-02-23T21:07:03Z",
       "side": 1,
       "message": "If this variable (constant) has a particular meaning, may be comment on it?",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_0a3b7bec",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 617,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab9d9a7_aa1cafc2",
       "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
       "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
       "unresolved": false
@@ -53,6 +89,24 @@
     },
     {
       "key": {
+        "uuid": "fab9d9a7_6a36b705",
+        "filename": "VideoPage.xaml.cpp",
+        "patchSetId": 11
+      },
+      "lineNbr": 723,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "Yeah I agree, I would really like to do a serious refactoring including removing of these useless namespace\ntags that are added automatically. I would prefer that such alterations be in a specific patch.",
+      "parentUuid": "fab9d9a7_4a7973fb",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab9d9a7_eaf4e788",
         "filename": "VideoPage.xaml.h",
         "patchSetId": 11
@@ -64,6 +118,24 @@
       "writtenOn": "2017-02-23T21:07:03Z",
       "side": 1,
       "message": "Aren\u0027t properties supposed to have first letter as capital letter? As per [1], I would guess so. What\u0027s your conventions?\n\nThis is not part of your patch, but I thought I\u0027d write this here.\n\n[1]: https://msdn.microsoft.com/en-us/library/hh755807.aspx",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_8a2e8ba4",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "This will be part of a refactoring patch.",
+      "parentUuid": "fab9d9a7_eaf4e788",
       "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
       "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
       "unresolved": false
@@ -87,6 +159,24 @@
     },
     {
       "key": {
+        "uuid": "fab9d9a7_6a1d5773",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 62,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "I have shortened it, but the C#-style shorthand property implementation doesn\u0027t seem to work in C++/CX :\u003c.",
+      "parentUuid": "fab9d9a7_8af1ab97",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab9d9a7_ca3ec329",
         "filename": "VideoPage.xaml.h",
         "patchSetId": 11
@@ -104,6 +194,24 @@
     },
     {
       "key": {
+        "uuid": "fab9d9a7_0a129b62",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "fab9d9a7_ca3ec329",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "fab9d9a7_0a35bb45",
         "filename": "VideoPage.xaml.h",
         "patchSetId": 11
@@ -115,6 +223,24 @@
       "writtenOn": "2017-02-23T21:07:03Z",
       "side": 1,
       "message": "May be stringdoc? For instance, I don\u0027t have any idea what arrangeResizer does. Also, is the name explicit enough? The answer depends on the missing documentation.",
+      "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
+      "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fab9d9a7_2a175f53",
+        "filename": "VideoPage.xaml.h",
+        "patchSetId": 11
+      },
+      "lineNbr": 141,
+      "author": {
+        "id": 90
+      },
+      "writtenOn": "2017-02-24T17:16:01Z",
+      "side": 1,
+      "message": "Will be part of a documentation patch in the near future.",
+      "parentUuid": "fab9d9a7_0a35bb45",
       "revId": "50be5efb7946e0508d94f159491658ee1e3645df",
       "serverId": "1e26b4c1-6b8c-47ff-9df7-501b633d3b5a",
       "unresolved": false
