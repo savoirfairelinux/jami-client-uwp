@@ -1,0 +1,7 @@
+Verified+1: Jenkins CI <jenkins@ring-packaging.cx>
+Code-Review+2: Simon Désaulniers <simon.desaulniers@savoirfairelinux.com>
+Submitted-by: Andreas Traczyk <andreas.traczyk@savoirfairelinux.com>
+Submitted-at: Fri, 24 Feb 2017 14:10:59 -0500
+Reviewed-on: https://gerrit-ring.savoirfairelinux.com/6115
+Project: ring-client-uwp
+Branch: refs/heads/master
