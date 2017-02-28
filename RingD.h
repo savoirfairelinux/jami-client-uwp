@@ -46,10 +46,10 @@ delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
-delegate void RegisteredNameFound(LookupStatus status, const std::string& address, const std::string& name);
+delegate void RegisteredNameFound(LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name);
 delegate void FinishCaptureDeviceEnumeration();
 delegate void RegistrationStateErrorGeneric(const std::string& accountId);
-delegate void RegistrationStateRegistered();
+delegate void RegistrationStateRegistered(const std::string& accountId);
 delegate void SetLoadingStatusText(String^ statusText, String^ color);
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
@@ -150,7 +150,7 @@ internal:
     CallStatus translateCallStatus(String^ state);
     String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
-    void HandleIncomingMessage( const std::string& callId,
+    void handleIncomingMessage( const std::string& callId,
                                 const std::string& accountId,
                                 const std::string& from,
                                 const std::map<std::string, std::string>& payloads);
@@ -173,12 +173,14 @@ internal:
     void switchDebug();
     void muteVideo(String^ callId, bool muted);
     void muteAudio(const std::string& callId, bool muted);
-    void lookUpName(String^ name);
     void registerName(String^ accountId, String^ password, String^ username);
     void registerName_new(const std::string& accountId, const std::string& password, const std::string& username);
     std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
-    void lookUpAddress(String^ address);
+    void lookUpName(const std::string& accountId, String^ name);
+    void lookUpAddress(const std::string& accountId, String^ address);
     std::string registeredName(Account^ account);
+    void removeContact(const std::string & accountId, const std::string& uri);
+    void sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -232,7 +234,11 @@ private:
         MuteAudio,
         LookUpName,
         LookUpAddress,
-        RegisterName
+        SendContactRequest,
+        AcceptContactRequest,
+        DiscardContactRequest,
+        RegisterName,
+        RemoveContact
     };
 
 
@@ -270,6 +276,7 @@ private:
 
     internal:
         std::string _accountId_new;
+        std::string _payload;
         std::string _password_new;
         std::string _publicUsername_new;
         std::string _callid_new;
@@ -280,7 +287,7 @@ private:
     /* functions */
     RingD(); // singleton
     void dequeueTasks();
-//    CallStatus translateCallStatus(String^ state);
+    //CallStatus translateCallStatus(String^ state);
 
     /* members */
     Windows::UI::Core::CoreDispatcher^ dispatcher;
@@ -300,5 +307,6 @@ private:
     std::map<std::string, SharedCallback> incomingVideoHandlers;
     std::map<std::string, SharedCallback> outgoingVideoHandlers;
     std::map<std::string, SharedCallback> nameRegistrationHandlers;
+    std::map<std::string, SharedCallback> trustRequestHandlers;
 };
 }
