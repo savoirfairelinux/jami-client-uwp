@@ -34,11 +34,11 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
                 <Button x:Name="_aboutBasicButton_"
-                    Content="About"
-                    Margin="0,0,6,0"
-                    BorderThickness="0"
-                    FontSize="12"
-                    Click="_aboutBasicButton__Click"
+                        Content="About"
+                        Margin="0,0,6,0"
+                        BorderThickness="0"
+                        FontSize="12"
+                        Click="_aboutBasicButton__Click"
                     />
                 <Button x:Name="_aboutCreditsButton_"
                     Content="Credits"
@@ -56,7 +56,6 @@
                     />
             </StackPanel>
             <Image x:Name="_welcomeImage_"
-
                        Source="Assets\Wide310x150Logo.scale-200.png"
                        Width="310"
                        HorizontalAlignment="Center"

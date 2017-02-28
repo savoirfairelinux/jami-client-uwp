@@ -66,7 +66,7 @@ RingClientUWP::RingD::reloadAccountList()
 
     for (; rit != accountList.rend(); ++rit) {
         std::map<std::string,std::string> accountDetails = DRing::getAccountDetails(*rit);
-
+        auto accountId = *rit;
         auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
         if (type == "RING") {
             auto  ringID = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
@@ -74,11 +74,16 @@ RingClientUWP::RingD::reloadAccountList()
                 ringID = ringID.substr(5);
 
             bool upnpState = (accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR)
-                             ? true
-                             : false;
+                                ? true
+                                : false;
+            bool autoAnswer = (accountDetails.find(DRing::Account::ConfProperties::AUTOANSWER)->second == ring::TRUE_STR)
+                                ? true
+                                : false;
+            bool dhtPublicInCalls = (accountDetails.find(DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS)->second == ring::TRUE_STR)
+                                ? true
+                                : false;
             auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
             auto deviceId = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
-            auto accountId = *rit;
 
             auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
 
@@ -87,11 +92,57 @@ RingClientUWP::RingD::reloadAccountList()
                 account->_upnpState = upnpState;
                 account->accountType_ = Utils::toPlatformString(type);
                 account->ringID_ = Utils::toPlatformString(ringID);
+                // load contact requests for the account
+                auto contactRequests = DRing::getTrustRequests(accountId);
+                if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(accountId))) {
+                    for (auto& cr: contactRequests) {
+                        auto ringId = cr.at("from");
+                        auto timeReceived = cr.at("received");
+                        auto payload = cr.at("payload");
+                        auto fromP = Utils::toPlatformString(ringId);
+                        auto contact = contactListModel->findContactByRingId(fromP);
+                        if (contact == nullptr) {
+                            contact = contactListModel->addNewContact(fromP, fromP, TrustStatus::INCOMING_CONTACT_REQUEST);
+
+                            contactListModel->saveContactsToFile();
+                            AccountsViewModel::instance->raiseUnreadContactRequest();
+
+                            SmartPanelItemsViewModel::instance->refreshFilteredData();
+                            SmartPanelItemsViewModel::instance->update();
+                        }
+                        if (contact != nullptr && ContactRequestItemsViewModel::instance->findItem(contact) == nullptr) {
+                            // The visible ring id will potentially be replaced by a username after a lookup
+                            RingD::instance->lookUpAddress(accountId, Utils::toPlatformString(ringId));
+
+                            auto vcard = contact->getVCard();
+                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payload);
+                            vcard->setData(parsedPayload.at("VCARD"));
+                            vcard->completeReception();
+
+                            // The name is the ring id for now
+                            contact->_name = Utils::toPlatformString(ringId);
+                            contact->_displayName = Utils::toPlatformString(vcard->getPart("FN"));
+
+                            auto newContactRequest = ref new ContactRequestItem();
+                            newContactRequest->_contact = contact;
+                            ContactRequestItemsViewModel::instance->itemsList->InsertAt(0, newContactRequest);
+
+                            ContactRequestItemsViewModel::instance->refreshFilteredData();
+                            ContactRequestItemsViewModel::instance->update();
+                        }
+                    }
+                }
                 accountUpdated(account);
             }
             else {
                 if (!ringID.empty())
-                    RingClientUWP::ViewModel::AccountsViewModel::instance->addRingAccount(alias, ringID, accountId, deviceId, upnpState);
+                    AccountsViewModel::instance->addRingAccount(alias,
+                                                                ringID,
+                                                                accountId,
+                                                                deviceId,
+                                                                upnpState,
+                                                                autoAnswer,
+                                                                dhtPublicInCalls);
             }
         }
         else { /* SIP */
@@ -112,10 +163,17 @@ RingClientUWP::RingD::reloadAccountList()
                 accountUpdated(account);
             }
             else {
-                RingClientUWP::ViewModel::AccountsViewModel::instance->addSipAccount(alias, accountId, sipHostname, sipUsername, sipPassword);
+                AccountsViewModel::instance->addSipAccount(alias, accountId, sipHostname, sipUsername, sipPassword);
             }
 
-            sipPassword = ""; // avoid to keep password in memory
+            sipPassword.clear();
+        }
+    }
+
+    for (auto account: AccountsViewModel::instance->accountsList) {
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(account->accountID_));
+        for (auto contact: contactListModel->_contactsList) {
+            DRing::subscribeBuddy(Utils::toString(account->accountID_), Utils::toString(contact->ringID_), true);
         }
     }
 
@@ -417,7 +475,7 @@ ShowMsgToast(String^ from, String^ payload)
 }
 
 void
-RingD::HandleIncomingMessage(   const std::string& callId,
+RingD::handleIncomingMessage(   const std::string& callId,
                                 const std::string& accountId,
                                 const std::string& from,
                                 const std::map<std::string, std::string>& payloads)
@@ -551,39 +609,14 @@ RingD::registerCallbacks()
             MSG_("state = " + state);
             MSG_("code = " + std::to_string(code));
 
+            auto item = SmartPanelItemsViewModel::instance->findItem(Utils::toPlatformString(callId));
+            if (item == nullptr)
+                return;
+
             auto callId2 = toPlatformString(callId);
             auto state2 = toPlatformString(state);
 
             auto state3 = translateCallStatus(state2);
-
-            if (state3 == CallStatus::OUTGOING_RINGING ||
-                    state3 == CallStatus::INCOMING_RINGING) {
-                try {
-                    Configuration::UserPreferences::instance->sendVCard(callId);
-                }
-                catch (Exception^ e) {
-                    EXC_(e);
-                }
-            }
-
-            if (state3 == CallStatus::INCOMING_RINGING) {
-                if (isInBackground) {
-                    ringtone_->Start();
-                    ShowCallToast(callId2);
-                }
-                else
-                    ringtone_->Start();
-            }
-
-            if (state3 == CallStatus::IN_PROGRESS) {
-                ringtone_->Stop();
-            }
-
-            if (state3 == CallStatus::ENDED ||
-                (state3 == CallStatus::NONE && code == 106) ) {
-                DRing::hangUp(callId); // solve a bug in the daemon API.
-                ringtone_->Stop();
-            }
 
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
                 CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
@@ -600,7 +633,7 @@ RingD::registerCallbacks()
             MSG_("accountId = " + accountId);
             MSG_("from = " + from);
 
-            HandleIncomingMessage("", accountId, from, payloads);
+            handleIncomingMessage("", accountId, from, payloads);
         }),
         DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
                     const std::string& callId,
@@ -611,7 +644,7 @@ RingD::registerCallbacks()
             MSG_("callId = " + callId);
             MSG_("from = " + from);
 
-            HandleIncomingMessage(callId, "", from, payloads);
+            handleIncomingMessage(callId, "", from, payloads);
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::RegistrationStateChanged>([this](
                     const std::string& account_id, const std::string& state,
@@ -623,7 +656,7 @@ RingD::registerCallbacks()
                 ref new DispatchedHandler([=]() {
                     reloadAccountList();
                     // enleves ce qui suit et utilises des evenements.
-                    registrationStateRegistered();
+                    registrationStateRegistered(account_id);
                     // mettre a jour le wizard
                     /*if (editModeOn_) {
                         auto frame = dynamic_cast<Frame^>(Window::Current->Content);
@@ -797,22 +830,24 @@ RingD::registerCallbacks()
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::RegisteredNameFound>(
         [this](const std::string &accountId, int status, const std::string &address, const std::string &name) {
-            //MSG_("<RegisteredNameFound>" + name + " : " + address + " status=" +std::to_string(status));
+            MSG_("<RegisteredNameFound>" + name + " : " + address + " status=" +std::to_string(status));
+            if (accountId.empty() && address.empty() && name.empty())
+                return;
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
             ref new DispatchedHandler([=]() {
                 switch (status)
                 {
                 case 0: // everything went fine. Name/address pair was found.
-                    registeredNameFound(LookupStatus::SUCCESS, address, name);
+                    registeredNameFound(LookupStatus::SUCCESS, accountId, address, name);
                     break;
                 case 1: // provided name is not valid.
-                    registeredNameFound(LookupStatus::INVALID_NAME, address, name);
+                    registeredNameFound(LookupStatus::INVALID_NAME, accountId, address, name);
                     break;
                 case 2: // everything went fine. Name/address pair was not found.
-                    registeredNameFound(LookupStatus::NOT_FOUND, address, name);
+                    registeredNameFound(LookupStatus::NOT_FOUND, accountId, address, name);
                     break;
                 case 3: // An error happened
-                    registeredNameFound(LookupStatus::ERRORR, address, name);
+                    registeredNameFound(LookupStatus::ERRORR, accountId, address, name);
                     break;
                 }
             }));
@@ -825,6 +860,148 @@ RingD::registerCallbacks()
         })
     };
     registerConfHandlers(nameRegistrationHandlers);
+
+    trustRequestHandlers =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::IncomingTrustRequest>(
+            [&](const std::string& account_id,
+                const std::string& from,
+                const std::vector<uint8_t>& payload,
+                time_t received)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                auto payloadString = std::string(payload.begin(), payload.end());
+                MSG_("IncomingTrustRequest");
+                MSG_("account_id = " + account_id);
+                MSG_("from = " + from);
+                MSG_("received = " + received.ToString());
+                MSG_("payload = " + payloadString);
+
+                // First check if this TR has a corresponding contact. If not, add a contact
+                // to the account's contact list with a trust status flag indicating that
+                // it should be treated as a TR, and only appear in the contact request list.
+                if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(account_id))) {
+                    auto fromP = Utils::toPlatformString(from);
+                    auto contact = contactListModel->findContactByRingId(fromP);
+
+                    // If the contact exists, we should check to see if we have previously
+                    // sent a TR to the peer. If, so we can accept this TR immediately.
+                    // Otherwise, we can ignore it completely.
+                    if (contact) {
+                        if (contact->_trustStatus == TrustStatus::CONTACT_REQUEST_SENT) {
+                            // get the vcard first
+                            auto vcard = contact->getVCard();
+                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                            vcard->setData(parsedPayload.at("VCARD"));
+                            vcard->completeReception();
+
+                            DRing::acceptTrustRequest(account_id, from);
+                            MSG_("Auto accepted IncomingTrustRequest");
+                        }
+                        else {
+                            MSG_("IncomingTrustRequest ignored");
+                        }
+                        return;
+                    }
+
+                    // No contact found, so add a new contact with the INCOMNG_CONTACT_REQUEST trust status flag
+                    contact = contactListModel->addNewContact("", fromP, TrustStatus::INCOMING_CONTACT_REQUEST);
+
+                    // The visible ring id will potentially be replaced by a username after a lookup
+                    RingD::instance->lookUpAddress(account_id, Utils::toPlatformString(from));
+
+                    auto vcard = contact->getVCard();
+                    auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                    vcard->setData(parsedPayload.at("VCARD"));
+                    vcard->completeReception();
+
+                    // The name is the ring id for now
+                    contact->_name = Utils::toPlatformString(from);
+                    contact->_displayName = Utils::toPlatformString(vcard->getPart("FN"));
+
+                    contactListModel->saveContactsToFile();
+                    AccountsViewModel::instance->raiseUnreadContactRequest();
+
+                    SmartPanelItemsViewModel::instance->refreshFilteredData();
+                    SmartPanelItemsViewModel::instance->update();
+
+                    // Add a corresponding contact request control item to the list.
+                    auto newContactRequest = ref new ContactRequestItem();
+                    newContactRequest->_contact = contact;
+                    ContactRequestItemsViewModel::instance->itemsList->InsertAt(0, newContactRequest);
+
+                    ContactRequestItemsViewModel::instance->refreshFilteredData();
+                    ContactRequestItemsViewModel::instance->update();
+                }
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::ContactAdded>(
+            [&](const std::string& account_id, const std::string& uri, bool confirmed)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("ContactAdded");
+                MSG_("account_id = " + account_id);
+                MSG_("uri = " + uri);
+                MSG_("confirmed = " + confirmed.ToString());
+
+                // If confirmed is false, we have just sent the TR and nothing need be done.
+                // If confirmed is true, the sent TR has been accepted and we can change the
+                // TrustStatus flag for the contact under the account_id, that matches the uri
+                if (confirmed) {
+                    if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(account_id))) {
+                        auto contact = contactListModel->findContactByRingId(Utils::toPlatformString(uri));
+                        if (contact == nullptr) {
+                            contact = contactListModel->addNewContact(  Utils::toPlatformString(uri),
+                                                                        Utils::toPlatformString(uri),
+                                                                        TrustStatus::TRUSTED);
+                            RingD::instance->lookUpAddress(account_id, Utils::toPlatformString(uri));
+                        }
+                        else
+                            contact->_trustStatus = TrustStatus::TRUSTED;
+
+                        SmartPanelItemsViewModel::instance->refreshFilteredData();
+                        SmartPanelItemsViewModel::instance->update();
+
+                        ContactRequestItemsViewModel::instance->update();
+
+                        contactListModel->saveContactsToFile();
+                    }
+                }
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::ContactRemoved>(
+            [&](const std::string& account_id, const std::string& uri, bool banned)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("ContactRemoved");
+                MSG_("account_id = " + account_id);
+                MSG_("uri = " + uri);
+                MSG_("banned = " + banned.ToString());
+
+                // It's currently not clear to me how this signal is pertinent to the UWP client
+            }));
+        }),
+            DRing::exportable_callback<DRing::PresenceSignal::NewBuddyNotification>(
+                [&](const std::string& account_id, const std::string& buddy_uri, int status, const std::string& /*line_status*/)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+                ref new DispatchedHandler([=]() {
+                MSG_("NewBuddyNotification");
+                MSG_("account_id = " + account_id);
+                MSG_("uri = " + buddy_uri);
+                MSG_("status = " + status);
+                // react to presence
+                dispatcher->RunAsync(CoreDispatcherPriority::High,
+                    ref new DispatchedHandler([=]() {
+                    newBuddyNotification(account_id, buddy_uri, status);
+                }));
+            }));
+        })
+    };
+    registerConfHandlers(trustRequestHandlers);
 }
 
 void
@@ -932,11 +1109,49 @@ RingD::startDaemon()
 
 RingD::RingD()
 {
+    this->stateChange += ref new StateChange(this, &RingD::onStateChange);
     ringtone_ = ref new Ringtone("default.wav");
     localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
     callIdsList_ = ref new Vector<String^>();
     currentCallId = nullptr;
     WriteLine("XBOX: " + isOnXBox.ToString());
+}
+
+void
+RingD::onStateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+{
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
+    {
+        if (state == CallStatus::OUTGOING_RINGING ||
+            state == CallStatus::INCOMING_RINGING) {
+            try {
+                Configuration::UserPreferences::instance->sendVCard(Utils::toString(callId));
+            }
+            catch (Exception^ e) {
+                EXC_(e);
+            }
+        }
+
+        if (state == CallStatus::INCOMING_RINGING) {
+            if (isInBackground) {
+                ringtone_->Start();
+                ShowCallToast(callId);
+            }
+            else
+                ringtone_->Start();
+        }
+
+        if (state == CallStatus::IN_PROGRESS) {
+            ringtone_->Stop();
+        }
+
+        if (state == CallStatus::ENDED ||
+            (state == CallStatus::NONE && code == 106)) {
+            DRing::hangUp(Utils::toString(callId));
+            ringtone_->Stop();
+        }
+    }));
 }
 
 std::string
@@ -1044,17 +1259,10 @@ RingD::dequeueTasks()
 
             std::map<std::string, std::string> deviceDetails;
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
-            //deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED, "true"));
-            //deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, "MonSuperUsername"));
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PIN, pin));
             deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
-            DRing::addAccount(deviceDetails);
 
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-            ref new DispatchedHandler([=]() {
-                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
-            }));
+            DRing::addAccount(deviceDetails);
         }
         break;
         case Request::GetKnownDevices:
@@ -1091,15 +1299,14 @@ RingD::dequeueTasks()
             std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
             std::map<std::string, std::string> accountDetailsOld(accountDetails);
 
-
-
             accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
 
             if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
+                accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
+                accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (account->_autoAnswer) ? ring::TRUE_STR : ring::FALSE_STR;
+                accountDetails[DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS] = (account->_dhtPublicInCalls) ? ring::TRUE_STR : ring::FALSE_STR;
                 if (accountDetails == accountDetailsOld)
                     break;
-
-                accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
                 CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
                 ref new DispatchedHandler([=]() {
                     auto frame = dynamic_cast<Frame^>(Window::Current->Content);
@@ -1110,6 +1317,8 @@ RingD::dequeueTasks()
                 accountDetails[DRing::Account::ConfProperties::HOSTNAME] = Utils::toString(account->_sipHostname);
                 accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
                 accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
+                if (accountDetails == accountDetailsOld)
+                    break;
             }
 
             DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
@@ -1128,7 +1337,6 @@ RingD::dequeueTasks()
                 auto frame = dynamic_cast<Frame^>(Window::Current->Content);
                 dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
             }));
-
 
             DRing::removeAccount(accountId2);
             break;
@@ -1174,12 +1382,12 @@ RingD::dequeueTasks()
         case Request::LookUpName:
         {
             auto alias = task->_alias;
-            DRing::lookupName("", "", Utils::toString(alias));
+            DRing::lookupName(task->_accountId_new, "", Utils::toString(alias));
             break;
         }
         case Request::LookUpAddress:
         {
-            DRing::lookupAddress("", "", Utils::toString(task->_address));
+            DRing::lookupAddress(task->_accountId_new, "", Utils::toString(task->_address));
             break;
         }
         case Request::RegisterName:
@@ -1199,16 +1407,19 @@ RingD::dequeueTasks()
                 }));
             }
 
-
-            //const wchar_t* toto = task->_accountId->Data();
-            //auto accountId = ref new String(toto);// Utils::toString(task->_accountId);
-            //auto accountDetails = DRing::getAccountDetails(Utils::toString(accountId));
-
-            //if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty())
-            //    registerName(task->_accountId, task->_password, task->_registeredName);
-            //else
-            //    DRing::registerName(Utils::toString(task->_accountId), Utils::toString(task->_password), Utils::toString(task->_registeredName));
-
+            break;
+        }
+        case Request::SendContactRequest:
+        {
+            std::vector<uint8_t> payload(task->_payload.begin(), task->_payload.end());
+            DRing::sendTrustRequest(task->_accountId_new, task->_ringId_new, payload);
+            MSG_("Sent Trust Request");
+            break;
+        }
+        case Request::RemoveContact:
+        {
+            DRing::removeContact(task->_accountId_new, task->_ringId_new);
+            MSG_("Removed contact (daemon)");
             break;
         }
         default:
@@ -1274,14 +1485,6 @@ void RingClientUWP::RingD::muteAudio(const std::string& callId, bool muted)
     tasksList_.push(task);
 }
 
-void RingClientUWP::RingD::lookUpName(String ^ name)
-{
-    auto task = ref new RingD::Task(Request::LookUpName);
-    task->_alias = name;
-
-    tasksList_.push(task);
-}
-
 void
 RingD::registerName(String^ accountId, String^ password, String^ username)
 {
@@ -1303,16 +1506,47 @@ void RingClientUWP::RingD::registerName_new(const std::string & accountId, const
     tasksList_.push(task);
 }
 
+void
+RingD::removeContact(const std::string& accountId, const std::string& uri)
+{
+    auto task = ref new RingD::Task(Request::RemoveContact);
+    task->_accountId_new = accountId;
+    task->_ringId_new = uri;
+    tasksList_.push(task);
+}
+
+void
+RingD::sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload)
+{
+    auto task = ref new RingD::Task(Request::SendContactRequest);
+    task->_accountId_new = accountId;
+    task->_ringId_new = uri;
+    task->_payload = payload;
+    tasksList_.push(task);
+}
+
 std::map<std::string, std::string>
 RingClientUWP::RingD::getVolatileAccountDetails(Account^ account)
 {
     return DRing::getVolatileAccountDetails(Utils::toString(account->accountID_));
 }
 
-void RingClientUWP::RingD::lookUpAddress(String^ address)
+void
+RingD::lookUpName(const std::string& accountId, String ^ name)
+{
+    auto task = ref new RingD::Task(Request::LookUpName);
+    task->_alias = name;
+    task->_accountId_new = accountId;
+
+    tasksList_.push(task);
+}
+
+void
+RingD::lookUpAddress(const std::string& accountId, String^ address)
 {
     auto task = ref new RingD::Task(Request::LookUpAddress);
     task->_address = address;
+    task->_accountId_new = accountId;
 
     tasksList_.push(task);
 }
