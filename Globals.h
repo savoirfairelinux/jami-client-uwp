@@ -15,6 +15,14 @@ public enum class CallStatus {
     CONNECTED
 };
 
+public enum class ContactRequestStatus {
+    NEW,
+    ACCEPTED,
+    PENDING,
+    IGNORED,
+    BLOCKED
+};
+
 public enum class LookupStatus {
     SUCCESS,
     INVALID_NAME,
