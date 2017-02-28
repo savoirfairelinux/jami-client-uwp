@@ -58,6 +58,8 @@ public:
     VCardUtils::VCard^      getVCard();
     void                    saveProfileToVCard();
 
+    void                    raiseSelectIndex(int index);
+
 internal:
     void                    sendVCard(std::string callID);
 
@@ -71,5 +73,7 @@ private:
 
 };
 
+task<Windows::UI::Xaml::Media::Imaging::BitmapImage^> getProfileImageAsync();
+//void    getProfileImageAsync();
 }
 }

@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="_aboutBasicButton_.Content" xml:space="preserve">
+    <value>Over</value>
+  </data>
+  <data name="_aboutCloseButton_.Content" xml:space="preserve">
+    <value>Sluiten</value>
+  </data>
+  <data name="_aboutCreditsButton_.Content" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="_aboutDisclaimer_.Text" xml:space="preserve">
+    <value>Op dit programma zit geen enkele garantie</value>
+  </data>
+  <data name="_aboutGPL_0_.Text" xml:space="preserve">
+    <value>Zie de</value>
+  </data>
+  <data name="_aboutGPL_1_.Content" xml:space="preserve">
+    <value>GNU General Public License, versie 3 of hoger</value>
+  </data>
+  <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
+    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
+  </data>
+  <data name="_aboutGPL_2_.Text" xml:space="preserve">
+    <value>voor details.</value>
+  </data>
+  <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
+    <value>Ring is software voor beveiligde en gedistribueerde communicatie.</value>
+  </data>
+  <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
+    <value>De Microsoft Windows Runtime cliënt voor Ring.</value>
+  </data>
+  <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
+    <value>Uitgave: Beta 2 - Gaston Miron</value>
+  </data>
+  <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer een alias in</value>
+  </data>
+  <data name="_accountEditionTitle_.Text" xml:space="preserve">
+    <value>Account wijzigen</value>
+  </data>
+  <data name="_accountsAddDevice_.Text" xml:space="preserve">
+    <value>Apparaat toevoegen</value>
+  </data>
+  <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
+    <value>Voer PIN-code in</value>
+  </data>
+  <data name="_accountsAddStep1_.Text" xml:space="preserve">
+    <value>Om dit apparaat te koppelen aan een Ring account moet je eerst een PIN-code genereren op een apparaat waarop je Ring account staat.</value>
+  </data>
+  <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
+    <value>Automatisch beantwoorden</value>
+  </data>
+  <data name="_accountsDevices_.Text" xml:space="preserve">
+    <value>Apparaten</value>
+  </data>
+  <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
+    <value>Meer informatie</value>
+  </data>
+  <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
+    <value>Voer je wachtwoord in</value>
+  </data>
+  <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
+    <value>Accepteer oproepen en berichten van anonieme contacten</value>
+  </data>
+  <data name="_accountsPINGenerator_.Text" xml:space="preserve">
+    <value>PIN generator</value>
+  </data>
+  <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
+    <value>Registreer een publieke gebruikersnaam</value>
+  </data>
+  <data name="_accountsShare_.Text" xml:space="preserve">
+    <value>Delen</value>
+  </data>
+  <data name="_accountsSIPParameters_.Text" xml:space="preserve">
+    <value>SIP account parameters</value>
+  </data>
+  <data name="_accountsTitle_.Text" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="_accountsType_.Text" xml:space="preserve">
+    <value>Account type</value>
+  </data>
+  <data name="_accountsUPnP_.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
+    <value>Account wordt geëxporteerd naar de Ring...</value>
+  </data>
+  <data name="_callsLookingFor_" xml:space="preserve">
+    <value>zoekende naar</value>
+  </data>
+  <data name="_contactRequestPending_.Text" xml:space="preserve">
+    <value>Heeft jou toegevoegd als contactpersoon.</value>
+  </data>
+  <data name="_contactRequestSent_.Text" xml:space="preserve">
+    <value>Contactverzoek verzonden.</value>
+  </data>
+  <data name="_contactRequestsTitle_.Text" xml:space="preserve">
+    <value>Contactverzoeken</value>
+  </data>
+  <data name="_contactsTitle_.Text" xml:space="preserve">
+    <value>Contacten</value>
+  </data>
+  <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
+    <value>Meer informatie</value>
+  </data>
+  <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
+    <value>Begin der tijden</value>
+  </data>
+  <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
+    <value>Registreren</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
+    <value>Herhaal wachtwoord</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer wachtwoord in</value>
+  </data>
+  <data name="_settingsTitle_.Text" xml:space="preserve">
+    <value>Instellingen</value>
+  </data>
+  <data name="_settingsVideoDevice_.Text" xml:space="preserve">
+    <value>Apparaat</value>
+  </data>
+  <data name="_settingsVideoRate_.Text" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="_settingsVideoResolution_.Text" xml:space="preserve">
+    <value>Resolutie</value>
+  </data>
+  <data name="_settingsVideo_.Text" xml:space="preserve">
+    <value>Video</value>
+  </data>
+  <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer hostnaam in</value>
+  </data>
+  <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer wachtwoord in</value>
+  </data>
+  <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer gebruikersnaam in</value>
+  </data>
+  <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Voer je gebruikersnaam in</value>
+  </data>
+  <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
+    <value>wachten op apparatenlijst...</value>
+  </data>
+  <data name="_welcomeAboutButton_.Content" xml:space="preserve">
+    <value>Over</value>
+  </data>
+  <data name="_welcomeDescription_.Text" xml:space="preserve">
+    <value>Ring is vrije software voor universele communicatie, die de vrijheden en privacy van haar gebruikers eerbiedigt.</value>
+  </data>
+  <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
+    <value>Privacybeleid</value>
+  </data>
+  <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
+    <value>Je account zal worden verwijderd van deze computer. Op andere apparaten heeft dit geen invloed. Je publieke registratie kan nooit worden verwijderd.</value>
+  </data>
+  <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
+    <value>Je account wordt verwijderd van deze computer.</value>
+  </data>
+  <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
+    <value>Mensen kunnen je vinden met je gebruikersnaam</value>
+  </data>
+  <data name="_whatWillHappen_0_" xml:space="preserve">
+    <value>Je bent reeds geregistreerd.</value>
+  </data>
+  <data name="_whatWillHappen_1_" xml:space="preserve">
+    <value>Je bent nog niet geregistreerd.</value>
+  </data>
+  <data name="_whatWillHappen_2_" xml:space="preserve">
+    <value>Je zult je RingID moeten sturen.</value>
+  </data>
+  <data name="_accountsCredentialsExpired_" xml:space="preserve">
+    <value>Fout in inloggegevens of PIN-code is verlopen.</value>
+  </data>
+  <data name="_accountsNoDeviceId_" xml:space="preserve">
+    <value>Geen apparaat-ID gevonden!</value>
+  </data>
+  <data name="_contactsContactExists_" xml:space="preserve">
+    <value>Je heb al een contact met deze Ring-ID.</value>
+  </data>
+  <data name="_contactsNetworkError_" xml:space="preserve">
+    <value>netwerkfout!</value>
+  </data>
+  <data name="_contactsRingIdAdded_" xml:space="preserve">
+    <value>Ring ID toegevoegd.</value>
+  </data>
+  <data name="_contactsUserAdded_" xml:space="preserve">
+    <value>Gebruikersnaam gevonden en toegevoegd.</value>
+  </data>
+  <data name="_contactsUsernameInvalid_" xml:space="preserve">
+    <value>Ongeldige gebruikersnaam.</value>
+  </data>
+  <data name="_contactsUsernameNotFound_" xml:space="preserve">
+    <value>Gebruikersnaam niet gevonden.</value>
+  </data>
+  <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
+    <value>Bestaand Account toevoegen</value>
+  </data>
+  <data name="_wizardCreateAccount_.Content" xml:space="preserve">
+    <value>Nieuw Account Maken</value>
+  </data>
+  <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
+    <value>Voer je volledige naam in</value>
+  </data>
+  <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
+    <value>Ring account wachtwoord</value>
+  </data>
+  <data name="_wizardStep1_.Content" xml:space="preserve">
+    <value>Stap 1</value>
+  </data>
+  <data name="_wizardStep2_.Content" xml:space="preserve">
+    <value>Stap 2</value>
+  </data>
+</root>
