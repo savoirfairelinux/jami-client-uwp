@@ -824,6 +824,58 @@ RingD::registerCallbacks()
         })
     };
     registerConfHandlers(nameRegistrationHandlers);
+
+    trustRequestHandlers =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::IncomingTrustRequest>(
+            [&](const std::string& account_id,
+                const std::string& from,
+                const std::vector<uint8_t>& payload,
+                time_t received)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("IncomingTrustRequest");
+                MSG_("account_id = " + account_id);
+                MSG_("from = " + from);
+                MSG_("received = " + received.ToString());
+                MSG_("payload = " + std::string(payload.begin(), payload.end()));
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::ContactAdded>(
+            [&](const std::string& account_id, const std::string& uri, bool confirmed)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("ContactAdded");
+                MSG_("account_id = " + account_id);
+                MSG_("uri = " + uri);
+                MSG_("confirmed = " + confirmed.ToString());
+
+                // If confirmed is false, we have just sent the TR and nothing need be done.
+                // If confirmed is true, the sent TR has been accepted and we can change the
+                // TrustStatus flag for the contact under the account_id, that matches the uri
+                if (confirmed) {
+                    auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(account_id));
+                    auto contact = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(uri));
+                }
+            }));
+        }),
+        DRing::exportable_callback<DRing::ConfigurationSignal::ContactRemoved>(
+            [&](const std::string& account_id, const std::string& uri, bool banned)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("ContactRemoved");
+                MSG_("account_id = " + account_id);
+                MSG_("uri = " + uri);
+                MSG_("banned = " + banned.ToString());
+
+                // It's not clear to me how this signal is pertinent to the UWP client currently
+            }));
+        })
+    };
+    registerConfHandlers(trustRequestHandlers);
 }
 
 void
@@ -1201,7 +1253,6 @@ RingD::dequeueTasks()
                 }));
             }
 
-
             //const wchar_t* toto = task->_accountId->Data();
             //auto accountId = ref new String(toto);// Utils::toString(task->_accountId);
             //auto accountDetails = DRing::getAccountDetails(Utils::toString(accountId));
@@ -1211,6 +1262,11 @@ RingD::dequeueTasks()
             //else
             //    DRing::registerName(Utils::toString(task->_accountId), Utils::toString(task->_password), Utils::toString(task->_registeredName));
 
+            break;
+        }
+        case Request::RemoveContact:
+        {
+            DRing::removeContact(task->_accountId_new, task->_ringId_new);
             break;
         }
         default:
@@ -1302,6 +1358,15 @@ void RingClientUWP::RingD::registerName_new(const std::string & accountId, const
     task->_password_new = password;
     task->_publicUsername_new = username;
 
+    tasksList_.push(task);
+}
+
+void
+RingD::removeContact(const std::string & accountId, const std::string& uri)
+{
+    auto task = ref new RingD::Task(Request::RemoveContact);
+    task->_accountId_new = accountId;
+    task->_ringId_new = uri;
     tasksList_.push(task);
 }
 

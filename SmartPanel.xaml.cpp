@@ -1,4 +1,4 @@
-﻿﻿/***************************************************************************
+﻿﻿﻿/***************************************************************************
  * Copyright (C) 2016 by Savoir-faire Linux                                *
  * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
  * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
@@ -23,6 +23,7 @@
 #include "qrencode.h"
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 #include "callmanager_interface.h"
+#include "configurationmanager_interface.h"
 
 using namespace Platform;
 
@@ -59,6 +60,7 @@ SmartPanel::SmartPanel()
     /* populate the smartlist */
     _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsList;
 
+    _incomingContactRequestList_->ItemsSource = ContactRequestItemsViewModel::instance->itemsList;
 
     /* populate the device list*/
 ///	_devicesIdList_ // not used so far
@@ -89,14 +91,10 @@ SmartPanel::SmartPanel()
     });
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
     String^ accountId, String^ callId, String^ from) {
-        ///auto from = call->from;
         auto contact = ContactsViewModel::instance->findContactByRingId(from);
 
-        if (contact == nullptr)
-            contact = ContactsViewModel::instance->addNewContact(from, from); // contact checked inside addNewContact.
-
         if (contact == nullptr) {
-            ERR_("contact not handled!");
+            ERR_("contact not handled!"); // call from untrusted peer
             return;
         }
 
@@ -280,13 +278,19 @@ void RingClientUWP::Views::SmartPanel::_createAccountNo__Click(Platform::Object^
 }
 
 /* using the usual selection behaviour doesn't allow us to deselect by simple click. The selection is managed
-   by Grid_PointerReleased */
+   by SmartPanelItem_Grid_PointerReleased */
 void
 SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = dynamic_cast<ListBox^>(sender); // same as _smartList_
     listbox->SelectedItem = nullptr;
     return;
+}
+
+void
+SmartPanel::_incomingContactRequestList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
+{
+
 }
 
 void
@@ -401,7 +405,8 @@ void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ s
     }
 }
 
-void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+void
+SmartPanel::SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
@@ -414,7 +419,8 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerEntered(Platform::Object^ sen
 }
 
 
-void RingClientUWP::Views::SmartPanel::Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+void
+SmartPanel::SmartPanelItem_Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
@@ -1046,7 +1052,8 @@ void RingClientUWP::Views::SmartPanel::_smartList__PointerExited(Platform::Objec
 }
 
 
-void RingClientUWP::Views::SmartPanel::Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+void
+SmartPanel::SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
@@ -1147,6 +1154,11 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = Utils::toPlatformString(address);
                 ringTxtBxPlaceHolderDelay("username found and added.", 5000);
+                if (contact->_trustStatus == TrustStatus::UNKNOWN) {
+                    auto accountId = Utils::toString(AccountListItemsViewModel::instance->_selectedItem->_account->accountID_);
+                    DRing::sendTrustRequest(accountId, address);
+                    contact->_trustStatus = TrustStatus::CONTACT_REQUEST_SENT;
+                }
                 ContactsViewModel::instance->saveContactsToFile();
             }
             else {
@@ -1158,9 +1170,7 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
                         ContactsViewModel::instance->deleteContact(co);
                         SmartPanelItemsViewModel::instance->removeItem(item);
                     }
-
                 }
-
             }
 
             /* open the text message page */
@@ -1463,41 +1473,6 @@ SmartPanel::populateVideoRateSettingsComboBox()
 }
 
 
-
-void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
-{
-    if (e->Key == Windows::System::VirtualKey::Enter) {
-        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            if (item->_contact->_name == _ringTxtBx_->Text || item->_contact->ringID_ == _ringTxtBx_->Text) {
-                SmartPanelItemsViewModel::instance->_selectedItem = item;
-                summonMessageTextPage();
-            }
-        }
-
-        auto contact = ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
-        RingD::instance->lookUpName(_ringTxtBx_->Text);
-
-        _ringTxtBx_->Text = "";
-
-        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
-        }
-        return;
-    }
-
-    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-        auto str1 = Utils::toString(item->_contact->_name);
-        auto str2 = Utils::toString(_ringTxtBx_->Text);
-
-        if (str1.find(str2) != std::string::npos)
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
-        else
-            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
-    }
-
-}
-
-
 void RingClientUWP::Views::SmartPanel::_linkThisDeviceBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _accountsMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -1587,53 +1562,44 @@ RingClientUWP::Views::ContactStatusNotification::ContactStatusNotification()
 
 void RingClientUWP::Views::SmartPanel::selectMenu(MenuOpen menu)
 {
-
-
     _contactsListMenuButton_->IsChecked = (menu == MenuOpen::CONTACTS_LIST) ? true : false;
-    _smartGrid_->Visibility = (menu == MenuOpen::CONTACTS_LIST)
-                              ? Windows::UI::Xaml::Visibility::Visible
-                              : Windows::UI::Xaml::Visibility::Collapsed;
+    _smartGrid_->Visibility = (menu == MenuOpen::CONTACTS_LIST) ? VIS::Visible : VIS::Collapsed;
+
+    _contactsRequestListMenuButton_->IsChecked = (menu == MenuOpen::CONTACTREQUEST_LIST) ? true : false;
+    _incomingContactRequestGrid_->Visibility = (menu == MenuOpen::CONTACTREQUEST_LIST) ? VIS::Visible : VIS::Collapsed;
 
     _accountsMenuButton_->IsChecked = (menu == MenuOpen::ACCOUNTS_LIST) ? true : false;
-    _accountsMenuGrid_->Visibility = (menu == MenuOpen::ACCOUNTS_LIST)
-                                     ? Windows::UI::Xaml::Visibility::Visible
-                                     : Windows::UI::Xaml::Visibility::Collapsed;
+    _accountsMenuGrid_->Visibility = (menu == MenuOpen::ACCOUNTS_LIST) ? VIS::Visible : VIS::Collapsed;
 
     _shareMenuButton_->IsChecked = (menu == MenuOpen::SHARE) ? true : false;
-    _shareMenuGrid_->Visibility = (menu == MenuOpen::SHARE)
-                                  ? Windows::UI::Xaml::Visibility::Visible
-                                  : Windows::UI::Xaml::Visibility::Collapsed;
+    _shareMenuGrid_->Visibility = (menu == MenuOpen::SHARE) ? VIS::Visible : VIS::Collapsed;
 
     _devicesMenuButton_->IsChecked = (menu == MenuOpen::DEVICE) ? true : false;
-    _devicesMenuGrid_->Visibility = (menu == MenuOpen::DEVICE)
-                                    ? Windows::UI::Xaml::Visibility::Visible
-                                    : Windows::UI::Xaml::Visibility::Collapsed;
+    _devicesMenuGrid_->Visibility = (menu == MenuOpen::DEVICE) ? VIS::Visible : VIS::Collapsed;
 
     _settingsMenuButton_->IsChecked = (menu == MenuOpen::SETTINGS) ? true : false;
-    _settingsMenu_->Visibility = (menu == MenuOpen::SETTINGS)
-                                 ? Windows::UI::Xaml::Visibility::Visible
-                                 : Windows::UI::Xaml::Visibility::Collapsed;
+    _settingsMenu_->Visibility = (menu == MenuOpen::SETTINGS) ? VIS::Visible : VIS::Collapsed;
 
     /* manage the account menu */
-    _accountCreationMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    _accountAddMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _accountCreationMenuGrid_->Visibility = VIS::Collapsed;
+    _accountEditionGrid_->Visibility = VIS::Collapsed;
+    _accountAddMenuGrid_->Visibility = VIS::Collapsed;
 
     /* manage the share icon*/
     if (menu == MenuOpen::SHARE && menuOpen != MenuOpen::SHARE) {
         generateQRcode();
-        _qrCodeIconWhite_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _qrCodeIconBlack_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        _qrCodeIconWhite_->Visibility = VIS::Collapsed;
+        _qrCodeIconBlack_->Visibility = VIS::Visible;
     }
     else if (menu != MenuOpen::SHARE && menuOpen == MenuOpen::SHARE) {
-        _qrCodeIconBlack_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _qrCodeIconWhite_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        _qrCodeIconBlack_->Visibility = VIS::Collapsed;
+        _qrCodeIconWhite_->Visibility = VIS::Visible;
     }
 
     /* manage adding device menu */
-    _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-    _waitingForPin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    _addingDeviceGrid_->Visibility = VIS::Collapsed;
+    _waitingDevicesList_->Visibility = VIS::Collapsed;
+    _waitingForPin_->Visibility = VIS::Collapsed;
 
     /* manage the video preview */
     if (menu == MenuOpen::SETTINGS && menuOpen != MenuOpen::SETTINGS) {
@@ -1667,8 +1633,9 @@ void RingClientUWP::Views::SmartPanel::selectMenu(MenuOpen menu)
     menuOpen = menu;
 }
 
-/* if you changed the name of Grid_PointerReleased, be sure to change it in the comment about the selection */
-void RingClientUWP::Views::SmartPanel::Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+/* if you changed the name of SmartPanelItem_Grid_PointerReleased, be sure to change it in the comment about the selection */
+void
+SmartPanel::SmartPanelItem_Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
     auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
@@ -1787,9 +1754,6 @@ Object ^ RingClientUWP::Views::CallStatusForIncomingCallAnimatedEllipse::Convert
     throw ref new Platform::NotImplementedException();
 }
 
-RingClientUWP::Views::CallStatusForIncomingCallAnimatedEllipse::CallStatusForIncomingCallAnimatedEllipse()
-{}
-
 Object ^ RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto callStatus = static_cast<CallStatus>(value);
@@ -1807,46 +1771,51 @@ Object ^ RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::ConvertBa
     throw ref new Platform::NotImplementedException();
 }
 
-RingClientUWP::Views::CallStatusForIncomingCallStaticEllipse::CallStatusForIncomingCallStaticEllipse()
-{}
-
-
-void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+SmartPanel::addToContactList(String^ name)
 {
     for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-        if (item->_contact->_name == _ringTxtBx_->Text || item->_contact->ringID_ == _ringTxtBx_->Text) {
+        if (item->_contact->_name == name || item->_contact->ringID_ == name) {
             SmartPanelItemsViewModel::instance->_selectedItem = item;
             summonMessageTextPage();
+            return;
         }
-
-        auto contact = ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
-        RingD::instance->lookUpName(_ringTxtBx_->Text);
-
-        _ringTxtBx_->Text = "";
-
-        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
-        }
-        return;
     }
 
-    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-        auto str1 = Utils::toString(item->_contact->_name);
-        auto str2 = Utils::toString(_ringTxtBx_->Text);
+    auto contact = ContactsViewModel::instance->addNewContact(  name, "",
+                                                                TrustStatus::UNKNOWN,
+                                                                ContactStatus::WAITING_FOR_ACTIVATION);
 
-        if (str1.find(str2) != std::string::npos)
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
-        else
-            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+    RingD::instance->lookUpName(name);
+
+    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+        item->_isVisible = Windows::UI::Xaml::Visibility::Visible;
     }
 }
 
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    addToContactList(_ringTxtBx_->Text);
+    _ringTxtBx_->Text = "";
+}
+
+void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+{
+    if (e->Key == Windows::System::VirtualKey::Enter) {
+        addToContactList(_ringTxtBx_->Text);
+        _ringTxtBx_->Text = "";
+    }
+}
 
 void RingClientUWP::Views::SmartPanel::_contactsListMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     selectMenu(MenuOpen::CONTACTS_LIST);
 }
 
+void RingClientUWP::Views::SmartPanel::_contactsRequestListMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    selectMenu(MenuOpen::CONTACTREQUEST_LIST);
+}
 
 void RingClientUWP::Views::SmartPanel::_accountsMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -1908,4 +1877,28 @@ void RingClientUWP::Views::SmartPanel::requestPin()
     _closePin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
     RingD::instance->askToExportOnRing(accountId, password);
+}
+
+void
+SmartPanel::ContactRequestItem_Grid_PointerReleased(Platform::Object ^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^ e)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+void
+SmartPanel::ContactRequestItem_Grid_PointerEntered(Platform::Object ^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^ e)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+void
+SmartPanel::ContactRequestItem_Grid_PointerExited(Platform::Object ^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^ e)
+{
+    throw ref new Platform::NotImplementedException();
+}
+
+void
+SmartPanel::ContactRequestItem_Grid_PointerMoved(Platform::Object ^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs ^ e)
+{
+    throw ref new Platform::NotImplementedException();
 }
