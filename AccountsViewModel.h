@@ -35,6 +35,7 @@ delegate void ContactAdded(String^, Contact^);
 delegate void ContactDeleted(String^, Contact^);
 delegate void ContactDataModified(String^, Contact^);
 delegate void NewUnreadMessage();
+delegate void NewUnreadContactRequest();
 
 namespace ViewModel
 {
@@ -45,6 +46,7 @@ public:
     void raiseContactAdded(String^ accountId, Contact^ name);
     void raiseContactDeleted(String^ accountId, Contact^ name);
     void raiseContactDataModified(String^ accountId, Contact^ name);
+    void raiseUnreadContactRequest();
 
 internal:
     /* properties */
@@ -55,21 +57,20 @@ internal:
         }
     }
 
-    property Vector<Account^>^ accountsList
-    {
-        Vector<Account^>^ get()
-        {
+    property Vector<Account^>^ accountsList {
+        Vector<Account^>^ get() {
             return accountsList_;
         }
     }
 
     /* functions */
-    void addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState);
+    void addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState, bool autoAnswer, bool dhtPublicInCalls);
     void addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword);
     void clearAccountList();
     Account^ findItem(String^ accountId);
     ContactListModel^ getContactListModel(std::string& accountId);
     int unreadMessages(String^ accountId);
+    int unreadContactRequests(String^ accountId);
 
     /* events */
     event NewAccountSelected^ newAccountSelected;
@@ -81,6 +82,7 @@ internal:
     event ContactDeleted^ contactDeleted;
     event ContactDataModified^ contactDataModified;
     event NewUnreadMessage^ newUnreadMessage;
+    event NewUnreadContactRequest^ newUnreadContactRequest;
 
 private:
     AccountsViewModel();
