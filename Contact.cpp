@@ -36,7 +36,7 @@ using namespace ViewModel;
 Contact::Contact(String^ name,
                  String^ ringID,
                  String^ GUID,
-                 unsigned int unreadmessages,
+                 uint32 unreadmessages,
                  ContactStatus contactStatus)
 {
     vCard_ = ref new VCardUtils::VCard(this);
@@ -76,6 +76,8 @@ Contact::Contact(String^ name,
     _displayName = "";
 
     contactStatus_ = contactStatus;
+    isTrusted_ = contactStatus > ContactStatus::WAITING_FOR_ACTIVATION;
+
     lastTime_ = "never called.";
 }
 
@@ -103,6 +105,7 @@ Contact::ToJsonObject()
     contactObject->SetNamedValue(accountIdAssociatedKey, JsonValue::CreateStringValue(_accountIdAssociated));
     contactObject->SetNamedValue(vcardUIDKey, JsonValue::CreateStringValue(_vcardUID));
     contactObject->SetNamedValue(lastTimeKey, JsonValue::CreateStringValue(_lastTime));
+    contactObject->SetNamedValue(contactStatusKey, JsonValue::CreateBooleanValue(_isTrusted));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);
@@ -149,7 +152,8 @@ Contact::DestringifyConversation(String^ data)
     }
 }
 
-void RingClientUWP::Contact::deleteConversationFile()
+void
+Contact::deleteConversationFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
     String^ messagesFile = ".messages\\" + GUID_ + ".json";

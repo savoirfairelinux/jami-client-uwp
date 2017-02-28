@@ -164,10 +164,11 @@ ContactsViewModel::Destringify(String^ data)
     String^         displayname;
     String^         ringid;
     String^         guid;
-    unsigned int    unreadmessages;
-    String^			accountIdAssociated;
+    uint32          unreadmessages;
+    String^         accountIdAssociated;
     String^         vcardUID;
-    String^			lastTime;
+    String^         lastTime;
+    uint8           contactStatus;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (int i = contactlist->Size - 1; i >= 0; i--) {
@@ -176,16 +177,24 @@ ContactsViewModel::Destringify(String^ data)
             JsonObject^ jsonContactObject = contact->GetObject();
             JsonObject^ contactObject = jsonContactObject->GetNamedObject(contactKey, nullptr);
             if (contactObject != nullptr) {
-                name = contactObject->GetNamedString(nameKey);
-                displayname = contactObject->GetNamedString(displayNameKey);
-                ringid = contactObject->GetNamedString(ringIDKey);
-                guid = contactObject->GetNamedString(GUIDKey);
-                unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
-                accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
-                vcardUID = contactObject->GetNamedString(vcardUIDKey);
-
+                if (contactObject->HasKey(nameKey))
+                    name = contactObject->GetNamedString(nameKey);
+                if (contactObject->HasKey(displayNameKey))
+                    displayname = contactObject->GetNamedString(displayNameKey);
+                if (contactObject->HasKey(ringIDKey))
+                    ringid = contactObject->GetNamedString(ringIDKey);
+                if (contactObject->HasKey(GUIDKey))
+                    guid = contactObject->GetNamedString(GUIDKey);
+                if (contactObject->HasKey(unreadMessagesKey))
+                    unreadmessages = static_cast<uint32>(contactObject->GetNamedNumber(unreadMessagesKey));
+                if (contactObject->HasKey(accountIdAssociatedKey))
+                    accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
+                if (contactObject->HasKey(vcardUIDKey))
+                    vcardUID = contactObject->GetNamedString(vcardUIDKey);
                 if (contactObject->HasKey(lastTimeKey))
                     lastTime = contactObject->GetNamedString(lastTimeKey);
+                if (contactObject->HasKey(contactStatusKey))
+                    contactStatus = static_cast<uint8>(contactObject->GetNamedNumber(contactStatusKey));
             }
             auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
@@ -206,7 +215,8 @@ ContactsViewModel::Destringify(String^ data)
     }
 }
 
-void RingClientUWP::ViewModel::ContactsViewModel::deleteContact(Contact ^ contact)
+void
+ContactsViewModel::deleteContact(Contact ^ contact)
 {
     unsigned int index;
     auto itemsList = SmartPanelItemsViewModel::instance->itemsList;
@@ -221,7 +231,8 @@ void RingClientUWP::ViewModel::ContactsViewModel::deleteContact(Contact ^ contac
 }
 
 
-void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
+void
+ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);

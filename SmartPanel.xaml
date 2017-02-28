@@ -148,11 +148,11 @@
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <Grid PointerReleased="Grid_PointerReleased"
-                  PointerEntered="Grid_PointerEntered"
-                  PointerExited="Grid_PointerExited"
-                  PointerMoved="Grid_PointerMoved"
-                  Visibility="{x:Bind  _showMe, Mode=OneWay}">
+            <Grid   PointerReleased="SmartPanelItem_Grid_PointerReleased"
+                    PointerEntered="SmartPanelItem_Grid_PointerEntered"
+                    PointerExited="SmartPanelItem_Grid_PointerExited"
+                    PointerMoved="SmartPanelItem_Grid_PointerMoved"
+                    Visibility="{x:Bind  _isVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <!-- row definition for the contact. -->
                     <RowDefinition Height="auto"/>
@@ -334,47 +334,101 @@
                         </Grid>
                     </Grid>
                 </Grid>
-                <!-- old call bar.KEEP FOR DEBUG -->
-                <!--<Grid Width="320"
-                      Grid.Row="1"
-                      HorizontalAlignment="Left"
-                      Background="DarkGray">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto"/>
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-
-                    <TextBlock x:Name="_CallStatus_"
+            </Grid>
+        </DataTemplate>
+        <!-- template for ContactRequestItems. -->
+        <DataTemplate x:Key="ContactRequestItemsTemplate"
+                      x:DataType="controls:ContactRequestItem">
+            <Grid PointerReleased="ContactRequestItem_Grid_PointerReleased"
+                  PointerEntered="ContactRequestItem_Grid_PointerEntered"
+                  PointerExited="ContactRequestItem_Grid_PointerExited"
+                  PointerMoved="ContactRequestItem_Grid_PointerMoved"
+                  Visibility="{x:Bind  _isVisible, Mode=OneWay}">
+                <Grid.RowDefinitions>
+                    <!-- row definition for the contact. -->
+                    <RowDefinition Height="auto"/>
+                    <!-- row definition for the incoming call bar. -->
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+                <!-- the first rectangle helps to detect mouse hovering-->
+                <Rectangle Fill="Transparent"
+                           Width="320"
+                           Grid.Row="0"/>
+                <!-- the two next rectangles offer a better visibility correlation between the call button and the
+                     backgrounds. Using them, avoid some visual bugs -->
+                <!-- the second rectangle controls the background for a selected item -->
+                <Rectangle Fill="#3bc1d3"
+                           Width="320"
+                           Visibility="{x:Bind _isSelected, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
+                           Grid.Row="0"/>
+                <!-- the thirs rectangle controls the background for an hovered item -->
+                <Rectangle Fill="#ced9e1"
+                           Width="320"
+                           Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
+                           Grid.Row="0"/>
+                <!-- curtain over item with contact not ready (e.g. lookup is in progress) -->
+                <Rectangle Fill="White"
+                           Width="320"
                            Grid.Row="0"
-                           Foreground="White"
-                           Text="{x:Bind _callStatus, Mode=OneWay}"
-                           Visibility="{x:Bind _callStatus, Converter={StaticResource _HasAnActiveCall_}, Mode=OneWay}"
-                           HorizontalAlignment="Center">
-                    </TextBlock>
-                    <StackPanel Orientation="Horizontal"
-                                Visibility="Visible"
-                                Grid.Row="1"
-                                HorizontalAlignment="Center">
-                        <Button x:Name="_acceptIncomingCallBtn_"
-                            Click="_acceptIncomingCallBtn__Click"
-                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Accept"/>
-                        <Button x:Name="_rejectIncomingCallBtn_"
-                            Click="_rejectIncomingCallBtn__Click"
-                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Reject"/>
-                        <Button x:Name="_cancelCallBtn_"
-                            Click="_cancelCallBtn__Click"
-                            Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
-                            VerticalAlignment="Center"
-                            HorizontalAlignment="Center"
-                            Content="Cancel"/>
-                    </StackPanel>
-                </Grid>-->
+                           Canvas.ZIndex="2"
+                           Opacity="0.6"
+                           Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"/>
+                <ProgressBar Canvas.ZIndex="3"
+                             Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"
+                             IsIndeterminate="True"/>
+                <!-- contact. -->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="310"/>
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60"/>
+                        <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                        <RowDefinition x:Name="_contactBar_"
+                                       Height="{x:Bind _contact._contactBarHeight, Mode=OneWay}"/>
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60"/>
+                            <ColumnDefinition Width="*"
+                                              MinWidth="200"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <Ellipse    Height="50"
+                                        Width="50"
+                                        VerticalAlignment="Center"
+                                        HorizontalAlignment="Center"
+                                        Margin="5">
+                                <Ellipse.Fill>
+                                    <ImageBrush  x:Name="_contactAvatar_"
+                                            ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                            <Border x:Name="_visualNotificationNewMessage_"
+                                    Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
+                                    Style="{StaticResource BorderStyle2}">
+                                <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
+                                           Style="{StaticResource TextStyle3}"/>
+                                <Border.RenderTransform>
+                                    <TranslateTransform X="-17" Y="-58"/>
+                                </Border.RenderTransform>
+                            </Border>
+                        </StackPanel>
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60"/>
+                                <RowDefinition Height="30"/>
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0">
+                                <!-- name of the contact. -->
+                                <TextBlock  x:Name="_contactName_"
+                                            Text="{x:Bind _contact._name, Mode=OneWay}"
+                                            TextTrimming="CharacterEllipsis">
+                                </TextBlock>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -451,6 +505,12 @@
                                       VerticalAlignment="Bottom"
                                       Content="&#xe716;"
                                       Click="_contactsListMenuButton__Click"
+                                      Style="{StaticResource ToggleButtonStyle2}"/>
+                        <!-- contact request list -->
+                        <ToggleButton x:Name="_contactsRequestListMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Content="&#xe8fa;"
+                                      Click="_contactsRequestListMenuButton__Click"
                                       Style="{StaticResource ToggleButtonStyle2}"/>
                         <!-- account menu -->
                         <ToggleButton x:Name="_accountsMenuButton_"
@@ -1240,6 +1300,20 @@
                             Background="Transparent"
                             Margin="0"
                             SelectionChanged="_smartList__SelectionChanged"
+                            Padding="0"
+                            ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                            ScrollViewer.HorizontalScrollMode="Disabled"
+                            MaxWidth="320"
+                            ItemContainerStyle="{StaticResource contactsListBoxStyle}"
+                            ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
+            </Grid>
+            <!-- trust requests -->
+            <Grid x:Name="_incomingContactRequestGrid_"
+                  Grid.Row="0">
+                <ListBox    x:Name="_incomingContactRequestList_"
+                            Background="Transparent"
+                            Margin="0"
+                            SelectionChanged="_incomingContactRequestList__SelectionChanged"
                             Padding="0"
                             ScrollViewer.HorizontalScrollBarVisibility="Auto"
                             ScrollViewer.HorizontalScrollMode="Disabled"
