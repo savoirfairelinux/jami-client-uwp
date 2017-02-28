@@ -30,7 +30,7 @@
             <DoubleAnimation
             Storyboard.TargetName="_loadingOverlay_"
             Storyboard.TargetProperty="Opacity"
-            From="1.0" To="0.0" Duration="0:0:1" Completed="hideLoadingOverlay"/>
+            From="1.0" To="0.0" Duration="0:0:0" Completed="hideLoadingOverlay"/>
         </Storyboard>
         <Storyboard x:Name="_fadeInModalStoryboard_">
             <DoubleAnimation
