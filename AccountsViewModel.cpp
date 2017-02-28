@@ -37,61 +37,89 @@ AccountsViewModel::AccountsViewModel()
 }
 
 void
-AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ name)
+AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ contact)
 {
-    contactAdded(accountId, name);
+    contactAdded(accountId, contact);
 }
 
 void
-AccountsViewModel::raiseContactDeleted(String^ accountId, Contact ^ name)
+AccountsViewModel::raiseContactDeleted(String^ accountId, Contact ^ contact)
 {
-    contactDeleted(accountId, name);
+    contactDeleted(accountId, contact);
 }
 
 void
-AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ name)
+AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ contact)
 {
-    contactDataModified(accountId, name);
+    contactDataModified(accountId, contact);
 }
 
 void
-AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState)
+AccountsViewModel::raiseUnreadContactRequest()
 {
-    auto account = ref new Account(
-                       Utils::toPlatformString(alias),
-                       Utils::toPlatformString(ringID),
-                       "RING",
-                       Utils::toPlatformString(accountID),
-                       Utils::toPlatformString(deviceId),
-                       upnpState,
-                       "" /* sip hostame not used woth ring account */,
-                       "" /* sip username not used with ring account */,
-                       "" /* sip password not used with ring */ );
+    newUnreadContactRequest();
+}
 
-    accountsList_->Append(account);
+void
+AccountsViewModel::addRingAccount(  std::string& alias,
+                                    std::string& ringID,
+                                    std::string& accountID,
+                                    std::string& deviceId,
+                                    std::string& deviceName,
+                                    bool active,
+                                    bool upnpState,
+                                    bool autoAnswer,
+                                    bool dhtPublicInCalls,
+                                    bool turnEnabled,
+                                    std::string& turnAddress)
+{
+    auto account = ref new Account( Utils::toPlatformString(alias),
+                                    Utils::toPlatformString(ringID),
+                                    "RING",
+                                    Utils::toPlatformString(accountID),
+                                    Utils::toPlatformString(deviceId),
+                                    Utils::toPlatformString(deviceName),
+                                    active,
+                                    upnpState,
+                                    autoAnswer,
+                                    dhtPublicInCalls,
+                                    turnEnabled,
+                                    Utils::toPlatformString(turnAddress),
+                                    "" /* sip hostame not used with ring account */,
+                                    "" /* sip username not used with ring account */,
+                                    "" /* sip password not used with ring */ );
+    RingD::instance->lookUpAddress(accountID, Utils::toPlatformString(ringID));
+    accountsList_->InsertAt(0, account);
     contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
-    updateScrollView();
     accountAdded(account);
 }
 
 void
-AccountsViewModel::addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword)
+AccountsViewModel::addSipAccount(   std::string& alias,
+                                    std::string& accountID,
+                                    bool active,
+                                    std::string& sipHostname,
+                                    std::string& sipUsername,
+                                    std::string& sipPassword)
 {
-    auto account = ref new Account(
-                       Utils::toPlatformString(alias),
-                       "" /* ring Id not used with sip */ ,
-                       "SIP",
-                       Utils::toPlatformString(accountID),
-                       "" /* device id not used with sip */,
-                       false /* upnpn not used with sip */,
-                       Utils::toPlatformString(sipHostname),
-                       Utils::toPlatformString(sipUsername),
-                       Utils::toPlatformString(sipPassword)
-                   );
+    auto account = ref new Account( Utils::toPlatformString(alias),
+                                    "" /* ring Id not used with sip */ ,
+                                    "SIP",
+                                    Utils::toPlatformString(accountID),
+                                    "" /* device id not used with sip */,
+                                    "" /* device name not used with sip */,
+                                    active,
+                                    false /* upnpn not used with sip */,
+                                    false,
+                                    true,
+                                    false,
+                                    "",
+                                    Utils::toPlatformString(sipHostname),
+                                    Utils::toPlatformString(sipUsername),
+                                    Utils::toPlatformString(sipPassword));
 
-    accountsList_->Append(account);
+    accountsList_->InsertAt(0, account);
     contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
-    updateScrollView();
     accountAdded(account);
 }
 
@@ -111,28 +139,75 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
     return nullptr;
 }
 
+Account^
+AccountsViewModel::findAccountByRingID(String ^ ringId)
+{
+    for each (Account^ item in accountsList_)
+        if (item->ringID_ == ringId)
+            return item;
+
+    return nullptr;
+}
+
 ContactListModel^
 AccountsViewModel::getContactListModel(std::string& accountId)
 {
-    try {
+    if (contactListModels_->Size)
         return contactListModels_->Lookup(Utils::toPlatformString(accountId));
-    }
-    catch (Platform::OutOfBoundsException^ e) {
-        EXC_(e);
-        return nullptr;
-    }
+    return nullptr;
 }
 
 int
 AccountsViewModel::unreadMessages(String ^ accountId)
 {
     int messageCount = 0;
+    auto acceptIncognitoMessages = findItem(accountId)->_dhtPublicInCalls;
     if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
         for each (auto contact in contactListModel->_contactsList) {
-            messageCount += contact->_unreadMessages;
+            if (acceptIncognitoMessages || contact->_trustStatus == TrustStatus::TRUSTED)
+                messageCount += contact->_unreadMessages;
         }
     }
     return messageCount;
+}
+
+int
+AccountsViewModel::unreadContactRequests(String ^ accountId)
+{
+    int contactRequestCount = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
+                contactRequestCount += contact->_unreadContactRequest ? 1 : 0;
+            }
+        }
+    }
+    return contactRequestCount;
+}
+
+int
+AccountsViewModel::bannedContacts(String^ accountId)
+{
+    int bannedContacts = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (contact->_trustStatus == TrustStatus::BLOCKED) {
+                bannedContacts++;
+            }
+        }
+    }
+    return bannedContacts;
+}
+
+int
+AccountsViewModel::activeAccounts()
+{
+    int totalActiveAccounts = 0;
+    for (auto account : accountsList_) {
+        if (account->_active)
+            totalActiveAccounts++;
+    }
+    return totalActiveAccounts;
 }
 
 void
@@ -142,31 +217,37 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
 
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
-    if (contact == nullptr)
-        contact = contactListModel->addNewContact(fromRingId, fromRingId);
-
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+    bool itemSelected = false;
+    if (auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem)
+        itemSelected = (selectedItem->_contact == contact);
+    auto isInBackground = RingD::instance->isInBackground;
 
     if (contact == nullptr) {
-        ERR_("contact not handled!");
-        return;
+        contact = contactListModel->addNewContact(fromRingId, fromRingId, TrustStatus::UNKNOWN, true);
+        RingD::instance->lookUpAddress(Utils::toString(accountId), fromRingId);
+        if (!itemSelected || isInBackground || RingD::instance->isInvisible) {
+            RingD::instance->unpoppedToasts.insert(std::make_pair(contact->ringID_,
+                [isInBackground, fromRingId, payload](String^ username) {
+                RingD::instance->ShowIMToast(isInBackground, fromRingId, payload, username);
+            }));
+        }
+    }
+    else {
+        contact->_isIncognitoContact = true;
+        if (!itemSelected || isInBackground || RingD::instance->isInvisible) {
+            RingD::instance->ShowIMToast(isInBackground, fromRingId, payload);
+        }
     }
 
-    RingD::instance->lookUpAddress(fromRingId);
-
-    contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
+    auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
+    contact->_conversation->addMessage(MSG_FROM_CONTACT, payload, std::time(nullptr), false, messageId);
 
     /* save contacts conversation to disk */
     contact->saveConversationToFile();
 
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto selectedContact = (item) ? item->_contact : nullptr;
-
-    if (contact->ringID_ == fromRingId && contact != selectedContact) {
-        contact->_unreadMessages++;
-        newUnreadMessage();
-        /* saveContactsToFile used to save the notification */
-        contactListModel->saveContactsToFile();
-    }
+    newUnreadMessage(contact);
 }
 
 void
@@ -181,18 +262,14 @@ AccountsViewModel::OnincomingMessage(String ^callId, String ^payload)
     if (contact) {
         auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
-        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
+        auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
+        contact->_conversation->addMessage(MSG_FROM_CONTACT, payload, std::time(nullptr), false, messageId);
 
         /* save contacts conversation to disk */
         contact->saveConversationToFile();
 
         auto selectedContact = (item) ? item->_contact : nullptr;
 
-        if (contact != selectedContact) {
-            contact->_unreadMessages++;
-            newUnreadMessage();
-            /* saveContactsToFile used to save the notification */
-            contactListModel->saveContactsToFile();
-        }
+        newUnreadMessage(contact);
     }
 }

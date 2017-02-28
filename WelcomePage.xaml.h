@@ -31,11 +31,11 @@ public ref class WelcomePage sealed
 {
 public:
     WelcomePage();
-protected:
-    void PositionImage();
-    void OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e);
+    void    generateShareData();
+
 private:
-    void _aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void    _welcomeAboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+
 internal:
     event SummonAboutPage^ summonAboutPage;
 };
