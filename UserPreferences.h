@@ -46,9 +46,12 @@ public:
 
     /* properties */
     property int            PREF_ACCOUNT_INDEX;
+    property String^        PREF_ACCOUNT_ID;
     property uint64_t       PREF_PROFILE_UID;
     property bool           PREF_PROFILE_HASPHOTO;
     property String^        PREF_PROFILE_FN;
+
+    property bool           profileImageLoaded;
 
     /* functions */
     void                    save();
@@ -58,6 +61,8 @@ public:
     VCardUtils::VCard^      getVCard();
     void                    saveProfileToVCard();
 
+    void                    raiseSelectIndex(int index);
+
 internal:
     void                    sendVCard(std::string callID);
 
@@ -66,10 +71,12 @@ internal:
     event LoadProfileImage^ loadProfileImage;
 
 private:
+    bool loaded_;
     VCardUtils::VCard^ vCard_;
     UserPreferences();
-
 };
 
+task<Windows::UI::Xaml::Media::Imaging::BitmapImage^> getProfileImageAsync();
+//void    getProfileImageAsync();
 }
 }
