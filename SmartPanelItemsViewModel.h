@@ -26,9 +26,12 @@ using namespace RingClientUWP::Controls;
 
 namespace RingClientUWP
 {
-namespace ViewModel {
+delegate void SelectedItemUpdated();
 
-public ref class SmartPanelItemsViewModel sealed
+namespace ViewModel
+{
+
+ref class SmartPanelItemsViewModel sealed
 {
 public:
     bool isInCall();
@@ -78,12 +81,14 @@ internal:
             if (oldItem_ != nullptr)
                 oldItem_->_isSelected = false;
 
-            if (currentItem_ != nullptr)
+            if (currentItem_ != nullptr) {
                 currentItem_->_isSelected = true;
-
-            //newContactSelected();
+                raiseSelectedItemUpdated();
+            }
         }
     }
+
+    event SelectedItemUpdated^ selectedItemUpdated;
 
 private:
     SmartPanelItemsViewModel(); // singleton
@@ -91,6 +96,7 @@ private:
     SmartPanelItem^ currentItem_;
     SmartPanelItem^ oldItem_;
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
+    void raiseSelectedItemUpdated();
 };
 }
 }
