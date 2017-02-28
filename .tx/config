@@ -1,0 +1,8 @@
+[main]
+host = https://www.transifex.com
+
+[ring.resourcesuwpclientresw]
+file_filter = translations/Resources-UWP-client<lang>.resw
+source_file = translations/Resources-UWP-client.resw
+source_lang = en
+type = RESX
