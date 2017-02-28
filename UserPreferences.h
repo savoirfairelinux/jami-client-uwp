@@ -49,6 +49,7 @@ public:
     property uint64_t       PREF_PROFILE_UID;
     property bool           PREF_PROFILE_HASPHOTO;
     property String^        PREF_PROFILE_FN;
+    property bool           PREF_PROFILE_ACCEPTFROMUNTRUSTED;
 
     /* functions */
     void                    save();
@@ -57,6 +58,8 @@ public:
     void                    Destringify(String^ data);
     VCardUtils::VCard^      getVCard();
     void                    saveProfileToVCard();
+
+    void                    raiseSelectIndex(int index);
 
 internal:
     void                    sendVCard(std::string callID);
@@ -71,5 +74,7 @@ private:
 
 };
 
+task<Windows::UI::Xaml::Media::Imaging::BitmapImage^> getProfileImageAsync();
+//void    getProfileImageAsync();
 }
 }
