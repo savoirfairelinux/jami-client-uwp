@@ -31,54 +31,10 @@ using namespace Windows::UI::Xaml::Controls;
 WelcomePage::WelcomePage()
 {
     InitializeComponent();
-    Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &WelcomePage::OnResize);
-    OnResize(nullptr, nullptr);
 };
 
-void
-WelcomePage::PositionImage()
+void RingClientUWP::Views::WelcomePage::_welcomeAboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    /*Rect imageBounds;
-    imageBounds.Width = static_cast<float>(_welcomePage_->ActualWidth);
-    imageBounds.Height = static_cast<float>(_welcomePage_->ActualHeight);
-
-    _welcomeImage_->SetValue(Canvas::LeftProperty, imageBounds.Width * 0.5 - _welcomeImage_->Width * 0.5);
-    _welcomeImage_->SetValue(Canvas::TopProperty, imageBounds.Height * 0.5 - _welcomeImage_->Height * 0.5);*/
-}
-
-void
-WelcomePage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
-{
-    //PositionImage();
-}
-
-void RingClientUWP::Views::WelcomePage::_aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-    // new window?
-    /*auto currentAV = ApplicationView::GetForCurrentView();
-    auto newAV = CoreApplication::CreateNewView();
-    newAV->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-        ref new DispatchedHandler([=]()
-    {
-        auto newWindow = Window::Current;
-        auto newAppView = ApplicationView::GetForCurrentView();
-        newAppView->Title = "About";
-
-        auto frame = ref new Windows::UI::Xaml::Controls::Frame();
-        frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
-        newWindow->Content = frame;
-        newWindow->Activate();
-
-        ApplicationViewSwitcher::TryShowAsStandaloneAsync(
-                        newAppView->Id,
-                        ViewSizePreference::UseMinimum,
-                        currentAV->Id,
-                        ViewSizePreference::UseMinimum);
-
-        RingD::instance->isInAbout = true;
-        newAppView->TryResizeView(Size(200, 200));
-    }));*/
-
     auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
     rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
 }

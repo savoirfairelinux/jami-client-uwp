@@ -1,3 +1,22 @@
+/**************************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+**************************************************************************/
+
 #include "pch.h"
 #include <direct.h>
 #include "Wizard.xaml.h"
@@ -35,6 +54,7 @@ Wizard::Wizard()
 void RingClientUWP::Views::Wizard::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs ^ e)
 {
     RingD::instance->init();
+    RingD::instance->isInWizard = true;
 }
 
 void
@@ -43,6 +63,7 @@ Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
     //RingD::instance->_startingStatus = StartingStatus::REGISTERING_ON_THIS_PC;
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
+        RingD::instance->isInWizard = false;
         RingD::instance->createRINGAccount(_fullnameTextBox_->Text
                                            , _password_->Password
                                            , true // upnp by default set to true
@@ -78,40 +99,20 @@ Wizard::_showAddAccountMenuBtn__Click(Object^ sender, RoutedEventArgs^ e)
 void
 Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Jpeg;
-    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
-
-    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
-    .then([this](StorageFile^ photoFile)
-    {
-        if (photoFile != nullptr) {
-            auto brush = ref new ImageBrush();
-
-            auto circle = ref new Ellipse();
-            circle->Height = 80;
-            circle->Width = 80;
-            auto path = photoFile->Path;
-            auto uri = ref new Windows::Foundation::Uri(path);
-            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
-            bitmapImage->UriSource = uri;
-
-            std::string fileBuffer = Utils::getStringFromFile(Utils::toString(photoFile->Path));
-            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
-            _mkdir(profilePath.c_str());
-            std::ofstream file((profilePath + "\\profile_image.png"),
-                               std::ios::out | std::ios::trunc | std::ios::binary);
-            if (file.is_open()) {
-                file << fileBuffer;
-                file.close();
+    create_task(Configuration::getProfileImageAsync()).then([&](task<BitmapImage^> image){
+        try {
+            if (auto bitmapImage = image.get()) {
+                auto brush = ref new ImageBrush();
+                auto circle = ref new Ellipse();
+                circle->Height = 100;
+                circle->Width = 100;
+                brush->ImageSource = bitmapImage;
+                circle->Fill = brush;
+                _avatarWebcamCaptureBtn_->Content = circle;
             }
-
-            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
-            Configuration::UserPreferences::instance->save();
-
-            brush->ImageSource = bitmapImage;
-            circle->Fill = brush;
-            _avatarWebcamCaptureBtn_->Content = circle;
+        }
+        catch (Platform::Exception^ e) {
+            ERR_("Exception thrown during getProfileImageAsync: " + e->Message);
         }
     });
 }
@@ -201,7 +202,8 @@ void RingClientUWP::Views::Wizard::_usernameTextBox__KeyUp(Platform::Object^ sen
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     } else {
-        RingD::instance->lookUpName(alias);
+        auto accountId = ViewModel::AccountListItemsViewModel::instance->getSelectedAccountId();
+        RingD::instance->lookUpName(Utils::toString(accountId), alias);
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
@@ -220,10 +222,12 @@ void RingClientUWP::Views::Wizard::_RegisterState__Toggled(Platform::Object^ sen
 
     if (isPublic) {
         _usernameTextBox_->IsEnabled = true;
-        _whatWilHappen_->Text = "peoples will find you with your username.";
+        auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
+        _whatWillHappen_->Text = loader->GetString("_whatWillHappenEditionUid_.Text");
     } else {
         _usernameTextBox_->IsEnabled = false;
-        _whatWilHappen_->Text = "you'll have to send your ringId.";
+        auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
+        _whatWillHappen_->Text = loader->GetString("_whatWillHappen_2_");
     }
 
     checkState();
@@ -273,16 +277,13 @@ void RingClientUWP::Views::Wizard::_step2button__Click(Platform::Object^ sender,
     _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, const std::string& address, const std::string& name)
+void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status,  const std::string& accountId, const std::string& address, const std::string& name)
 {
     switch (status)
     {
     case LookupStatus::SUCCESS:
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        isUsernameValid = false;
-        break;
     case LookupStatus::INVALID_NAME:
+    case LookupStatus::ERRORR:
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         isUsernameValid = false;
@@ -291,11 +292,6 @@ void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, co
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         isUsernameValid = true;
-        break;
-    case LookupStatus::ERRORR:
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        isUsernameValid = false;
         break;
     }
 
@@ -306,7 +302,8 @@ void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, co
 
 void RingClientUWP::Views::Wizard::OnregistrationStateErrorGeneric(const std::string &accountId)
 {
-    _response_->Text = "Credentials error or PIN expired.";
+    auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
+    _response_->Text = loader->GetString("_accountsCredentialsExpired_");
     _addAccountYes_->IsEnabled = false;
 }
 
