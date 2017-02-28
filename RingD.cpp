@@ -824,6 +824,25 @@ RingD::registerCallbacks()
         })
     };
     registerConfHandlers(nameRegistrationHandlers);
+
+    trustRequestHandlers =
+    {
+        DRing::exportable_callback<DRing::ConfigurationSignal::IncomingTrustRequest>(
+            [&](const std::string& account_id,
+                const std::string& from,
+                const std::vector<uint8_t>& payload,
+                time_t received)
+        {
+            dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]() {
+                MSG_("IncomingTrustRequest");
+                MSG_("account_id = " + account_id);
+                MSG_("from = " + from);
+                MSG_("received = " + received.ToString());
+            }));
+        })
+    };
+    registerConfHandlers(trustRequestHandlers);
 }
 
 void

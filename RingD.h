@@ -228,6 +228,9 @@ private:
         MuteAudio,
         LookUpName,
         LookUpAddress,
+        SendTrustRequest,
+        AcceptTrustRequest,
+        DiscardTrustRequest,
         RegisterName
     };
 
@@ -296,5 +299,6 @@ private:
     std::map<std::string, SharedCallback> incomingVideoHandlers;
     std::map<std::string, SharedCallback> outgoingVideoHandlers;
     std::map<std::string, SharedCallback> nameRegistrationHandlers;
+    std::map<std::string, SharedCallback> trustRequestHandlers;
 };
 }
