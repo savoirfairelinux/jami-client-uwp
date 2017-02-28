@@ -22,7 +22,6 @@ using namespace Platform;
 
 using namespace Windows::Media::Audio;
 using namespace Windows::Media::Core;
-using namespace Windows::Media::Playback;
 
 namespace RingClientUWP
 {
@@ -39,8 +38,8 @@ private:
     AudioFileInputNode^ _fileInputNode;
     AudioGraph^ _graph;
     AudioDeviceOutputNode^ _deviceOutputNode;
-    MediaPlayer^ mp;
     String^ fileName_;
+    double startingGain;
 
     task<void> CreateGraph();
     task<void> CreateDefaultDeviceOutputNode();

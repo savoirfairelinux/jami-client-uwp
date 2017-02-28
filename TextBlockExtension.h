@@ -1,7 +1,6 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,23 +15,40 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
+
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Interop;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Interop;
+using namespace Windows::UI::Xaml::Documents;
+using namespace Platform;
+
 #include "pch.h"
+#include <regex>
 
-#include "CallsViewModel.h"
-
-using namespace RingClientUWP;
-using namespace ViewModel;
-using namespace Windows::UI::Core;
-using namespace Windows::ApplicationModel::Core;
-
-CallsViewModel::CallsViewModel()
+namespace RingClientUWP
 {
-    callIdsList_ = ref new Vector<String^>();
 
-    /* connect to delegates. */
+namespace UserAndCustomControls {
 
-    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
-    String^ accountId, String^ callId, String^ from) {
-        callIdsList_->Append(callId); // TODO : check if the string is remove when the call ends.
-    });
+public ref class TextBlockExtension sealed : public Control
+{
+private:
+    static DependencyProperty^ FormattedTextProperty;
+
+public:
+    TextBlockExtension::TextBlockExtension();
+
+    static String^ GetFormattedText(DependencyObject^ obj) {
+        return (String^)obj->GetValue(FormattedTextProperty);
+    };
+    static void SetFormattedText(DependencyObject^ obj, String^ value) {
+        obj->SetValue(FormattedTextProperty, value);
+    }
+
+};
+
+}
 }
