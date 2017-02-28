@@ -19,14 +19,51 @@
     x:Class="RingClientUWP.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RingClientUWP">
+    xmlns:local="using:RingClientUWP"
+    xmlns:views="using:RingClientUWP.Views"
+    xmlns:uc="using:RingClientUWP.UserAndCustomControls">
 
     <Application.Resources>
         <ResourceDictionary>
+            <!--  converters  -->
+            <views:BubbleBackground x:Key="_bubbleBackground_" />
+            <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
+            <views:boolToVisibility x:Key="_boolToVisibility_" />
+            <views:MessageDateTimeString x:Key="_MessageDateTimeString_" />
+            <views:MessageChainBreakToVisibility x:Key="_MessageChainBreakToVisibility_" />
+            <views:MessageChainBreakToHeight x:Key="_MessageChainBreakToHeight_" />
+            <views:CachedImageConverter x:Key="_CachedImageConverter_" />
+            <views:NameToInitialConverter x:Key="_NameToInitialConverter_" />
+            <views:NewMessageBubbleNotification x:Key="_NewMessageBubbleNotification_" />
+            <views:NewMessageNotificationToNumber x:Key="_NewMessageNotificationToNumber_" />
+            <views:IncomingVisibility x:Key="_IncomingVisibility_" />
+            <views:OutGoingVisibility x:Key="_OutGoingVisibility_" />
+            <views:HasAnActiveCall x:Key="_HasAnActiveCall_" />
+            <views:HasAvatarToVisibility x:Key="_HasAvatarToVisibility_" />
+            <views:AccountTypeToSourceImage x:Key="_AccountTypeToSourceImage_" />
+            <views:RingAccountTypeToVisibility x:Key="_RingAccountTypeToVisibility_" />
+            <views:AccountSelectedToVisibility x:Key="_AccountSelectedToVisibility_" />
+            <views:CollapseEmptyString x:Key="_CollapseEmptyString_" />
+            <views:ContactStatusNotification x:Key="_ContactStatusNotification_" />
+            <views:uintToVisibility x:Key="_uintToVisibility_" />
+            <views:OneToVisibility x:Key="_OneToVisibility_" />
+            <views:PresenceStatus x:Key="_PresenceStatus_" />
+            <views:MoreThanOneToVisibility x:Key="_MoreThanOneToVisibility_" />
+            <views:MoreThanZeroToVisibility x:Key="_MoreThanZeroToVisibility_" />
+            <views:UnreadAccountNotificationsString x:Key="_UnreadAccountNotificationsString_" />
+            <views:PartialTrustToVisibility x:Key="_PartialTrustToVisibility_" />
+            <views:TrustedToVisibility x:Key="_TrustedToVisibility_" />
+            <views:SelectedAccountToVisibility x:Key="_SelectedAccountToVisibility_" />
+            <views:CallStatusToSpinnerVisibility x:Key="_CallStatusToSpinnerVisibility_" />
+            <views:CallStatusForIncomingCallEllipse x:Key="_CallStatusForIncomingCallEllipse_" />
+            <views:AccountRegistrationStateToString x:Key="_AccountRegistrationStateToString_" />
+            <views:AccountRegistrationStateToForeground x:Key="_AccountRegistrationStateToForeground_" />
+            <views:ContactAccountTypeToVisibility x:Key="_ContactAccountTypeToVisibility_" />
+            <views:ContactConferenceableToVisibility x:Key="_ContactConferenceableToVisibility_" />
+
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="ms-appx:///Styles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
-
 </Application>

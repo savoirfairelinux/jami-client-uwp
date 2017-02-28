@@ -1,0 +1,558 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="_aboutBasicButton_.Content" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="_aboutCloseButton_.Content" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="_aboutCreditsButton_.Content" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="_aboutDisclaimer_.Text" xml:space="preserve">
+    <value>This program comes with absolutely no warranty</value>
+  </data>
+  <data name="_aboutGPL_0_.Text" xml:space="preserve">
+    <value>See the </value>
+  </data>
+  <data name="_aboutGPL_1_.Content" xml:space="preserve">
+    <value>GNU General Public License, version 3 or later</value>
+  </data>
+  <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
+    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
+  </data>
+  <data name="_aboutGPL_2_.Text" xml:space="preserve">
+    <value> for details.</value>
+  </data>
+  <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
+    <value>Ring is a secured and distributed communication software.</value>
+  </data>
+  <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
+    <value>The Microsoft Windows Runtime client for Ring.</value>
+  </data>
+  <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
+    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+  </data>
+  <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter alias</value>
+  </data>
+  <data name="_accountEditionTitle_.Text" xml:space="preserve">
+    <value>Edit Account</value>
+  </data>
+  <data name="_accountsAddDevice_.Text" xml:space="preserve">
+    <value>Add Device</value>
+  </data>
+  <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
+    <value>Enter PIN</value>
+  </data>
+  <data name="_accountsAddStep1_.Text" xml:space="preserve">
+    <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
+  </data>
+  <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
+    <value>Auto answer</value>
+  </data>
+  <data name="_accountsDevices_.Text" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
+    <value>Enter your password</value>
+  </data>
+  <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
+    <value>Accept calls and messages from incognito contacts</value>
+  </data>
+  <data name="_accountsPINGenerator_.Text" xml:space="preserve">
+    <value>PIN generator</value>
+  </data>
+  <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
+    <value>Register public username</value>
+  </data>
+  <data name="_accountsShare_.Text" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="_accountsSIPParameters_.Text" xml:space="preserve">
+    <value>SIP account parameters</value>
+  </data>
+  <data name="_accountsTitle_.Text" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="_accountsType_.Text" xml:space="preserve">
+    <value>Account type</value>
+  </data>
+  <data name="_accountsUPnP_.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
+    <value>Exporting account on the Ring...</value>
+  </data>
+  <data name="_callsLookingFor_" xml:space="preserve">
+    <value>looking for </value>
+  </data>
+  <data name="_contactRequestPending_.Text" xml:space="preserve">
+    <value>has added you as a contact</value>
+  </data>
+  <data name="_contactRequestSent_.Text" xml:space="preserve">
+    <value>Contact request sent</value>
+  </data>
+  <data name="_contactRequestsTitle_.Text" xml:space="preserve">
+    <value>Contact Requests</value>
+  </data>
+  <data name="_contactsTitle_.Text" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
+    <value>Beginning of Time</value>
+  </data>
+  <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
+    <value>Repeat password</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="_settingsTitle_.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="_settingsVideoDevice_.Text" xml:space="preserve">
+    <value>Device</value>
+  </data>
+  <data name="_settingsVideoRate_.Text" xml:space="preserve">
+    <value>Rate</value>
+  </data>
+  <data name="_settingsVideoResolution_.Text" xml:space="preserve">
+    <value>Resolution</value>
+  </data>
+  <data name="_settingsVideo_.Text" xml:space="preserve">
+    <value>वीडियो</value>
+  </data>
+  <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter hostname</value>
+  </data>
+  <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter password</value>
+  </data>
+  <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter username</value>
+  </data>
+  <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Enter your username</value>
+  </data>
+  <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
+    <value>waiting for devices list...</value>
+  </data>
+  <data name="_welcomeAboutButton_.Content" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="_welcomeDescription_.Text" xml:space="preserve">
+    <value>रिंग हर तरह के संवाद के लिये एक मुक्त/स्विधीन साॅफ्टवेयर है, जो अपने उपभोक्ताओं की स्वाधीनता व गोपनीयता का सम्मान करता है</value>
+  </data>
+  <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
+    <value>Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted.</value>
+  </data>
+  <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
+    <value>Your account will be deleted from this computer.</value>
+  </data>
+  <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
+    <value>People can find you with your username</value>
+  </data>
+  <data name="_whatWillHappen_0_" xml:space="preserve">
+    <value>You are already registered.</value>
+  </data>
+  <data name="_whatWillHappen_1_" xml:space="preserve">
+    <value>You are not yet registered.</value>
+  </data>
+  <data name="_whatWillHappen_2_" xml:space="preserve">
+    <value>You&apos;ll have to send your ringId.</value>
+  </data>
+  <data name="_accountsCredentialsExpired_" xml:space="preserve">
+    <value>Credentials error or PIN expired.</value>
+  </data>
+  <data name="_accountsNoDeviceId_" xml:space="preserve">
+    <value>No device id found!</value>
+  </data>
+  <data name="_contactsContactExists_" xml:space="preserve">
+    <value>you already have a contact with this ring id</value>
+  </data>
+  <data name="_contactsNetworkError_" xml:space="preserve">
+    <value>network error!</value>
+  </data>
+  <data name="_contactsRingIdAdded_" xml:space="preserve">
+    <value>ring id added</value>
+  </data>
+  <data name="_contactsUserAdded_" xml:space="preserve">
+    <value>username found and added</value>
+  </data>
+  <data name="_contactsUsernameInvalid_" xml:space="preserve">
+    <value>username invalid</value>
+  </data>
+  <data name="_contactsUsernameNotFound_" xml:space="preserve">
+    <value>username not found</value>
+  </data>
+  <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
+    <value>Add Existing Account</value>
+  </data>
+  <data name="_wizardCreateAccount_.Content" xml:space="preserve">
+    <value>Create New Account</value>
+  </data>
+  <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
+    <value>Enter your full name</value>
+  </data>
+  <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
+    <value>Ring account password</value>
+  </data>
+  <data name="_wizardStep1_.Content" xml:space="preserve">
+    <value>Step 1</value>
+  </data>
+  <data name="_wizardStep2_.Content" xml:space="preserve">
+    <value>Step 2</value>
+  </data>
+  <data name="_accountsAlias_.Text" xml:space="preserve">
+    <value>Alias</value>
+  </data>
+  <data name="_accountsCreation_.Text" xml:space="preserve">
+    <value>Create Account</value>
+  </data>
+  <data name="_accountsEnabled_.Text" xml:space="preserve">
+    <value>Account enabled</value>
+  </data>
+  <data name="_accountsHideBannedList_" xml:space="preserve">
+    <value>Hide banned contacts</value>
+  </data>
+  <data name="_accountsShowBannedList_" xml:space="preserve">
+    <value>Show banned contacts</value>
+  </data>
+  <data name="_accountNotRegistered_" xml:space="preserve">
+    <value>No connection available</value>
+  </data>
+  <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
+    <value>Accept account modifications</value>
+  </data>
+  <data name="_tt_accept_call_.Text" xml:space="preserve">
+    <value>Accept the incoming call</value>
+  </data>
+  <data name="_tt_accept_cr_.Text" xml:space="preserve">
+    <value>Add this user to your contacts</value>
+  </data>
+  <data name="_tt_account_cancel_.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="_tt_account_list_menu_.Text" xml:space="preserve">
+    <value>Accounts</value>
+  </data>
+  <data name="_tt_add_account_.Text" xml:space="preserve">
+    <value>Create a new account</value>
+  </data>
+  <data name="_tt_add_account_next_.Text" xml:space="preserve">
+    <value>Next step</value>
+  </data>
+  <data name="_tt_add_account_yes_.Text" xml:space="preserve">
+    <value>Add account</value>
+  </data>
+  <data name="_tt_add_banned_.Text" xml:space="preserve">
+    <value>Unblock and add this user to your contacts</value>
+  </data>
+  <data name="_tt_add_device_.Text" xml:space="preserve">
+    <value>Add a new device to this account</value>
+  </data>
+  <data name="_tt_audio_call_.Text" xml:space="preserve">
+    <value>Start an audio call</value>
+  </data>
+  <data name="_tt_block_cr_.Text" xml:space="preserve">
+    <value>Block this user from making any further contact</value>
+  </data>
+  <data name="_tt_block_cr_2.Text" xml:space="preserve">
+    <value>(the user can be unblocked from the Account Settings panel)</value>
+  </data>
+  <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
+    <value>Cancel account modifications</value>
+  </data>
+  <data name="_tt_cancel_call_.Text" xml:space="preserve">
+    <value>Cancel the outgoing call</value>
+  </data>
+  <data name="_tt_change_orientation_.Text" xml:space="preserve">
+    <value>Change message panel orientation</value>
+  </data>
+  <data name="_tt_clear_conversation_.Text" xml:space="preserve">
+    <value>Erase this conversation</value>
+  </data>
+  <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="_tt_create_account_yes_.Text" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
+    <value>Contact Requests</value>
+  </data>
+  <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
+    <value>Devices</value>
+  </data>
+  <data name="_tt_done_.Text" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="_tt_edit_account_.Text" xml:space="preserve">
+    <value>Open the Account Settings panel</value>
+  </data>
+  <data name="_tt_home_menu_.Text" xml:space="preserve">
+    <value>Home/About</value>
+  </data>
+  <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
+    <value>Ignore this user&apos;s contact request</value>
+  </data>
+  <data name="_tt_link_device_.Text" xml:space="preserve">
+    <value>Link this device to an existing account</value>
+  </data>
+  <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
+    <value>Cancel PIN generation</value>
+  </data>
+  <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
+    <value>Generate account PIN</value>
+  </data>
+  <data name="_tt_reject_call_.Text" xml:space="preserve">
+    <value>Reject the incoming call</value>
+  </data>
+  <data name="_tt_remove_contact_.Text" xml:space="preserve">
+    <value>Remove this contact</value>
+  </data>
+  <data name="_tt_revoke_device_.Text" xml:space="preserve">
+    <value>Revoke the device from this account</value>
+  </data>
+  <data name="_tt_send_message_.Text" xml:space="preserve">
+    <value>Send message</value>
+  </data>
+  <data name="_tt_settings_menu_.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="_tt_share_menu_.Text" xml:space="preserve">
+    <value>Display QR code and RingID</value>
+  </data>
+  <data name="_tt_video_call_.Text" xml:space="preserve">
+    <value>Start a video call</value>
+  </data>
+  <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
+    <value>Enable TURN server</value>
+  </data>
+  <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
+    <value>Add to contacts</value>
+  </data>
+  <data name="_si_audioCodec_.Text" xml:space="preserve">
+    <value>Audio codec: </value>
+  </data>
+  <data name="_si_fps_.Text" xml:space="preserve">
+    <value>Framerate: </value>
+  </data>
+  <data name="_si_resolution_.Text" xml:space="preserve">
+    <value>Resoulution: </value>
+  </data>
+  <data name="_si_videoCodec_.Text" xml:space="preserve">
+    <value>Video codec: </value>
+  </data>
+  <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
+    <value>Add Device</value>
+  </data>
+  <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
+    <value>Search for new or existing contacts</value>
+  </data>
+  <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
+    <value>Search for new or existing contacts</value>
+  </data>
+  <data name="_thisDevice_.Text" xml:space="preserve">
+    <value>This device</value>
+  </data>
+  <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>TURN server address</value>
+  </data>
+  <data name="_tt_delete_account_.Text" xml:space="preserve">
+    <value>Delete account</value>
+  </data>
+  <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
+    <value>Type a message</value>
+  </data>
+  <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="_add_to_conference_.Text" xml:space="preserve">
+    <value>Add to conference</value>
+  </data>
+  <data name="_call_.Text" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="_copy_ring_id_.Text" xml:space="preserve">
+    <value>Copy RingID</value>
+  </data>
+  <data name="_deviceName_.Text" xml:space="preserve">
+    <value>Name </value>
+  </data>
+  <data name="_network_unavailable_.Text" xml:space="preserve">
+    <value>Network unavailable</value>
+  </data>
+  <data name="_other_linked_devices_.Text" xml:space="preserve">
+    <value>Other linked devices</value>
+  </data>
+  <data name="_removeContact_.Text" xml:space="preserve">
+    <value>Remove contact</value>
+  </data>
+  <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
+    <value>Add Existing Account</value>
+  </data>
+  <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
+    <value>Create New Account</value>
+  </data>
+  <data name="m_never_called_" xml:space="preserve">
+    <value>never called</value>
+  </data>
+  <data name="_c_artwork_by_.Text" xml:space="preserve">
+    <value>Artwork by:</value>
+  </data>
+  <data name="_c_created_by_.Text" xml:space="preserve">
+    <value>Created by:</value>
+  </data>
+  <data name="_m_add_device_" xml:space="preserve">
+    <value>Attempting to add this device...</value>
+  </data>
+  <data name="_m_creating_account_" xml:space="preserve">
+    <value>Creating account...</value>
+  </data>
+  <data name="_m_deleting_account_" xml:space="preserve">
+    <value>Deleting account...</value>
+  </data>
+  <data name="_m_generating_pin_" xml:space="preserve">
+    <value>Generating PIN</value>
+  </data>
+  <data name="_m_revoking_device_" xml:space="preserve">
+    <value>Revoking device with ID:</value>
+  </data>
+  <data name="_m_updating_account_" xml:space="preserve">
+    <value>Updating account...</value>
+  </data>
+  <data name="_remove_contact_.Text" xml:space="preserve">
+    <value>Remove contact</value>
+  </data>
+</root>

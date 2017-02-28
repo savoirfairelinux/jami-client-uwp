@@ -21,64 +21,102 @@
 #include "WelcomePage.xaml.h"
 #include "AboutPage.xaml.h"
 
+#include "qrencode.h"
+#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
+
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
+using namespace RingClientUWP::ViewModel;
 
 using namespace Windows::UI::ViewManagement;
 using namespace Windows::UI::Core;
 using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::Storage;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::Graphics::Imaging;
 
 WelcomePage::WelcomePage()
 {
     InitializeComponent();
-    Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &WelcomePage::OnResize);
-    OnResize(nullptr, nullptr);
+
+    RingD::instance->shareRequested += ref new ShareRequested(this, &WelcomePage::generateShareData);
 };
 
 void
-WelcomePage::PositionImage()
+WelcomePage::_welcomeAboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    /*Rect imageBounds;
-    imageBounds.Width = static_cast<float>(_welcomePage_->ActualWidth);
-    imageBounds.Height = static_cast<float>(_welcomePage_->ActualHeight);
-
-    _welcomeImage_->SetValue(Canvas::LeftProperty, imageBounds.Width * 0.5 - _welcomeImage_->Width * 0.5);
-    _welcomeImage_->SetValue(Canvas::TopProperty, imageBounds.Height * 0.5 - _welcomeImage_->Height * 0.5);*/
+    auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
+    rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
 }
 
 void
-WelcomePage::OnResize(Platform::Object^ sender, Windows::UI::Core::WindowSizeChangedEventArgs^ e)
+WelcomePage::generateShareData()
 {
-    //PositionImage();
-}
+    auto ringId = AccountListItemsViewModel::instance->_selectedItem->_account->ringID_;
+    auto ringId2 = Utils::toString(ringId);
 
-void RingClientUWP::Views::WelcomePage::_aboutButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-    // new window?
-    /*auto currentAV = ApplicationView::GetForCurrentView();
-    auto newAV = CoreApplication::CreateNewView();
-    newAV->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-        ref new DispatchedHandler([=]()
+    _ringId_->Text = ringId;
+    _welcomeAboutButton_->Margin = Windows::UI::Xaml::Thickness(0.0, 24.0, 0.0, 0.0);
+
+    auto qrcode = QRcode_encodeString(ringId2.c_str(),
+        0, //Let the version be decided by libqrencode
+        QR_ECLEVEL_L, // Lowest level of error correction
+        QR_MODE_8, // 8-bit data mode
+        1);
+
+    if (!qrcode) {
+        WNG_("Failed to generate QR code: ");
+        return;
+    }
+
+    const int STRETCH_FACTOR = 4;
+    const int widthQrCode = qrcode->width;
+    const int widthBitmap = STRETCH_FACTOR * widthQrCode;
+
+    unsigned char* qrdata = qrcode->data;
+
+    auto frame = ref new SoftwareBitmap(BitmapPixelFormat::Bgra8, widthBitmap, widthBitmap, BitmapAlphaMode::Premultiplied);
+
+    const int BYTES_PER_PIXEL = 4;
+
+
+    BitmapBuffer^ buffer = frame->LockBuffer(BitmapBufferAccessMode::ReadWrite);
+    IMemoryBufferReference^ reference = buffer->CreateReference();
+
+    Microsoft::WRL::ComPtr<IMemoryBufferByteAccess> byteAccess;
+    if (SUCCEEDED(reinterpret_cast<IUnknown*>(reference)->QueryInterface(IID_PPV_ARGS(&byteAccess))))
     {
-        auto newWindow = Window::Current;
-        auto newAppView = ApplicationView::GetForCurrentView();
-        newAppView->Title = "About";
+        byte* data;
+        unsigned capacity;
+        byteAccess->GetBuffer(&data, &capacity);
 
-        auto frame = ref new Windows::UI::Xaml::Controls::Frame();
-        frame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
-        newWindow->Content = frame;
-        newWindow->Activate();
+        auto desc = buffer->GetPlaneDescription(0);
 
-        ApplicationViewSwitcher::TryShowAsStandaloneAsync(
-                        newAppView->Id,
-                        ViewSizePreference::UseMinimum,
-                        currentAV->Id,
-                        ViewSizePreference::UseMinimum);
+        unsigned char* row, *p;
+        p = qrcode->data;
 
-        RingD::instance->isInAbout = true;
-        newAppView->TryResizeView(Size(200, 200));
-    }));*/
+        for (int u = 0; u < widthBitmap; u++) {
+            for (int v = 0; v < widthBitmap; v++) {
+                int x = static_cast<int>((float)u / (float)widthBitmap * (float)widthQrCode);
+                int y = static_cast<int>((float)v / (float)widthBitmap * (float)widthQrCode);
 
-    auto rootFrame = dynamic_cast<Windows::UI::Xaml::Controls::Frame^>(Window::Current->Content);
-    rootFrame->Navigate(Windows::UI::Xaml::Interop::TypeName(Views::AboutPage::typeid));
+                auto currPixelRow = desc.StartIndex + desc.Stride * u + BYTES_PER_PIXEL * v;
+                row = (p + (y * widthQrCode));
+
+                if (*(row + x) & 0x1) {
+                    data[currPixelRow + 3] = 255;
+                }
+            }
+        }
+
+    }
+    delete reference;
+    delete buffer;
+
+    auto sbSource = ref new Media::Imaging::SoftwareBitmapSource();
+
+    sbSource->SetBitmapAsync(frame);
+
+    _selectedAccountQrCode_->Source = sbSource;
+    _selectedAccountQrCode_->Visibility = VIS::Visible;
 }
