@@ -23,6 +23,8 @@ using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
 
+#include <chrono>
+
 namespace RingClientUWP
 {
 namespace Controls
@@ -33,10 +35,11 @@ public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 public:
     SmartPanelItem();
 
-    void muteVideo(bool state);
-
-    void notifyPropertyChanged(String^ propertyName);
+    void raiseNotifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    void muteVideo(bool state);
+    void startCallTimer();
 
     property Contact^ _contact {
         Contact^ get() { return contact_; }
@@ -46,7 +49,27 @@ public:
         }
     };
 
-    property String^ _callId;
+    property String^ _callId {
+        String^ get() {
+            return Utils::toPlatformString(call_.id);
+        }
+        void set(String^ value) {
+            call_.id = Utils::toString(value);
+        }
+    };
+
+    property String^ _callTime {
+        String^ get() {
+            auto duration = std::chrono::steady_clock::now() - call_.callStartTime;
+            auto hours = std::chrono::duration_cast<std::chrono::hours>(duration).count();
+            auto minutes = std::chrono::duration_cast<std::chrono::minutes>(duration).count() - hours * 60;
+            auto seconds = std::chrono::duration_cast<std::chrono::seconds>(duration).count() - minutes * 60;
+            auto hoursString = !hours ? "" : (hours < 10 ? "0" + hours.ToString() : hours.ToString()) + ":";
+            auto minutesString = minutes < 10 ? "0" + minutes.ToString() : minutes.ToString();
+            auto secondsString = seconds < 10 ? "0" + seconds.ToString() : seconds.ToString();
+            return hoursString + minutesString + ":" + secondsString;
+        }
+    };
 
     property CallStatus _callStatus {
         CallStatus get() { return callStatus_; }
@@ -62,11 +85,11 @@ public:
 
     property bool _audioMuted;
 
-    property Visibility _showMe {
-        Visibility get() { return showMe_; }
+    property Visibility _isVisible {
+        Visibility get() { return isVisible_; }
         void set(Visibility value) {
-            showMe_ = value;
-            NotifyPropertyChanged("_showMe");
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
         }
     }
 
@@ -99,13 +122,15 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Visibility showMe_ = Visibility::Visible;
+    Visibility isVisible_;
+    bool isSelected_;
+    bool isHovered_;
+
     CallStatus callStatus_;
     Contact^ contact_;
     String^ callId_;
+    Call call_;
     bool videoMuted_;
-    bool isSelected_;
-    bool isHovered_;
 
     void OncallPlaced(Platform::String ^callId);
 };
