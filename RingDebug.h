@@ -17,9 +17,13 @@
 **************************************************************************/
 #pragma once
 
-#define UWP_DBG_CLIENT      0
+#define UWP_DBG_CONSOLE     0
 #define UWP_DBG_VS          1
 #define UWP_DBG_FILE        1
+
+#define UWP_DBG_CLIENT      1
+#define UWP_DBG_IO          0
+#define UWP_DBG_DAEMON      1
 
 using namespace Windows::Storage;
 
@@ -64,23 +68,31 @@ private:
     RingDebug(); // singleton
 };
 
-void WriteLine(String^ str)
+void
+WriteLine(String^ str)
 {
     std::wstringstream wStringstream;
     wStringstream << str->Data() << "\n";
     OutputDebugString(wStringstream.str().c_str());
 }
 
-void WriteException(Exception^ ex)
+__declspec(deprecated)
+void
+WriteException(Exception^ ex)
 {
     std::wstringstream wStringstream;
     wStringstream << "0x" << ex->HResult << ": " << ex->Message->Data();
     OutputDebugString(wStringstream.str().c_str());
 }
 
+#if UWP_DBG_DAEMON
 #define DMSG_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::DMN, __FILE__, __LINE__); }))
+#else
+#define DMSG_(str)
+#endif
 
+#if UWP_DBG_CLIENT
 #define MSG_(str) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Type::MSG, __FILE__, __LINE__); }))
 
@@ -92,5 +104,17 @@ ref new DispatchedHandler([=]() { RingDebug::instance->print(str, RingDebug::Typ
 
 #define EXC_(e) CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High, \
 ref new DispatchedHandler([=]() { RingDebug::instance->print(e, __FILE__, __LINE__); }))
+
+#if UWP_DBG_IO
+#define IOMSG_(str) MSG_(str)
+#else
+#define IOMSG_(str)
+#endif
+#else
+#define MSG_(str)
+#define WNG_(str)
+#define ERR_(str)
+#define EXC_(e)
+#endif
 
 }

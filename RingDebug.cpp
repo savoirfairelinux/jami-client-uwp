@@ -79,7 +79,7 @@ RingDebug::print(const  std::string& message, const Type& type,
     OutputDebugString((wString + L"\n").c_str());
 #endif
 
-#if UWP_DBG_CLIENT
+#if UWP_DBG_CONSOLE
     /* fire the event. */
     messageToScreen(msg);
 #endif
@@ -110,7 +110,7 @@ RingDebug::print(String^ message, const Type& type,
     OutputDebugString(wStringstream.str().c_str());
 #endif
 
-#if UWP_DBG_CLIENT
+#if UWP_DBG_CONSOLE
     /* fire the event. */
     messageToScreen(messageTimestamped);
 #endif
@@ -128,7 +128,7 @@ void
 RingDebug::print(Exception^ e, std::string file, int line)
 {
     /* add header */
-    auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "0x" + e->HResult.ToString() + ": " + e->Message;
+    auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "Exception : 0x" + e->HResult.ToString() + ": " + e->Message;
 
 #if UWP_DBG_VS
     /* screen it into VS debug console */
@@ -137,7 +137,7 @@ RingDebug::print(Exception^ e, std::string file, int line)
     OutputDebugString(wStringstream.str().c_str());
 #endif
 
-#if UWP_DBG_CLIENT
+#if UWP_DBG_CONSOLE
     /* fire the event. */
     messageToScreen(message);
 #endif
