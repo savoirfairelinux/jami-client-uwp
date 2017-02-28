@@ -1,6 +1,5 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -20,37 +19,61 @@
 #pragma once
 
 using namespace Platform;
-using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
-
-#include <RingDebug.h>
 
 namespace RingClientUWP
 {
 namespace Controls
 {
 
-public ref class AccountListItem sealed : public INotifyPropertyChanged
+public ref class ContactRequestItem sealed : public INotifyPropertyChanged
 {
 public:
-    AccountListItem(Account^ a);
+    ContactRequestItem();
 
-    property Account^ _account;
+    property Contact^ _contact;
 
-    property bool _editionMode;
-    property bool _disconnected;
+    property TrustStatus _status {
+        TrustStatus get() { return status_; }
+        void set(TrustStatus value) {
+            status_ = value;
+            NotifyPropertyChanged("_status");
+        }
+    }
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
-    property bool _isSelected {
+    property Visibility _isVisible
+    {
+        Visibility get() {
+            return isVisible_;
+        }
+        void set(Visibility value) {
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
+        }
+    }
+
+    property bool _isSelected
+    {
         bool get() {
             return isSelected_;
         }
         void set(bool value) {
             isSelected_ = value;
-            if (!_disconnected)
-                NotifyPropertyChanged("_isSelected");
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered
+    {
+        bool get() {
+            return isHovered_;
+        }
+        void set(bool value) {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
         }
     }
 
@@ -58,8 +81,11 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
+    Visibility isVisible_;
     bool isSelected_;
+    bool isHovered_;
+
+    TrustStatus status_;
 };
 }
 }
-

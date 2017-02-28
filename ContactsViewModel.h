@@ -47,7 +47,10 @@ internal:
     /* functions */
     Contact^    findContactByName(String^ name);
     Contact^    findContactByRingId(String^ ringId);
-    Contact^    addNewContact(String^ name, String^ ringId, ContactStatus contactStatus = ContactStatus::READY);
+    Contact^    addNewContact(  String^ name,
+                                String^ ringId,
+                                TrustStatus trustStatus,
+                                ContactStatus contactStatus = ContactStatus::READY);
     void        saveContactsToFile();
     void        openContactsFromFile();
     String^     Stringify();

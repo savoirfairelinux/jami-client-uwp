@@ -28,7 +28,7 @@ namespace RingClientUWP
 {
 namespace ViewModel {
 
-public ref class SmartPanelItemsViewModel sealed
+ref class SmartPanelItemsViewModel sealed
 {
 public:
     bool isInCall();
