@@ -32,12 +32,18 @@ Conversation::Conversation()
 }
 
 void
-Conversation::addMessage(String^ date, bool fromContact, String^ payload)
+Conversation::addMessage(bool fromContact,
+                         String^ payload,
+                         std::time_t timeReceived,
+                         bool isReceived,
+                         uint64_t MessageId)
 {
     ConversationMessage^ message = ref new ConversationMessage();
-    message->Date = date;
     message->FromContact = fromContact;
     message->Payload = payload;
+    message->TimeReceived = timeReceived;
+    message->IsReceived = isReceived;
+    message->MessageId = MessageId;
 
     /* add message to _messagesList_ */
     messagesList_->Append(message);
@@ -47,9 +53,11 @@ JsonObject^
 ConversationMessage::ToJsonObject()
 {
     JsonObject^ messageObject = ref new JsonObject();
-    messageObject->SetNamedValue(dateKey, JsonValue::CreateStringValue(Date));
     messageObject->SetNamedValue(fromContactKey, JsonValue::CreateBooleanValue(FromContact));
     messageObject->SetNamedValue(payloadKey, JsonValue::CreateStringValue(Payload));
+    messageObject->SetNamedValue(timeReceivedKey, JsonValue::CreateNumberValue(static_cast<double>(TimeReceived)));
+    messageObject->SetNamedValue(isReceivedKey, JsonValue::CreateBooleanValue(IsReceived));
+    messageObject->SetNamedValue(messageIdKey, JsonValue::CreateStringValue(MessageId.ToString()));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(messageKey, messageObject);

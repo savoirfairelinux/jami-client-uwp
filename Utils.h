@@ -20,6 +20,7 @@
 #include <pch.h>
 
 #include <random>
+#include <type_traits>
 
 using namespace Platform;
 using namespace Platform::Collections;
@@ -27,13 +28,35 @@ using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage;
 using namespace Windows::System;
+using namespace Windows::Globalization::DateTimeFormatting;
 
-typedef Windows::UI::Xaml::Visibility VIS;
+using VIS = Windows::UI::Xaml::Visibility;
+static const uint64_t TICKS_PER_SECOND = 10000000;
+static const uint64_t EPOCH_DIFFERENCE = 11644473600LL;
 
 namespace RingClientUWP
 {
 namespace Utils
 {
+
+template<typename E>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value,
+                                            typename std::underlying_type<E>::type
+                                        >::type
+toUnderlyingValue(E e) noexcept
+{
+    return static_cast<typename std::underlying_type<E>::type >( e );
+}
+
+template<typename E, typename T>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value &&
+                                            std::is_integral<T>::value, E
+                                        >::type
+toEnum(T value) noexcept
+{
+    return static_cast<E>(value);
+}
+
 inline int
 fileExists(const std::string& name)
 {
@@ -286,6 +309,34 @@ ColorFromString(String^ s)
         return Windows::UI::ColorHelper::FromArgb(a, r, g, b);
     else
         return Windows::UI::ColorHelper::FromArgb(255, 0, 0, 0);
+}
+
+DateTime
+epochToDateTime(std::time_t epochTime)
+{
+    Windows::Foundation::DateTime dateTime;
+    dateTime.UniversalTime = (epochTime + EPOCH_DIFFERENCE) * TICKS_PER_SECOND;
+    return dateTime;
+}
+
+DateTime
+currentDateTime()
+{
+    Windows::Globalization::Calendar^ calendar = ref new Windows::Globalization::Calendar();
+    return calendar->GetDateTime();
+}
+
+String^
+dateTimeToString(DateTime dateTime)
+{
+    static auto timeFormatter = ref new DateTimeFormatter("day month year hour minute second");
+    return timeFormatter->Format(dateTime);
+}
+
+std::time_t
+dateTimeToEpoch(DateTime dateTime)
+{
+    return static_cast<std::time_t>(dateTime.UniversalTime / TICKS_PER_SECOND - EPOCH_DIFFERENCE);
 }
 
 } /*namespace Utils*/
