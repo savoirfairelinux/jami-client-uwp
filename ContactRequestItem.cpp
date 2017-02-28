@@ -1,8 +1,6 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -17,49 +15,36 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-using namespace Platform::Collections;
+#include "pch.h"
 
-namespace RingClientUWP
+#include "ContactRequestItem.h"
+
+using namespace Platform;
+using namespace Windows::UI::Core;
+using namespace Windows::ApplicationModel::Core;
+
+using namespace RingClientUWP;
+using namespace RingClientUWP::Controls;
+using namespace ViewModel;
+
+ContactRequestItem::ContactRequestItem()
 {
-/* delegate */
-delegate void CallRecieved(Call^ call);
-delegate void CallStatusUpdated(Call^ call);
-delegate void CallStarted();
-delegate void CallEnded();
-
-namespace ViewModel {
-public ref class CallsViewModel sealed
-{
-internal:
-    /* singleton */
-    static property CallsViewModel^ instance
-    {
-        CallsViewModel^ get()
-        {
-            static CallsViewModel^ instance_ = ref new CallsViewModel();
-            return instance_;
-        }
-    }
-
-    /* properties */
-    property Vector<String^>^ _callIdList
-    {
-        Vector<String^>^ get()
-        {
-            return callIdsList_;
-        }
-    }
-
-    /* events */
-    event CallRecieved^ callRecieved;
-    event CallStatusUpdated^ callStatusUpdated;
-    event CallStarted^ callStarted;
-    event CallEnded^ callEnded;
-
-private:
-    CallsViewModel(); // singleton
-    Vector<String^>^ callIdsList_;
-
-};
 }
+
+void
+ContactRequestItem::NotifyPropertyChanged(String^ propertyName)
+{
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::High,
+        ref new DispatchedHandler([this, propertyName]()
+    {
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    }));
+}
+
+void
+ContactRequestItem::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
 }
