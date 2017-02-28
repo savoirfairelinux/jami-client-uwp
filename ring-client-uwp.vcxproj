@@ -98,7 +98,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <PackageCertificateKeyFile>ring-client-uwp_StoreKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
@@ -176,12 +176,15 @@
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Contact.h" />
+    <ClInclude Include="ContactRequestItem.h" />
+    <ClInclude Include="ContactRequestItemsViewModel.h" />
     <ClInclude Include="ContactListModel.h" />
     <ClInclude Include="Conversation.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="LoadingPage.xaml.h">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
@@ -317,7 +320,7 @@
       <DeploymentContent>true</DeploymentContent>
     </Image>
     <Image Include="Assets\TESTS\blank.png" />
-    <Image Include="Assets\TESTS\contactAvatar.png" />
+    <Image Include="Assets\TESTS\sadCyclops.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-100.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-125.png" />
     <Image Include="Assets\TESTS\logo-ring.scale-150.png" />
@@ -338,10 +341,15 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
+    <ClCompile Include="ContactRequestItem.cpp" />
+    <ClCompile Include="ContactRequestItemsViewModel.cpp" />
     <ClCompile Include="ContactListModel.cpp" />
     <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
