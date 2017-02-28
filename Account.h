@@ -30,8 +30,18 @@ ref class Contact;
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState
-            , String^ sipHostname, String^ sipUsername, String^ sipPassword);
+    Account(String^ name,
+            String^ ringID,
+            String^ accountType,
+            String^ accountID,
+            String^ deviceId,
+            bool active,
+            bool upnpState,
+            bool autoAnswer,
+            bool dhtPublicInCalls,
+            String^ sipHostname,
+            String^ sipUsername,
+            String^ sipPassword);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
@@ -43,8 +53,48 @@ public:
         void set(String^ value) {
             alias_ = value;
             NotifyPropertyChanged("name_");
+            NotifyPropertyChanged("_bestName");
         }
     }
+
+    property String^ _username
+    {
+        String^ get() {
+            return username_;
+        }
+        void set(String^ value) {
+            username_ = value;
+            NotifyPropertyChanged("_username");
+            NotifyPropertyChanged("_bestName");
+        }
+    }
+
+    property String^ _bestName {
+        String^ get() {
+            String^ bestName;
+            if (alias_)
+                bestName += alias_;
+            if (accountType_ == "RING")
+                bestName += " - ";
+            if (username_)
+                bestName += username_;
+            else
+                bestName += ringID__;
+            return bestName;
+        }
+    }
+
+    property String^ _bestName2 {
+        String^ get() {
+            String^ bestName;
+            if (alias_)
+                bestName += alias_;
+            if (accountType_ == "RING" && username_)
+                bestName += " - " + username_;
+            return bestName;
+        }
+    }
+
     property String^ ringID_ {
         String^ get() {
             return ringID__;
@@ -65,7 +115,13 @@ public:
             devicesIdList_ = value;
         }
     };
+
+    property RegistrationState _registrationState;
+
+    property bool _active;
     property bool _upnpState;
+    property bool _autoAnswer;
+    property bool _dhtPublicInCalls;
     property String^ _sipHostname;
     property String^ _sipUsername
     {
@@ -75,6 +131,7 @@ public:
         void set(String^ value) {
             sipUsername_ = value;
             NotifyPropertyChanged("_sipUsername");
+            NotifyPropertyChanged("_bestName");
         }
     }
 
@@ -86,6 +143,17 @@ public:
         void set(unsigned value) {
             unreadMessages_ = value;
             NotifyPropertyChanged("_unreadMessages");
+        }
+    }
+
+    property unsigned _unreadContactRequests
+    {
+        unsigned get() {
+            return unreadContactRequests_;
+        }
+        void set(unsigned value) {
+            unreadContactRequests_ = value;
+            NotifyPropertyChanged("_unreadContactRequests");
         }
     }
 
@@ -108,9 +176,11 @@ private:
     IVector<Contact^>^ contactsList_;
 
     String^ alias_;
+    String^ username_;
     String^ ringID__;
     String^ sipUsername_;
     unsigned unreadMessages_;
+    unsigned unreadContactRequests_;
 };
 }
 

@@ -1,5 +1,28 @@
 namespace RingClientUWP
 {
+
+namespace ViewModel
+{
+namespace NotifyStrings
+{
+const std::vector<std::string> notifySmartPanelItem =
+    {   "_isSelected",
+        "_contactStatus",
+        "_lastTime",
+        "_presenceStatus",
+        "_displayName",
+        "_name",
+        "_bestName",
+        "notificationNewMessage",
+        "_unreadMessages",
+        "_unreadContactRequest" };
+const std::vector<std::string> notifyContactRequestItem =
+    { "_isSelected" };
+const std::vector<std::string> notifyAccount = { "" };
+const std::vector<std::string> notifyConversation = { "" };
+}
+}
+
 /* public enumerations. */
 public enum class CallStatus {
     NONE,
@@ -12,7 +35,24 @@ public enum class CallStatus {
     PEER_PAUSED,
     ENDED,
     TERMINATING,
-    CONNECTED
+    CONNECTED,
+    AUTO_ANSWERING
+};
+
+public enum class TrustStatus {
+    UNKNOWN,
+    INCOMING_CONTACT_REQUEST,
+    INGNORED,
+    BLOCKED,
+    CONTACT_REQUEST_SENT,
+    TRUSTED
+};
+
+public enum class RegistrationState {
+    UNKNOWN,
+    TRYING,
+    REGISTERED,
+    UNREGISTERED
 };
 
 public enum class LookupStatus {
@@ -23,7 +63,7 @@ public enum class LookupStatus {
 };
 
 public enum class ContactStatus {
-    WAITING_FOR_ACTIVATION, // waiting for lookup
+    WAITING_FOR_ACTIVATION,
     READY
 };
 
