@@ -1,6 +1,6 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -15,55 +15,53 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
-#include "Call.h"
+#include "RingDeviceItemsViewModel.h"
 
 using namespace Windows::ApplicationModel::Core;
-using namespace Platform;
+using namespace Windows::Data::Json;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
 using namespace Windows::UI::Core;
+using namespace Windows::Globalization::DateTimeFormatting;
+
 
 using namespace RingClientUWP;
+using namespace ViewModel;
 
-// REFACTORING : for the whole Call class, change "from" to "peer"
-
-Call::Call(String^ accountIdz, String^ callIdz, String^ fromz)
+RingDeviceItemsViewModel::RingDeviceItemsViewModel()
 {
-    this->accountId = accountIdz;
-    this->callId = callIdz;
-    this->from = fromz;
+    itemsList_ = ref new Vector<RingDeviceItem^>();
+}
 
-    isOutGoing = false; // by default, we consider the call incomming, REFACTO : add this to the constructor params...
+RingDeviceItem^
+RingDeviceItemsViewModel::findItem(String^ deviceId)
+{
+    for each (RingDeviceItem^ item in itemsList)
+        if (item->_deviceId == deviceId)
+            return item;
 
-    this->state = CallStatus::NONE;
-    this->code = -1;
+    return nullptr;
+}
+
+unsigned int
+RingDeviceItemsViewModel::getIndex(String^ deviceId)
+{
+    for (unsigned i = 0; i < itemsList_->Size; i++)
+        if (itemsList_->GetAt(i)->_deviceId == deviceId)
+            return i;
+
+    return 0;
 }
 
 void
-Call::NotifyPropertyChanged(String^ propertyName)
+RingDeviceItemsViewModel::removeItem(RingDeviceItem ^ item)
 {
-    CoreApplicationView^ view = CoreApplication::MainView;
-    view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High,
-        ref new DispatchedHandler([this, propertyName]()
-    {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    unsigned int index;
 
-    }));
+    if (itemsList->IndexOf(item, &index)) {
+        itemsList->RemoveAt(index);
+    }
 }
-
-//void RingClientUWP::Call::refuse()
-//{
-//    RingD::instance->refuseIncommingCall(this);
-//}
-//
-//void RingClientUWP::Call::accept()
-//{
-//    RingD::instance->acceptIncommingCall(this);
-//}
-//
-//void RingClientUWP::Call::cancel()
-//{
-//    MSG_("!2--->> cancel");
-//    RingD::instance->cancelOutGoingCall(this);
-//}

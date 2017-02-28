@@ -60,7 +60,7 @@ VideoCaptureManager::VideoCaptureManager():
 })
 {
     deviceList = ref new Vector<Device^>();
-    InitializeCopyFrameDispatcher(60);
+    InitializeCopyFrameDispatcher(120);
     captureTaskTokenSource = new cancellation_token_source();
 }
 
@@ -145,7 +145,7 @@ VideoCaptureManager::StartPreviewAsync(bool isSettingsPreview)
             MSG_("StartPreviewAsync DONE");
         }
         catch (Exception ^e) {
-            WriteException(e);
+            EXC_(e);
         }
     });
 }
@@ -170,7 +170,7 @@ VideoCaptureManager::StopPreviewAsync()
                 MSG_("StopPreviewAsync DONE");
             }
             catch (Exception ^e) {
-                WriteException(e);
+                EXC_(e);
             }
         });
     }
@@ -206,7 +206,7 @@ VideoCaptureManager::InitializeCameraAsync(bool isSettingsPreview)
             return StartPreviewAsync(isSettingsPreview);
         }
         catch (Exception ^e) {
-            WriteException(e);
+            EXC_(e);
             return concurrency::task_from_result();
         }
     });
@@ -245,13 +245,13 @@ VideoCaptureManager::EnumerateWebcamsAsync()
                     }
                     catch (Exception^ e) {
                         ERR_("One doesn't simply start Ring daemon...");
-                        WriteException(e);
+                        EXC_(e);
                     }
                 });
             }
         }
         catch (Platform::Exception^ e) {
-            WriteException(e);
+            EXC_(e);
         }
     });
 }
@@ -379,7 +379,7 @@ VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
             DRing::addVideoDevice(Utils::toString(device->name()), &devInfo);
         }
         catch (Platform::Exception^ e) {
-            WriteException(e);
+            EXC_(e);
         }
     });
 }
@@ -400,7 +400,7 @@ VideoCaptureManager::InitializeCopyFrameDispatcher(unsigned frameRate)
         isRendering = false;
     }
     catch (Exception^ e) {
-        MSG_(e->ToString());
+        EXC_(e);
     }
 }
 
@@ -415,7 +415,7 @@ VideoCaptureManager::CopyFrame(Object^ sender, Object^ e)
                 copyTask.get();
             }
             catch (Exception^ e) {
-                WriteException(e);
+                EXC_(e);
                 isRendering = false;
                 StopPreviewAsync();
                 videoFrameCopyInvoker->Stop();
@@ -434,9 +434,10 @@ VideoCaptureManager::CopyFrameAsync()
     unsigned int videoFrameWidth = activeDevice->currentResolution()->width();
     unsigned int videoFrameHeight = activeDevice->currentResolution()->height();
 
-    auto allprops = mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(MediaStreamType::VideoPreview);
+   /* auto allprops = mediaCapture->VideoDeviceController->GetAvailableMediaStreamProperties(MediaStreamType::VideoPreview);
     MediaProperties::VideoEncodingProperties^ vidprops = static_cast<VideoEncodingProperties^>(allprops->GetAt(0));
     String^ format = vidprops->Subtype;
+    MSG_(format);*/
 
     auto videoFrame = ref new VideoFrame(BitmapPixelFormat::Bgra8, videoFrameWidth, videoFrameHeight);
 
@@ -475,7 +476,7 @@ VideoCaptureManager::CopyFrameAsync()
 
             }
             catch (Exception^ e) {
-                WriteException(e);
+                EXC_(e);
                 throw ref new Exception(e->HResult, e->Message);
             }
         }).then([=](task<void> renderCaptureToBufferTask) {
@@ -484,12 +485,12 @@ VideoCaptureManager::CopyFrameAsync()
                 isRendering = false;
             }
             catch (Platform::Exception^ e) {
-                WriteException(e);
+                EXC_(e);
             }
         });
     }
     catch(Exception^ e) {
-        WriteException(e);
+        EXC_(e);
         throw ref new Exception(e->HResult, e->Message);
     }
 }
@@ -521,7 +522,8 @@ VideoCaptureManager::SetCaptureSettings()
             MSG_("SetCaptureSettings DONE");
         }
         catch (Exception^ e) {
-            WriteException(e);
+            EXC_(e);
+
         }
     });
 }

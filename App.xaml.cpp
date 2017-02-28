@@ -49,36 +49,38 @@ App::App()
 void
 App::OnLaunched(LaunchActivatedEventArgs^ e)
 {
-    rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
+    if (e->PreviousExecutionState != ApplicationExecutionState::Running) {
+        rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
 
-    if (rootFrame == nullptr) {
-        rootFrame = ref new Frame();
+        if (rootFrame == nullptr) {
+            rootFrame = ref new Frame();
 
-        if (rootFrame->Content == nullptr)
+            if (rootFrame->Content == nullptr)
+                rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
+
+            Window::Current->Content = rootFrame;
+        }
+        else {
             rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
+            Window::Current->Content = rootFrame;
+        }
 
-        Window::Current->Content = rootFrame;
+        ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
+        Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
+        Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
+            = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;
+
+        Window::Current->Activate();
+
+        auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
+
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
     }
-    else {
-        rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
-        Window::Current->Content = rootFrame;
-    }
-
-    ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
-        = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;
-
-    Window::Current->Activate();
-
-    auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
-
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }
 
 void App::OnsummonWizard()

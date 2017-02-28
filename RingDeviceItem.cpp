@@ -1,7 +1,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -18,21 +18,36 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "CallsViewModel.h"
+#include "RingDeviceItem.h"
+
+using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Windows::Data::Json;
+using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
+using namespace RingClientUWP::Controls;
 using namespace ViewModel;
-using namespace Windows::UI::Core;
-using namespace Windows::ApplicationModel::Core;
 
-CallsViewModel::CallsViewModel()
+RingDeviceItem::RingDeviceItem(String^ deviceId, String^ deviceName)
+    :device_(std::make_unique<RingDevice>(Utils::toString(deviceId), Utils::toString(deviceName)))
 {
-    callIdsList_ = ref new Vector<String^>();
+}
 
-    /* connect to delegates. */
+void
+RingDeviceItem::NotifyPropertyChanged(String^ propertyName)
+{
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::High,
+        ref new DispatchedHandler([this, propertyName]()
+    {
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    }));
+}
 
-    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
-    String^ accountId, String^ callId, String^ from) {
-        callIdsList_->Append(callId); // TODO : check if the string is remove when the call ends.
-    });
+void
+RingDeviceItem::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
 }
