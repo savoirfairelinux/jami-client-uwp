@@ -32,7 +32,11 @@ Account::Account(String^ name,
                  String^ accountType,
                  String^ accountID,
                  String^ deviceId,
+                 String^ deviceName,
+                 bool active,
                  bool upnpState,
+                 bool autoAnswer,
+                 bool dhtPublicInCalls,
                  String^ sipHostname,
                  String^ sipUsername,
                  String^ sipPassword)
@@ -42,11 +46,17 @@ Account::Account(String^ name,
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
+    _deviceName = deviceName;
+    _active = active;
     _upnpState = upnpState;
+    _autoAnswer = autoAnswer;
+    _dhtPublicInCalls = dhtPublicInCalls;
     _sipHostname = sipHostname;
     _sipUsername = sipUsername;
     _sipPassword = sipPassword;
     _unreadMessages = 0;
+    _registrationState = RegistrationState::UNKNOWN;
+    _username = "";
 }
 
 void

@@ -30,6 +30,12 @@ using namespace Windows::UI::Xaml::Controls;
 AboutPage::AboutPage()
 {
     InitializeComponent();
+
+    // Until a better solution is found, we can use the package versioning
+    // system to discern the build date.
+    // year:hardcoded(2017) / month:version.Minor / day:version.Build
+    PackageVersion version = Package::Current->Id->Version;
+    _aboutVersionString_->Text = "Ring version: 2017/" + version.Minor.ToString() + "/" + version.Build.ToString();
 };
 
 void RingClientUWP::Views::AboutPage::_aboutBasicButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
