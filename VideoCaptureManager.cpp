@@ -286,7 +286,7 @@ VideoCaptureManager::AddVideoDeviceAsync(uint8_t index)
                 String^ format = vidprops->Subtype;
                 // Create rate
                 Video::Rate^ rate = ref new Rate();
-                unsigned int frame_rate = 0;
+                double frame_rate = 0;
                 if (vidprops->FrameRate->Denominator != 0)
                     frame_rate = vidprops->FrameRate->Numerator / vidprops->FrameRate->Denominator;
                 rate->setValue(frame_rate);
