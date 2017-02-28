@@ -25,6 +25,7 @@
     xmlns:ctl="using:RingClientUWP.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:RingClientUWP.UserAndCustomControls"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled">
 
@@ -48,32 +49,112 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <!-- bubble -->
+        <views:boolToVisibility x:Key="_boolToVisibility_" />
         <views:BubbleBackground x:Key="_bubbleBackground_" />
         <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
+        <views:MessageDateTimeString x:Key="_MessageDateTimeString_" />
+        <views:MessageChainBreakToVisibility x:Key="_MessageChainBreakToVisibility_" />
+        <views:MessageChainBreakToHeight x:Key="_MessageChainBreakToHeight_" />
+
         <DataTemplate x:Key="ConversationMessageTemplate"
                       x:DataType="local:ConversationMessage">
-            <Grid Margin="6,0,12,0"
+            <Grid Margin="12,0,20,0"
                   HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="8*" />
-                </Grid.ColumnDefinitions>
-                <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToHeight_}, Mode=OneWay}"/>
+                </Grid.RowDefinitions>
+                <!--avatar, message spikes, and message body-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="8*" />
+                    </Grid.ColumnDefinitions>
+                    <!--avatar-->
+                    <Grid Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
+                        <Ellipse    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Margin="0,2,0,0"
+                                Grid.Column="0"
+                                Height="36"
+                                Width="36"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Center">
+                            <Ellipse.Fill>
+                                <ImageBrush  x:Name="_contactAvatar_"
+                                     ImageSource="{x:Bind MessageAvatar, Mode=OneWay}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Grid>
+                    <!--left spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="1">
+                        <Polygon    Name="_chatLeftBubbleSpike_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                    Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                    Points="10,0,0,5,10,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="8" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                    <!--message-->
+                    <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
                          CornerRadius="10"
-                         Grid.Column="1"
+                         Grid.Column="3"
                          Width="auto"
                          Height="auto"
-                         Padding="5"
+                         Padding="10,6,10,6"
                          Margin="5" >
-                    <ContentPresenter>
-                        <!--Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
-                        <TextBlock x:Name="_msgContent_"
-                                   TextWrapping="Wrap"
-                                   IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Payload}"
-                                   Foreground="White"/>
-                    </ContentPresenter>
-                </Border>
+                        <ContentPresenter>
+                            <RichTextBlock  x:Name="_msgContent_"
+                                        TextWrapping="Wrap"
+                                        IsTextSelectionEnabled="True"
+                                        uc:TextBlockExtension.FormattedText="{x:Bind Payload}"
+                                        Foreground="White">
+                                <Paragraph />
+                            </RichTextBlock>
+                        </ContentPresenter>
+                    </Border>
+                    <!--right spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="3">
+                        <Polygon
+                                HorizontalAlignment="Right"
+                                Name="_chatRightBubbleSpike_"
+                                Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                Points="0,0,10,5,0,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="3" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                </Grid>
+                <!--message info-->
+                <Grid Grid.Row="1">
+                    <StackPanel x:Name="_messageInfo_"
+                            HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}"
+                            Orientation="Horizontal"
+                            Margin="10,0,10,0">
+                        <TextBlock  x:Name="_messageTimeFrom_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform X="50"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock  x:Name="_messageTimeTo_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
         <!-- barre d'envoi de message -->
@@ -125,6 +206,7 @@
                                           IsTabStop="False"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ZoomMode="Disabled" />
+
                             <Button x:Name="_sendBtn_"
                                     Background="Transparent"
                                     BorderThickness="0"
@@ -146,286 +228,334 @@
         </Style>
     </Page.Resources>
 
-    <SplitView x:Name="_videoSplitView_" IsPaneOpen="False" OpenPaneLength="400" PanePlacement="Right">
-        <SplitView.Pane>
-            <Frame x:Name="_chatPanel_"/>
-        </SplitView.Pane>
-        <SplitView.Content>
-            <Grid x:Name="_videoContent_">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition x:Name="_rowChatBx_" Height="0"/>
-                </Grid.RowDefinitions>
-                <Grid   Background="#000000"
-                        Grid.Row="0"
-                        PointerMoved="_videoControl__PointerMoved">
-                    <StackPanel x:Name="_headerBar_"
-                                Background="{StaticResource SemiTransparentBlack}"
-                                Canvas.ZIndex="99999"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Top"
-                                Height="50">
-                        <TextBlock  x:Name="_callee_"
-                                    Text="callee"
-                                    Foreground="White"
-                                    Margin="20,10"/>
-                    </StackPanel>
+    <Grid x:Name="_videoContent_">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition x:Name="_chatResizeBarVertical_" Height="4"/>
+            <RowDefinition x:Name="_rowChatBx_" Height="0*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition x:Name="_chatResizeBarHorizontal_" Width="4"/>
+            <ColumnDefinition x:Name="_colChatBx_" Width="0*"/>
+        </Grid.ColumnDefinitions>
+        <!-- actual video -->
+        <Grid Grid.Row="0"
+                Background="#000000"
+                PointerMoved="_videoControl__PointerMoved">
+            <StackPanel x:Name="_headerBar_"
+                        Background="{StaticResource SemiTransparentBlack}"
+                        Canvas.ZIndex="99999"
+                        HorizontalAlignment="Stretch"
+                        VerticalAlignment="Top"
+                        Height="50">
+                <TextBlock  x:Name="_callee_"
+                            Text="callee"
+                            Foreground="White"
+                            Margin="20,10"/>
+            </StackPanel>
 
-                    <!-- video -->
-                    <Image Name="_IncomingVideoImage_"
-                           Grid.Column="0"
-                           Canvas.ZIndex="-1"
-                           DoubleTapped="IncomingVideoImage_DoubleTapped"
-                           />
-                    <TextBlock Name="_callPaused_"
-                               Grid.Column="0"
-                               Text="&#xE769;"
-                               Foreground="White"
-                               FontSize="200"
-                               VerticalAlignment="Center"
-                               HorizontalAlignment="Center"
-                               FontFamily="Segoe MDL2 Assets"
-                               Visibility="Collapsed"
-                               Canvas.ZIndex="-1"/>
+            <!-- video -->
+            <Image Name="_IncomingVideoImage_"
+                   Grid.Column="0"
+                   Canvas.ZIndex="-1"
+                   DoubleTapped="IncomingVideoImage_DoubleTapped"
+                   />
+            <TextBlock Name="_callPaused_"
+                       Grid.Column="0"
+                       Text="&#xE769;"
+                       Foreground="White"
+                       FontSize="200"
+                       VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       FontFamily="Segoe MDL2 Assets"
+                       Visibility="Collapsed"
+                       Canvas.ZIndex="-1"/>
 
-                    <!--camera preview-->
-                    <Canvas   Name="_PreviewImageRect_"
-                              HorizontalAlignment="Right"
-                              VerticalAlignment="Bottom"
-                              PointerReleased="PreviewImage_PointerReleased"
-                              PointerCaptureLost="PreviewImage_PointerReleased">
-                        <Polygon    Name="_PreviewImageResizer_"
-                                    Visibility="Collapsed"
-                                    Fill="#FF3BC1D3"
-                                    Points="0,0,20,0,0,20"
-                                    Canvas.ZIndex="99999"
-                                    ManipulationMode="TranslateY"/>
-                        <CaptureElement Name="_PreviewImage_"
-                                        Visibility="Collapsed"
-                                        Stretch="Uniform"
-                                        Width="20"
-                                        Height="20"
-                                        ManipulationMode="All"/>
-                    </Canvas>
+            <!--camera preview-->
+            <Canvas   Name="_PreviewImageRect_"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Bottom"
+                      PointerReleased="PreviewImage_PointerReleased"
+                      PointerCaptureLost="PreviewImage_PointerReleased">
+                <Polygon    Name="_PreviewImageResizer_"
+                            Visibility="Collapsed"
+                            Fill="#FF3BC1D3"
+                            Points="0,0,20,0,0,20"
+                            Canvas.ZIndex="99999"
+                            ManipulationMode="TranslateY"/>
+                <CaptureElement Name="_PreviewImage_"
+                                Visibility="Collapsed"
+                                Stretch="Uniform"
+                                Width="20"
+                                Height="20"
+                                ManipulationMode="All"/>
+            </Canvas>
 
-                    <StackPanel x:Name="_controlsBar_"
-                            HorizontalAlignment="Center"
-                            VerticalAlignment="Bottom"
-                            Orientation="Horizontal">
-                        <StackPanel.Resources>
-                            <Style TargetType="Button">
-                                <Setter Property="Margin" Value="10,30"/>
-                                <Setter Property="Width" Value="40"/>
-                                <Setter Property="Height" Value="40"/>
-                                <Setter Property="Background" Value="Black"/>
-                                <Setter Property="Foreground" Value="White"/>
-                                <Setter Property="BorderBrush" Value="Gray"/>
-                                <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}"/>
-                                <Setter Property="Template">
-                                    <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                            <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
-                                                <VisualStateManager.VisualStateGroups>
-                                                    <VisualStateGroup x:Name="CommonStates">
-                                                        <VisualState x:Name="PointerOver">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="Gray"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="White"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="White"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Normal">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="Black"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="White"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="Gray"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                        <VisualState x:Name="Pressed">
-                                                            <Storyboard>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="White"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="Black"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
-                                                                                           Storyboard.TargetName="ContentPresenter">
-                                                                    <DiscreteObjectKeyFrame KeyTime="0"
-                                                                                        Value="Gray"/>
-                                                                </ObjectAnimationUsingKeyFrames>
-                                                                <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
-                                                            </Storyboard>
-                                                        </VisualState>
-                                                    </VisualStateGroup>
-                                                </VisualStateManager.VisualStateGroups>
-                                                <ContentPresenter x:Name="ContentPresenter"
-                                                              AutomationProperties.AccessibilityView="Raw"
-                                                              BorderBrush="{TemplateBinding BorderBrush}"
-                                                              BorderThickness="{TemplateBinding BorderThickness}"
-                                                              ContentTemplate="{TemplateBinding ContentTemplate}"
-                                                              ContentTransitions="{TemplateBinding ContentTransitions}"
-                                                              Content="{TemplateBinding Content}"
-                                                              HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                              Padding="{TemplateBinding Padding}"
-                                                              VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
-                                            </Grid>
-                                        </ControlTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </Style>
-                        </StackPanel.Resources>
+            <StackPanel x:Name="_controlsBar_"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Orientation="Horizontal">
+                <StackPanel.Resources>
+                    <Style TargetType="Button">
+                        <Setter Property="Margin" Value="10,30"/>
+                        <Setter Property="Width" Value="40"/>
+                        <Setter Property="Height" Value="40"/>
+                        <Setter Property="Background" Value="Black"/>
+                        <Setter Property="Foreground" Value="White"/>
+                        <Setter Property="BorderBrush" Value="Gray"/>
+                        <Setter Property="BorderThickness" Value="{ThemeResource ButtonBorderThemeThickness}"/>
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Grid x:Name="RootGrid" Background="{TemplateBinding Background}">
+                                        <VisualStateManager.VisualStateGroups>
+                                            <VisualStateGroup x:Name="CommonStates">
+                                                <VisualState x:Name="PointerOver">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Gray"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="White"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="White"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Normal">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Black"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="White"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Gray"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerUpThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                                <VisualState x:Name="Pressed">
+                                                    <Storyboard>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="White"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Black"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush"
+                                                                                   Storyboard.TargetName="ContentPresenter">
+                                                            <DiscreteObjectKeyFrame KeyTime="0"
+                                                                                Value="Gray"/>
+                                                        </ObjectAnimationUsingKeyFrames>
+                                                        <PointerDownThemeAnimation Storyboard.TargetName="RootGrid"/>
+                                                    </Storyboard>
+                                                </VisualState>
+                                            </VisualStateGroup>
+                                        </VisualStateManager.VisualStateGroups>
+                                        <ContentPresenter x:Name="ContentPresenter"
+                                                      AutomationProperties.AccessibilityView="Raw"
+                                                      BorderBrush="{TemplateBinding BorderBrush}"
+                                                      BorderThickness="{TemplateBinding BorderThickness}"
+                                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                                      ContentTransitions="{TemplateBinding ContentTransitions}"
+                                                      Content="{TemplateBinding Content}"
+                                                      HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      Padding="{TemplateBinding Padding}"
+                                                      VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Grid>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </StackPanel.Resources>
 
-                        <Button x:Name="_btnHangUp_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnHangUp__Tapped">
-                            <SymbolIcon Symbol="HangUp"/>
-                        </Button>
-                        <Button x:Name="_btnPause_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnPause__Tapped">
-                            <SymbolIcon Symbol="Pause"/>
-                        </Button>
-                        <Button x:Name="_btnChat_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnChat__Tapped">
-                            <SymbolIcon Symbol="Message" HorizontalAlignment="Left" Width="20"/>
-                        </Button>
-                        <Button x:Name="_btnAddFriend_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnAddFriend__Tapped" Visibility="Collapsed">
-                            <SymbolIcon Symbol="AddFriend"/>
-                        </Button>
-                        <Button x:Name="_btnSwitch_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnSwitch__Tapped" Visibility="Collapsed">
-                            <SymbolIcon Symbol="Switch"/>
-                        </Button>
-                        <Button x:Name="_btnMicrophone_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Click="_btnMicrophone__Click">
-                            <Grid>
-                                <SymbolIcon Symbol="Microphone"/>
-                                <TextBlock x:Name="_txbkMicrophoneMuted_"
-                                           Text="&#xE25B;"
-                                           FontSize="16"
-                                           IsHitTestVisible="True"
-                                           Visibility="Collapsed"
-                                           Foreground="Red"
-                                           FontWeight="Bold"
-                                           FontFamily="Segoe MDL2 Assets">
-                                    <TextBlock.RenderTransform>
-                                        <TranslateTransform X="1" Y="2"/>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                            </Grid>
-                        </Button>
-                        <!--Tapped="_btnVideo__Tapped"-->
-                        <Button x:Name="_btnVideo_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Click="_btnVideo__Click">
-                            <Grid>
-                                <SymbolIcon Symbol="Video"/>
-                                <TextBlock x:Name="_txbkVideoMuted_"
-                                           Text="&#xE25B;"
-                                           FontSize="16"
-                                           IsHitTestVisible="True"
-                                           Visibility="Collapsed"
-                                           Foreground="Red"
-                                           FontWeight="Bold"
-                                           FontFamily="Segoe MDL2 Assets">
-                                    <TextBlock.RenderTransform>
-                                        <TranslateTransform X="1" Y="2"/>
-                                    </TextBlock.RenderTransform>
-                                </TextBlock>
-                            </Grid>
-                        </Button>
-                        <Button x:Name="_btnMemo_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnMemo__Tapped" Visibility="Collapsed">
-                            <SymbolIcon Symbol="Memo"/>
-                        </Button>
-                        <Button x:Name="_btnHQ_"
-                            PointerEntered="btnAny_entered"
-                            PointerExited="btnAny_exited"
-                            Tapped="_btnHQ__Tapped" Visibility="Collapsed">
-                            <TextBlock FontSize="12" Text="HQ"/>
-                        </Button>
-                    </StackPanel>
-                </Grid>
-                <!-- in call chat box -->
-                <Grid Grid.Row="1">
-                    <Grid Background="#FFF2F2F2">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="auto" />
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="auto" />
-                        </Grid.RowDefinitions>
-                        <ScrollViewer   x:Name="_scrollView_"
-                                        Grid.Row="1"
-                                        ScrollViewer.VerticalScrollBarVisibility="Auto">
-                            <StackPanel>
-                                <ListBox    x:Name="_messagesList_"
-                                            Margin="0"
-                                            Padding="0"
-                                            ItemContainerStyle="{StaticResource messageBubleStyle}"
-                                            ItemTemplate="{StaticResource ConversationMessageTemplate}">
-                                </ListBox>
-                            </StackPanel>
-                        </ScrollViewer>
-                        <Grid   Height="50"
-                                Grid.Row="2"
-                                Margin="0"
-                                Padding="0"
-                                Background="#FFF2F2F2">
-                            <TextBox    x:Name="_messageTextBox_"
-                                        HorizontalAlignment="Stretch"
-                                        TextWrapping="NoWrap"
-                                        VerticalAlignment="Bottom"
-                                        Margin="8,6,8,6"
-                                        Background="White"
-                                        KeyDown="_messageTextBox__KeyDown"/>
-                        </Grid>
+                <Button x:Name="_btnHangUp_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnHangUp__Tapped">
+                    <SymbolIcon Symbol="HangUp"/>
+                </Button>
+                <Button x:Name="_btnPause_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnPause__Tapped">
+                    <SymbolIcon Symbol="Pause"/>
+                </Button>
+                <Button x:Name="_btnChat_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnChat__Tapped">
+                    <SymbolIcon Symbol="Message" HorizontalAlignment="Left" Width="20"/>
+                </Button>
+                <Button x:Name="_btnToggleOrientation_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnToggleOrientation__Tapped"
+                    DoubleTapped="_btnToggleOrientation__Tapped"
+                        Visibility="Visible"
+                        FontFamily="Segoe MDL2 Assets"
+                        Content="&#xE90D;">
+                </Button>
+                <Button x:Name="_btnAddFriend_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnAddFriend__Tapped" Visibility="Collapsed">
+                    <SymbolIcon Symbol="AddFriend"/>
+                </Button>
+                <Button x:Name="_btnSwitch_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnSwitch__Tapped" Visibility="Collapsed">
+                    <SymbolIcon Symbol="Switch"/>
+                </Button>
+                <Button x:Name="_btnMicrophone_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnMicrophone__Click">
+                    <Grid>
+                        <SymbolIcon Symbol="Microphone"/>
+                        <TextBlock x:Name="_txbkMicrophoneMuted_"
+                                   Text="&#xE25B;"
+                                   FontSize="16"
+                                   IsHitTestVisible="True"
+                                   Visibility="Collapsed"
+                                   Foreground="Red"
+                                   FontWeight="Bold"
+                                   FontFamily="Segoe MDL2 Assets">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform X="1" Y="2"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
                     </Grid>
-                </Grid>
+                </Button>
+                <!--Tapped="_btnVideo__Tapped"-->
+                <Button x:Name="_btnVideo_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Click="_btnVideo__Click">
+                    <Grid>
+                        <SymbolIcon Symbol="Video"/>
+                        <TextBlock x:Name="_txbkVideoMuted_"
+                                   Text="&#xE25B;"
+                                   FontSize="16"
+                                   IsHitTestVisible="True"
+                                   Visibility="Collapsed"
+                                   Foreground="Red"
+                                   FontWeight="Bold"
+                                   FontFamily="Segoe MDL2 Assets">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform X="1" Y="2"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                    </Grid>
+                </Button>
+                <Button x:Name="_btnMemo_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnMemo__Tapped" Visibility="Collapsed">
+                    <SymbolIcon Symbol="Memo"/>
+                </Button>
+                <Button x:Name="_btnHQ_"
+                    PointerEntered="btnAny_entered"
+                    PointerExited="btnAny_exited"
+                    Tapped="_btnHQ__Tapped" Visibility="Collapsed">
+                    <TextBlock FontSize="12" Text="HQ"/>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <!-- resize bar -->
+        <Grid x:Name="_chatPanelResizeBarGrid_"
+              Grid.Row="1"
+              Grid.Column="0"
+              Background="Red">
+        </Grid>
+        <!-- in call chat box -->
+        <Grid x:Name="_chatPanelGrid_"
+              Grid.Row="2"
+              Grid.Column="0">
+            <Grid Background="#FFF2F2F2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto" />
+                </Grid.RowDefinitions>
+                <ScrollViewer   x:Name="_scrollView_"
+                                BorderThickness="0,0,0,0"
+                                BorderBrush="#3bc1d3"
+                                Grid.Row="1"
+                                ScrollViewer.VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*" MinWidth="140"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle  Grid.Column="0"
+                                        Fill="LightGray"
+                                        Height="1"
+                                        Margin="16,4,4,4"/>
+                            <TextBlock  x:Uid="_msgBeginningOfTime_"
+                                        Grid.Column="1"
+                                        Foreground="Gray"
+                                        HorizontalAlignment="Center"
+                                        Margin="4"/>
+                            <Rectangle  Grid.Column="2"
+                                        Fill="LightGray"
+                                        Height="1"
+                                        Margin="4,4,16,4"/>
+                        </Grid>
+                        <ListBox    x:Name="_messagesList_"
+                                    Margin="0"
+                                    Padding="0"
+                                    ItemContainerStyle="{StaticResource messageBubbleStyle}"
+                                    ItemTemplate="{StaticResource ConversationMessageTemplate}">
+                        </ListBox>
+                        <Rectangle  Fill="Transparent"
+                                    Height="6"/>
+                    </StackPanel>
+                </ScrollViewer>
+                <StackPanel Grid.Row="2"
+                            Orientation="Vertical">
+                    <Rectangle  Grid.Row="0"
+                                Fill="LightGray"
+                                Height="1"
+                                Margin="16,0,16,0"/>
+                    <Grid   Height="48"
+                            Margin="0"
+                            Padding="0"
+                            Background="#FFF2F2F2">
+                        <TextBox    x:Name="_messageTextBox_"
+                                    IsTabStop="True"
+                                    HorizontalAlignment="Stretch"
+                                    TextWrapping="NoWrap"
+                                    VerticalAlignment="Center"
+                                    Margin="8,4,8,4"
+                                    Background="White"
+                                    KeyDown="_messageTextBox__KeyDown"/>
+                    </Grid>
+                </StackPanel>
             </Grid>
-        </SplitView.Content>
-    </SplitView>
+        </Grid>
+    </Grid>
 </Page>
