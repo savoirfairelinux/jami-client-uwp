@@ -114,13 +114,9 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
 ContactListModel^
 AccountsViewModel::getContactListModel(std::string& accountId)
 {
-    try {
+    if (contactListModels_->Size)
         return contactListModels_->Lookup(Utils::toPlatformString(accountId));
-    }
-    catch (Platform::OutOfBoundsException^ e) {
-        EXC_(e);
-        return nullptr;
-    }
+    return nullptr;
 }
 
 int
@@ -142,17 +138,15 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
 
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
-    if (contact == nullptr)
-        contact = contactListModel->addNewContact(fromRingId, fromRingId);
-
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-
+    // trust requests
     if (contact == nullptr) {
         ERR_("contact not handled!");
         return;
     }
 
-    RingD::instance->lookUpAddress(fromRingId);
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    RingD::instance->lookUpAddress(Utils::toString(accountId), fromRingId);
 
     contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
