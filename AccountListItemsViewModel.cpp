@@ -42,7 +42,7 @@ AccountListItemsViewModel::AccountListItemsViewModel()
 void RingClientUWP::ViewModel::AccountListItemsViewModel::OnaccountAdded(RingClientUWP::Account ^account)
 {
     auto item = ref new AccountListItem(account);
-    itemsList_->Append(item);
+    itemsList_->InsertAt(0, item);
 }
 
 
@@ -54,7 +54,8 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
 void
 AccountListItemsViewModel::updateContactsViewModel()
 {
-    SmartPanelItemsViewModel::instance->update();
+    SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+    SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
 }
 
 AccountListItem^
@@ -65,6 +66,17 @@ RingClientUWP::ViewModel::AccountListItemsViewModel::findItem(String^ accountId)
             return item;
 
     return nullptr;
+}
+
+int
+AccountListItemsViewModel::getIndex(String^ accountId)
+{
+    int i;
+    for (i = 0; i < itemsList_->Size; i++) {
+        if (itemsList_->GetAt(i)->_account->accountID_ == accountId)
+            break;
+    }
+    return i;
 }
 
 void RingClientUWP::ViewModel::AccountListItemsViewModel::removeItem(AccountListItem ^ item)
@@ -95,4 +107,25 @@ AccountListItemsViewModel::unreadMessages()
         messageCount += account->_unreadMessages;
     }
     return messageCount;
+}
+
+int
+AccountListItemsViewModel::unreadContactRequests()
+{
+    int unreadContactRequestCount = 0;
+    for each (auto account in AccountsViewModel::instance->accountsList) {
+        account->_unreadContactRequests = AccountsViewModel::instance->unreadContactRequests(account->accountID_);
+        unreadContactRequestCount += account->_unreadContactRequests;
+    }
+    return unreadContactRequestCount;
+}
+
+void
+AccountListItemsViewModel::update(const std::vector<std::string>& properties)
+{
+    for each (AccountListItem^ item in itemsList) {
+        for each (std::string prop in properties) {
+            item->_account->raiseNotifyPropertyChanged(Utils::toPlatformString(prop));
+        }
+    }
 }

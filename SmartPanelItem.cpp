@@ -47,6 +47,12 @@ SmartPanelItem::muteVideo(bool state)
 }
 
 void
+SmartPanelItem::startCallTimer()
+{
+    call_.callStartTime = std::chrono::steady_clock::now();;
+}
+
+void
 SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
@@ -67,7 +73,7 @@ SmartPanelItem::OncallPlaced(Platform::String ^callId)
 }
 
 void
-SmartPanelItem::notifyPropertyChanged(String^ propertyName)
+SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }

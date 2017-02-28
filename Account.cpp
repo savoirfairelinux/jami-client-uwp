@@ -32,7 +32,12 @@ Account::Account(String^ name,
                  String^ accountType,
                  String^ accountID,
                  String^ deviceId,
+                 String^ deviceName,
+                 bool active,
                  bool upnpState,
+                 bool autoAnswer,
+                 bool dhtPublicInCalls,
+                 bool turnEnabled,
                  String^ sipHostname,
                  String^ sipUsername,
                  String^ sipPassword)
@@ -42,11 +47,18 @@ Account::Account(String^ name,
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
+    _deviceName = deviceName;
+    _active = active;
     _upnpState = upnpState;
+    _autoAnswer = autoAnswer;
+    _dhtPublicInCalls = dhtPublicInCalls;
+    _turnEnabled = turnEnabled;
     _sipHostname = sipHostname;
     _sipUsername = sipUsername;
     _sipPassword = sipPassword;
     _unreadMessages = 0;
+    _registrationState = RegistrationState::UNKNOWN;
+    _username = "";
 }
 
 void
@@ -59,4 +71,10 @@ Account::NotifyPropertyChanged(String^ propertyName)
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
+}
+
+void
+Account::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
 }

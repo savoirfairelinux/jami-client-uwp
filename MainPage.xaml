@@ -30,7 +30,7 @@
             <DoubleAnimation
             Storyboard.TargetName="_loadingOverlay_"
             Storyboard.TargetProperty="Opacity"
-            From="1.0" To="0.0" Duration="0:0:1" Completed="hideLoadingOverlay"/>
+            From="1.0" To="0.0" Duration="0:0:0.25" Completed="hideLoadingOverlay"/>
         </Storyboard>
         <Storyboard x:Name="_fadeInModalStoryboard_">
             <DoubleAnimation
@@ -104,7 +104,7 @@
                             <Grid   x:Name="_hamburgerButtonBar_"
                                     Canvas.ZIndex="0"
                                     Grid.Row="0"
-                                    Background="#3bc1d3"
+                                    Background="{StaticResource RingBlueMidBrush}"
                                     Width="320"
                                     HorizontalAlignment="Left">
                                 <Grid.ColumnDefinitions>
