@@ -19,26 +19,41 @@
 #pragma once
 
 #include "MainPage.g.h"
+#include "SmartPanelItem.h"
 
-using namespace Windows::UI::Xaml::Controls;
 using namespace Windows::UI::Xaml::Input;
 using namespace Windows::Foundation;
 using namespace Windows::ApplicationModel::ExtendedExecution;
+using namespace Windows::UI::Xaml::Controls;
 
 namespace RingClientUWP
 {
 
-namespace Views {
-}
+enum class FrameOpen {
+    WELCOME,
+    MESSAGE,
+    VIDEO
+};
+
 public ref class MainPage sealed
 {
 public:
     MainPage();
+
     void showLoadingOverlay(bool load, bool modal);
     void hideLoadingOverlay();
+    void focusOnMessagingTextbox();
+    void preloadMessageTextPage(SmartPanelItem^ item);
 
     property bool isLoading;
     property bool isModal;
+
+internal:
+    property FrameOpen currentFrame {
+        FrameOpen get() {
+            return _currentFrame;
+        }
+    };
 
 protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
@@ -60,6 +75,7 @@ private:
     EventRegistrationToken dpiChangedtoken;
     Rect bounds;
     bool editionMode = false;
+    FrameOpen _currentFrame;
 
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
@@ -73,7 +89,7 @@ private:
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
     void OncloseMessageTextPage();
     void OnregistrationStateErrorGeneric(const std::string& accountId);
-    void OnregistrationStateRegistered();
+    void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OnnameRegistred(bool status);
     void OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details);

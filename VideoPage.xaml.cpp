@@ -47,6 +47,8 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::Media;
 using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Media::Animation;
+using namespace Windows::UI::Xaml::Shapes;
 using namespace Windows::Media::Capture;
 using namespace Windows::Devices::Sensors;
 
@@ -147,7 +149,6 @@ VideoPage::VideoPage()
 
             _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
             _IncomingVideoImage_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-//            _PreviewImage_->Visibility = Windows::UI::Xaml::Visibility::Visible;
             break;
         }
         case CallStatus::ENDED:
@@ -166,7 +167,6 @@ VideoPage::VideoPage()
         case CallStatus::PAUSED:
             _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
             _IncomingVideoImage_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-//            _PreviewImage_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
             break;
         }
     });
