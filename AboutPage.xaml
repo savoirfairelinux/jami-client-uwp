@@ -34,11 +34,11 @@
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
                 <Button x:Name="_aboutBasicButton_"
-                    Content="About"
-                    Margin="0,0,6,0"
-                    BorderThickness="0"
-                    FontSize="12"
-                    Click="_aboutBasicButton__Click"
+                        Content="About"
+                        Margin="0,0,6,0"
+                        BorderThickness="0"
+                        FontSize="12"
+                        Click="_aboutBasicButton__Click"
                     />
                 <Button x:Name="_aboutCreditsButton_"
                     Content="Credits"
@@ -56,7 +56,6 @@
                     />
             </StackPanel>
             <Image x:Name="_welcomeImage_"
-
                        Source="Assets\Wide310x150Logo.scale-200.png"
                        Width="310"
                        HorizontalAlignment="Center"
@@ -72,10 +71,10 @@
                                 VerticalScrollBarVisibility="Hidden">
                     <StackPanel MaxWidth="500"
                                 Width="310">
-                        <TextBlock  Text="Ring version: 2017/2/13"
+                        <TextBlock  x:Name="_aboutVersionString_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
-                                     Margin="0,0,0,24"
+                                    Margin="0,0,0,24"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     HorizontalAlignment="Center"/>
