@@ -47,10 +47,6 @@ MessageTextPage::MessageTextPage()
 {
     InitializeComponent();
 
-    /* bind the source to account only able to be used to contact the contact */
-    _associableAccountsList_->ItemsSource = AccountsViewModel::instance->accountsList;
-    _associableAccountsList_->SelectionChanged += ref new Windows::UI::Xaml::Controls::SelectionChangedEventHandler(this, &RingClientUWP::Views::MessageTextPage::OnSelectionChanged);
-
     /* connect to delegates */
     RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
     String^ fromRingId, String^ payload) {
@@ -58,55 +54,68 @@ MessageTextPage::MessageTextPage()
     });
     RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::MessageTextPage::OnincomingMessage);
 
+    SmartPanelItemsViewModel::instance->selectedItemUpdated += ref new SelectedItemUpdated([&]() {
+        updatePageContent();
+    });
+
 }
 
 void
-RingClientUWP::Views::MessageTextPage::updatePageContent()
+MessageTextPage::updatePageContent()
 {
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-    auto contact = item->_contact;
+    if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
+        auto contact = item->_contact;
 
-    if (!contact) /* should never happen */
-        return;
+        if (!contact) /* should never happen */
+            return;
 
-    /* show the name of contact on the page */
-    _title_->Text = contact->_name;
-    _profilName_->Text = contact->_displayName;
-    contact->_unreadMessages = 0;
-
-    String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
-    if (Utils::fileExists(Utils::toString(image_path))) {
-        auto uri = ref new Windows::Foundation::Uri(image_path);
-        _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
-    }
-    else {
-        auto uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/contactAvatar.png");
-        _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
-    }
-
-    /* show messages */
-    _messagesList_->ItemsSource = contact->_conversation->_messages;
-
-    /* select the associated accountId stored with the contact */
-    auto accountIdAssociated = contact->_accountIdAssociated;
-    auto list = AccountsViewModel::instance->accountsList;
-    unsigned int index = 0;
-    bool found = true;
-
-    for (auto item : list)
-        if (item->accountID_ == accountIdAssociated) {
-            found = list->IndexOf(item, &index);
-            break;
+        if (contact->_trustStatus == TrustStatus::TRUSTED) {
+            _messageTextBox_->Visibility = VIS::Visible;
+            _videoCallBtn_->Visibility = VIS::Visible;
+            _audioCallBtn_->Visibility = VIS::Visible;
+            _clearConversationBtn_->Visibility = VIS::Visible;
+        }
+        else {
+            _messageTextBox_->Visibility = VIS::Collapsed;
+            _videoCallBtn_->Visibility = VIS::Collapsed;
+            _audioCallBtn_->Visibility = VIS::Collapsed;
+            _clearConversationBtn_->Visibility = VIS::Collapsed;
         }
 
-    if (found)
-        _associableAccountsList_->SelectedIndex = index;
-    else
-        ERR_("mismatch between accountIdAssociated and associable accounts!");
+        /* show the name of contact on the page */
+        _contactName_->Text = contact->_name;
+        _profileName_->Text = contact->_displayName;
+        contact->_unreadMessages = 0;
 
-    /* scroll to the last message on the page*/
-    scrollDown();
+        String^ image_path = Utils::toPlatformString(RingD::instance->getLocalFolder()) + ".vcards\\" + contact->_vcardUID + ".png";
+        if (Utils::fileExists(Utils::toString(image_path))) {
+            auto uri = ref new Windows::Foundation::Uri(image_path);
+            _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
+        }
+        else {
+            auto uri = ref new Windows::Foundation::Uri("ms-appx:///Assets/TESTS/contactAvatar.png");
+            _contactBarAvatar_->ImageSource = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage(uri);
+        }
 
+        /* show messages */
+        _messagesList_->ItemsSource = contact->_conversation->_messages;
+
+        /* select the associated accountId stored with the contact */
+        auto accountIdAssociated = contact->_accountIdAssociated;
+        auto list = AccountsViewModel::instance->accountsList;
+        unsigned int index = 0;
+        bool found = true;
+
+        for (auto item : list) {
+            if (item->accountID_ == accountIdAssociated) {
+                found = list->IndexOf(item, &index);
+                break;
+            }
+        }
+
+        /* scroll to the last message on the page*/
+        scrollDown();
+    }
 }
 
 void RingClientUWP::Views::MessageTextPage::scrollDown()
@@ -186,11 +195,9 @@ void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^
 
 void RingClientUWP::Views::MessageTextPage::OnSelectionChanged(Platform::Object ^sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^e)
 {
-    auto account = dynamic_cast<Account^>(_associableAccountsList_->SelectedItem);
-    SmartPanelItemsViewModel::instance->_selectedItem->_contact->_accountIdAssociated = account->accountID_;
 }
 
-void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void RingClientUWP::Views::MessageTextPage::_deleteContactBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
@@ -214,7 +221,7 @@ void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Obje
 }
 
 
-void RingClientUWP::Views::MessageTextPage::_clearConversation__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void RingClientUWP::Views::MessageTextPage::_clearConversationBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
@@ -235,7 +242,7 @@ void RingClientUWP::Views::MessageTextPage::_clearConversation__Click(Platform::
 }
 
 
-void RingClientUWP::Views::MessageTextPage::_audioCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void RingClientUWP::Views::MessageTextPage::_audioCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     if (button) {
@@ -249,7 +256,7 @@ void RingClientUWP::Views::MessageTextPage::_audioCall__Click(Platform::Object^ 
 }
 
 
-void RingClientUWP::Views::MessageTextPage::_videoCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void RingClientUWP::Views::MessageTextPage::_videoCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto button = dynamic_cast<Button^>(e->OriginalSource);
     if (button) {
