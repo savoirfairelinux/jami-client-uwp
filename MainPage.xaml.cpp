@@ -95,6 +95,7 @@ MainPage::MainPage()
 
     RingD::instance->registrationStateErrorGeneric += ref new RingClientUWP::RegistrationStateErrorGeneric(this, &RingClientUWP::MainPage::OnregistrationStateErrorGeneric);
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &RingClientUWP::MainPage::OnregistrationStateRegistered);
+    RingD::instance->registrationStateUnregistered += ref new RingClientUWP::RegistrationStateUnregistered(this, &RingClientUWP::MainPage::OnregistrationStateUnregistered);
     RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::MainPage::OncallPlaced);
 
     RingD::instance->setLoadingStatusText += ref new SetLoadingStatusText([this](String^ statusText, String^ color) {
@@ -105,6 +106,15 @@ MainPage::MainPage()
     });
 
     RingD::instance->fullScreenToggled += ref new RingClientUWP::FullScreenToggled(this, &RingClientUWP::MainPage::OnFullScreenToggled);
+
+}
+
+void
+MainPage::focusOnMessagingTextbox()
+{
+    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    auto messageTextBox = dynamic_cast<TextBox^>(messageTextPage->FindName("_messageTextBox_"));
+    messageTextBox->Focus(Windows::UI::Xaml::FocusState::Programmatic);
 }
 
 void
@@ -138,12 +148,16 @@ RingClientUWP::MainPage::showFrame(Windows::UI::Xaml::Controls::Frame^ frame)
     _navGrid_->SetRow(_videoFrame_, 0);
 
     if (frame == _welcomeFrame_) {
+        _currentFrame = FrameOpen::WELCOME;
         _navGrid_->SetRow(_welcomeFrame_, 1);
     } else if (frame == _videoFrame_) {
+        _currentFrame = FrameOpen::VIDEO;
         _navGrid_->SetRow(_videoFrame_, 1);
     } else if (frame == _messageTextFrame_) {
+        _currentFrame = FrameOpen::MESSAGE;
         _navGrid_->SetRow(_messageTextFrame_, 1);
     }
+
 }
 
 void
@@ -197,14 +211,19 @@ RingClientUWP::MainPage::hideLoadingOverlay()
     _loadingOverlay_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
-void RingClientUWP::MainPage::OnsummonMessageTextPage()
+void
+RingClientUWP::MainPage::OnsummonMessageTextPage()
 {
-    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
-    messageTextPage->updatePageContent();
+    preloadMessageTextPage(nullptr);
     showFrame(_messageTextFrame_);
-
 }
 
+void
+RingClientUWP::MainPage::preloadMessageTextPage(SmartPanelItem^ item)
+{
+    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    messageTextPage->updatePageContent(item);
+}
 
 void RingClientUWP::MainPage::OnsummonWelcomePage()
 {
@@ -226,7 +245,7 @@ void RingClientUWP::MainPage::OnhidePreviewPage()
 void RingClientUWP::MainPage::OnsummonVideoPage()
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);;
+    auto videoPage = dynamic_cast<VideoPage^>(_videoFrame_->Content);
 
     if (item) {
         switch (item->_callStatus) {
@@ -250,7 +269,8 @@ void RingClientUWP::MainPage::OnpressHangUpCall()
     OnsummonMessageTextPage();
 }
 
-void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+void
+MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
@@ -258,8 +278,15 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     /* send the user to the peer's message text page */
     case CallStatus::ENDED:
     {
-        if (item)
+        auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
+
+        if (!selectedItem) {
+            return;
+        }
+
+        if (item && selectedItem->_callId == callId) {
             OnsummonMessageTextPage();
+        }
         break;
     }
     default:
@@ -308,7 +335,7 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
                     }));
                 }
                 catch (Exception^ e) {
-                    WriteException(e);
+                    EXC_(e);
                 }
             });
         }
@@ -354,21 +381,26 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
     showLoadingOverlay(false, false);
 }
 
+void RingClientUWP::MainPage::OnregistrationStateUnregistered(const std::string& accountId)
+{
+    showLoadingOverlay(false, false);
 
-void RingClientUWP::MainPage::OnregistrationStateRegistered()
+    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &MainPage::OnvolatileDetailsChanged);
+}
+
+void RingClientUWP::MainPage::OnregistrationStateRegistered(const std::string& accountId)
 {
     showLoadingOverlay(false, false);
 
     /* do not connect those delegates before initial registration on dht is fine.
        Otherwise your going to mess with the wizard */
     RingD::instance->nameRegistred += ref new RingClientUWP::NameRegistred(this, &RingClientUWP::MainPage::OnnameRegistred);
-    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &RingClientUWP::MainPage::OnvolatileDetailsChanged);
+    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &MainPage::OnvolatileDetailsChanged);
 }
 
 
 void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
 {
-    showFrame(_welcomeFrame_);
 }
 
 
@@ -378,7 +410,7 @@ void RingClientUWP::MainPage::OnnameRegistred(bool status)
 }
 
 
-void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details)
+void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string>& details)
 {
     showLoadingOverlay(false, false);
 }
