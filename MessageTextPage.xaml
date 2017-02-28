@@ -32,6 +32,9 @@
         <!-- bubble -->
         <views:BubbleBackground x:Key="_bubbleBackground_" />
         <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
+        <views:PartialTrustToVisibility x:Key="_PartialTrustToVisibility_" />
+        <views:TrustedToVisibility x:Key="_TrustedToVisibility_" />
+
         <DataTemplate x:Key="ConversationMessageTemplate"
                       x:DataType="local:ConversationMessage">
             <Grid Margin="6,0,12,0"
@@ -153,7 +156,7 @@
                              Height="50">
                 <Ellipse.Fill>
                     <ImageBrush x:Name="_contactBarAvatar_"
-                                        ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
+                                ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
                 </Ellipse.Fill>
             </Ellipse>
             <Grid Grid.Column="1">
@@ -169,7 +172,7 @@
                             <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
                     </Grid>
-                    <TextBlock  x:Name="_title_"
+                    <TextBlock  x:Name="_contactName_"
                                 Grid.Column="0"
                                 Text=""
                                 TextWrapping="NoWrap"
@@ -177,64 +180,45 @@
                                 VerticalAlignment="Center"
                                 FontSize="16"
                                 Margin="4,0,4,0" />
-                    <ComboBox   x:Name="_associableAccountsList_"
-                                Grid.Column="1"
-                                Margin="6,14,6,6"
-                                Visibility="Collapsed">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="local:Account">
-                                <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
                 </Grid>
-                <TextBlock  x:Name="_profilName_"
+                <TextBlock  x:Name="_profileName_"
                             Grid.Row="1"
                             Text=""
                             FontStyle="Italic"
                             VerticalAlignment="Center"
                             FontSize="16"
                             Margin="4,0,4,0" />
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="_videoCall_"
-                        Click="_videoCall__Click"
-                        Grid.Column="0"
-                        Content="&#xE714;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_audioCall_"
-                        Grid.Column="1"
-                        Click="_audioCall__Click"
-                        Content="&#xE13A;"
-                        FontSize="14"
-                        FontFamily="Segoe MDL2 Assets"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_clearConversation_"
-                        Grid.Column="2"
-                        Click="_clearConversation__Click"
-                        Content="&#xE894;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_deleteContact_"
-                        Grid.Column="3"
-                        Click="_deleteContact__Click"
-                        Content="&#xE74D;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                </Grid>
+                <StackPanel Grid.Row="2"
+                            Orientation="Horizontal">
+                    <Button     x:Name="_videoCallBtn_"
+                                Click="_videoCallBtn__Click"
+                                Content="&#xE714;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_audioCallBtn_"
+                                Click="_audioCallBtn__Click"
+                                Content="&#xE13A;"
+                                FontSize="14"
+                                FontFamily="Segoe MDL2 Assets"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_clearConversationBtn_"
+                                Click="_clearConversationBtn__Click"
+                                Content="&#xE894;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_deleteContactBtn_"
+                                Click="_deleteContactBtn__Click"
+                                Content="&#xE74D;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                </StackPanel>
             </Grid>
         </Grid>
         <ScrollViewer x:Name="_scrollView_"
