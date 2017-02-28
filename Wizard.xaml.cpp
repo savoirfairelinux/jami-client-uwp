@@ -201,7 +201,8 @@ void RingClientUWP::Views::Wizard::_usernameTextBox__KeyUp(Platform::Object^ sen
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     } else {
-        RingD::instance->lookUpName(alias);
+        auto accountId = ViewModel::AccountListItemsViewModel::instance->getSelectedAccountId();
+        RingD::instance->lookUpName(Utils::toString(accountId), alias);
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
@@ -273,7 +274,7 @@ void RingClientUWP::Views::Wizard::_step2button__Click(Platform::Object^ sender,
     _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, const std::string& address, const std::string& name)
+void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status,  const std::string& accountId, const std::string& address, const std::string& name)
 {
     switch (status)
     {
