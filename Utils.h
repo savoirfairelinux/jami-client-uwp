@@ -20,6 +20,8 @@
 #include <pch.h>
 
 #include <random>
+#include <type_traits>
+#include <functional>
 
 using namespace Platform;
 using namespace Platform::Collections;
@@ -27,24 +29,123 @@ using namespace Windows::Foundation;
 using namespace Windows::Foundation::Collections;
 using namespace Windows::Storage;
 using namespace Windows::System;
+using namespace Windows::Globalization::DateTimeFormatting;
+using namespace Windows::UI::Core;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Controls;
+using namespace Windows::UI::Xaml::Controls::Primitives;
+using namespace Windows::Networking::Connectivity;
+using namespace Windows::System::Threading;
+using namespace Windows::Security::Cryptography;
+using namespace Windows::Security::Cryptography::Core;
+using namespace Windows::Storage::Streams;
 
-typedef Windows::UI::Xaml::Visibility VIS;
+using VIS = Windows::UI::Xaml::Visibility;
+static const uint64_t TICKS_PER_SECOND = 10000000;
+static const uint64_t EPOCH_DIFFERENCE = 11644473600LL;
 
 namespace RingClientUWP
 {
 namespace Utils
 {
-inline int
-fileExists(const std::string& name)
+
+namespace detail
 {
-    std::ifstream f(name.c_str());
-    return f.good();
+
+#include <stdint.h>
+#include <stdlib.h>
+
+/* Mainly based on the following stackoverflow question:
+* http://stackoverflow.com/questions/342409/how-do-i-base64-encode-decode-in-c
+*/
+static const char encoding_table[] = {
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K',
+    'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
+    'W', 'X', 'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f', 'g',
+    'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r',
+    's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '0', '1', '2',
+    '3', '4', '5', '6', '7', '8', '9', '+', '/'
+};
+
+static const size_t mod_table[] = { 0, 2, 1 };
+
+char *base64_encode(const uint8_t *input, size_t input_length,
+    char *output, size_t *output_length)
+{
+    size_t i, j;
+    size_t out_sz = *output_length;
+    *output_length = 4 * ((input_length + 2) / 3);
+    if (out_sz < *output_length || output == NULL)
+        return NULL;
+
+    for (i = 0, j = 0; i < input_length; ) {
+        uint8_t octet_a = i < input_length ? input[i++] : 0;
+        uint8_t octet_b = i < input_length ? input[i++] : 0;
+        uint8_t octet_c = i < input_length ? input[i++] : 0;
+
+        uint32_t triple = (octet_a << 0x10) + (octet_b << 0x08) + octet_c;
+
+        output[j++] = encoding_table[(triple >> 3 * 6) & 0x3F];
+        output[j++] = encoding_table[(triple >> 2 * 6) & 0x3F];
+        output[j++] = encoding_table[(triple >> 1 * 6) & 0x3F];
+        output[j++] = encoding_table[(triple >> 0 * 6) & 0x3F];
+    }
+
+    for (i = 0; i < mod_table[input_length % 3]; i++)
+        output[*output_length - 1 - i] = '=';
+
+    return output;
 }
 
-inline int
-fileDelete(const std::string& file)
+uint8_t *base64_decode(const char *input, size_t input_length,
+    uint8_t *output, size_t *output_length)
 {
-    return std::remove(file.c_str());
+    size_t i, j;
+    uint8_t decoding_table[256];
+
+    uint8_t c;
+    for (c = 0; c < 64; c++)
+        decoding_table[static_cast<int>(encoding_table[c])] = c;
+
+    if (input_length % 4 != 0)
+        return NULL;
+
+    size_t out_sz = *output_length;
+    *output_length = input_length / 4 * 3;
+    if (input[input_length - 1] == '=')
+        (*output_length)--;
+    if (input[input_length - 2] == '=')
+        (*output_length)--;
+
+    if (out_sz < *output_length || output == NULL)
+        return NULL;
+
+    for (i = 0, j = 0; i < input_length;) {
+        uint8_t sextet_a = input[i] == '=' ? 0 & i++
+            : decoding_table[static_cast<int>(input[i++])];
+        uint8_t sextet_b = input[i] == '=' ? 0 & i++
+            : decoding_table[static_cast<int>(input[i++])];
+        uint8_t sextet_c = input[i] == '=' ? 0 & i++
+            : decoding_table[static_cast<int>(input[i++])];
+        uint8_t sextet_d = input[i] == '=' ? 0 & i++
+            : decoding_table[static_cast<int>(input[i++])];
+
+        uint32_t triple = (sextet_a << 3 * 6) +
+            (sextet_b << 2 * 6) +
+            (sextet_c << 1 * 6) +
+            (sextet_d << 0 * 6);
+
+        if (j < *output_length)
+            output[j++] = (triple >> 2 * 8) & 0xFF;
+        if (j < *output_length)
+            output[j++] = (triple >> 1 * 8) & 0xFF;
+        if (j < *output_length)
+            output[j++] = (triple >> 0 * 8) & 0xFF;
+    }
+
+    return output;
 }
 
 inline std::string
@@ -76,21 +177,75 @@ makeWString(const std::string& str)
         return std::wstring();
     }
 
-    return std::wstring(wide.get());;
+    return std::wstring(wide.get());
+}
+
+} /*namespace detail*/
+
+template<typename E>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value,
+                                            typename std::underlying_type<E>::type
+                                        >::type
+toUnderlyingValue(E e) noexcept
+{
+    return static_cast<typename std::underlying_type<E>::type >( e );
+}
+
+template<typename E, typename T>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value &&
+                                            std::is_integral<T>::value, E
+                                        >::type
+toEnum(T value) noexcept
+{
+    return static_cast<E>(value);
+}
+
+std::string
+fileNameOnly(const std::string& path)
+{
+    return path.substr(path.find_last_of("\\") + 1);
+}
+
+inline int
+fileExists(const std::string& name)
+{
+    std::ifstream f(name.c_str());
+    return f.good();
+}
+
+inline int
+fileDelete(const std::string& file)
+{
+    return std::remove(file.c_str());
 }
 
 inline std::string
 toString(Platform::String ^str)
 {
     std::wstring wsstr(str->Data());
-    return makeString(wsstr);
+    return detail::makeString(wsstr);
 }
 
 inline Platform::String^
 toPlatformString(const std::string& str)
 {
-    std::wstring wsstr = makeWString(str);
+    std::wstring wsstr = detail::makeWString(str);
     return ref new Platform::String(wsstr.c_str(), wsstr.length());
+}
+
+std::string
+getData(::Windows::Storage::Streams::IBuffer^ buf)
+{
+    auto reader = ::Windows::Storage::Streams::DataReader::FromBuffer(buf);
+
+    std::vector<unsigned char> data(reader->UnconsumedBufferLength);
+
+    if (!data.empty())
+        reader->ReadBytes(
+            ::Platform::ArrayReference<unsigned char>(
+                &data[0], data.size()));
+
+    return std::string(data.begin(), data.end());
 }
 
 Platform::String^
@@ -256,11 +411,11 @@ findIn(std::vector<T> vec, T val)
 }
 
 std::string
-genID(long long lower, long long upper)
+genID(uint64_t lower, uint64_t upper)
 {
     std::random_device r;
     std::mt19937 gen(r());
-    std::uniform_int_distribution<long long> idgen {lower, upper};
+    std::uniform_int_distribution<uint64_t> idgen {lower, upper};
 
     uint16_t digits = 0;
     if (upper < 0LL)
@@ -278,6 +433,22 @@ genID(long long lower, long long upper)
     return o.str();
 }
 
+bool
+hasInternet()
+{
+    auto connectionProfile = NetworkInformation::GetInternetConnectionProfile();
+    return (connectionProfile != nullptr &&
+        connectionProfile->GetNetworkConnectivityLevel() == NetworkConnectivityLevel::InternetAccess);
+}
+
+std::string
+getHostName()
+{
+    auto hostNames = NetworkInformation::GetHostNames();
+    auto hostName = hostNames != nullptr ? toString(hostNames->GetAt(0)->DisplayName) : "";
+    return hostName;
+}
+
 Windows::UI::Color
 ColorFromString(String^ s)
 {
@@ -288,5 +459,159 @@ ColorFromString(String^ s)
         return Windows::UI::ColorHelper::FromArgb(255, 0, 0, 0);
 }
 
+template <typename... Args>
+void
+runOnWorkerThread(  std::function<void()> const& f,
+                    WorkItemPriority priority = WorkItemPriority::Normal)
+{
+    ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
+    {
+        f();
+    }, Platform::CallbackContext::Any), priority);
+}
+
+template <typename... Args>
+void
+runOnUIThread(  std::function<void()> const& f,
+                CoreDispatcherPriority priority = CoreDispatcherPriority::High)
+{
+    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(priority,
+        ref new DispatchedHandler([=]()
+    {
+        f();
+    }));
+}
+
+template <typename... Args>
+void
+runOnUIThreadDelayed(int delayInMilliSeconds, std::function<void()> const& f)
+{
+    // duration is measured in 100-nanosecond units
+    TimeSpan delay;
+    delay.Duration = 10000 * delayInMilliSeconds;
+    ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
+        ref new TimerElapsedHandler([=](ThreadPoolTimer^ source)
+    {
+        runOnUIThread(f);
+    }), delay);
+}
+
+DateTime
+epochToDateTime(std::time_t epochTime)
+{
+    Windows::Foundation::DateTime dateTime;
+    dateTime.UniversalTime = (epochTime + EPOCH_DIFFERENCE) * TICKS_PER_SECOND;
+    return dateTime;
+}
+
+DateTime
+currentDateTime()
+{
+    Windows::Globalization::Calendar^ calendar = ref new Windows::Globalization::Calendar();
+    return calendar->GetDateTime();
+}
+
+std::time_t
+currentTimestamp()
+{
+    return std::time(nullptr);
+}
+
+String^
+dateTimeToString(DateTime dateTime, String^ format)
+{
+    auto timeFormatter = ref new DateTimeFormatter(format);
+    return timeFormatter->Format(dateTime);
+}
+
+std::time_t
+dateTimeToEpoch(DateTime dateTime)
+{
+    return static_cast<std::time_t>(dateTime.UniversalTime / TICKS_PER_SECOND - EPOCH_DIFFERENCE);
+}
+
+namespace xaml
+{
+
+Windows::UI::Xaml::FrameworkElement^
+FindVisualChildByName(DependencyObject^ obj, String^ name)
+{
+    FrameworkElement^ ret;
+    int numChildren = VisualTreeHelper::GetChildrenCount(obj);
+    for (int i = 0; i < numChildren; i++)
+    {
+        auto objChild = VisualTreeHelper::GetChild(obj, i);
+        auto child = safe_cast<FrameworkElement^>(objChild);
+        if (child != nullptr && child->Name == name)
+        {
+            return child;
+        }
+
+        ret = FindVisualChildByName(objChild, name);
+        if (ret != nullptr)
+            break;
+    }
+    return ret;
+}
+
+} /*namespace xaml*/
+
+namespace base64
+{
+
+std::string
+encode(const std::vector<uint8_t>::const_iterator begin,
+    const std::vector<uint8_t>::const_iterator end)
+{
+    size_t output_length = 4 * ((std::distance(begin, end) + 2) / 3);
+    std::string out;
+    out.resize(output_length);
+    detail::base64_encode(&(*begin), std::distance(begin, end),
+        &(*out.begin()), &output_length);
+    out.resize(output_length);
+    return out;
+}
+
+std::string
+encode(const std::vector<uint8_t>& dat)
+{
+    return encode(dat.cbegin(), dat.cend());
+}
+
+std::vector<uint8_t>
+decode(const std::string& str)
+{
+    size_t output_length = str.length() / 4 * 3 + 2;
+    std::vector<uint8_t> output;
+    output.resize(output_length);
+    detail::base64_decode(str.data(), str.size(), output.data(), &output_length);
+    output.resize(output_length);
+    return output;
+}
+
+} /*namespace base64*/
+
+String^
+GetMD5Hash(String^ strMsg)
+{
+    String^ strAlgName = HashAlgorithmNames::Md5;
+    IBuffer^ buffUtf8Msg = CryptographicBuffer::ConvertStringToBinary(strMsg, BinaryStringEncoding::Utf8);
+
+    HashAlgorithmProvider^ objAlgProv = HashAlgorithmProvider::OpenAlgorithm(strAlgName);
+
+    IBuffer^ buffHash = objAlgProv->HashData(buffUtf8Msg);
+
+    if (buffHash->Length != objAlgProv->HashLength) {
+        throw ref new Exception(1, "There was an error creating the hash");
+    }
+
+    String^ hex = CryptographicBuffer::EncodeToHexString(buffHash);
+    return hex;
+}
+
 } /*namespace Utils*/
+
+String^ SuccessColor = "#FF00CC6A";
+String^ ErrorColor = "#FFFF4343";
+
 } /*namespace RingClientUWP*/
