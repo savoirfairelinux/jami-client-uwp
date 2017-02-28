@@ -59,96 +59,96 @@ void
 RingDebug::print(const  std::string& message, const Type& type,
                         std::string file, int line)
 {
-    std::string _message;
+    Utils::runOnWorkerThread([this, message, type, file, line]()
+    {
+        std::string _message;
 
-    if (type != Type::DMN)
-        _message = getDebugHeader(file, line) + message;
-    else
-        _message = message;
+        if (type != Type::DMN)
+            _message = getDebugHeader(file, line) + message;
+        else
+            _message = message;
 
-    std::wstring wString = std::wstring(_message.begin(), _message.end());
+        std::wstring wString = std::wstring(_message.begin(), _message.end());
 
-    /* set message type. */
-    wString = (type>Type::WNG)?(L"(EE) "):((type>Type::MSG)?(L"(WW) "):(L"")) + wString;
+        /* set message type. */
+        wString = (type>Type::WNG) ? (L"(EE) ") : ((type>Type::MSG) ? (L"(WW) ") : (L"")) + wString;
 
-    String^ msg;
-    msg = ref new String(wString.c_str(), wString.length());
+        String^ msg;
+        msg = ref new String(wString.c_str(), wString.length());
 
 #if UWP_DBG_VS
-    /* screen it into VS debug console */
-    OutputDebugString((wString + L"\n").c_str());
+        /* screen it into VS debug console */
+        OutputDebugString((wString + L"\n").c_str());
 #endif
 
-#if UWP_DBG_CLIENT
-    /* fire the event. */
-    messageToScreen(msg);
+#if UWP_DBG_CONSOLE
+        /* fire the event. */
+        messageToScreen(msg);
 #endif
 
 #if UWP_DBG_FILE
-    /* output to file */
-    std::ofstream ofs;
-    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
-    ofs << Utils::toString(msg) << "\n";
-    ofs.close();
+        /* output to file */
+        printToLogFile(Utils::toString(msg));
 #endif
+    }, WorkItemPriority::Normal);
 }
 
 void
 RingDebug::print(String^ message, const Type& type,
                         std::string file, int line)
 {
-    /* add header */
-    auto messageTimestamped = Utils::toPlatformString(getDebugHeader(file, line)) + message;
+    Utils::runOnWorkerThread([this, message, type, file, line]()
+    {
+        /* add header */
+        auto messageTimestamped = Utils::toPlatformString(getDebugHeader(file, line)) + message;
 
-    /* set message type. */
-    messageTimestamped = (type>Type::WNG)?("(EE) "):((type>Type::MSG)?("(WW) "):("")) + messageTimestamped;
+        /* set message type. */
+        messageTimestamped = (type>Type::WNG) ? ("(EE) ") : ((type>Type::MSG) ? ("(WW) ") : ("")) + messageTimestamped;
 
 #if UWP_DBG_VS
-    /* screen it into VS debug console */
-    std::wstringstream wStringstream;
-    wStringstream << messageTimestamped->Data() << "\n";
-    OutputDebugString(wStringstream.str().c_str());
+        /* screen it into VS debug console */
+        std::wstringstream wStringstream;
+        wStringstream << messageTimestamped->Data() << "\n";
+        OutputDebugString(wStringstream.str().c_str());
 #endif
 
-#if UWP_DBG_CLIENT
-    /* fire the event. */
-    messageToScreen(messageTimestamped);
+#if UWP_DBG_CONSOLE
+        /* fire the event. */
+        messageToScreen(messageTimestamped);
 #endif
 
 #if UWP_DBG_FILE
-    /* output to file */
-    std::ofstream ofs;
-    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
-    ofs << Utils::toString(messageTimestamped) << "\n";
-    ofs.close();
+        /* output to file */
+        printToLogFile(Utils::toString(messageTimestamped));
 #endif
+    }, WorkItemPriority::Normal);
 }
 
 void
 RingDebug::print(Exception^ e, std::string file, int line)
 {
-    /* add header */
-    auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "0x" + e->HResult.ToString() + ": " + e->Message;
+    Utils::runOnWorkerThread([this, e, file, line]()
+    {
+        /* add header */
+        auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "Exception : 0x" + e->HResult.ToString() + ": " + e->Message;
 
 #if UWP_DBG_VS
-    /* screen it into VS debug console */
-    std::wstringstream wStringstream;
-    wStringstream << message->Data() << "\n";
-    OutputDebugString(wStringstream.str().c_str());
+        /* screen it into VS debug console */
+        std::wstringstream wStringstream;
+        wStringstream << message->Data() << "\n";
+        OutputDebugString(wStringstream.str().c_str());
 #endif
 
-#if UWP_DBG_CLIENT
-    /* fire the event. */
-    messageToScreen(message);
+#if UWP_DBG_CONSOLE
+        /* fire the event. */
+        messageToScreen(message);
 #endif
 
 #if UWP_DBG_FILE
-    /* output to file */
-    std::ofstream ofs;
-    ofs.open (RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
-    ofs << Utils::toString(message) << "\n";
-    ofs.close();
+        /* output to file */
+        printToLogFile(Utils::toString(message));
 #endif
+    }, WorkItemPriority::Normal);
 }
 
 RingDebug::RingDebug()
@@ -159,3 +159,14 @@ RingDebug::RingDebug()
     ofs.close();
 }
 
+void
+RingDebug::printToLogFile(std::string msg)
+{
+    {
+        std::lock_guard<std::mutex> l(debugMutex_);
+        std::ofstream ofs;
+        ofs.open(RingD::instance->getLocalFolder() + "debug.log", std::ofstream::out | std::ofstream::app);
+        ofs << msg << "\n";
+        ofs.close();
+    }
+}
