@@ -23,39 +23,166 @@
     xmlns:local="using:RingClientUWP"
     xmlns:views="using:RingClientUWP.Views"
     xmlns:ctl="using:RingClientUWP.Controls"
+    xmlns:uc="using:RingClientUWP.UserAndCustomControls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ei="http://schemas.microsoft.com/expression/2010/interactions"
+    xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+    xmlns:core="System.Windows.Interactivity"
     NavigationCacheMode="Enabled"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- bubble -->
         <views:BubbleBackground x:Key="_bubbleBackground_" />
         <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
+        <views:boolToVisibility x:Key="_boolToVisibility_" />
+        <views:MessageDateTimeString x:Key="_MessageDateTimeString_" />
+        <views:MessageChainBreakToVisibility x:Key="_MessageChainBreakToVisibility_" />
+        <views:MessageChainBreakToHeight x:Key="_MessageChainBreakToHeight_" />
+
         <DataTemplate x:Key="ConversationMessageTemplate"
                       x:DataType="local:ConversationMessage">
-            <Grid Margin="6,0,12,0"
+            <Grid Margin="12,0,20,0"
                   HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="8*" />
-                </Grid.ColumnDefinitions>
-                <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToHeight_}, Mode=OneWay}"/>
+                </Grid.RowDefinitions>
+                <!--avatar, message spikes, and message body-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="8*" />
+                    </Grid.ColumnDefinitions>
+                    <!--avatar-->
+                    <Grid Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
+                        <Ellipse    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Margin="0,2,0,0"
+                                Grid.Column="0"
+                                Height="36"
+                                Width="36"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Center">
+                            <Ellipse.Fill>
+                                <ImageBrush  x:Name="_contactAvatar_"
+                                     ImageSource="{x:Bind MessageAvatar, Mode=OneWay}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Grid>
+                    <!--left spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="1">
+                        <Polygon    Name="_chatLeftBubbleSpike_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                    Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                    Points="10,0,0,5,10,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="8" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                    <!--message-->
+                    <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
                          CornerRadius="10"
-                         Grid.Column="1"
+                         Grid.Column="3"
                          Width="auto"
                          Height="auto"
-                         Padding="5"
+                         Padding="10,6,10,6"
                          Margin="5" >
-                    <ContentPresenter>
-                        <!--Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
-                        <TextBlock x:Name="_msgContent_"
-                                   TextWrapping="Wrap"
-                                   IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Payload}"
-                                   Foreground="White"/>
-                    </ContentPresenter>
-                </Border>
+                        <ContentPresenter>
+                            <RichTextBlock  x:Name="_msgContent_"
+                                        TextWrapping="Wrap"
+                                        IsTextSelectionEnabled="True"
+                                        uc:TextBlockExtension.FormattedText="{x:Bind Payload}"
+                                        Foreground="White">
+                                <Paragraph />
+                            </RichTextBlock>
+                        </ContentPresenter>
+                    </Border>
+                    <!--right spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="3">
+                        <Polygon
+                                HorizontalAlignment="Right"
+                                Name="_chatRightBubbleSpike_"
+                                Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                Points="0,0,10,5,0,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="3" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                </Grid>
+                <!--message info-->
+                <Grid Grid.Row="1">
+                    <StackPanel x:Name="_messageInfo_"
+                            HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}"
+                            Orientation="Horizontal"
+                            Margin="10,0,10,0">
+                        <Grid   x:Name="_confirmationCheckGrid_"
+                            Visibility="Collapsed"
+                                Grid.Column="2"
+                            Margin="0,1,8,0">
+                            <Rectangle x:Name="_checkHider_"
+                                   Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                   Fill="#fff2f2f2"
+                                   Canvas.ZIndex="999"
+                                   HorizontalAlignment="Right"
+                                   Width="12">
+                                <Rectangle.RenderTransform>
+                                    <TransformGroup>
+                                        <ScaleTransform ScaleX="1.0"/>
+                                        <TranslateTransform X="0"/>
+                                    </TransformGroup>
+                                </Rectangle.RenderTransform>
+                                <Rectangle.Triggers>
+                                    <EventTrigger>
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="_showCheck_">
+                                                <DoubleAnimation    Storyboard.TargetName="_checkHider_"
+                                                                    Storyboard.TargetProperty="(FrameworkElement.RenderTransform).(TransformGroup.Children)[0].(ScaleTransform.ScaleX)"
+                                                                    From="1"
+                                                                    To="0"
+                                                                    Duration="0:0:0.5"/>
+                                                <DoubleAnimation    Storyboard.TargetName="_checkHider_"
+                                                                    Storyboard.TargetProperty="(FrameworkElement.RenderTransform).(TransformGroup.Children)[1].(TranslateTransform.X)"
+                                                                    From="0"
+                                                                    To="12"
+                                                                    Duration="0:0:0.5"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Rectangle.Triggers>
+                            </Rectangle>
+                            <TextBlock  Text="&#xE73E;"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_},  ConverterParameter=Inverted}"
+                                    Foreground="Green"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    FontSize="12"
+                                    Margin="6,0,0,0"/>
+                        </Grid>
+                        <TextBlock  x:Name="_messageTimeFrom_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform X="50"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock  x:Name="_messageTimeTo_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
         <!-- barre d'envoi de message -->
@@ -75,8 +202,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
@@ -127,12 +254,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <DataTemplate x:Key="_AssociableAccountsListDataTemplate_"
-                      x:DataType="local:Account">
-            <Grid>
-                <TextBlock Text="{x:Bind name_}"/>
-            </Grid>
-        </DataTemplate>
     </Page.Resources>
 
     <Grid Background="#FFF2F2F2">
@@ -141,100 +262,81 @@
             <RowDefinition Height="*"/>
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0"
-                    Background="White"
-                    Height="auto">
+        <Grid   x:Name="_contactInfoGrid_"
+                Grid.Row="0"
+                Background="White"
+                Height="62">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="62"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <Ellipse Grid.Column="0"
-                             Width="50"
-                             Height="50">
+            <Ellipse    Grid.Column="0"
+                        Width="50"
+                        Height="50">
                 <Ellipse.Fill>
                     <ImageBrush x:Name="_contactBarAvatar_"
-                                        ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
+                                ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
                 </Ellipse.Fill>
             </Ellipse>
-            <Grid Grid.Column="1">
+            <Grid   x:Name="_contactInfoGridData_"
+                    Grid.Column="1">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="25" />
-                    <RowDefinition Height="30" />
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="32"/>
                 </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="280"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-                    </Grid>
-                    <TextBlock  x:Name="_title_"
-                                Grid.Column="0"
+                <StackPanel Orientation="Horizontal"
+                            Grid.Row="0">
+                    <TextBlock  x:Name="_contactName_"
                                 Text=""
                                 TextWrapping="NoWrap"
                                 TextTrimming="CharacterEllipsis"
                                 VerticalAlignment="Center"
                                 FontSize="16"
                                 Margin="4,0,4,0" />
-                    <ComboBox   x:Name="_associableAccountsList_"
-                                Grid.Column="1"
-                                Margin="6,14,6,6"
-                                Visibility="Collapsed">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate x:DataType="local:Account">
-                                <TextBlock Text="{x:Bind name_, Mode=OneWay}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-                </Grid>
-                <TextBlock  x:Name="_profilName_"
-                            Grid.Row="1"
-                            Text=""
-                            FontStyle="Italic"
-                            VerticalAlignment="Center"
-                            FontSize="16"
-                            Margin="4,0,4,0" />
-                <Grid Grid.Row="2">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                        <ColumnDefinition Width="auto"/>
-                    </Grid.ColumnDefinitions>
-                    <Button x:Name="_videoCall_"
-                        Click="_videoCall__Click"
-                        Grid.Column="0"
-                        Content="&#xE714;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_audioCall_"
-                        Grid.Column="1"
-                        Click="_audioCall__Click"
-                        Content="&#xE13A;"
-                        FontSize="14"
-                        FontFamily="Segoe MDL2 Assets"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_clearConversation_"
-                        Grid.Column="2"
-                        Click="_clearConversation__Click"
-                        Content="&#xE894;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                    <Button x:Name="_deleteContact_"
-                        Grid.Column="3"
-                        Click="_deleteContact__Click"
-                        Content="&#xE74D;"
-                        FontFamily="Segoe MDL2 Assets"
-                        FontSize="14"
-                        Style="{StaticResource ButtonStyle4}"
-                        Margin="6,2,6,6"/>
-                </Grid>
+                    <TextBlock  x:Name="_contactNameSeperator_"
+                                Text="-"
+                                TextTrimming="CharacterEllipsis"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Margin="4,0,4,0" />
+                    <TextBlock  x:Name="_displayName_"
+                                Text=""
+                                FontStyle="Italic"
+                                VerticalAlignment="Center"
+                                FontSize="16"
+                                Margin="4,0,4,0" />
+                </StackPanel>
+                <StackPanel Grid.Row="1"
+                            Orientation="Horizontal">
+                    <Button     x:Name="_videoCallBtn_"
+                                Click="_videoCallBtn__Click"
+                                Content="&#xE714;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_audioCallBtn_"
+                                Click="_audioCallBtn__Click"
+                                Content="&#xE13A;"
+                                FontSize="14"
+                                FontFamily="Segoe MDL2 Assets"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_clearConversationBtn_"
+                                Click="_clearConversationBtn__Click"
+                                Content="&#xE894;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                    <Button     x:Name="_deleteContactBtn_"
+                                Click="_deleteContactBtn__Click"
+                                Content="&#xE74D;"
+                                FontFamily="Segoe MDL2 Assets"
+                                FontSize="14"
+                                Style="{StaticResource ButtonStyle4}"
+                                Margin="6,2,6,6"/>
+                </StackPanel>
             </Grid>
         </Grid>
         <ScrollViewer x:Name="_scrollView_"
@@ -243,29 +345,55 @@
                        Grid.Row="1"
                        ScrollViewer.VerticalScrollBarVisibility="Auto">
             <StackPanel>
+                <Grid Margin="0,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Rectangle  Grid.Column="0"
+                                Fill="LightGray"
+                                Height="1"
+                                Margin="16,4,4,4"/>
+                    <TextBlock  Grid.Column="1"
+                                Foreground="Gray"
+                                HorizontalAlignment="Center"
+                                Text="Beginning of Time"
+                                Margin="4"/>
+                    <Rectangle  Grid.Column="2"
+                                Fill="LightGray"
+                                Height="1"
+                                Margin="4,4,16,4"/>
+                </Grid>
                 <ListBox x:Name="_messagesList_"
                          Margin="0"
                          Padding="0"
-                         ItemContainerStyle="{StaticResource messageBubleStyle}"
+                         ItemContainerStyle="{StaticResource messageBubbleStyle}"
                          ItemTemplate="{StaticResource ConversationMessageTemplate}">
                 </ListBox>
+                <Rectangle  Fill="Transparent"
+                            Height="6"/>
             </StackPanel>
         </ScrollViewer>
-        <Grid Height="50"
-              Grid.Row="2"
+        <StackPanel Grid.Row="2"
+                    Orientation="Vertical">
+            <Rectangle  Grid.Row="0"
+                        Fill="LightGray"
+                        Height="1"
+                        Margin="16,0,16,0"/>
+            <Grid Height="48"
               Margin="0"
               Padding="0"
               Background="#FFF2F2F2">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-            </Grid.ColumnDefinitions>
-            <TextBox x:Name="_messageTextBox_"
-                     HorizontalAlignment="Stretch"
-                     TextWrapping="NoWrap"
-                     VerticalAlignment="Center"
-                     Margin="8,6,8,6"
-                     Background="White"
-                     KeyDown="_messageTextBox__KeyDown"/>
-        </Grid>
+                <TextBox    x:Name="_messageTextBox_"
+                            IsTabStop="True"
+                            HorizontalAlignment="Stretch"
+                            TextWrapping="NoWrap"
+                            VerticalAlignment="Center"
+                            Margin="8,4,8,4"
+                            Background="White"
+                            KeyDown="_messageTextBox__KeyDown"/>
+            </Grid>
+        </StackPanel>        
     </Grid>
 </Page>
