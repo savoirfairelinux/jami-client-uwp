@@ -25,6 +25,7 @@
     xmlns:ctl="using:RingClientUWP.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:uc="using:RingClientUWP.UserAndCustomControls"
     mc:Ignorable="d"
     NavigationCacheMode="Enabled">
 
@@ -48,32 +49,112 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <!-- bubble -->
+        <views:boolToVisibility x:Key="_boolToVisibility_" />
         <views:BubbleBackground x:Key="_bubbleBackground_" />
         <views:BubbleHorizontalAlignement x:Key="_bubbleHorizontalAlignement_" />
+        <views:MessageDateTimeString x:Key="_MessageDateTimeString_" />
+        <views:MessageChainBreakToVisibility x:Key="_MessageChainBreakToVisibility_" />
+        <views:MessageChainBreakToHeight x:Key="_MessageChainBreakToHeight_" />
+
         <DataTemplate x:Key="ConversationMessageTemplate"
                       x:DataType="local:ConversationMessage">
-            <Grid Margin="6,0,12,0"
+            <Grid Margin="12,0,20,0"
                   HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}" >
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="8*" />
-                </Grid.ColumnDefinitions>
-                <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToHeight_}, Mode=OneWay}"/>
+                </Grid.RowDefinitions>
+                <!--avatar, message spikes, and message body-->
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="2*" />
+                        <ColumnDefinition Width="8*" />
+                    </Grid.ColumnDefinitions>
+                    <!--avatar-->
+                    <Grid Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
+                        <Ellipse    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Margin="0,2,0,0"
+                                Grid.Column="0"
+                                Height="36"
+                                Width="36"
+                                VerticalAlignment="Top"
+                                HorizontalAlignment="Center">
+                            <Ellipse.Fill>
+                                <ImageBrush  x:Name="_contactAvatar_"
+                                     ImageSource="{x:Bind MessageAvatar, Mode=OneWay}"/>
+                            </Ellipse.Fill>
+                        </Ellipse>
+                    </Grid>
+                    <!--left spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="1">
+                        <Polygon    Name="_chatLeftBubbleSpike_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                    Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                    Points="10,0,0,5,10,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="8" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                    <!--message-->
+                    <Border  Background="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
                          CornerRadius="10"
-                         Grid.Column="1"
+                         Grid.Column="3"
                          Width="auto"
                          Height="auto"
-                         Padding="5"
+                         Padding="10,6,10,6"
                          Margin="5" >
-                    <ContentPresenter>
-                        <!--Text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."-->
-                        <TextBlock x:Name="_msgContent_"
-                                   TextWrapping="Wrap"
-                                   IsTextSelectionEnabled="True"
-                                   Text="{x:Bind Payload}"
-                                   Foreground="White"/>
-                    </ContentPresenter>
-                </Border>
+                        <ContentPresenter>
+                            <RichTextBlock  x:Name="_msgContent_"
+                                        TextWrapping="Wrap"
+                                        IsTextSelectionEnabled="True"
+                                        uc:TextBlockExtension.FormattedText="{x:Bind Payload}"
+                                        Foreground="White">
+                                <Paragraph />
+                            </RichTextBlock>
+                        </ContentPresenter>
+                    </Border>
+                    <!--right spike-->
+                    <Grid   Visibility="{x:Bind MessageIdInteger, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}"
+                        Grid.Column="3">
+                        <Polygon
+                                HorizontalAlignment="Right"
+                                Name="_chatRightBubbleSpike_"
+                                Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Fill="{x:Bind FromContact, Converter={StaticResource _bubbleBackground_}}"
+                                Points="0,0,10,5,0,10">
+                            <Polygon.RenderTransform>
+                                <TranslateTransform X="3" Y="15"/>
+                            </Polygon.RenderTransform>
+                        </Polygon>
+                    </Grid>
+                </Grid>
+                <!--message info-->
+                <Grid Grid.Row="1">
+                    <StackPanel x:Name="_messageInfo_"
+                            HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}"
+                            Orientation="Horizontal"
+                            Margin="10,0,10,0">
+                        <TextBlock  x:Name="_messageTimeFrom_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                            <TextBlock.RenderTransform>
+                                <TranslateTransform X="50"/>
+                            </TextBlock.RenderTransform>
+                        </TextBlock>
+                        <TextBlock  x:Name="_messageTimeTo_"
+                                    Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}, ConverterParameter=Inverted}"
+                                Text="{x:Bind TimeReceived, Converter={StaticResource _MessageDateTimeString_}}"
+                                Foreground="Gray"
+                                FontSize="10">
+                        </TextBlock>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </DataTemplate>
         <!-- barre d'envoi de message -->
@@ -125,6 +206,7 @@
                                           IsTabStop="False"
                                           AutomationProperties.AccessibilityView="Raw"
                                           ZoomMode="Disabled" />
+
                             <Button x:Name="_sendBtn_"
                                     Background="Transparent"
                                     BorderThickness="0"
@@ -399,33 +481,65 @@
                             <RowDefinition Height="auto" />
                         </Grid.RowDefinitions>
                         <ScrollViewer   x:Name="_scrollView_"
+                                        BorderThickness="0,0,0,0"
+                                        BorderBrush="#3bc1d3"
                                         Grid.Row="1"
                                         ScrollViewer.VerticalScrollBarVisibility="Auto">
                             <StackPanel>
+                                <Grid Margin="0,0,0,0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*" MinWidth="140"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <Rectangle  Grid.Column="0"
+                                                Fill="LightGray"
+                                                Height="1"
+                                                Margin="16,4,4,4"/>
+                                    <TextBlock  x:Uid="_msgBeginningOfTime_"
+                                                Grid.Column="1"
+                                                Foreground="Gray"
+                                                HorizontalAlignment="Center"
+                                                Margin="4"/>
+                                    <Rectangle  Grid.Column="2"
+                                                Fill="LightGray"
+                                                Height="1"
+                                                Margin="4,4,16,4"/>
+                                </Grid>
                                 <ListBox    x:Name="_messagesList_"
                                             Margin="0"
                                             Padding="0"
-                                            ItemContainerStyle="{StaticResource messageBubleStyle}"
+                                            ItemContainerStyle="{StaticResource messageBubbleStyle}"
                                             ItemTemplate="{StaticResource ConversationMessageTemplate}">
                                 </ListBox>
+                                <Rectangle  Fill="Transparent"
+                                            Height="6"/>
                             </StackPanel>
                         </ScrollViewer>
-                        <Grid   Height="50"
-                                Grid.Row="2"
-                                Margin="0"
-                                Padding="0"
-                                Background="#FFF2F2F2">
-                            <TextBox    x:Name="_messageTextBox_"
-                                        HorizontalAlignment="Stretch"
-                                        TextWrapping="NoWrap"
-                                        VerticalAlignment="Bottom"
-                                        Margin="8,6,8,6"
-                                        Background="White"
-                                        KeyDown="_messageTextBox__KeyDown"/>
-                        </Grid>
+                        <StackPanel Grid.Row="2"
+                                    Orientation="Vertical">
+                            <Rectangle  Grid.Row="0"
+                                        Fill="LightGray"
+                                        Height="1"
+                                        Margin="16,0,16,0"/>
+                            <Grid   Height="48"
+                                    Margin="0"
+                                    Padding="0"
+                                    Background="#FFF2F2F2">
+                                <TextBox    x:Name="_messageTextBox_"
+                                            IsTabStop="True"
+                                            HorizontalAlignment="Stretch"
+                                            TextWrapping="NoWrap"
+                                            VerticalAlignment="Center"
+                                            Margin="8,4,8,4"
+                                            Background="White"
+                                            KeyDown="_messageTextBox__KeyDown"/>
+                            </Grid>
+                        </StackPanel>
                     </Grid>
                 </Grid>
             </Grid>
+
         </SplitView.Content>
     </SplitView>
 </Page>
