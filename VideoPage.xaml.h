@@ -23,7 +23,9 @@
 
 using namespace Platform;
 using namespace Concurrency;
+using namespace Windows::Media;
 using namespace Windows::Media::Capture;
+using namespace Windows::Graphics::Imaging;
 using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Media;
@@ -36,7 +38,7 @@ namespace RingClientUWP
 /* delegate */
 delegate void PressHangUpCall();
 delegate void PauseCall();
-delegate void ChatPanelCall(); // nobody use this ?
+delegate void ChatPanelCall(); // used ?
 delegate void AddContactCall();
 delegate void TransferCall();
 delegate void SwitchMicrophoneStateCall();
@@ -51,7 +53,9 @@ public ref class VideoPage sealed
 {
 public:
     VideoPage();
+
     void updatePageContent();
+    void SetBuffer(uint8_t* buf, int width, int height);
 
     property bool barFading {
         bool get(){ return barFading_; }
@@ -78,19 +82,35 @@ internal:
 
 private:
     bool barFading_;
+    String^ lastMessageText;
+
+    VideoFrame^ videoFrame;
+    SoftwareBitmap^ softwareBitmap;
 
     // For transforming the preview image
     double userPreviewHeightModifier = 0.0;
+    double lastUserPreviewHeightModifier;
+    bool isMovingPreview = false;
     bool isResizingPreview = false;
-    int lastQuadrant = 0;
-    int quadrant = 0;
+    bool isHoveringOnResizer = false;
+    enum class Quadrant {
+        SE, SW, NW, NE
+    } quadrant = Quadrant::SE, lastQuadrant = Quadrant::SE;
     TransformGroup^ PreviewImage_transforms;
     MatrixTransform^ PreviewImage_previousTransform;
     CompositeTransform^ PreviewImage_deltaTransform;
 
+    // Chat panel transformations
+    bool isChatPanelOpen = false;
+    bool isResizingChatPanel = false;
+    double chatPanelSize = 176;
+    double lastchatPanelSize;
+    enum class Orientation {
+        Horizontal, Vertical
+    } chtBoxOrientation = Orientation::Vertical;
+
     Concurrency::task<void> WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, int height);
     void _sendBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
-    void _messageTextBox__KeyDown(Object^ sender, KeyRoutedEventArgs^ e);
     void sendMessage();
     void Button_Click(Object^ sender, RoutedEventArgs^ e);
     void _btnCancel__Click(Object^ sender, RoutedEventArgs^ e);
@@ -115,8 +135,9 @@ private:
     void OnstopPreviewing();
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
-
-    // For transforming the preview image
+    void openChatPanel();
+    void closeChatPanel();
+    void resizeChatPanel();
     void computeQuadrant();
     void arrangeResizer();
     void anchorPreview();
@@ -126,9 +147,20 @@ private:
     void PreviewImage_ManipulationCompleted(Object^ sender, ManipulationCompletedRoutedEventArgs^ e);
     void PreviewImageResizer_ManipulationDelta(Object^ sender, ManipulationDeltaRoutedEventArgs^ e);
     void PreviewImageResizer_ManipulationCompleted(Object^ sender, ManipulationCompletedRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__ManipulationDelta(Object^ sender, ManipulationDeltaRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__ManipulationCompleted(Object^ sender, ManipulationCompletedRoutedEventArgs^ e);
     void PreviewImage_PointerReleased(Object^ sender, PointerRoutedEventArgs^ e);
     void PreviewImageResizer_PointerEntered(Object^ sender, PointerRoutedEventArgs^ e);
     void PreviewImageResizer_PointerExited(Object^ sender, PointerRoutedEventArgs^ e);
+    void PreviewImageResizer_Pressed(Object^ sender, PointerRoutedEventArgs^ e);
+    void _btnToggleOrientation__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+    void PreviewImageResizer_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _chatPanelResizeBarGrid__PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _videoContent__SizeChanged(Platform::Object^ sender, Windows::UI::Xaml::SizeChangedEventArgs^ e);
+    void _messageTextBox__TextChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::TextChangedEventArgs^ e);
 };
 }
 }
