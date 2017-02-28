@@ -187,6 +187,12 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     }
 }
 
+void
+SmartPanelItemsViewModel::raiseSelectedItemUpdated()
+{
+    selectedItemUpdated();
+}
+
 String^
 SmartPanelItemsViewModel::getAssociatedAccountId(SmartPanelItem^ item)
 {
@@ -202,5 +208,6 @@ SmartPanelItemsViewModel::update()
     for each (SmartPanelItem^ item in itemsList) {
         item->notifyPropertyChanged("");
         item->_contact->notifyPropertyChanged("");
+        selectedItemUpdated();
     }
 }

@@ -62,11 +62,11 @@ public:
 
     property bool _audioMuted;
 
-    property Visibility _showMe {
-        Visibility get() { return showMe_; }
+    property Visibility _isVisible {
+        Visibility get() { return isVisible_; }
         void set(Visibility value) {
-            showMe_ = value;
-            NotifyPropertyChanged("_showMe");
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
         }
     }
 
@@ -99,13 +99,14 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Visibility showMe_ = Visibility::Visible;
+    Visibility isVisible_;
+    bool isSelected_;
+    bool isHovered_;
+
     CallStatus callStatus_;
     Contact^ contact_;
     String^ callId_;
     bool videoMuted_;
-    bool isSelected_;
-    bool isHovered_;
 
     void OncallPlaced(Platform::String ^callId);
 };

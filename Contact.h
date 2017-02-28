@@ -19,6 +19,7 @@
 #pragma once
 
 #include "VCardUtils.h"
+#include "Utils.h"
 
 using namespace Platform;
 using namespace Windows::Data::Json;
@@ -36,7 +37,7 @@ String^ contactListKey = "contactlist";
 String^ accountIdAssociatedKey = "accountIdAssociated";
 String^ vcardUIDKey = "vcardUID";
 String^ lastTimeKey = "lastTime";
-
+String^ trustStatusKey = "trustStatus";
 
 namespace RingClientUWP
 {
@@ -45,84 +46,73 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ accountId,
-            String^ name,
-            String^ ringID,
-            String^ GUID,
-            unsigned int unreadmessages,
-            ContactStatus contactStatus);
+    Contact(    String^ accountId,
+                String^ name,
+                String^ ringID,
+                String^ GUID,
+                unsigned int unreadmessages,
+                ContactStatus contactStatus,
+                TrustStatus trustStatus);
 
     JsonObject^ ToJsonObject();
 
     void notifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
-    property String^ _name
-    {
-        String^ get()
-        {
+    property String^ _name {
+        String^ get() {
             return name_;
         }
-        void set(String^ value)
-        {
+        void set(String^ value) {
             name_ = value;
             NotifyPropertyChanged("_name");
         }
     }
+
     property String^ ringID_;
     property String^ GUID_;
 
-    property Conversation^ _conversation
-    {
-        Conversation^ get()
-        {
+    property Conversation^ _conversation {
+        Conversation^ get() {
             return conversation_;
         }
     }
-    property Visibility notificationNewMessage
-    {
-        Visibility get()
-        {
+
+    property Visibility notificationNewMessage {
+        Visibility get() {
             return notificationNewMessage_;
         }
-        void set(Visibility visibility)
-        {
+        void set(Visibility visibility) {
             notificationNewMessage_ = visibility;
             NotifyPropertyChanged("notificationNewMessage");
         }
     }
-    property uint32 _unreadMessages
-    {
-        uint32 get()
-        {
+
+    property uint32 _unreadMessages {
+        uint32 get() {
             return unreadMessages_;
         }
-        void set(uint32 value)
-        {
+        void set(uint32 value) {
             unreadMessages_ = value;
             NotifyPropertyChanged("_unreadMessages");
         }
     }
-    property String^ _avatarImage
-    {
-        String^ get()
-        {
+
+    property String^ _avatarImage {
+        String^ get() {
             return avatarImage_;
         }
-        void set(String^ value)
-        {
+        void set(String^ value) {
             avatarImage_ = value;
             NotifyPropertyChanged("_avatarImage");
         }
     }
-    property Windows::UI::Xaml::GridLength _contactBarHeight
-    {
-        Windows::UI::Xaml::GridLength get()
-        {
+
+    property Windows::UI::Xaml::GridLength _contactBarHeight {
+        GridLength get() {
             return contactBarHeight_;
         }
-        void set(Windows::UI::Xaml::GridLength value)
-        {
+        void set(GridLength value) {
             contactBarHeight_ = value;
             NotifyPropertyChanged("_contactBarHeight");
         }
@@ -137,45 +127,52 @@ public:
         }
     }
     property String^ _vcardUID;
-    property String^ _displayName
-    {
-        String^ get()
-        {
+
+    property String^ _displayName {
+        String^ get() {
             return displayName_;
         }
-        void set(String^ value)
-        {
+        void set(String^ value) {
             displayName_ = value;
             NotifyPropertyChanged("_displayName");
         }
     }
 
-    property ContactStatus _contactStatus
-    {
-        ContactStatus get()
-        {
+    property ContactStatus _contactStatus {
+        ContactStatus get() {
             return contactStatus_;
         }
-        void set(ContactStatus value)
-        {
+        void set(ContactStatus value) {
             contactStatus_ = value;
             NotifyPropertyChanged("_contactStatus");
         }
     }
 
-    property String^ _lastTime
-    {
-        String^ get()
-        {
+    property String^ _lastTime {
+        String^ get() {
             return lastTime_;
         }
-        void set(String^ value)
-        {
+        void set(String^ value) {
             lastTime_ = value;
             NotifyPropertyChanged("_lastTime");
         }
     }
 
+    property bool _isTrusted {
+        bool get() {
+            return  trustStatus_ == TrustStatus::CONTACT_REQUEST_SENT ||
+                    trustStatus_ == TrustStatus::TRUSTED;
+        }
+    }
+
+    property TrustStatus _trustStatus {
+        TrustStatus get() {
+            return trustStatus_;
+        }
+        void set(TrustStatus value) {
+            trustStatus_ = value;
+        }
+    }
 
     VCardUtils::VCard^ getVCard();
 
@@ -184,7 +181,6 @@ internal:
     String^     StringifyConversation();
     void        DestringifyConversation(String^ data);
     void        deleteConversationFile();
-
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
@@ -201,6 +197,7 @@ private:
     ContactStatus contactStatus_;
     String^ name_;
     String^ lastTime_;
+    TrustStatus trustStatus_;
 };
 }
 
