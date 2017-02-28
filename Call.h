@@ -1,7 +1,7 @@
-#pragma once
-/**************************************************************************
+/***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,53 +16,25 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-using namespace Platform;
-using namespace Windows::UI::Xaml::Data;
+#pragma once
+
+#include <set>
+#include <chrono>
 
 namespace RingClientUWP
 {
-/* enumerations. */
-public enum class CallStatus { NONE, INCOMING_RINGING, OUTGOING_RINGING, SEARCHING, IN_PROGRESS, ENDED };
 
-public ref class Call sealed : public INotifyPropertyChanged
+struct Call
 {
-public:
+    Call() { };
+    Call(const std::string& id, const std::set<std::string>& participants)
+        : id(id)
+        , participants(participants)
+    { }
 
-    /* functions */
-    Call(String^ accountId, String^ callId, String^ from);
-
-    /* properties */
-    virtual event PropertyChangedEventHandler^ PropertyChanged;
-
-    property String^ accountId;
-    property String^ callId;
-    property String^ from;
-    property CallStatus state {
-        CallStatus get() {
-            return state_;
-        }
-        void set(CallStatus value) {
-            state_ = value;
-            PropertyChanged(this, ref new PropertyChangedEventArgs("state"));
-        }
-    }
-    property bool isOutGoing;
-    property int code;
-
-    /* events */
-
-protected:
-    /* properties */
-    void NotifyPropertyChanged(String^ propertyName);
-
-internal:
-    //void refuse();
-    //void accept();
-    //void cancel();
-
-private:
-    CallStatus state_;
-
+    std::string id;
+    std::chrono::time_point<std::chrono::steady_clock> callStartTime;
+    std::set<std::string> participants;
 };
-}
 
+}
