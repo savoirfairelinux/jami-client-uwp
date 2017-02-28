@@ -50,6 +50,8 @@ ConversationMessage::ToJsonObject()
     messageObject->SetNamedValue(dateKey, JsonValue::CreateStringValue(Date));
     messageObject->SetNamedValue(fromContactKey, JsonValue::CreateBooleanValue(FromContact));
     messageObject->SetNamedValue(payloadKey, JsonValue::CreateStringValue(Payload));
+    messageObject->SetNamedValue(timeReceivedKey, JsonValue::CreateNumberValue(static_cast<double>(TimeReceived)));
+    messageObject->SetNamedValue(isReadKey, JsonValue::CreateBooleanValue(IsRead));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(messageKey, messageObject);

@@ -37,8 +37,9 @@ Contact::Contact(   String^ accountId,
                     String^ name,
                     String^ ringID,
                     String^ GUID,
-                    unsigned int unreadmessages,
-                    ContactStatus contactStatus)
+                    uint32 unreadmessages,
+                    ContactStatus contactStatus,
+                    TrustStatus trustStatus)
 {
     vCard_ = ref new VCardUtils::VCard(this, accountId);
 
@@ -77,7 +78,13 @@ Contact::Contact(   String^ accountId,
     _displayName = "";
 
     contactStatus_ = contactStatus;
+    trustStatus_ = trustStatus;
+
+    unreadContactRequest_ = trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST ? true : false;
+
     lastTime_ = "never called.";
+
+    presenceStatus_ = -1;
 }
 
 void
@@ -101,9 +108,11 @@ Contact::ToJsonObject()
     contactObject->SetNamedValue(ringIDKey, JsonValue::CreateStringValue(ringID_));
     contactObject->SetNamedValue(GUIDKey, JsonValue::CreateStringValue(GUID_));
     contactObject->SetNamedValue(unreadMessagesKey, JsonValue::CreateNumberValue(unreadMessages_));
+    contactObject->SetNamedValue(unreadContactRequestKey, JsonValue::CreateBooleanValue(unreadContactRequest_));
     contactObject->SetNamedValue(accountIdAssociatedKey, JsonValue::CreateStringValue(_accountIdAssociated));
     contactObject->SetNamedValue(vcardUIDKey, JsonValue::CreateStringValue(_vcardUID));
     contactObject->SetNamedValue(lastTimeKey, JsonValue::CreateStringValue(_lastTime));
+    contactObject->SetNamedValue(trustStatusKey, JsonValue::CreateNumberValue(Utils::toUnderlyingValue(trustStatus_)));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(contactKey, contactObject);
@@ -133,6 +142,8 @@ Contact::DestringifyConversation(String^ data)
     String^     date;
     bool        fromContact;
     String^     payload;
+    std::time_t timeReceived;
+    bool        isRead;
 
     JsonArray^ messageList = jsonObject->GetNamedArray(conversationKey, ref new JsonArray());
     for (unsigned int i = 0; i < messageList->Size; i++) {
@@ -141,16 +152,24 @@ Contact::DestringifyConversation(String^ data)
             JsonObject^ jsonMessageObject = message->GetObject();
             JsonObject^ messageObject = jsonMessageObject->GetNamedObject(messageKey, nullptr);
             if (messageObject != nullptr) {
-                date = messageObject->GetNamedString(dateKey, "");
-                fromContact = messageObject->GetNamedBoolean(fromContactKey, "");
-                payload = messageObject->GetNamedString(payloadKey, "");
+                if (messageObject->HasKey(dateKey))
+                    date = messageObject->GetNamedString(dateKey);
+                if (messageObject->HasKey(fromContactKey))
+                    fromContact = messageObject->GetNamedBoolean(fromContactKey);
+                if (messageObject->HasKey(payloadKey))
+                    payload = messageObject->GetNamedString(payloadKey);
+                if (messageObject->HasKey(timeReceivedKey))
+                    timeReceived = static_cast<std::time_t>(messageObject->GetNamedNumber(timeReceivedKey));
+                if (messageObject->HasKey(isReadKey))
+                    isRead = messageObject->GetNamedBoolean(isReadKey);
             }
             conversation_->addMessage(date, fromContact, payload);
         }
     }
 }
 
-void RingClientUWP::Contact::deleteConversationFile()
+void
+Contact::deleteConversationFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
     String^ messagesFile = ".messages\\" + GUID_ + ".json";
@@ -185,7 +204,7 @@ Contact::getVCard()
 }
 
 void
-Contact::notifyPropertyChanged(String^ propertyName)
+Contact::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }
