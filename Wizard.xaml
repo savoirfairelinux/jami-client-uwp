@@ -89,10 +89,10 @@
                                               Toggled="_RegisterState__Toggled"
                                               IsOn="True"
                                               Margin="0,10"/>
-                                <TextBlock x:Name="_whatWilHappen_"
+                                <TextBlock x:Name="_whatWillHappen_"
                                            Margin="0,10,0,0"
                                            Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="peoples will find you with your username"/>
+                                           Text="People can find you with your username"/>
                                 <HyperlinkButton Content="Learn more"
                                                  Margin="0,0,0,10"
                                                  NavigateUri="http://ring.cx"/>
@@ -103,7 +103,7 @@
                                     </Grid.ColumnDefinitions>
                                     <TextBox x:Name="_usernameTextBox_"
                                              Grid.Column="0"
-                                             PlaceholderText="Enter your full name"
+                                             PlaceholderText="Enter your username"
                                              KeyUp="_usernameTextBox__KeyUp"/>
                                     <TextBlock x:Name="_usernameValid_"
                                                Grid.Column="1"

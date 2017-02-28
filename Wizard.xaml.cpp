@@ -78,40 +78,20 @@ Wizard::_showAddAccountMenuBtn__Click(Object^ sender, RoutedEventArgs^ e)
 void
 Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
-    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Jpeg;
-    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(80, 80);
-
-    create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
-    .then([this](StorageFile^ photoFile)
-    {
-        if (photoFile != nullptr) {
-            auto brush = ref new ImageBrush();
-
-            auto circle = ref new Ellipse();
-            circle->Height = 80;
-            circle->Width = 80;
-            auto path = photoFile->Path;
-            auto uri = ref new Windows::Foundation::Uri(path);
-            auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
-            bitmapImage->UriSource = uri;
-
-            std::string fileBuffer = Utils::getStringFromFile(Utils::toString(photoFile->Path));
-            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
-            _mkdir(profilePath.c_str());
-            std::ofstream file((profilePath + "\\profile_image.png"),
-                               std::ios::out | std::ios::trunc | std::ios::binary);
-            if (file.is_open()) {
-                file << fileBuffer;
-                file.close();
+    create_task(Configuration::getProfileImageAsync()).then([&](task<BitmapImage^> image){
+        try {
+            if (auto bitmapImage = image.get()) {
+                auto brush = ref new ImageBrush();
+                auto circle = ref new Ellipse();
+                circle->Height = 100;
+                circle->Width = 100;
+                brush->ImageSource = bitmapImage;
+                circle->Fill = brush;
+                _avatarWebcamCaptureBtn_->Content = circle;
             }
-
-            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
-            Configuration::UserPreferences::instance->save();
-
-            brush->ImageSource = bitmapImage;
-            circle->Fill = brush;
-            _avatarWebcamCaptureBtn_->Content = circle;
+        }
+        catch (Platform::Exception^ e) {
+            ERR_("Exception thrown during getProfileImageAsync: " + e->Message);
         }
     });
 }
@@ -201,7 +181,8 @@ void RingClientUWP::Views::Wizard::_usernameTextBox__KeyUp(Platform::Object^ sen
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     } else {
-        RingD::instance->lookUpName(alias);
+        auto accountId = ViewModel::AccountListItemsViewModel::instance->getSelectedAccountId();
+        RingD::instance->lookUpName(Utils::toString(accountId), alias);
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
@@ -220,10 +201,10 @@ void RingClientUWP::Views::Wizard::_RegisterState__Toggled(Platform::Object^ sen
 
     if (isPublic) {
         _usernameTextBox_->IsEnabled = true;
-        _whatWilHappen_->Text = "peoples will find you with your username.";
+        _whatWillHappen_->Text = "People can find you with your username.";
     } else {
         _usernameTextBox_->IsEnabled = false;
-        _whatWilHappen_->Text = "you'll have to send your ringId.";
+        _whatWillHappen_->Text = "You'll have to send your ringId.";
     }
 
     checkState();
@@ -273,16 +254,13 @@ void RingClientUWP::Views::Wizard::_step2button__Click(Platform::Object^ sender,
     _addAccountYes_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, const std::string& address, const std::string& name)
+void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status,  const std::string& accountId, const std::string& address, const std::string& name)
 {
     switch (status)
     {
     case LookupStatus::SUCCESS:
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        isUsernameValid = false;
-        break;
     case LookupStatus::INVALID_NAME:
+    case LookupStatus::ERRORR:
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         isUsernameValid = false;
@@ -291,11 +269,6 @@ void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status, co
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         isUsernameValid = true;
-        break;
-    case LookupStatus::ERRORR:
-        _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        isUsernameValid = false;
         break;
     }
 
