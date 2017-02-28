@@ -1,4 +1,3 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
@@ -17,6 +16,9 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
+#pragma once
+
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
@@ -26,26 +28,32 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-namespace Controls {
+namespace Controls
+{
+
 public ref class AccountListItem sealed : public INotifyPropertyChanged
 {
 public:
     AccountListItem(Account^ a);
 
+    void notifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
+
     property Account^ _account;
+
+    property bool _editionMode;
+    property bool _disconnected;
+
     property bool _isSelected {
+        bool get() {
+            return isSelected_;
+        }
         void set(bool value) {
             isSelected_ = value;
             if (!_disconnected)
                 NotifyPropertyChanged("_isSelected");
         }
-        bool get() {
-            return isSelected_;
-        }
     }
-    property bool _editionMode;
-    property bool _disconnected;
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
