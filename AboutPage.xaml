@@ -33,35 +33,30 @@
                     Margin="24">
             <StackPanel Orientation="Horizontal"
                         HorizontalAlignment="Center">
-                <Button x:Name="_aboutBasicButton_"
-                    Content="About"
-                    Margin="0,0,6,0"
-                    BorderThickness="0"
-                    FontSize="12"
-                    Click="_aboutBasicButton__Click"
+                <Button x:Uid="_aboutBasicButton_"
+                        Margin="0,0,6,0"
+                        BorderThickness="0"
+                        FontSize="12"
+                        Click="_aboutBasicButton__Click"
                     />
-                <Button x:Name="_aboutCreditsButton_"
-                    Content="Credits"
-                    Margin="0,0,6,0"
-                    BorderThickness="0"
-                    FontSize="12"
-                    Click="_aboutCreditsButton__Click"
+                <Button x:Uid="_aboutCreditsButton_"
+                        Margin="0,0,6,0"
+                        BorderThickness="0"
+                        FontSize="12"
+                        Click="_aboutCreditsButton__Click"
                     />
-                <Button x:Name="_aboutCloseButton_"
-                    Content="Close"
-                    Margin="0,0,6,0"
-                    BorderThickness="0"
-                    FontSize="12"
-                    Click="_aboutCloseButton__Click"
+                <Button x:Uid="_aboutCloseButton_"
+                        Margin="0,0,6,0"
+                        BorderThickness="0"
+                        FontSize="12"
+                        Click="_aboutCloseButton__Click"
                     />
             </StackPanel>
             <Image x:Name="_welcomeImage_"
-
-                       Source="Assets\Wide310x150Logo.scale-200.png"
-                       Width="310"
-                       HorizontalAlignment="Center"
-                       Margin="0 10 0 30"
-                       Height="150"/>
+                   Source="Assets\Wide310x150Logo.scale-200.png"
+                   Width="310"
+                   HorizontalAlignment="Center"
+                   Height="150"/>
             <Grid x:Name="_aboutNavGrid_">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="0"/>
@@ -72,24 +67,24 @@
                                 VerticalScrollBarVisibility="Hidden">
                     <StackPanel MaxWidth="500"
                                 Width="310">
-                        <TextBlock  Text="Ring version: 2017/2/13"
+                        <TextBlock  x:Name="_aboutVersionString_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
-                                     Margin="0,0,0,24"
+                                    Margin="0,0,0,24"
                                     FontSize="12"
                                     FontWeight="Bold"
                                     HorizontalAlignment="Center"/>
-                        <TextBlock  Text="Release: Beta 2 - Gaston Miron"
+                        <TextBlock  x:Uid="_aboutReleaseTitle_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
                                     FontSize="12"
                                     HorizontalAlignment="Center"/>
-                        <TextBlock  Text="The Microsoft Windows Runtime client for Ring."
+                        <TextBlock  x:Uid="_aboutReleasePlatform_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
                                     FontSize="12"
                                     HorizontalAlignment="Center"/>
-                        <TextBlock  Text="Ring is a secured and distributed communication software."
+                        <TextBlock  x:Uid="_aboutReleaseDescription_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
                                     FontSize="12"
@@ -104,29 +99,28 @@
                                     TextAlignment="Justify"
                                     FontSize="10"
                                     HorizontalAlignment="Center"/>
-                        <TextBlock  Text="This program comes with absolutely no warranty"
+                        <TextBlock  x:Uid="_aboutDisclaimer_"
                                     TextWrapping="Wrap"
                                     TextAlignment="Justify"
                                     FontSize="10"
                                     HorizontalAlignment="Center"/>
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Center">
-                            <TextBlock  Text="See the "
+                            <TextBlock  x:Uid="_aboutGPL_0_"
                                         Margin="0,0,4,0"
-                                    TextWrapping="Wrap"
-                                    TextAlignment="Justify"
-                                    FontSize="10"/>
-                            <HyperlinkButton    Content="GNU General Public License, version 3 or later"
-                                                FontSize="10"
-                                                NavigateUri="https://www.gnu.org/licenses/gpl-3.0.en.html">
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Justify"
+                                        FontSize="10"/>
+                            <HyperlinkButton    x:Uid="_aboutGPL_1_"
+                                                FontSize="10">
                                 <HyperlinkButton.RenderTransform>
                                     <TranslateTransform Y="-6"/>
                                 </HyperlinkButton.RenderTransform>
                             </HyperlinkButton>
-                            <TextBlock  Text=" for details."
-                                    TextWrapping="Wrap"
-                                    TextAlignment="Justify"
-                                    FontSize="10"/>
+                            <TextBlock  x:Uid="_aboutGPL_2_"
+                                        TextWrapping="Wrap"
+                                        TextAlignment="Justify"
+                                        FontSize="10"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
@@ -139,7 +133,7 @@
                                 BorderBrush="Black"
                                 BorderThickness="1">
                     <StackPanel>
-                        <TextBlock  Text="Created by:"
+                        <TextBlock  x:Uid="_c_created_by_"
                                     Margin="0,0,0,0"
                                     TextWrapping="Wrap"
                                     TextAlignment="Center"
@@ -151,7 +145,6 @@
                                 TextAlignment="Center"
                                 FontSize="12"
                                 HorizontalAlignment="Center">
-                            <LineBreak/>    Created by:
                             <LineBreak/>    Adrien Béraud
                             <LineBreak/>    Alexandr Sergheev
                             <LineBreak/>    Alexandre Lision
@@ -166,7 +159,9 @@
                             <LineBreak/>    Emmanuel Lepage-Vallée
                             <LineBreak/>    Frédéric Guimont
                             <LineBreak/>    Guillaume Roguez
+                            <LineBreak/>    Hadrien De Sousa
                             <LineBreak/>    Julien Grossholtz
+                            <LineBreak/>    Kateryna Kostiuk
                             <LineBreak/>    Loïc Siret
                             <LineBreak/>    Nicolas Jäger
                             <LineBreak/>    Nicolas Reynaud
@@ -175,13 +170,16 @@
                             <LineBreak/>    Patrick Keroulas
                             <LineBreak/>    Philippe Gorley
                             <LineBreak/>    Romain Bertozzi
+                            <LineBreak/>    Sébastien Blin
                             <LineBreak/>    Seva Ivanov
+                            <LineBreak/>    Silbino Gonçalves Matado
                             <LineBreak/>    Simon Désaulniers
                             <LineBreak/>    Stepan Salenikovich
                             <LineBreak/>    Simon Zeni
                             <LineBreak/>    Thibault Wittemberg
+                            <LineBreak/>
                         </TextBlock>
-                        <TextBlock  Text="Artwork by:"
+                        <TextBlock  x:Uid="_c_artwork_by_"
                                     Margin="0,0,0,0"
                                     TextWrapping="Wrap"
                                     TextAlignment="Center"
