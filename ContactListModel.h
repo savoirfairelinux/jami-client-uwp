@@ -35,7 +35,11 @@ internal:
     /* functions */
     Contact^    findContactByName(String^ name);
     Contact^    findContactByRingId(String^ ringId);
-    Contact^    addNewContact(String^ name, String^ ringId, ContactStatus contactStatus = ContactStatus::READY);
+    Contact^    addNewContact(  String^ name,
+                                String^ ringId,
+                                TrustStatus trustStatus,
+                                bool isIncognitoContact,
+                                ContactStatus contactStatus = ContactStatus::READY);
     void        saveContactsToFile();
     void        openContactsFromFile();
     String^     Stringify();
@@ -59,7 +63,7 @@ private:
     Contact^ oldItem_;
     String^ m_Owner;
 
-    void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name);
+    void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string &address, const std::string &name);
 };
 }
 }

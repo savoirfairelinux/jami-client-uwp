@@ -1,282 +1,327 @@
-﻿<Page
-    x:Class="RingClientUWP.Views.Wizard"
-    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:RingClientUWP"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    NavigationCacheMode="Enabled"
-    mc:Ignorable="d">
+﻿<!-- **********************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas<nicolas.jager@savoirfairelinux.com>               *
+* Author: Traczyk Andreas<andreas.traczyk@savoirfairelinux.com>           *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/> .  *
+***********************************************************************-->
+<Page x:Class="RingClientUWP.Views.Wizard"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="using:RingClientUWP"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      NavigationCacheMode="Enabled"
+      mc:Ignorable="d">
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <Grid>
             <StackPanel Width="400">
-                <Rectangle Height="50"/>
+                <Rectangle Height="50" />
                 <Image x:Name="_welcomeImage_"
-                       Source="Assets\Wide310x150Logo.scale-200.png"
                        Width="310"
+                       Height="150"
+                       Margin="0,10,0,30"
                        HorizontalAlignment="Center"
-                       Margin="0 10 0 30"
-                       Height="150"/>
-                <StackPanel Height="auto"
-                            Background="#3bc1d3"
-                            Grid.Column="0">
-                    <Button x:Name="_showCreateAccountMenuTitle_"
-                            Content="Create New Account"
-                            Foreground="White"
-                            Click="collapseMenus"
-                            Style="{StaticResource ButtonStyle8}"
-                            Visibility="Collapsed"
-                            HorizontalAlignment="Center"/>
-                    <Button x:Name="_showCreateAccountMenuBtn_"
-                            Content="Create New Account"
+                       Source="Assets\Wide310x150Logo.scale-200.png" />
+                <StackPanel x:Name="_createStack_"
+                            Height="auto"
+                            Background="{StaticResource RingBlueMidBrush}"
                             Visibility="Visible"
+                            Margin="0,0,0,0">
+                    <TextBlock x:Name="_showCreateAccountMenuTitle_"
+                               x:Uid="_wizardCreateAccountTitle_"
+                               HorizontalAlignment="Center"
+                               FontSize="30"
+                               Foreground="White"
+                               Style="{StaticResource SubheaderTextBlockStyle}"
+                               Visibility="Collapsed" />
+                    <Button x:Name="_showCreateAccountMenuBtn_"
+                            x:Uid="_wizardCreateAccount_"
+                            Width="400"
+                            Height="36"
                             HorizontalAlignment="Center"
-                            Style="{StaticResource ButtonStyle4}"
-                            Click="_showCreateAccountMenuBtn__Click"/>
+                            Click="_showCreateAccountMenuBtn__Click"
+                            FontSize="18"
+                            Style="{StaticResource WizardButtons1}"
+                            Visibility="Visible" />
                     <Grid x:Name="_accountCreationMenuGrid_"
-                          Background="#3bc1d3"
+                          Background="{StaticResource RingBlueMidBrush}"
                           Visibility="Collapsed">
                         <Grid.RowDefinitions>
-                            <RowDefinition Height="auto"/>
-                            <RowDefinition Height="30"/>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="30" />
                         </Grid.RowDefinitions>
-                        <StackPanel Orientation="Vertical"
-                                    Grid.Row="0"
-                                    Background="#FFE4F1F9">
-                            <!-- note : we propose only RING account from the wizard. -->
+                        <StackPanel Grid.Row="0"
+                                    Background="{StaticResource RingBlueLightBrush}"
+                                    Orientation="Vertical">
+                            <!--  note : we propose only RING account from the wizard.  -->
                             <StackPanel x:Name="_ringAccountCreationStack_"
-                                        Visibility="Visible"
-                                        Padding="10,0">
-                                <Button  x:Name="_avatarWebcamCaptureBtn_"
-                                         Margin="0,10,0,0"
-                                         VerticalAlignment="Center"
-                                         Content="&#xE8B8;"
-                                         Click="_avatarWebcamCaptureBtn__Click"
-                                         Style="{StaticResource ButtonStyle3}"
-                                         HorizontalAlignment="Center"/>
+                                        Padding="10,0"
+                                        Visibility="Visible">
+                                <Button x:Name="_avatarWebcamCaptureBtn_"
+                                        Width="90"
+                                        Height="90"
+                                        Margin="0,10,0,0"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Click="_avatarWebcamCaptureBtn__Click"
+                                        Content="&#xE8B8;"
+                                        Style="{StaticResource ButtonStyle3}" />
                                 <Grid Margin="0,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="25"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="25" />
                                     </Grid.ColumnDefinitions>
-                                    <!-- ajouter add a new account to et mettre le fullname -->
-                                    <TextBox x:Name="_fullnameTextBox_"
-                                             Grid.Column="0"
-                                             PlaceholderText="Enter your full name"
-                                             KeyUp="_fullnameTextBox__KeyUp"/>
-                                    <TextBlock x:Name="_fullnameValid_"
-                                               Grid.Column="1"
+                                    <!--  ajouter add a new account to et mettre le fullname  -->
+                                    <TextBox Grid.Column="0"
+                                             x:Name="_fullnameTextBox_"
+                                             x:Uid="_wizardFullName_"
+                                             Margin="20,0,20,0"
+                                             IsSpellCheckEnabled="False"
+                                             KeyUp="_fullnameTextBox__KeyUp" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_fullnameValid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                                    <TextBlock x:Name="_fullnameInvalid_"
-                                               Grid.Column="1"
+                                               Text="&#xE10B;"
+                                               Visibility="Collapsed" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_fullnameInvalid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
+                                               Text="&#xE10A;" />
                                 </Grid>
-                                <!-- Register public username -->
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,20,0,10">
+                                <!--  Register public username  -->
+                                <StackPanel Margin="10,20,0,10"
+                                            Orientation="Horizontal">
                                     <TextBlock Style="{StaticResource TextSegoeStyle-24pt-black}"
-                                               Text="&#xE167;"/>
-                                    <TextBlock Text="Register public username"
-                                               Style="{StaticResource TitleTextBlockStyle}"/>
+                                               Text="&#xE167;" />
+                                    <TextBlock x:Uid="_accountsRegisterPublicName_"
+                                               Margin="10,0,0,0"
+                                               FontWeight="SemiLight"
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                 </StackPanel>
                                 <ToggleSwitch x:Name="_RegisterState_"
-                                              Toggled="_RegisterState__Toggled"
+                                              Margin="20,10,0,10"
                                               IsOn="True"
-                                              Margin="0,10"/>
-                                <TextBlock x:Name="_whatWilHappen_"
-                                           Margin="0,10,0,0"
-                                           Style="{StaticResource BodyTextBlockStyle}"
-                                           Text="peoples will find you with your username"/>
-                                <HyperlinkButton Content="Learn more"
-                                                 Margin="0,0,0,10"
-                                                 NavigateUri="http://ring.cx"/>
+                                              Toggled="_RegisterState__Toggled" />
+                                <TextBlock x:Name="_whatWillHappen_"
+                                           x:Uid="_whatWillHappenEditionUid_"
+                                           Margin="20,10,0,0"
+                                           Style="{StaticResource BodyTextBlockStyle}" />
+                                <HyperlinkButton Margin="20,0,0,10"
+                                                 Content="Learn more"
+                                                 NavigateUri="http://ring.cx" />
                                 <Grid Margin="0,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="25"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="25" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBox x:Name="_usernameTextBox_"
-                                             Grid.Column="0"
-                                             PlaceholderText="Enter your full name"
-                                             KeyUp="_usernameTextBox__KeyUp"/>
-                                    <TextBlock x:Name="_usernameValid_"
-                                               Grid.Column="1"
+                                    <TextBox Grid.Column="0"
+                                             x:Name="_usernameTextBox_"
+                                             x:Uid="_usernameTextBoxEditionUid_"
+                                             Margin="20,0,20,0"
+                                             IsSpellCheckEnabled="False"
+                                             KeyUp="_usernameTextBox__KeyUp"
+                                             PlaceholderText="" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_usernameValid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                                    <TextBlock x:Name="_usernameInvalid_"
-                                               Grid.Column="1"
+                                               Text="&#xE10B;"
+                                               Visibility="Collapsed" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_usernameInvalid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
+                                               Text="&#xE10A;" />
                                 </Grid>
-                                <StackPanel Orientation="Horizontal"
-                                            Margin="0,20,0,10">
+                                <StackPanel Margin="10,20,0,10"
+                                            Orientation="Horizontal">
                                     <TextBlock Style="{StaticResource TextSegoeStyle-24pt-black}"
-                                               Text="&#xE8D7;"/>
-                                    <TextBlock Text="Ring account password"
-                                               Style="{StaticResource TitleTextBlockStyle}"/>
+                                               Text="&#xE8D7;" />
+                                    <TextBlock x:Uid="_wizardRingAccountPassword_"
+                                               Margin="10,0,0,0"
+                                               FontWeight="SemiLight"
+                                               Style="{StaticResource TitleTextBlockStyle}" />
                                 </StackPanel>
                                 <Grid Margin="0,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="25"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="25" />
                                     </Grid.ColumnDefinitions>
                                     <PasswordBox x:Name="_password_"
-                                             Margin="0,10"
-                                             PasswordChanged="_password__PasswordChanged"
-                                             PlaceholderText="Enter your password"/>
-                                    <TextBlock x:Name="_passwordValid_"
-                                               Grid.Column="1"
+                                                 x:Uid="_accountsEnterArchivePassword_"
+                                                 Margin="20,10,20,10"
+                                                 PasswordChanged="_password__PasswordChanged" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_passwordValid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                                    <TextBlock x:Name="_passwordInvalid_"
-                                               Grid.Column="1"
+                                               Text="&#xE10B;"
+                                               Visibility="Collapsed" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_passwordInvalid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
+                                               Text="&#xE10A;" />
                                 </Grid>
                                 <Grid Margin="0,10">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="25"/>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="25" />
                                     </Grid.ColumnDefinitions>
                                     <PasswordBox x:Name="_passwordCheck_"
-                                                 Margin="0,10,0,20"
-                                                 PasswordChanged="_passwordCheck__PasswordChanged"
-                                                 PlaceholderText="Repeat your Password"/>
-                                    <TextBlock x:Name="_passwordCheckValid_"
-                                               Grid.Column="1"
+                                                 x:Uid="_ringPasswordBoxAccountCreationCheckUid_"
+                                                 Margin="20,0,20,20"
+                                                 PasswordChanged="_passwordCheck__PasswordChanged" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_passwordCheckValid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                                    <TextBlock x:Name="_passwordCheckInvalid_"
-                                               Grid.Column="1"
+                                               Text="&#xE10B;"
+                                               Visibility="Collapsed" />
+                                    <TextBlock Grid.Column="1"
+                                               x:Name="_passwordCheckInvalid_"
                                                Padding="10,0"
+                                               Margin="-20,0,0,0"
                                                Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
+                                               Text="&#xE10A;" />
                                 </Grid>
                             </StackPanel>
                         </StackPanel>
-                        <!-- buttons yes/no to create the new account. -->
+                        <!--  buttons yes/no to create the new account.  -->
                         <Grid Grid.Row="1">
-                            <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center">
+                            <StackPanel Grid.Row="1"
+                                        HorizontalAlignment="Center"
+                                        Orientation="Horizontal">
                                 <Button x:Name="_createAccountYes_"
-                                    Grid.Row="1"
-                                    VerticalAlignment="Center"
-                                    HorizontalAlignment="Center"
-                                    Content="&#xE081;"
-                                    IsEnabled="False"
-                                    Click="_createAccountYes__Click"
-                                    Style="{StaticResource ButtonStyle2}"/>
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Click="_createAccountYes__Click"
+                                        Content="&#xE081;"
+                                        IsEnabled="False"
+                                        Style="{StaticResource ButtonStyle2}">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="_tt_create_account_yes_" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
+                                <Button x:Name="_createAccountNo_"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Click="collapseMenus"
+                                        Content="&#xE106;"
+                                        IsEnabled="True"
+                                        Style="{StaticResource ButtonStyle2}">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="_tt_account_cancel_" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
                             </StackPanel>
                         </Grid>
                     </Grid>
                 </StackPanel>
-                <Rectangle Height="50"/>
-                <!-- add account. -->
-                <StackPanel Height="auto"
-                        Background="#3bc1d3"
-                        Grid.Column="2">
-                    <StackPanel x:Name="addExistingAccountStep1">
-                    </StackPanel>
+                <StackPanel x:Name="_addStack_"
+                            Height="auto"
+                            Margin="0,36,0,50"
+                            Background="{StaticResource RingBlueMidBrush}"
+                            Visibility="Visible">
+                    <StackPanel x:Name="addExistingAccountStep1" />
                     <StackPanel x:Name="addExistingAccountStep2">
-                        <Button x:Name="_showAddAccountMenuTitle_"
-                                Content="Add Existing Account"
-                                Foreground="White"
-                                Visibility="Collapsed"
-                                Style="{StaticResource ButtonStyle8}"
-                                Click="collapseMenus"
-                                HorizontalAlignment="Center"/>
+                        <TextBlock x:Name="_showAddAccountMenuTitle_"
+                                   x:Uid="_wizardAddExistingAccountTitle_"
+                                   HorizontalAlignment="Center"
+                                   Foreground="White"
+                                   Style="{StaticResource SubheaderTextBlockStyle}"
+                                   Visibility="Collapsed" />
                         <Button x:Name="_showAddAccountMenuBtn_"
-                                Visibility="Visible"
-                                Content="Add Existing Account"
+                                x:Uid="_wizardAddExistingAccount_"
+                                Width="400"
+                                Height="36"
                                 HorizontalAlignment="Center"
-                                Style="{StaticResource ButtonStyle4}"
-                                Click="_showAddAccountMenuBtn__Click"/>
+                                Click="_showAddAccountMenuBtn__Click"
+                                FontSize="18"
+                                Style="{StaticResource WizardButtons1}"
+                                Visibility="Visible" />
                         <Grid x:Name="_accountAddMenuGrid_"
-                          Visibility="Collapsed"
-                          Background="#3bc1d3">
+                              Background="{StaticResource RingBlueMidBrush}"
+                              Visibility="Collapsed">
                             <Grid.RowDefinitions>
-                                <RowDefinition Height="30"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="30"/>
+                                <RowDefinition Height="30" />
+                                <RowDefinition Height="auto" />
+                                <RowDefinition Height="30" />
                             </Grid.RowDefinitions>
-                            <StackPanel Orientation="Horizontal"
-                                        Grid.Row="0">
-                                <Button x:Name="_step1button_"
-                                        Style="{StaticResource ButtonStyle4}"
-                                        Content="Step 1"
-                                        Click="_step1button__Click"/>
-                                <TextBlock Text=">"
-                                           VerticalAlignment="Center"
-                                           Style="{StaticResource TextStyle7}"/>
-                                <Button x:Name="_step2button_"
-                                        Style="{StaticResource ButtonStyle4}"
-                                        Click="_step2button__Click"
-                                        Content="Step 2"/>
-                            </StackPanel>
-                            <!-- step 1. -->
-                            <StackPanel x:Name="_step1Menu_"
-                                        Background="#FFE4F1F9"
-                                        Padding="10"
-                                        Grid.Row="1">
-                                <TextBlock Text="To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account."
+                            <StackPanel Grid.Row="1"
+                                        x:Name="_step2Menu_"
+                                        Background="{StaticResource RingBlueLightBrush}"
+                                        Orientation="Vertical">
+                                <TextBlock x:Uid="_accountsAddStep1_"
+                                           TextAlignment="Justify"
                                            TextWrapping="Wrap"
-                                           TextAlignment="Justify"/>
-                                <HyperlinkButton Content="Learn more"
-                                                 Margin="0,0,0,10"
-                                                 NavigateUri="http://ring.cx"/>
-                            </StackPanel>
-                            <!-- step 2. -->
-                            <StackPanel x:Name="_step2Menu_"
-                                        Background="#FFE4F1F9"
-                                        Visibility="Collapsed"
-                                        Grid.Row="1">
-                                <TextBox  x:Name="_PINTextBox_"
-                                      Margin="10"
-                                      GotFocus="_PINTextBox__GotFocus"
-                                          KeyUp="_PINTextBox__KeyUp"
-                                      PlaceholderText="Enter PIN"/>
+                                           Margin="30,20,30,20"/>
+                                <HyperlinkButton x:Uid="_accountsEditionLearnMore_"
+                                                 Margin="30,0,0,10"
+                                                 NavigateUri="http://ring.cx" />
+                                <TextBox x:Name="_PINTextBox_"
+                                         x:Uid="_accountsAddEnterPIN_"
+                                         Margin="30,20,30,10"
+                                         GotFocus="_PINTextBox__GotFocus"
+                                         IsSpellCheckEnabled="False"
+                                         KeyUp="_PINTextBox__KeyUp" />
                                 <PasswordBox x:Name="_ArchivePassword_"
-                                      Margin="10"
-                                             KeyUp="_ArchivePassword__KeyUp"
-                                      PlaceholderText="Enter your password"/>
+                                             x:Uid="_accountsEnterArchivePassword_"
+                                             Margin="30,10,30,10"
+                                             KeyUp="_ArchivePassword__KeyUp" />
                                 <TextBlock x:Name="_response_"
-                                           Foreground="Red"
                                            HorizontalAlignment="Center"
-                                           Text=""/>
+                                           Foreground="Red" />
                             </StackPanel>
-                            <!-- buttons next step and yes/no to add the account. -->
+                            <!--  buttons next step and yes/no to add the account.  -->
                             <Grid Grid.Row="2">
-                                <StackPanel Orientation="Horizontal"
-                                            Padding="10,0"
-                                            HorizontalAlignment="Center">
-                                    <Button x:Name="_nextstep_"
-                                            VerticalAlignment="Center"
+                                <StackPanel Padding="10,0"
                                             HorizontalAlignment="Center"
-                                            Content="&#xE081;"
-                                            Click="_step2button__Click"
-                                            Style="{StaticResource ButtonStyle2}"/>
+                                            Orientation="Horizontal">
                                     <Button x:Name="_addAccountYes_"
-                                            VerticalAlignment="Center"
                                             HorizontalAlignment="Center"
-                                            Visibility="Collapsed"
-                                            Content="&#xE081;"
+                                            VerticalAlignment="Center"
                                             Click="_addAccountYes__Click"
+                                            Content="&#xE081;"
                                             IsEnabled="False"
-                                            Style="{StaticResource ButtonStyle2}"/>
+                                            Style="{StaticResource ButtonStyle2}">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="_tt_add_account_yes_" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
+                                    <Button x:Name="_addAccountNo_"
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center"
+                                            Click="collapseMenus"
+                                            Content="&#xE106;"
+                                            IsEnabled="True"
+                                            Style="{StaticResource ButtonStyle2}">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="_tt_account_cancel_" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -285,10 +330,4 @@
             </StackPanel>
         </Grid>
     </ScrollViewer>
-
-
-
-
-
-
 </Page>

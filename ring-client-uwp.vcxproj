@@ -97,12 +97,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <PackageCertificateKeyFile>ring-client-uwp_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>ring-client-uwp_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>6E2CEF8A6A6A44314AB297CE41FC3BC8F2890973</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>A60EB824B6591CA560948145FAC6F93D83E777AD</PackageCertificateThumbprint>
     <AppxPackageDir>$(USERPROFILE)\ring_packaging\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -145,6 +145,7 @@
       <PreprocessorDefinitions>STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsManaged>false</CompileAsManaged>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\build\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\build\bin\x64;$(SolutionDir)..\ring-daemon\contrib\build\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)x64\Release-Lib;$(SolutionDir)contrib\qrencode-win32\vc8\qrcodelib\x64\Release-Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -175,17 +176,27 @@
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
+    <ClInclude Include="Call.h" />
     <ClInclude Include="Contact.h" />
+    <ClInclude Include="ContactRequestItem.h" />
+    <ClInclude Include="ContactRequestItemsViewModel.h" />
     <ClInclude Include="ContactListModel.h" />
     <ClInclude Include="Conversation.h" />
+    <ClInclude Include="HttpUtils.h" />
+    <ClInclude Include="RingDevice.h" />
+    <ClInclude Include="RingDeviceItemsViewModel.h" />
+    <ClInclude Include="RingDeviceItem.h" />
     <ClInclude Include="Globals.h" />
     <ClInclude Include="LoadingPage.xaml.h">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="lodepng.h" />
     <ClInclude Include="MessageTextPage.xaml.h">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="pch.h" />
+    <ClInclude Include="pch.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
     </ClInclude>
@@ -195,6 +206,8 @@
     <ClInclude Include="PreviewPage.xaml.h">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RingConsolePanel.xaml.h">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -211,6 +224,7 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h" />
     <ClInclude Include="SmartPanelItemsViewModel.h" />
+    <ClInclude Include="TextBlockExtension.h" />
     <ClInclude Include="UserModel.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
@@ -236,6 +250,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="AboutPage.xaml" />
+    <Page Include="Buttons.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="LoadingPage.xaml" />
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
@@ -245,7 +262,13 @@
     <Page Include="RingConsolePanel.xaml">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Page>
+    <Page Include="ScrollBars.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="SmartPanel.xaml" />
+    <Page Include="SplitViews.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Styles.xaml" />
     <Page Include="VideoPage.xaml" />
     <Page Include="WelcomePage.xaml" />
@@ -285,15 +308,17 @@
     <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
-    <None Include="ring-client-uwp_StoreKey.pfx" />
+    <None Include="packages.config" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png" />
     <Image Include="Assets\AccountTypeSIP.png" />
+    <Image Include="Assets\angledGrid.png" />
+    <Image Include="Assets\grid.png" />
     <Image Include="Assets\LockScreenLogo.scale-200.png" />
-    <Image Include="Assets\qrCodeIconBlack.png" />
-    <Image Include="Assets\qrCodeIconWhite.png" />
+    <Image Include="Assets\share_b.png" />
+    <Image Include="Assets\share_w.png" />
     <Image Include="Assets\SplashScreen.scale-200.png" />
     <Image Include="Assets\Square150x150Logo.scale-200.png" />
     <Image Include="Assets\Square44x44Logo.scale-200.png" />
@@ -338,10 +363,17 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
+    <ClCompile Include="ContactRequestItem.cpp" />
+    <ClCompile Include="ContactRequestItemsViewModel.cpp" />
     <ClCompile Include="ContactListModel.cpp" />
     <ClCompile Include="Conversation.cpp" />
+    <ClCompile Include="RingDeviceItemsViewModel.cpp" />
+    <ClCompile Include="RingDeviceItem.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
@@ -360,6 +392,7 @@
     <ClCompile Include="PreviewPage.xaml.cpp">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="RingConsolePanel.xaml.cpp">
       <DependentUpon>RingConsolePanel.xaml</DependentUpon>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -376,6 +409,7 @@
     </ClCompile>
     <ClCompile Include="SmartPanelItem.cpp" />
     <ClCompile Include="SmartPanelItemsViewModel.cpp" />
+    <ClCompile Include="TextBlockExtension.cpp" />
     <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClCompile Include="VCardUtils.cpp">
@@ -396,15 +430,61 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="localization\Fr-fr\Resources.resw" />
-    <PRIResource Include="localization\US-en\Resources.resw" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Package.StoreAssociation.xml" />
+    <None Include="Package.StoreAssociation.xml">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Assets\default.wav" />
-    <Media Include="Assets\message_notification_sound.wav" />
+    <Media Include="Assets\ringtone_notify.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ring-client-uwp.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="localization\ar\Resources.resw" />
+    <PRIResource Include="localization\bg\Resources.resw" />
+    <PRIResource Include="localization\ca\Resources.resw" />
+    <PRIResource Include="localization\cs-CZ\Resources.resw" />
+    <PRIResource Include="localization\da-DK\Resources.resw" />
+    <PRIResource Include="localization\de-DE\Resources.resw" />
+    <PRIResource Include="localization\de\Resources.resw" />
+    <PRIResource Include="localization\el\Resources.resw" />
+    <PRIResource Include="localization\en-GB\Resources.resw" />
+    <PRIResource Include="localization\en-US\Resources.resw" />
+    <PRIResource Include="localization\es\Resources.resw" />
+    <PRIResource Include="localization\et-EE\Resources.resw" />
+    <PRIResource Include="localization\fa-IR\Resources.resw" />
+    <PRIResource Include="localization\fi\Resources.resw" />
+    <PRIResource Include="localization\fr-FR\Resources.resw" />
+    <PRIResource Include="localization\fr\Resources.resw" />
+    <PRIResource Include="localization\fr-CA\Resources.resw" />
+    <PRIResource Include="localization\he\Resources.resw" />
+    <PRIResource Include="localization\hi-IN\Resources.resw" />
+    <PRIResource Include="localization\hr\Resources.resw" />
+    <PRIResource Include="localization\hu\Resources.resw" />
+    <PRIResource Include="localization\id\Resources.resw" />
+    <PRIResource Include="localization\it\Resources.resw" />
+    <PRIResource Include="localization\it-IT\Resources.resw" />
+    <PRIResource Include="localization\ja\Resources.resw" />
+    <PRIResource Include="localization\lt\Resources.resw" />
+    <PRIResource Include="localization\ms\Resources.resw" />
+    <PRIResource Include="localization\nb\Resources.resw" />
+    <PRIResource Include="localization\nl-NL\Resources.resw" />
+    <PRIResource Include="localization\nl\Resources.resw" />
+    <PRIResource Include="localization\pa\Resources.resw" />
+    <PRIResource Include="localization\pl\Resources.resw" />
+    <PRIResource Include="localization\pt\Resources.resw" />
+    <PRIResource Include="localization\pt-BR\Resources.resw" />
+    <PRIResource Include="localization\ro\Resources.resw" />
+    <PRIResource Include="localization\ru-RU\Resources.resw" />
+    <PRIResource Include="localization\ru\Resources.resw" />
+    <PRIResource Include="localization\sk-SK\Resources.resw" />
+    <PRIResource Include="localization\sq-AL\Resources.resw" />
+    <PRIResource Include="localization\sv\Resources.resw" />
+    <PRIResource Include="localization\tr\Resources.resw" />
+    <PRIResource Include="localization\uk\Resources.resw" />
+    <PRIResource Include="localization\zh\Resources.resw" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

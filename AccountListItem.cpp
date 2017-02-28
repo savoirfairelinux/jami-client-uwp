@@ -33,7 +33,6 @@ AccountListItem::AccountListItem(Account^ a)
 {
     _account = a;
     _editionMode = false;
-
 }
 
 void
@@ -44,6 +43,13 @@ AccountListItem::NotifyPropertyChanged(String^ propertyName)
         CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
+        //MSG_("AccountListItem::NotifyPropertyChanged: " + propertyName);
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
+}
+
+void
+AccountListItem::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
 }
