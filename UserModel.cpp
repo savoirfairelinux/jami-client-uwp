@@ -7,7 +7,7 @@ using namespace RingClientUWP;
 void
 UserModel::getUserData()
 {
-    create_task(User::FindAllAsync())
+    /*create_task(User::FindAllAsync())
         .then([=](IVectorView<User^>^ users) {
         for (size_t index = 0; index < users->Size; index++) {
             auto user = users->GetAt(index);
@@ -24,5 +24,5 @@ UserModel::getUserData()
                 });
             }
         }
-    });
+    });*/
 }
