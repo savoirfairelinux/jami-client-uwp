@@ -47,6 +47,8 @@ using namespace Windows::Graphics::Display;
 using namespace Windows::Graphics::Imaging;
 using namespace Windows::Media;
 using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::UI::Xaml::Media::Animation;
+using namespace Windows::UI::Xaml::Shapes;
 using namespace Windows::Media::Capture;
 using namespace Windows::Devices::Sensors;
 
@@ -147,7 +149,6 @@ VideoPage::VideoPage()
 
             _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
             _IncomingVideoImage_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-//            _PreviewImage_->Visibility = Windows::UI::Xaml::Visibility::Visible;
             break;
         }
         case CallStatus::ENDED:
@@ -158,7 +159,7 @@ VideoPage::VideoPage()
                 RingD::instance->setWindowedMode();
 
             /* "close" the chat panel */
-            _rowChatBx_->Height = 0;
+            closeChatPanel();
 
             break;
         }
@@ -166,7 +167,6 @@ VideoPage::VideoPage()
         case CallStatus::PAUSED:
             _callPaused_->Visibility = Windows::UI::Xaml::Visibility::Visible;
             _IncomingVideoImage_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-//            _PreviewImage_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
             break;
         }
     });
@@ -197,7 +197,7 @@ void
 RingClientUWP::Views::VideoPage::OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e)
 {
     updatePageContent();
-    _rowChatBx_->Height = 0;
+    closeChatPanel();
 }
 
 void RingClientUWP::Views::VideoPage::updatePageContent()
@@ -235,19 +235,19 @@ VideoPage::updatePreviewFrameDimensions()
     TranslateTransform^ translate = ref new TranslateTransform();
     switch (quadrant)
     {
-    case 0:
+    case Quadrant::SE:
         translate->Y = -userPreviewHeightModifier;
         translate->X = translate->Y * aspectRatio;
         break;
-    case 1:
+    case Quadrant::SW:
         translate->Y = -userPreviewHeightModifier;
         translate->X = 0;
         break;
-    case 2:
+    case Quadrant::NW:
         translate->Y = 0;
         translate->X = 0;
         break;
-    case 3:
+    case Quadrant::NE:
         translate->Y = 0;
         translate->X = -userPreviewHeightModifier * aspectRatio;
         break;
@@ -296,10 +296,46 @@ RingClientUWP::Views::VideoPage::_sendBtn__Click(Platform::Object^ sender, Windo
 }
 
 void
+VideoPage::openChatPanel()
+{
+    _chatResizeBarVertical_->Height = 4;
+    _chatResizeBarHorizontal_->Width = 4;
+    resizeChatPanel();
+    chatPanelOpen = true;
+    SmartPanelItemsViewModel::instance->_selectedItem->_contact->_unreadMessages = 0;
+}
+void
+VideoPage::closeChatPanel()
+{
+    _chatResizeBarVertical_->Height = 0;
+    _rowChatBx_->Height = 0;
+    _chatResizeBarHorizontal_->Width = 0;
+    _colChatBx_->Width = 0;
+    chatPanelOpen = false;
+}
+
+void
+VideoPage::resizeChatPanel()
+{
+    if (chtBoxOrientation == Orientation::Horizontal)
+        _colChatBx_->Width = GridLength(chatPanelSize, GridUnitType::Star);
+    else
+        _rowChatBx_->Height = GridLength(chatPanelSize, GridUnitType::Star);
+}
+
+void
 RingClientUWP::Views::VideoPage::_messageTextBox__KeyDown(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
     if (e->Key == Windows::System::VirtualKey::Enter) {
         sendMessage();
+    }
+    else if (e->Key == Windows::System::VirtualKey::Down) {
+        chatPanelSize = max(.3, min(chatPanelSize + .1, 1.));
+        resizeChatPanel();
+    }
+    else if (e->Key == Windows::System::VirtualKey::Up) {
+        chatPanelSize = max(.3, min(chatPanelSize - .1, 1.));
+        resizeChatPanel();
     }
 }
 
@@ -328,7 +364,6 @@ void RingClientUWP::Views::VideoPage::Button_Click(Platform::Object^ sender, Win
 
 void RingClientUWP::Views::VideoPage::_btnCancel__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-
 }
 
 void RingClientUWP::Views::VideoPage::_btnHangUp__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
@@ -360,12 +395,11 @@ void RingClientUWP::Views::VideoPage::_btnPause__Tapped(Platform::Object^ sender
 
 void RingClientUWP::Views::VideoPage::_btnChat__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    if (_rowChatBx_->Height == 0) {
-        _rowChatBx_->Height = 200;
-        SmartPanelItemsViewModel::instance->_selectedItem->_contact->_unreadMessages = 0;
+    if (!chatPanelOpen) {
+        openChatPanel();
     }
     else {
-        _rowChatBx_->Height = 0;
+        closeChatPanel();
     }
 }
 
@@ -474,9 +508,7 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 
 void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
-    if (_rowChatBx_->Height == 0)
-        _rowChatBx_->Height = 200;
-
+    openChatPanel();
     scrollDown();
 }
 
@@ -564,6 +596,9 @@ void RingClientUWP::Views::VideoPage::InitManipulationTransforms()
 
 void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
 {
+    if (!isMovingPreview)
+        isMovingPreview = true;
+
     _PreviewImageRect_->RenderTransform = PreviewImage_transforms;
 
     PreviewImage_previousTransform->Matrix = PreviewImage_transforms->Value;
@@ -578,8 +613,8 @@ void
 RingClientUWP::Views::VideoPage::computeQuadrant()
 {
     // Compute center coordinate of _videoContent_
-    Point centerOfVideoFrame = Point(   static_cast<float>(_videoContent_->ActualWidth) / 2,
-                                        static_cast<float>(_videoContent_->ActualHeight) / 2        );
+    Point centerOfVideoFrame = Point(   static_cast<float>(_videoContent_->ActualWidth - _colChatBx_->ActualWidth) / 2,
+                                        static_cast<float>(_videoContent_->ActualHeight - _rowChatBx_->ActualHeight) / 2  );
 
     // Compute the center coordinate of _PreviewImage_ relative to _videoContent_
     Point centerOfPreview = Point( static_cast<float>(_PreviewImage_->ActualWidth) / 2,
@@ -595,9 +630,9 @@ RingClientUWP::Views::VideoPage::computeQuadrant()
 
     lastQuadrant = quadrant;
     if (diff.X > 0)
-        quadrant = diff.Y > 0 ? 2 : 1;
+        quadrant = diff.Y > 0 ? Quadrant::NW : Quadrant::SW;
     else
-        quadrant = diff.Y > 0 ? 3 : 0;
+        quadrant = diff.Y > 0 ? Quadrant::NE : Quadrant::SE;
 
     if (lastQuadrant != quadrant) {
         arrangeResizer();
@@ -616,28 +651,28 @@ RingClientUWP::Views::VideoPage::arrangeResizer()
     PointCollection^ resizeTrianglePoints = ref new PointCollection();
     switch (quadrant)
     {
-    case 0:
+    case Quadrant::SE:
         xOffset = 0;
         yOffset = 0;
         resizeTrianglePoints->Append(Point(xOffset,         yOffset));
         resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
         resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
         break;
-    case 1:
+    case Quadrant::SW:
         xOffset = scaledWidth - rSize;
         yOffset = 0;
         resizeTrianglePoints->Append(Point(xOffset,         yOffset));
         resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
         resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset + rSize));
         break;
-    case 2:
+    case Quadrant::NW:
         xOffset = scaledWidth - rSize;
         yOffset = scaledHeight - rSize;
         resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset));
         resizeTrianglePoints->Append(Point(xOffset + rSize, yOffset + rSize));
         resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
         break;
-    case 3:
+    case Quadrant::NE:
         xOffset = 0;
         yOffset = scaledHeight - rSize;
         resizeTrianglePoints->Append(Point(xOffset,         yOffset + rSize));
@@ -652,8 +687,16 @@ RingClientUWP::Views::VideoPage::arrangeResizer()
 
 void RingClientUWP::Views::VideoPage::PreviewImage_ManipulationCompleted(Platform::Object^ sender, ManipulationCompletedRoutedEventArgs^ e)
 {
+    isMovingPreview = false;
     anchorPreview();
     updatePreviewFrameDimensions();
+}
+
+void
+VideoPage::PreviewImageResizer_Pressed(Object^ sender, PointerRoutedEventArgs^ e)
+{
+    isResizingPreview = true;
+    lastUserPreviewHeightModifier = userPreviewHeightModifier;
 }
 
 void RingClientUWP::Views::VideoPage::anchorPreview()
@@ -663,19 +706,19 @@ void RingClientUWP::Views::VideoPage::anchorPreview()
 
     switch (quadrant)
     {
-    case 0:
+    case Quadrant::SE:
         _PreviewImageRect_->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Right;
         _PreviewImageRect_->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Bottom;
         break;
-    case 1:
+    case Quadrant::SW:
         _PreviewImageRect_->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left;
         _PreviewImageRect_->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Bottom;
         break;
-    case 2:
+    case Quadrant::NW:
         _PreviewImageRect_->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Left;
         _PreviewImageRect_->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Top;
         break;
-    case 3:
+    case Quadrant::NE:
         _PreviewImageRect_->HorizontalAlignment = Windows::UI::Xaml::HorizontalAlignment::Right;
         _PreviewImageRect_->VerticalAlignment = Windows::UI::Xaml::VerticalAlignment::Top;
         break;
@@ -687,11 +730,15 @@ void RingClientUWP::Views::VideoPage::anchorPreview()
 void
 VideoPage::PreviewImageResizer_ManipulationDelta(Platform::Object^ sender, ManipulationDeltaRoutedEventArgs^ e)
 {
-    isResizingPreview = true;
-    if (quadrant > 1)
-        userPreviewHeightModifier += e->Delta.Translation.Y;
-    else
-        userPreviewHeightModifier -= e->Delta.Translation.Y;
+    if (!isResizingPreview)
+        isResizingPreview = true;
+
+    if (quadrant == Quadrant::NW || quadrant == Quadrant::NE) {
+        userPreviewHeightModifier = lastUserPreviewHeightModifier + e->Cumulative.Translation.Y;
+    }
+    else {
+        userPreviewHeightModifier = lastUserPreviewHeightModifier - (e->Cumulative.Translation.Y);
+    }
 
     updatePreviewFrameDimensions();
 }
@@ -700,12 +747,15 @@ void
 VideoPage::PreviewImageResizer_ManipulationCompleted(Platform::Object^ sender, ManipulationCompletedRoutedEventArgs^ e)
 {
     isResizingPreview = false;
+    if (!isHoveringOnResizer) {
+        CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::Arrow, 0);
+    }
 }
 
 void
 VideoPage::PreviewImage_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-    // For some reason, PreviewImage_ManipulationCompleted doesn't always fire when it should
+    // For some reason, PreviewImage_ManipulationCompleted doesn't always fired when the mouse is released
     anchorPreview();
     updatePreviewFrameDimensions();
 }
@@ -713,26 +763,74 @@ VideoPage::PreviewImage_PointerReleased(Platform::Object^ sender, Windows::UI::X
 void
 VideoPage::PreviewImageResizer_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
-    switch (quadrant)
-    {
-    case 0:
-    case 2:
-        CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::SizeNorthwestSoutheast, 0);
-        break;
-    case 1:
-    case 3:
-        CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::SizeNortheastSouthwest, 0);
-        break;
-    default:
-        break;
+    isHoveringOnResizer = true;
+    if (!isMovingPreview) {
+        switch (quadrant)
+        {
+        case Quadrant::SE:
+        case Quadrant::NW:
+            CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::SizeNorthwestSoutheast, 0);
+            break;
+        case Quadrant::SW:
+        case Quadrant::NE:
+            CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::SizeNortheastSouthwest, 0);
+            break;
+        default:
+            break;
+        }
     }
 }
-
 
 void
 VideoPage::PreviewImageResizer_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
+    isHoveringOnResizer = false;
     if (!isResizingPreview) {
         CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::Arrow, 0);
     }
+}
+
+void
+VideoPage::PreviewImageResizer_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+{
+    if (!isHoveringOnResizer) {
+        CoreApplication::MainView->CoreWindow->PointerCursor = ref new Windows::UI::Core::CoreCursor(Windows::UI::Core::CoreCursorType::Arrow, 0);
+    }
+}
+
+void
+VideoPage::_btnToggleOrientation__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
+{
+    bool wasChatPanelOpen = chatPanelOpen;
+    closeChatPanel();
+
+    if (chtBoxOrientation == Orientation::Vertical) {
+        chtBoxOrientation = Orientation::Horizontal;
+        _btnToggleOrientation_->Content = L"\uE90E";
+
+        Grid::SetRow(_chatPanelResizeBarGrid_, 0);
+        Grid::SetColumn(_chatPanelResizeBarGrid_, 1);
+
+        _chatResizeBarHorizontal_->Width = 0;
+        _chatResizeBarVertical_->Height = 4;
+
+        Grid::SetRow(_chatPanelGrid_, 0);
+        Grid::SetColumn(_chatPanelGrid_, 2);
+    }
+    else {
+        chtBoxOrientation = Orientation::Vertical;
+        _btnToggleOrientation_->Content = L"\uE90D";
+
+        Grid::SetRow(_chatPanelResizeBarGrid_, 1);
+        Grid::SetColumn(_chatPanelResizeBarGrid_, 0);
+
+        _chatResizeBarHorizontal_->Width = 4;
+        _chatResizeBarVertical_->Height = 0;
+
+        Grid::SetRow(_chatPanelGrid_, 2);
+        Grid::SetColumn(_chatPanelGrid_, 0);
+    }
+
+    if (wasChatPanelOpen)
+        openChatPanel();
 }

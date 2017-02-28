@@ -81,12 +81,23 @@ private:
 
     // For transforming the preview image
     double userPreviewHeightModifier = 0.0;
+    double lastUserPreviewHeightModifier;
+    bool isMovingPreview = false;
     bool isResizingPreview = false;
-    int lastQuadrant = 0;
-    int quadrant = 0;
+    bool isHoveringOnResizer = false;
+    enum class Quadrant {
+        SE, SW, NW, NE
+    } quadrant = Quadrant::SE, lastQuadrant = Quadrant::SE;
     TransformGroup^ PreviewImage_transforms;
     MatrixTransform^ PreviewImage_previousTransform;
     CompositeTransform^ PreviewImage_deltaTransform;
+
+    // Chat panel transformations
+    bool chatPanelOpen = false;
+    double chatPanelSize = 1;
+    enum class Orientation {
+        Horizontal, Vertical
+    } chtBoxOrientation = Orientation::Vertical;
 
     Concurrency::task<void> WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, int height);
     void _sendBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -115,8 +126,9 @@ private:
     void OnstopPreviewing();
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
-
-    // For transforming the preview image
+    void openChatPanel();
+    void closeChatPanel();
+    void resizeChatPanel();
     void computeQuadrant();
     void arrangeResizer();
     void anchorPreview();
@@ -129,6 +141,9 @@ private:
     void PreviewImage_PointerReleased(Object^ sender, PointerRoutedEventArgs^ e);
     void PreviewImageResizer_PointerEntered(Object^ sender, PointerRoutedEventArgs^ e);
     void PreviewImageResizer_PointerExited(Object^ sender, PointerRoutedEventArgs^ e);
+    void PreviewImageResizer_Pressed(Object^ sender, PointerRoutedEventArgs^ e);
+    void _btnToggleOrientation__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+    void PreviewImageResizer_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
 };
 }
 }
