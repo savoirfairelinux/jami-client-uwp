@@ -42,20 +42,20 @@ Ringtone::Ringtone(String^ fileName)
 void
 Ringtone::Start()
 {
-    _graph->Start();
+    _deviceOutputNode->OutgoingGain = startingGain;
+    _graph->ResetAllNodes();
 }
 
 void
 Ringtone::Stop()
 {
-    _graph->Stop();
-    _graph->ResetAllNodes();
+    _deviceOutputNode->OutgoingGain = 0.0;
 }
 
 task<void>
 Ringtone::CreateGraph()
 {
-    AudioGraphSettings^ settings = ref new AudioGraphSettings(Windows::Media::Render::AudioRenderCategory::Media);
+    AudioGraphSettings^ settings = ref new AudioGraphSettings(Windows::Media::Render::AudioRenderCategory::GameChat);
     return create_task(AudioGraph::CreateAsync(settings))
         .then([=](CreateAudioGraphResult^ result){
         if (result->Status != AudioGraphCreationStatus::Success) {
@@ -74,6 +74,9 @@ Ringtone::CreateDefaultDeviceOutputNode()
             MSG_("CreateDefaultDeviceOutputNode failed");
         }
         _deviceOutputNode = result->DeviceOutputNode;
+        startingGain = _deviceOutputNode->OutgoingGain;
+        _deviceOutputNode->OutgoingGain = 0.0;
+        _graph->Start();
     });
 }
 
@@ -86,12 +89,6 @@ Ringtone::CreateFileInputNode()
         .then([=](StorageFolder^ assetsFolder){
         create_task(assetsFolder->GetFileAsync(fileName_))
             .then([=](StorageFile^ ringtoneFile){
-            // functions as a Background task but will force a SMTC panel into the thumbnail
-            //mp = ref new MediaPlayer();
-            //mp->Source = MediaSource::CreateFromStorageFile(ringtoneFile);
-            ////mp->CommandManager->IsEnabled = false;
-            //mp->IsLoopingEnabled = true;
-            //mp->Play();
             create_task(_graph->CreateFileInputNodeAsync(ringtoneFile))
                 .then([=](CreateAudioFileInputNodeResult^ result){
                 if (result->Status != AudioFileNodeCreationStatus::Success) {
