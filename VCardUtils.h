@@ -44,7 +44,7 @@ struct Symbols {
     constexpr static const char* SEPERATOR1             =   ";";
     constexpr static const char* SEPERATOR2             =   ":";
     constexpr static const char* PHOTO_ENC              =   "ENDCODING=BASE64";
-    constexpr static const char* PHOTO_TYPE             =   "TYPE=JPEG";
+    constexpr static const char* PHOTO_TYPE             =   "TYPE=PNG";
 };
 
 struct Property {
@@ -65,19 +65,25 @@ internal:
     void                    sendChunk(std::string callID, std::map<std::string, std::string> chunk);
     void                    send(std::string callID, const char* file = nullptr);
     std::string             asString();
+    std::string             getPart(const std::string& part);
     int                     saveToFile();
     void                    decodeBase64ToPNGFile();
     void                    encodePNGToBase64();
 
     void                    completeReception();
+    int                     parseFromString();
     void                    setData(std::map<std::string, std::string> data);
+    void                    setData(const std::string& data);
 
 private:
-    std::map<std::string, std::string>  m_mParts     {       };
+    std::string             m_data;
+    std::map<std::string, std::string>  m_mParts;
     Contact^                m_Owner;
     int                     m_type;
     std::string             m_accountId;
 };
+
+std::map<std::string, std::string> parseContactRequestPayload(const std::string& payload);
 
 }
 }
