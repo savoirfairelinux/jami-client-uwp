@@ -150,7 +150,7 @@ internal:
     CallStatus translateCallStatus(String^ state);
     String^ getUserName();
     Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
-    void HandleIncomingMessage( const std::string& callId,
+    void handleIncomingMessage( const std::string& callId,
                                 const std::string& accountId,
                                 const std::string& from,
                                 const std::map<std::string, std::string>& payloads);
@@ -179,6 +179,7 @@ internal:
     std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
     void lookUpAddress(String^ address);
     std::string registeredName(Account^ account);
+    void removeContact(const std::string & accountId, const std::string& uri);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -232,7 +233,11 @@ private:
         MuteAudio,
         LookUpName,
         LookUpAddress,
-        RegisterName
+        SendTrustRequest,
+        AcceptTrustRequest,
+        DiscardTrustRequest,
+        RegisterName,
+        RemoveContact
     };
 
 
@@ -300,5 +305,6 @@ private:
     std::map<std::string, SharedCallback> incomingVideoHandlers;
     std::map<std::string, SharedCallback> outgoingVideoHandlers;
     std::map<std::string, SharedCallback> nameRegistrationHandlers;
+    std::map<std::string, SharedCallback> trustRequestHandlers;
 };
 }

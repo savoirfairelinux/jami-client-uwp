@@ -126,6 +126,15 @@ public:
     MoreThanOneToVisibility() {};
 };
 
+public ref class TrustedToVisibility sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, TypeName  targetType, Object^ parameter, String^ language) {
+        return nullptr;
+    };
+    TrustedToVisibility() {};
+};
+
 public ref class SelectedAccountToVisibility sealed : IValueConverter {
 public:
     virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);
@@ -146,14 +155,14 @@ public ref class CallStatusForIncomingCallAnimatedEllipse sealed : IValueConvert
 public:
     virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);
     virtual Object^ ConvertBack(Object^ value, TypeName  targetType, Object^ parameter, String^ language);
-    CallStatusForIncomingCallAnimatedEllipse();
+    CallStatusForIncomingCallAnimatedEllipse() {};
 };
 
 public ref class CallStatusForIncomingCallStaticEllipse sealed : IValueConverter {
 public:
     virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);
     virtual Object^ ConvertBack(Object^ value, TypeName  targetType, Object^ parameter, String^ language);
-    CallStatusForIncomingCallStaticEllipse();
+    CallStatusForIncomingCallStaticEllipse() {};
 };
 
 
@@ -176,6 +185,7 @@ internal:
 private:
     enum class MenuOpen {
         CONTACTS_LIST,
+        CONTACTREQUEST_LIST,
         ACCOUNTS_LIST,
         SHARE,
         DEVICE,
@@ -193,8 +203,8 @@ private:
     void _acceptIncomingCallBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _callContact__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _cancelCallBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
-    void Grid_PointerEntered(Platform::Object^ sender, PointerRoutedEventArgs^ e);
-    void Grid_PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void SmartPanelItem_Grid_PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void generateQRcode();
     void _videoDeviceComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
     void _videoResolutionComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
@@ -207,6 +217,9 @@ private:
     void ringTxtBxPlaceHolderDelay(String^ placeHolderText, int delayInMilliSeconds);
     void showLinkThisDeviceStep1();
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
+    void addToContactList(String^ name);
+
+    /* members */
     void _addDevice__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void OndevicesListRefreshed(Platform::Collections::Vector<Platform::String ^, std::equal_to<Platform::String ^>, true> ^devicesList);
     void _pinGeneratorYes__Click(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -226,7 +239,7 @@ private:
     void _selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _selectedAccountAvatarContainer__PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _smartList__PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
-    void Grid_PointerMoved(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _registerOnBlockchainEdition__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _usernameTextBoxEdition__KeyUp(Platform::Object^ sender, KeyRoutedEventArgs^ e);
     void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& address, const std::string& name);
@@ -246,7 +259,8 @@ private:
     void OncallPlaced(Platform::String ^callId);
     void updateUnreadMessagesState();
     void selectMenu(MenuOpen menu);
-    void Grid_PointerReleased(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+
+    void SmartPanelItem_Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload);
     void _ringTxtBx__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _contactsListMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -256,6 +270,14 @@ private:
     void _settingsMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _passwordForPinGenerator__KeyUp(Platform::Object^ sender, KeyRoutedEventArgs^ e);
     void requestPin();
+    void ContactRequestItem_Grid_PointerReleased(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void ContactRequestItem_Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void ContactRequestItem_Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void ContactRequestItem_Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
+    void _contactsRequestListMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _incomingContactRequestList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
+    void _acceptContactRequestBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _rejectContactRequestBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
