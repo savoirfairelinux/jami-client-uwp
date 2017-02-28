@@ -143,7 +143,7 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
     if (contact == nullptr)
-        contact = contactListModel->addNewContact(fromRingId, fromRingId);
+        contact = contactListModel->addNewContact(fromRingId, fromRingId, TrustStatus::UNKNOWN);
 
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
