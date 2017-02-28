@@ -1480,7 +1480,7 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
         _ringTxtBx_->Text = "";
 
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Visible;
         }
         return;
     }
@@ -1490,9 +1490,9 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
         auto str2 = Utils::toString(_ringTxtBx_->Text);
 
         if (str1.find(str2) != std::string::npos)
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Visible;
         else
-            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Collapsed;
     }
 
 }
@@ -1825,7 +1825,7 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sende
         _ringTxtBx_->Text = "";
 
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Visible;
         }
         return;
     }
@@ -1835,9 +1835,9 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sende
         auto str2 = Utils::toString(_ringTxtBx_->Text);
 
         if (str1.find(str2) != std::string::npos)
-            item->_showMe = Windows::UI::Xaml::Visibility::Visible;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Visible;
         else
-            item->_showMe = Windows::UI::Xaml::Visibility::Collapsed;
+            item->_isVisible = Windows::UI::Xaml::Visibility::Collapsed;
     }
 }
 

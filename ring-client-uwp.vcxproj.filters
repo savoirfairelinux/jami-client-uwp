@@ -38,49 +38,55 @@
       <Filter>Controls</Filter>
     </ClCompile>
     <ClCompile Include="Video.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoCaptureManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoRendererManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="Account.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Contact.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Conversation.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="AccountListItemsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="AccountsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="ContactsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="UserModel.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp" />
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Ringtone.cpp">
-      <Filter>Media\Audio</Filter>
+      <Filter>Models\Media\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AboutPage.xaml.cpp" />
+    <ClCompile Include="ContactRequestItem.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ContactRequestItemsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -115,49 +121,55 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="Video.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoCaptureManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoRendererManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="Account.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Contact.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Conversation.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="AccountListItemsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="AccountsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="ContactsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="SmartPanelItemsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="UserModel.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="PreviewPage.xaml.h" />
     <ClInclude Include="VCardUtils.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Ringtone.h">
-      <Filter>Media\Audio</Filter>
+      <Filter>Models\Media\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AboutPage.xaml.h" />
+    <ClInclude Include="ContactRequestItem.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ContactRequestItemsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
@@ -307,21 +319,6 @@
     <Filter Include="Controls">
       <UniqueIdentifier>{befd33e5-463a-42bb-9b9b-68c1ab49f0df}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Media">
-      <UniqueIdentifier>{b4690532-30e8-4640-8478-1a686d31d7a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Audio">
-      <UniqueIdentifier>{851d9f4a-c6b8-40aa-ba0f-44a7185795e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Video">
-      <UniqueIdentifier>{6d47b8c1-b056-4461-98d6-5bcb52d30447}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{04b389af-ccff-45ed-b44a-645c39388eec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ModelViews">
-      <UniqueIdentifier>{259b6ba4-1943-4393-b7a1-5e83f15a0217}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Strings">
       <UniqueIdentifier>{f9db2a3e-6f39-4c23-922e-7143eb98197b}</UniqueIdentifier>
     </Filter>
@@ -336,6 +333,21 @@
     </Filter>
     <Filter Include="Views">
       <UniqueIdentifier>{b81596e4-e16c-4537-9631-65655360cbf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ViewModels">
+      <UniqueIdentifier>{259b6ba4-1943-4393-b7a1-5e83f15a0217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{04b389af-ccff-45ed-b44a-645c39388eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media">
+      <UniqueIdentifier>{b4690532-30e8-4640-8478-1a686d31d7a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media\Audio">
+      <UniqueIdentifier>{851d9f4a-c6b8-40aa-ba0f-44a7185795e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media\Video">
+      <UniqueIdentifier>{6d47b8c1-b056-4461-98d6-5bcb52d30447}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

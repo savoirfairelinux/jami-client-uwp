@@ -152,7 +152,7 @@
                   PointerEntered="Grid_PointerEntered"
                   PointerExited="Grid_PointerExited"
                   PointerMoved="Grid_PointerMoved"
-                  Visibility="{x:Bind  _showMe, Mode=OneWay}">
+                  Visibility="{x:Bind  _isVisible, Mode=OneWay}">
                 <Grid.RowDefinitions>
                     <!-- row definition for the contact. -->
                     <RowDefinition Height="auto"/>
