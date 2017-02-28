@@ -61,6 +61,9 @@ private:
     Rect bounds;
     bool editionMode = false;
 
+    DispatcherTimer^ textBoxFocuser;
+    void focusTextbox(Object^ sender, Object^ e);
+
     void _toggleSmartBoxButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void showFrame(Windows::UI::Xaml::Controls::Frame^ frame);
     void OnsummonMessageTextPage();
@@ -73,7 +76,7 @@ private:
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
     void OncloseMessageTextPage();
     void OnregistrationStateErrorGeneric(const std::string& accountId);
-    void OnregistrationStateRegistered();
+    void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OnnameRegistred(bool status);
     void OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details);
