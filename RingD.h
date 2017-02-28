@@ -41,15 +41,17 @@ delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
 delegate void CallPlaced(String^ callId);
 delegate void IncomingMessage(String^ callId, String^ payload);
-delegate void DevicesListRefreshed(Vector<String^>^ devicesList);
+delegate void DevicesListRefreshed(Map<String^, String^>^ deviceMap);
 delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
-delegate void RegisteredNameFound(LookupStatus status, const std::string& address, const std::string& name);
+delegate void RegisteredNameFound(LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name);
 delegate void FinishCaptureDeviceEnumeration();
 delegate void RegistrationStateErrorGeneric(const std::string& accountId);
-delegate void RegistrationStateRegistered();
+delegate void RegistrationStateRegistered(const std::string& accountId);
+delegate void RegistrationStateUnregistered(const std::string& accountId);
+delegate void RegistrationStateTrying(const std::string& accountId);
 delegate void SetLoadingStatusText(String^ statusText, String^ color);
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
@@ -57,7 +59,13 @@ delegate void VideoMuted(const std::string& callId, bool state);
 delegate void NameRegistred(bool status);
 delegate void FullScreenToggled(bool state);
 delegate void WindowResized();
+delegate void NetworkChanged();
+delegate void MessageDataLoaded();
+delegate void UpdateSmartInfo(const std::map<std::string, std::string>& info);
+delegate void MessageStatusUpdated(String^ messageId, int status);
 delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
+delegate void NewBuddyNotification(const std::string& accountId, const std::string& uri, int status);
+delegate unsigned GetSelectedSmartListItem();
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 using namespace std::placeholders;
@@ -94,6 +102,16 @@ public:
         }
     }
 
+    property bool _hasInternet
+    {
+        bool get()
+        {
+            return hasInternet_;
+        }
+    }
+
+    property bool isInWizard;
+
     property bool isFullScreen
     {
         bool get()
@@ -112,7 +130,17 @@ public:
         }
     }
 
-    property bool isInBackground;
+    property bool isInBackground {
+        bool get() {
+            return isInBackground_;
+        }
+
+        void set(bool value) {
+            isInBackground_ = value;
+            connectivityChanged();
+        }
+    }
+
     property StartingStatus _startingStatus;
 
     void cancelOutGoingCall2(String^ callId); // marche
@@ -128,6 +156,8 @@ internal: // why this property has to be internal and not public ?
 
 
 internal:
+    using AccountDetails = std::map<std::string, std::string>;
+    using AccountDetailsBlob = std::map<std::string, AccountDetails>;
     /* functions */
     std::string getLocalFolder();
     void registerCallbacks();
@@ -135,7 +165,10 @@ internal:
     void startDaemon();
     void init();
     void deinit();
-    void reloadAccountList();
+    void loadAccounts();
+    AccountDetailsBlob getAllAccountDetails();
+    void parseAccountDetails(const AccountDetailsBlob& allAccountDetails);
+    void subscribeBuddies();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
     void sendSIPTextMessageVCF(std::string callID, std::map<std::string, std::string> message);
@@ -149,8 +182,9 @@ internal:
     /*void cancelOutGoingCall2(String^ callId);*/ // marche pas
     CallStatus translateCallStatus(String^ state);
     String^ getUserName();
-    Vector<String^>^ translateKnownRingDevices(const std::map<std::string, std::string> devices);
-    void HandleIncomingMessage( const std::string& callId,
+    void startSmartInfo(int refresh);
+    void stopSmartInfo();
+    void handleIncomingMessage( const std::string& callId,
                                 const std::string& accountId,
                                 const std::string& from,
                                 const std::map<std::string, std::string>& payloads);
@@ -158,11 +192,12 @@ internal:
     void toggleFullScreen();
     void setWindowedMode();
     void setFullScreenMode();
-
+    void connectivityChanged();
+    void onStateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
     void hangUpCall2(String^ callId);
     void pauseCall(String ^ callId);
     void unPauseCall(String ^ callId);
-    void askToRefreshKnownDevices(String^ accountId);
+    void getKnownDevices(String^ accountId);
     void askToExportOnRing(String^ accountId, String^ password);
     void eraseCacheFolder();
     void updateAccount(String^ accountId);
@@ -173,12 +208,19 @@ internal:
     void switchDebug();
     void muteVideo(String^ callId, bool muted);
     void muteAudio(const std::string& callId, bool muted);
-    void lookUpName(String^ name);
+    void subscribeBuddy(const std::string& accountId, const std::string& uri, bool flag);
     void registerName(String^ accountId, String^ password, String^ username);
     void registerName_new(const std::string& accountId, const std::string& password, const std::string& username);
     std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
-    void lookUpAddress(String^ address);
+    void lookUpName(const std::string& accountId, String^ name);
+    void lookUpAddress(const std::string& accountId, String^ address);
     std::string registeredName(Account^ account);
+    void removeContact(const std::string & accountId, const std::string& uri);
+    void sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload);
+    void raiseMessageDataLoaded();
+    void revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId);
+    void showLoadingOverlay(String^ text, String^ color);
+    void hideLoadingOverlay(String^ text, String^ color);
 
     /* TODO : move members */
     String ^ currentCallId; // to save ongoing call id during visibility change
@@ -198,6 +240,8 @@ internal:
     event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
     event RegistrationStateErrorGeneric^ registrationStateErrorGeneric;
     event RegistrationStateRegistered^ registrationStateRegistered;
+    event RegistrationStateUnregistered^ registrationStateUnregistered;
+    event RegistrationStateTrying^ registrationStateTrying;
     event SetLoadingStatusText^ setLoadingStatusText;
     event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
     event AudioMuted^ audioMuted;
@@ -205,7 +249,13 @@ internal:
     event NameRegistred^ nameRegistred;
     event FullScreenToggled^ fullScreenToggled;
     event WindowResized^ windowResized;
+    event NetworkChanged^ networkChanged;
+    event MessageDataLoaded^ messageDataLoaded;
+    event UpdateSmartInfo^ updateSmartInfo;
+    event MessageStatusUpdated^ messageStatusUpdated;
     event VolatileDetailsChanged^ volatileDetailsChanged;
+    event NewBuddyNotification^ newBuddyNotification;
+    event GetSelectedSmartListItem^ getSelectedSmartListItem;
 
 private:
     /* sub classes */
@@ -232,7 +282,13 @@ private:
         MuteAudio,
         LookUpName,
         LookUpAddress,
-        RegisterName
+        SendContactRequest,
+        AcceptContactRequest,
+        DiscardContactRequest,
+        RegisterName,
+        RemoveContact,
+        RevokeDevice,
+        SubscribeBuddy
     };
 
 
@@ -270,22 +326,28 @@ private:
 
     internal:
         std::string _accountId_new;
+        std::string _payload;
         std::string _password_new;
         std::string _publicUsername_new;
         std::string _callid_new;
         std::string _ringId_new;
+        std::string _deviceId;
         bool _audioMuted_new;
     };
 
     /* functions */
     RingD(); // singleton
     void dequeueTasks();
-//    CallStatus translateCallStatus(String^ state);
+    //CallStatus translateCallStatus(String^ state);
 
     /* members */
     Windows::UI::Core::CoreDispatcher^ dispatcher;
 
+    void InternetConnectionChanged(Platform::Object^ sender);
+    bool hasInternet_;
+
     std::string localFolder_;
+    bool isInBackground_ = false;
     bool daemonInitialized_ = false;
     bool daemonRunning_ = false;
     std::queue<Task^> tasksList_;
@@ -295,10 +357,8 @@ private:
     Ringtone^ ringtone_;
 
     std::map<std::string, SharedCallback> callHandlers;
-    std::map<std::string, SharedCallback> getAppPathHandler;
-    std::map<std::string, SharedCallback> getAppUserNameHandler;
-    std::map<std::string, SharedCallback> incomingVideoHandlers;
-    std::map<std::string, SharedCallback> outgoingVideoHandlers;
-    std::map<std::string, SharedCallback> nameRegistrationHandlers;
+    std::map<std::string, SharedCallback> configurationHandlers;
+    std::map<std::string, SharedCallback> presenceHandlers;
+    std::map<std::string, SharedCallback> videoHandlers;
 };
 }

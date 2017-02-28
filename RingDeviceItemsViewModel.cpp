@@ -1,7 +1,6 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,23 +15,53 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
-#include "CallsViewModel.h"
+#include "RingDeviceItemsViewModel.h"
+
+using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Data::Json;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+using namespace Windows::UI::Core;
+using namespace Windows::Globalization::DateTimeFormatting;
+
 
 using namespace RingClientUWP;
 using namespace ViewModel;
-using namespace Windows::UI::Core;
-using namespace Windows::ApplicationModel::Core;
 
-CallsViewModel::CallsViewModel()
+RingDeviceItemsViewModel::RingDeviceItemsViewModel()
 {
-    callIdsList_ = ref new Vector<String^>();
+    itemsList_ = ref new Vector<RingDeviceItem^>();
+}
 
-    /* connect to delegates. */
+RingDeviceItem^
+RingDeviceItemsViewModel::findItem(String^ deviceId)
+{
+    for each (RingDeviceItem^ item in itemsList)
+        if (item->_deviceId == deviceId)
+            return item;
 
-    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
-    String^ accountId, String^ callId, String^ from) {
-        callIdsList_->Append(callId); // TODO : check if the string is remove when the call ends.
-    });
+    return nullptr;
+}
+
+unsigned int
+RingDeviceItemsViewModel::getIndex(String^ deviceId)
+{
+    for (unsigned i = 0; i < itemsList_->Size; i++)
+        if (itemsList_->GetAt(i)->_deviceId == deviceId)
+            return i;
+
+    return 0;
+}
+
+void
+RingDeviceItemsViewModel::removeItem(RingDeviceItem ^ item)
+{
+    unsigned int index;
+
+    if (itemsList->IndexOf(item, &index)) {
+        itemsList->RemoveAt(index);
+    }
 }
