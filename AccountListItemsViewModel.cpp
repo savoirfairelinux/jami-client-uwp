@@ -54,6 +54,7 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
 void
 AccountListItemsViewModel::updateContactsViewModel()
 {
+    SmartPanelItemsViewModel::instance->refreshFilteredData();
     SmartPanelItemsViewModel::instance->update();
 }
 
