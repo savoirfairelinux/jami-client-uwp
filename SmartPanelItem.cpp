@@ -54,6 +54,7 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
         CoreDispatcherPriority::High,
         ref new DispatchedHandler([this, propertyName]()
     {
+        //MSG_("SmartPanelItem::NotifyPropertyChanged: " + propertyName);
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
 }
@@ -67,7 +68,7 @@ SmartPanelItem::OncallPlaced(Platform::String ^callId)
 }
 
 void
-SmartPanelItem::notifyPropertyChanged(String^ propertyName)
+SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }
