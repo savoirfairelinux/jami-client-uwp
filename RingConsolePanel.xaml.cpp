@@ -31,7 +31,11 @@ RingConsolePanel::RingConsolePanel()
     InitializeComponent();
 
     RingDebug::instance->messageToScreen += ref new debugMessageToScreen([this](Platform::String^ message) {
-        output(message);
+        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]()
+        {
+            output(message);
+        }));
     });
 }
 
@@ -146,27 +150,6 @@ void RingConsolePanel::sendCommand()
         auto id = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
         MSG_("id : "+Utils::toString(id));
         return;
-    }
-    else if (input == "getContactsList") {
-        auto list = ContactListModel::instance->contactsList;
-        MSG_("list of calls returned by the daemon :");
-        for (auto contact : list) {
-            MSG_("name : " + Utils::toString(contact->_name));
-            MSG_("ringId : " + Utils::toString(contact->ringID_));
-        }
-        return;
-    }
-    else if (input == "placeCall") {
-        if (parameter1.empty()) {
-            MSG_("contact name missing");
-            return;
-        }
-        auto contact = ContactListModel::instance->findContactByName(Utils::toPlatformString(parameter1));
-        if (!contact) {
-            MSG_("contact "+parameter1+" not found");
-            return;
-        }
-        RingD::instance->placeCall(contact);
     }
 
     MSG_(">> error, command \'" + input + "\' not found");

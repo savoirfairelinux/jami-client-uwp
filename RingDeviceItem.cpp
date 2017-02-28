@@ -1,6 +1,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -17,30 +18,25 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "Call.h"
+#include "RingDeviceItem.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
+using namespace Windows::Data::Json;
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
+using namespace RingClientUWP::Controls;
+using namespace ViewModel;
 
-// REFACTORING : for the whole Call class, change "from" to "peer"
-
-Call::Call(String^ accountIdz, String^ callIdz, String^ fromz)
+RingDeviceItem::RingDeviceItem(String^ deviceId, String^ deviceName)
 {
-    this->accountId = accountIdz;
-    this->callId = callIdz;
-    this->from = fromz;
-
-    isOutGoing = false; // by default, we consider the call incomming, REFACTO : add this to the constructor params...
-
-    this->state = CallStatus::NONE;
-    this->code = -1;
+    device_.id = Utils::toString(deviceId);
+    device_.name = Utils::toString(deviceName);
 }
 
 void
-Call::NotifyPropertyChanged(String^ propertyName)
+RingDeviceItem::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
@@ -48,22 +44,11 @@ Call::NotifyPropertyChanged(String^ propertyName)
         ref new DispatchedHandler([this, propertyName]()
     {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-
     }));
 }
 
-//void RingClientUWP::Call::refuse()
-//{
-//    RingD::instance->refuseIncommingCall(this);
-//}
-//
-//void RingClientUWP::Call::accept()
-//{
-//    RingD::instance->acceptIncommingCall(this);
-//}
-//
-//void RingClientUWP::Call::cancel()
-//{
-//    MSG_("!2--->> cancel");
-//    RingD::instance->cancelOutGoingCall(this);
-//}
+void
+RingDeviceItem::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
+}
