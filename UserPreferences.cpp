@@ -20,10 +20,17 @@
 
 #include "base64.h"
 
+#include <direct.h>
+
+#include "lodepng.h"
+
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
 using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Media::Capture;
+using namespace Windows::Media::MediaProperties;
+using namespace Windows::UI::Xaml::Media::Imaging;
 
 using namespace RingClientUWP;
 using namespace Platform;
@@ -34,6 +41,7 @@ UserPreferences::UserPreferences()
     vCard_ = ref new VCardUtils::VCard(nullptr, nullptr);
     PREF_PROFILE_HASPHOTO = false;
     PREF_PROFILE_UID = stoull(Utils::genID(0LL, 9999999999999LL));
+    PREF_PROFILE_ACCEPTFROMUNTRUSTED = true;
 }
 
 void
@@ -81,6 +89,7 @@ UserPreferences::Stringify()
     preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(        PREF_ACCOUNT_INDEX   ));
     preferencesObject->SetNamedValue("PREF_PROFILE_HASPHOTO", JsonValue::CreateBooleanValue(    PREF_PROFILE_HASPHOTO));
     preferencesObject->SetNamedValue("PREF_PROFILE_UID",    JsonValue::CreateNumberValue(static_cast<double>(PREF_PROFILE_UID)));
+    preferencesObject->SetNamedValue("PREF_PROFILE_ACCEPTFROMUNTRUSTED", JsonValue::CreateBooleanValue(PREF_PROFILE_ACCEPTFROMUNTRUSTED));
 
     return preferencesObject->Stringify();
 }
@@ -90,9 +99,13 @@ UserPreferences::Destringify(String^ data)
 {
     JsonObject^ jsonObject = JsonObject::Parse(data);
 
-    PREF_ACCOUNT_INDEX      = static_cast<int>(jsonObject->GetNamedNumber("PREF_ACCOUNT_INDEX"      ));
-    PREF_PROFILE_HASPHOTO   = jsonObject->GetNamedBoolean(                "PREF_PROFILE_HASPHOTO"   );
-    PREF_PROFILE_UID        = static_cast<uint64_t>(jsonObject->GetNamedNumber( "PREF_PROFILE_UID"  ));
+    PREF_PROFILE_ACCEPTFROMUNTRUSTED = true;
+
+    PREF_ACCOUNT_INDEX                  = static_cast<int>(jsonObject->GetNamedNumber("PREF_ACCOUNT_INDEX"      ));
+    PREF_PROFILE_HASPHOTO               = jsonObject->GetNamedBoolean(                "PREF_PROFILE_HASPHOTO"   );
+    PREF_PROFILE_UID                    = static_cast<uint64_t>(jsonObject->GetNamedNumber( "PREF_PROFILE_UID"  ));
+    if (jsonObject->HasKey("PREF_PROFILE_ACCEPTFROMUNTRUSTED"))
+        PREF_PROFILE_ACCEPTFROMUNTRUSTED = jsonObject->GetNamedBoolean("PREF_PROFILE_ACCEPTFROMUNTRUSTED");
 
     JsonArray^ preferencesList = jsonObject->GetNamedArray("Account.index", ref new JsonArray());
 }
@@ -101,6 +114,12 @@ VCardUtils::VCard^
 UserPreferences::getVCard()
 {
     return vCard_;
+}
+
+void
+UserPreferences::raiseSelectIndex(int index)
+{
+    selectIndex(index);
 }
 
 void
@@ -124,4 +143,51 @@ UserPreferences::sendVCard(std::string callID)
 {
     vCard_->send(callID,
         (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(PREF_PROFILE_UID) + ".vcard").c_str());
+}
+
+task<BitmapImage^>
+Configuration::getProfileImageAsync()
+{
+    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+
+    return create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
+    .then([](StorageFile^ photoFile)
+    {
+        auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+        if (photoFile != nullptr) {
+            auto path = photoFile->Path;
+            auto uri = ref new Windows::Foundation::Uri(path);
+            bitmapImage->UriSource = uri;
+
+            std::string fileName = Utils::toString(photoFile->Path);
+            std::string fileBuffer = Utils::getStringFromFile(fileName);
+
+            // re-encode to remove windows meta-data
+            std::vector<uint8_t> image;
+            unsigned width, height;
+            unsigned err = lodepng::decode(image, width, height, fileName);
+            if (!err) {
+                lodepng::encode(fileName, image, width, height);
+            }
+
+            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
+            _mkdir(profilePath.c_str());
+            std::ofstream file((profilePath + "\\profile_image.png"),
+                               std::ios::out | std::ios::trunc | std::ios::binary);
+            if (file.is_open()) {
+                file << fileBuffer;
+                file.close();
+            }
+
+            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
+            Configuration::UserPreferences::instance->save();
+        }
+        else {
+            bitmapImage = nullptr;
+        }
+
+        return bitmapImage;
+    });
 }
