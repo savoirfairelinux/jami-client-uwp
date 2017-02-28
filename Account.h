@@ -30,8 +30,17 @@ ref class Contact;
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState
-            , String^ sipHostname, String^ sipUsername, String^ sipPassword);
+    Account(String^ name,
+            String^ ringID,
+            String^ accountType,
+            String^ accountID,
+            String^ deviceId,
+            bool upnpState,
+            bool autoAnswer,
+            bool dhtPublicInCalls,
+            String^ sipHostname,
+            String^ sipUsername,
+            String^ sipPassword);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
@@ -66,6 +75,8 @@ public:
         }
     };
     property bool _upnpState;
+    property bool _autoAnswer;
+    property bool _dhtPublicInCalls;
     property String^ _sipHostname;
     property String^ _sipUsername
     {
@@ -86,6 +97,17 @@ public:
         void set(unsigned value) {
             unreadMessages_ = value;
             NotifyPropertyChanged("_unreadMessages");
+        }
+    }
+
+    property unsigned _unreadContactRequests
+    {
+        unsigned get() {
+            return unreadContactRequests_;
+        }
+        void set(unsigned value) {
+            unreadContactRequests_ = value;
+            NotifyPropertyChanged("_unreadContactRequests");
         }
     }
 
@@ -111,6 +133,7 @@ private:
     String^ ringID__;
     String^ sipUsername_;
     unsigned unreadMessages_;
+    unsigned unreadContactRequests_;
 };
 }
 
