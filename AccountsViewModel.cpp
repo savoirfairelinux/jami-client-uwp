@@ -142,15 +142,16 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
 
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
-    if (contact == nullptr)
-        contact = contactListModel->addNewContact(fromRingId, fromRingId);
+    /*if (contact == nullptr)
+        contact = contactListModel->addNewContact(fromRingId, fromRingId, TrustStatus::UNKNOWN);*/
 
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-
+    // trust requests
     if (contact == nullptr) {
         ERR_("contact not handled!");
         return;
     }
+
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
     RingD::instance->lookUpAddress(fromRingId);
 
