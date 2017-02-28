@@ -34,8 +34,10 @@ public ref class MainPage sealed
 {
 public:
     MainPage();
+
     void showLoadingOverlay(bool load, bool modal);
     void hideLoadingOverlay();
+    void focusOnMessagingTextbox();
 
     property bool isLoading;
     property bool isModal;
@@ -73,7 +75,7 @@ private:
     void OnstateChange(Platform::String ^callId, CallStatus state, int code);
     void OncloseMessageTextPage();
     void OnregistrationStateErrorGeneric(const std::string& accountId);
-    void OnregistrationStateRegistered();
+    void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OnnameRegistred(bool status);
     void OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string, std::less<std::string>, std::allocator<std::pair<const std::string, std::string>>> &details);

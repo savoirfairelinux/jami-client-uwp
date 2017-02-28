@@ -31,28 +31,92 @@ Conversation::Conversation()
     messagesList_ = ref new  Vector<ConversationMessage^>();
 }
 
+ConversationMessage^
+Conversation::findMessage(uint64_t messageId)
+{
+    for each (ConversationMessage^ message in messagesList_)
+        if (message->MessageIdInteger == messageId)
+            return message;
+    return nullptr;
+}
+
+unsigned
+Conversation::getMessageIndex(uint64_t messageId)
+{
+    unsigned i;
+    for (i = 0; i < messagesList_->Size; i++) {
+        if (messagesList_->GetAt(i)->MessageIdInteger == messageId)
+            break;
+    }
+    return i;
+}
+
 void
-Conversation::addMessage(String^ date, bool fromContact, String^ payload)
+Conversation::addMessage(bool fromContact,
+                         String^ payload,
+                         std::time_t timeReceived,
+                         bool isReceived,
+                         String^ MessageId)
 {
     ConversationMessage^ message = ref new ConversationMessage();
-    message->Date = date;
     message->FromContact = fromContact;
     message->Payload = payload;
+    message->TimeReceived = timeReceived;
+    message->IsReceived = isReceived;
+    message->MessageId = MessageId;
 
     /* add message to _messagesList_ */
     messagesList_->Append(message);
+
+    update();
+}
+
+void
+Conversation::update()
+{
+    for each (ConversationMessage^ message in messagesList_) {
+        message->raiseNotifyPropertyChanged("");
+    }
 }
 
 JsonObject^
 ConversationMessage::ToJsonObject()
 {
     JsonObject^ messageObject = ref new JsonObject();
-    messageObject->SetNamedValue(dateKey, JsonValue::CreateStringValue(Date));
     messageObject->SetNamedValue(fromContactKey, JsonValue::CreateBooleanValue(FromContact));
     messageObject->SetNamedValue(payloadKey, JsonValue::CreateStringValue(Payload));
+    messageObject->SetNamedValue(timeReceivedKey, JsonValue::CreateNumberValue(static_cast<double>(TimeReceived)));
+    messageObject->SetNamedValue(isReceivedKey, JsonValue::CreateBooleanValue(IsReceived));
+    messageObject->SetNamedValue(messageIdKey, JsonValue::CreateStringValue(MessageId));
 
     JsonObject^ jsonObject = ref new JsonObject();
     jsonObject->SetNamedValue(messageKey, messageObject);
 
     return jsonObject;
+}
+
+void
+ConversationMessage::NotifyPropertyChanged(String^ propertyName)
+{
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::High,
+        ref new DispatchedHandler([this, propertyName]()
+    {
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    }));
+}
+
+void
+ConversationMessage::raiseNotifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
+}
+
+String^
+ConversationMessage::getMessageAvatar()
+{
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarImage;
+    return nullptr;
 }
