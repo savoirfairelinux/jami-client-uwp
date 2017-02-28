@@ -26,14 +26,17 @@ using namespace RingClientUWP::Controls;
 
 namespace RingClientUWP
 {
-namespace ViewModel {
+namespace ViewModel
+{
 
-public ref class SmartPanelItemsViewModel sealed
+ref class SmartPanelItemsViewModel sealed
 {
 public:
     bool isInCall();
     String^ getAssociatedAccountId(SmartPanelItem^ item);
     void update();
+    void refreshFilteredItemsList();
+    void refreshFilteredBannedItemsList();
 
 internal:
     /* singleton */
@@ -53,43 +56,67 @@ internal:
 
     unsigned int getIndex(String^ callId);
     unsigned int getIndex(Contact^ contact);
+    unsigned int getFilteredIndex(Contact^ contact);
+
     void removeItem(SmartPanelItem^ item);
     void moveItemToTheTop(SmartPanelItem^ item);
 
-    property Vector<SmartPanelItem^>^ itemsList
+    property IObservableVector<SmartPanelItem^>^ itemsList
     {
-        Vector<SmartPanelItem^>^ get()
-        {
+        IObservableVector<SmartPanelItem^>^ get() {
             return itemsList_;
+        }
+    }
+
+    property IObservableVector<SmartPanelItem^>^ itemsListFiltered
+    {
+        IObservableVector<SmartPanelItem^>^ get() {
+            return itemsListFiltered_;
+        }
+        void set(IObservableVector<SmartPanelItem^>^ value) {
+            itemsListFiltered_ = dynamic_cast<Vector<SmartPanelItem^>^>(value);
+        }
+    }
+
+    property IObservableVector<SmartPanelItem^>^ itemsListBannedFiltered
+    {
+        IObservableVector<SmartPanelItem^>^ get() {
+            return itemsListBannedFiltered_;
+        }
+        void set(IObservableVector<SmartPanelItem^>^ value) {
+            itemsListBannedFiltered_ = dynamic_cast<Vector<SmartPanelItem^>^>(value);
         }
     }
 
     property SmartPanelItem^ _selectedItem
     {
-        SmartPanelItem^ get()
-        {
+        SmartPanelItem^ get() {
             return currentItem_;
         }
-        void set(SmartPanelItem^ value)
-        {
+        void set(SmartPanelItem^ value) {
             oldItem_ = currentItem_;
             currentItem_ = value;
 
             if (oldItem_ != nullptr)
                 oldItem_->_isSelected = false;
 
-            if (currentItem_ != nullptr)
+            if (currentItem_ != nullptr) {
                 currentItem_->_isSelected = true;
-
-            //newContactSelected();
+                update();
+            }
         }
     }
 
 private:
     SmartPanelItemsViewModel(); // singleton
+
     Vector<SmartPanelItem^>^ itemsList_;
+    Vector<SmartPanelItem^>^ itemsListFiltered_;
+    Vector<SmartPanelItem^>^ itemsListBannedFiltered_;
+
     SmartPanelItem^ currentItem_;
     SmartPanelItem^ oldItem_;
+
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
 }
