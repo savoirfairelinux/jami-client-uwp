@@ -20,6 +20,7 @@
 #include <pch.h>
 
 #include <random>
+#include <type_traits>
 
 using namespace Platform;
 using namespace Platform::Collections;
@@ -34,6 +35,25 @@ namespace RingClientUWP
 {
 namespace Utils
 {
+
+template<typename E>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value,
+                                            typename std::underlying_type<E>::type
+                                        >::type
+toUnderlyingValue(E e) noexcept
+{
+    return static_cast<typename std::underlying_type<E>::type >( e );
+}
+
+template<typename E, typename T>
+constexpr inline typename std::enable_if<   std::is_enum<E>::value &&
+                                            std::is_integral<T>::value, E
+                                        >::type
+toEnum(T value) noexcept
+{
+    return static_cast<E>(value);
+}
+
 inline int
 fileExists(const std::string& name)
 {
