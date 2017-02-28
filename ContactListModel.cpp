@@ -21,6 +21,7 @@
 #include "ContactListModel.h"
 
 #include "fileutils.h"
+#include "presencemanager_interface.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
@@ -63,12 +64,23 @@ ContactListModel::findContactByRingId(String^ ringId)
 }
 
 Contact^
-ContactListModel::addNewContact(String^ name, String^ ringId, ContactStatus contactStatus)
+ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustStatus, bool isIncognitoContact, ContactStatus contactStatus)
 {
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
-        //if (contactsList_ && !findContactByName(trimmedName) && !findContactByRingId(ringId)) {
-        Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus);
+        String^ avatarColorString = Utils::getRandomColorString();
+        if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
+            if (acc->accountType_ == "RING") {
+                if (ringId)
+                    avatarColorString = Utils::getRandomColorStringFromString(ringId);
+                else
+                    avatarColorString = Utils::getRandomColorStringFromString(name);
+            }
+            else if (name != "") {
+                avatarColorString = Utils::getRandomColorStringFromString(name);
+            }
+        }
+        Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus, trustStatus, isIncognitoContact, avatarColorString);
         contactsList_->Append(contact);
         saveContactsToFile();
         AccountsViewModel::instance->raiseContactAdded(m_Owner, contact);
@@ -128,14 +140,18 @@ void
 ContactListModel::Destringify(String^ data)
 {
     JsonObject^     jsonObject = JsonObject::Parse(data);
-    String^         name;
-    String^         displayname;
-    String^         ringid;
-    String^         guid;
-    unsigned int    unreadmessages;
-    String^			accountIdAssociated;
-    String^         vcardUID;
-    String^			lastTime;
+    String^         name = "";
+    String^         displayname = "";
+    String^         ringid = "";
+    String^         guid = "";
+    uint32          unreadMessages = 0;
+    String^         accountIdAssociated = "";
+    String^         vcardUID = "";
+    String^         lastTime = "";
+    uint8           trustStatus = Utils::toUnderlyingValue(TrustStatus::TRUSTED);
+    bool            unreadContactRequest = false;
+    bool            isIncognitoContact = false;
+    String^         avatarColorString;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (int i = contactlist->Size - 1; i >= 0; i--) {
@@ -144,18 +160,60 @@ ContactListModel::Destringify(String^ data)
             JsonObject^ jsonContactObject = contact->GetObject();
             JsonObject^ contactObject = jsonContactObject->GetNamedObject(contactKey, nullptr);
             if (contactObject != nullptr) {
-                name = contactObject->GetNamedString(nameKey);
-                displayname = contactObject->GetNamedString(displayNameKey);
-                ringid = contactObject->GetNamedString(ringIDKey);
-                guid = contactObject->GetNamedString(GUIDKey);
-                unreadmessages = static_cast<uint16_t>(contactObject->GetNamedNumber(unreadMessagesKey));
-                accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
-                vcardUID = contactObject->GetNamedString(vcardUIDKey);
-
+                if (contactObject->HasKey(nameKey))
+                    name = contactObject->GetNamedString(nameKey);
+                if (contactObject->HasKey(displayNameKey))
+                    displayname = contactObject->GetNamedString(displayNameKey);
+                if (contactObject->HasKey(ringIDKey))
+                    ringid = contactObject->GetNamedString(ringIDKey);
+                if (contactObject->HasKey(GUIDKey))
+                    guid = contactObject->GetNamedString(GUIDKey);
+                if (contactObject->HasKey(unreadMessagesKey))
+                    unreadMessages = static_cast<uint32>(contactObject->GetNamedNumber(unreadMessagesKey));
+                if (contactObject->HasKey(unreadContactRequestKey))
+                    unreadContactRequest = contactObject->GetNamedBoolean(unreadContactRequestKey);
+                if (contactObject->HasKey(accountIdAssociatedKey))
+                    accountIdAssociated = contactObject->GetNamedString(accountIdAssociatedKey);
+                if (contactObject->HasKey(vcardUIDKey))
+                    vcardUID = contactObject->GetNamedString(vcardUIDKey);
                 if (contactObject->HasKey(lastTimeKey))
                     lastTime = contactObject->GetNamedString(lastTimeKey);
+                if (contactObject->HasKey(trustStatusKey))
+                    trustStatus = static_cast<uint8>(contactObject->GetNamedNumber(trustStatusKey));
+                if (contactObject->HasKey(isIncognitoContactKey))
+                    isIncognitoContact = contactObject->GetNamedBoolean(isIncognitoContactKey);
+                if (contactObject->HasKey(avatarColorStringKey)) {
+                    auto oldColorString = contactObject->GetNamedString(avatarColorStringKey);
+                    if (oldColorString != "") {
+                        avatarColorString = oldColorString;
+                    }
+                    else {
+                        if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
+                            if (acc->accountType_ == "RING") {
+                                avatarColorString = Utils::getRandomColorStringFromString(ringid);
+                            }
+                            else if (name != "") {
+                                avatarColorString = Utils::getRandomColorStringFromString(name);
+                            }
+                            else {
+                                avatarColorString = Utils::getRandomColorString();
+                            }
+                        }
+                        else
+                            avatarColorString = Utils::getRandomColorString();
+                    }
+                }
             }
-            auto contact = ref new Contact(m_Owner, name, ringid, guid, unreadmessages, ContactStatus::READY);
+            auto contact = ref new Contact( m_Owner,
+                                            name,
+                                            ringid,
+                                            guid,
+                                            unreadMessages,
+                                            ContactStatus::READY,
+                                            Utils::toEnum<TrustStatus>(trustStatus),
+                                            isIncognitoContact,
+                                            avatarColorString);
+            contact->_unreadContactRequest = unreadContactRequest;
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
@@ -163,9 +221,11 @@ ContactListModel::Destringify(String^ data)
             if (lastTime)
                 contact->_lastTime = lastTime;
 
-            std::string contactImageFile = RingD::instance->getLocalFolder() + ".vcards\\"
-                                           + Utils::toString(contact->_vcardUID) + ".png";
+            std::string vcardDir = RingD::instance->getLocalFolder() + ".vcards\\";
+            std::string pngFile = Utils::toString(contact->_vcardUID) + ".png";
+            std::string contactImageFile = vcardDir + pngFile;
             if (Utils::fileExists(contactImageFile)) {
+                //RingClientUWP::ResourceMananger::instance->preloadImage(Utils::toPlatformString(contactImageFile));
                 contact->_avatarImage = Utils::toPlatformString(contactImageFile);
             }
             contactsList_->Append(contact);
@@ -178,11 +238,12 @@ void
 ContactListModel::deleteContact(Contact ^ contact)
 {
     unsigned int index;
-    auto itemsList = SmartPanelItemsViewModel::instance->itemsList;
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
     if (contactsList_->IndexOf(contact, &index)) {
         contact->deleteConversationFile();
+        RingD::instance->removeContact(
+            Utils::toString(contact->_accountIdAssociated),
+            Utils::toString(contact->ringID_));
         contactsList_->RemoveAt(index);
     }
 
@@ -196,13 +257,14 @@ ContactListModel::modifyContact(Contact^ contact)
 }
 
 void
-ContactListModel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name)
+ContactListModel::OnregisteredNameFound(RingClientUWP::LookupStatus status,  const std::string& accountId, const std::string &address, const std::string &name)
 {
     if (status == LookupStatus::SUCCESS) {
-        for each (Contact^ contact in contactsList_)
+        for each (Contact^ contact in contactsList_) {
             if (contact->ringID_ == Utils::toPlatformString(address)) {
                 contact->_name = Utils::toPlatformString(name);
                 saveContactsToFile();
             }
+        }
     }
 }

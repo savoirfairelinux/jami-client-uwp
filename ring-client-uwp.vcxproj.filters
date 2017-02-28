@@ -4,14 +4,6 @@
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <PRIResource Include="localization\US-en\Resources.resw">
-      <Filter>Strings\en-US</Filter>
-    </PRIResource>
-    <PRIResource Include="localization\Fr-fr\Resources.resw">
-      <Filter>Strings\fr-FR</Filter>
-    </PRIResource>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="App.xaml.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp" />
     <ClCompile Include="MainPage.xaml.cpp" />
@@ -38,48 +30,69 @@
       <Filter>Controls</Filter>
     </ClCompile>
     <ClCompile Include="Video.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoCaptureManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="VideoRendererManager.cpp">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClCompile>
     <ClCompile Include="Account.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Contact.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="Conversation.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="AccountListItemsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="AccountsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClCompile>
     <ClCompile Include="UserModel.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp" />
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Ringtone.cpp">
-      <Filter>Media\Audio</Filter>
+      <Filter>Models\Media\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AboutPage.xaml.cpp" />
+    <ClCompile Include="ContactRequestItem.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ContactRequestItemsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
     <ClCompile Include="ContactListModel.cpp">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
+    </ClCompile>
+    <ClCompile Include="TextBlockExtension.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="RingDeviceItemsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="RingDeviceItem.cpp">
+      <Filter>Controls</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -115,120 +128,164 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="Video.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoCaptureManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="VideoRendererManager.h">
-      <Filter>Media\Video</Filter>
+      <Filter>Models\Media\Video</Filter>
     </ClInclude>
     <ClInclude Include="Account.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Contact.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="Conversation.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="AccountListItemsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="AccountsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="SmartPanelItemsViewModel.h">
-      <Filter>ModelViews</Filter>
+      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="UserModel.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="PreviewPage.xaml.h" />
     <ClInclude Include="VCardUtils.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="Ringtone.h">
-      <Filter>Media\Audio</Filter>
+      <Filter>Models\Media\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AboutPage.xaml.h" />
+    <ClInclude Include="ContactRequestItem.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="ContactRequestItemsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>Common</Filter>
+    </ClInclude>
     <ClInclude Include="ContactListModel.h">
-      <Filter>Model</Filter>
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="TextBlockExtension.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="ResourceManager.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="RingDevice.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="RingDeviceItemsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="RingDeviceItem.h">
+      <Filter>Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="Call.h">
+      <Filter>Models</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpUtils.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\AccountTypeSIP.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\blank.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
-    <Image Include="Assets\TESTS\contactAvatar.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-100.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-125.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-150.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-200.png">
-      <Filter>Assets\TESTS</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\TESTS\logo-ring.scale-400.png">
-      <Filter>Assets\TESTS</Filter>
-    </Image>
-    <Image Include="Assets\LockScreenLogo.scale-200.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Tests</Filter>
     </Image>
     <Image Include="Assets\SplashScreen.scale-200.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
     </Image>
     <Image Include="Assets\Square44x44Logo.scale-200.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
     </Image>
     <Image Include="Assets\Square44x44Logo.targetsize-24_altform-unplated.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
     </Image>
     <Image Include="Assets\Square150x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
     </Image>
     <Image Include="Assets\StoreLogo.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-100.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-125.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-150.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\StoreLogo.scale-200.png">
+      <Filter>Assets\Images</Filter>
     </Image>
     <Image Include="Assets\Wide310x150Logo.scale-200.png">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Images</Filter>
     </Image>
-    <Image Include="Assets\qrCodeIconBlack.png">
-      <Filter>Assets</Filter>
+    <Image Include="Assets\StoreLogo.scale-400.png">
+      <Filter>Assets\Images</Filter>
     </Image>
-    <Image Include="Assets\qrCodeIconWhite.png">
-      <Filter>Assets</Filter>
+    <Image Include="Assets\LockScreenLogo.scale-200.png">
+      <Filter>Assets\Images</Filter>
     </Image>
-    <Image Include="Assets\StoreLogo.scale-125.png" />
-    <Image Include="Assets\StoreLogo.scale-150.png" />
-    <Image Include="Assets\StoreLogo.scale-100.png" />
-    <Image Include="Assets\StoreLogo.scale-200.png" />
-    <Image Include="Assets\StoreLogo.scale-400.png" />
+    <Image Include="Assets\TESTS\contactAvatar.png">
+      <Filter>Assets\Tests</Filter>
+    </Image>
+    <Image Include="Assets\angledGrid.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\grid.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\share_b.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
+    <Image Include="Assets\share_w.png">
+      <Filter>Assets\Images</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ring-client-uwp_StoreKey.pfx" />
-    <None Include="ring-client-uwp_TemporaryKey.pfx" />
     <None Include="Package.StoreAssociation.xml" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="ring-client-uwp_StoreKey.pfx" />
     <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
@@ -259,10 +316,10 @@
     <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
+    <None Include="ring-client-uwp_TemporaryKey.pfx" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainPage.xaml" />
-    <Page Include="Wizard.xaml" />
     <Page Include="Styles.xaml">
       <Filter>Styles</Filter>
     </Page>
@@ -290,6 +347,21 @@
     <Page Include="AboutPage.xaml">
       <Filter>Views</Filter>
     </Page>
+    <Page Include="MainPage.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="Wizard.xaml">
+      <Filter>Views</Filter>
+    </Page>
+    <Page Include="Buttons.xaml">
+      <Filter>Styles</Filter>
+    </Page>
+    <Page Include="ScrollBars.xaml">
+      <Filter>Styles</Filter>
+    </Page>
+    <Page Include="SplitViews.xaml">
+      <Filter>Styles</Filter>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Assets">
@@ -298,29 +370,11 @@
     <Filter Include="Assets\Dlls">
       <UniqueIdentifier>{5cfe090d-7521-4f12-adaf-dd47afd8fa58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Assets\TESTS">
-      <UniqueIdentifier>{41024596-5974-4b5d-b9ce-970c3746ac80}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{98b4d31d-b4eb-44ec-ab04-2b98816714b8}</UniqueIdentifier>
     </Filter>
     <Filter Include="Controls">
       <UniqueIdentifier>{befd33e5-463a-42bb-9b9b-68c1ab49f0df}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media">
-      <UniqueIdentifier>{b4690532-30e8-4640-8478-1a686d31d7a5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Audio">
-      <UniqueIdentifier>{851d9f4a-c6b8-40aa-ba0f-44a7185795e2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Media\Video">
-      <UniqueIdentifier>{6d47b8c1-b056-4461-98d6-5bcb52d30447}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Model">
-      <UniqueIdentifier>{04b389af-ccff-45ed-b44a-645c39388eec}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ModelViews">
-      <UniqueIdentifier>{259b6ba4-1943-4393-b7a1-5e83f15a0217}</UniqueIdentifier>
     </Filter>
     <Filter Include="Strings">
       <UniqueIdentifier>{f9db2a3e-6f39-4c23-922e-7143eb98197b}</UniqueIdentifier>
@@ -328,22 +382,297 @@
     <Filter Include="Strings\en-US">
       <UniqueIdentifier>{a710d34d-6f6b-4a72-a62b-3d0bb132533b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Strings\fr-FR">
-      <UniqueIdentifier>{e97f4433-16c6-425e-b476-f2e3877d4104}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Styles">
       <UniqueIdentifier>{88bf5748-d567-486c-91cf-1c7a124078d3}</UniqueIdentifier>
     </Filter>
     <Filter Include="Views">
       <UniqueIdentifier>{b81596e4-e16c-4537-9631-65655360cbf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ViewModels">
+      <UniqueIdentifier>{259b6ba4-1943-4393-b7a1-5e83f15a0217}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{04b389af-ccff-45ed-b44a-645c39388eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media">
+      <UniqueIdentifier>{b4690532-30e8-4640-8478-1a686d31d7a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media\Audio">
+      <UniqueIdentifier>{851d9f4a-c6b8-40aa-ba0f-44a7185795e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Models\Media\Video">
+      <UniqueIdentifier>{6d47b8c1-b056-4461-98d6-5bcb52d30447}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Images">
+      <UniqueIdentifier>{a1f4e2c7-201e-4ebc-9b95-f7ac71650a1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Sounds">
+      <UniqueIdentifier>{7930b368-02a8-4837-b2e4-73821631ec32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Assets\Tests">
+      <UniqueIdentifier>{41024596-5974-4b5d-b9ce-970c3746ac80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\de-DE">
+      <UniqueIdentifier>{bf6d27bc-545f-421b-afe5-e1a80723cf8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\de">
+      <UniqueIdentifier>{b963a96c-a60e-49f6-bb44-7dac6823fe9c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\zh">
+      <UniqueIdentifier>{a4fc64cd-64e4-4986-8d57-98c39fe7443c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ar">
+      <UniqueIdentifier>{87c85455-c1f6-4d0e-a023-5d4ef17036e2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\bg">
+      <UniqueIdentifier>{2e36dc7c-f49b-469a-a8a0-1cbbc2cd1f09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ca">
+      <UniqueIdentifier>{1b873d03-fec9-42ec-8359-55a0cb4dfead}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\cs-CZ">
+      <UniqueIdentifier>{c23b4144-e177-489f-9e55-5c20660844c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\da-DK">
+      <UniqueIdentifier>{c779084e-7ddb-4f30-bde8-8e174b60c6a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\el">
+      <UniqueIdentifier>{dada0861-1a5e-4109-9cae-e742176adb21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\es">
+      <UniqueIdentifier>{32da36f6-52be-4e7f-8480-7f09178bca59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\et-EE">
+      <UniqueIdentifier>{7f16191c-2e9d-4333-821e-64092a73b9dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fa-IR">
+      <UniqueIdentifier>{75bb8c8c-bf06-4d66-a098-efc337967e26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fi">
+      <UniqueIdentifier>{8044aeac-8990-49a5-bca3-fabd9f53f304}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr">
+      <UniqueIdentifier>{1f80814e-29d9-44dc-9923-5a0aac42f9aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr-CA">
+      <UniqueIdentifier>{8d244376-ae30-4821-a4e9-05bff7f62f57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\fr-FR">
+      <UniqueIdentifier>{37c14f4a-73fe-44a9-ac07-46fb53d4adca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\he">
+      <UniqueIdentifier>{e1e19e7e-237f-4572-a8e0-82fac13880de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\hi-IN">
+      <UniqueIdentifier>{908f7a63-cecd-4b98-be0f-0ee57793f1cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\hr">
+      <UniqueIdentifier>{0a462d24-d254-4ea9-bd40-74bdc7816aab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\hu">
+      <UniqueIdentifier>{4e8aa18b-781a-4d77-ac27-e0297e411318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\id">
+      <UniqueIdentifier>{11d3c8a9-3a9b-4fb2-9315-7d49a4931aba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\it">
+      <UniqueIdentifier>{1d8edd29-9333-4cb0-a122-c65230a16016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\it-IT">
+      <UniqueIdentifier>{760af0c2-b157-48cf-bf3c-ac4ab3fedd1b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ja">
+      <UniqueIdentifier>{f4471385-687e-4a0e-9069-12d82733d0f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\lt">
+      <UniqueIdentifier>{cf417697-1ce1-4da0-8f6a-70d953460c9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ms">
+      <UniqueIdentifier>{c6755019-d09a-4405-aa10-cdc50a4f7cfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\nb">
+      <UniqueIdentifier>{2a20e2f5-0415-45ee-82c3-98175ab0cb50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\nl">
+      <UniqueIdentifier>{4850a8d4-1b15-4eb7-bbea-90c24c1e2988}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\nl-NL">
+      <UniqueIdentifier>{2e060855-5889-4ca4-8b76-5fc7a2c56e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\pa">
+      <UniqueIdentifier>{c58aaf2d-dc24-4766-9ad1-b7bdf8580791}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\pl">
+      <UniqueIdentifier>{73510f37-e648-4fa5-ad8d-89080898da32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\pt">
+      <UniqueIdentifier>{49dd9ab6-7435-428b-aa1e-5448e6ca0651}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\pt-BR">
+      <UniqueIdentifier>{1ee2f923-ee9b-4ba9-969e-f750552a330b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ro">
+      <UniqueIdentifier>{50d97b56-4805-4b9e-a70e-8e3651728371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ru">
+      <UniqueIdentifier>{b82f4c3a-26cf-4945-8385-b24a3f1a804b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\ru-RU">
+      <UniqueIdentifier>{30e4ffac-e285-44c8-b942-468dbc7dc193}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\sk-SK">
+      <UniqueIdentifier>{92c1e22d-4589-412a-be09-d3d6a756eacb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\sq-AL">
+      <UniqueIdentifier>{1cc0641f-3e86-4cbe-bc28-7c69f2033830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\sv">
+      <UniqueIdentifier>{7fa114b9-6612-469a-b7f3-de92aace1d25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\tr">
+      <UniqueIdentifier>{9d58b1d9-96b0-4b59-80e6-9156d577b840}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Strings\uk">
+      <UniqueIdentifier>{06d2516c-75b7-48aa-b47b-88553bcb17cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Media Include="Assets\default.wav">
-      <Filter>Assets</Filter>
+      <Filter>Assets\Sounds</Filter>
     </Media>
-    <Media Include="Assets\message_notification_sound.wav">
-      <Filter>Assets</Filter>
+    <Media Include="Assets\ringtone_notify.wav">
+      <Filter>Assets\Sounds</Filter>
     </Media>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ring-client-uwp.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <PRIResource Include="localization\en-US\Resources.resw">
+      <Filter>Strings\en-US</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\es\Resources.resw">
+      <Filter>Strings\es</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\et-EE\Resources.resw">
+      <Filter>Strings\et-EE</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\fa-IR\Resources.resw">
+      <Filter>Strings\fa-IR</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\fi\Resources.resw">
+      <Filter>Strings\fi</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\fr\Resources.resw">
+      <Filter>Strings\fr</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\fr-CA\Resources.resw">
+      <Filter>Strings\fr-CA</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\he\Resources.resw">
+      <Filter>Strings\he</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\hi-IN\Resources.resw">
+      <Filter>Strings\hi-IN</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\hr\Resources.resw">
+      <Filter>Strings\hr</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\hu\Resources.resw">
+      <Filter>Strings\hu</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\id\Resources.resw">
+      <Filter>Strings\id</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\it\Resources.resw">
+      <Filter>Strings\it</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\it-IT\Resources.resw">
+      <Filter>Strings\it-IT</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ja\Resources.resw">
+      <Filter>Strings\ja</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\lt\Resources.resw">
+      <Filter>Strings\lt</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ms\Resources.resw">
+      <Filter>Strings\ms</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\nb\Resources.resw">
+      <Filter>Strings\nb</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\nl\Resources.resw">
+      <Filter>Strings\nl</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\pa\Resources.resw">
+      <Filter>Strings\pa</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\pl\Resources.resw">
+      <Filter>Strings\pl</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\pt\Resources.resw">
+      <Filter>Strings\pt</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\pt-BR\Resources.resw">
+      <Filter>Strings\pt-BR</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ro\Resources.resw">
+      <Filter>Strings\ro</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ru\Resources.resw">
+      <Filter>Strings\ru</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\sk-SK\Resources.resw">
+      <Filter>Strings\sk-SK</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\sq-AL\Resources.resw">
+      <Filter>Strings\sq-AL</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\sv\Resources.resw">
+      <Filter>Strings\sv</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\tr\Resources.resw">
+      <Filter>Strings\tr</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\uk\Resources.resw">
+      <Filter>Strings\uk</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\zh\Resources.resw">
+      <Filter>Strings\zh</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\de-DE\Resources.resw">
+      <Filter>Strings\de-DE</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\de\Resources.resw">
+      <Filter>Strings\de</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ar\Resources.resw">
+      <Filter>Strings\ar</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\bg\Resources.resw">
+      <Filter>Strings\bg</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ca\Resources.resw">
+      <Filter>Strings\ca</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\cs-CZ\Resources.resw">
+      <Filter>Strings\cs-CZ</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\da-DK\Resources.resw">
+      <Filter>Strings\da-DK</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\el\Resources.resw">
+      <Filter>Strings\el</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\fr-FR\Resources.resw">
+      <Filter>Strings\fr-FR</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\nl-NL\Resources.resw">
+      <Filter>Strings\nl-NL</Filter>
+    </PRIResource>
+    <PRIResource Include="localization\ru-RU\Resources.resw">
+      <Filter>Strings\ru-RU</Filter>
+    </PRIResource>
   </ItemGroup>
 </Project>
