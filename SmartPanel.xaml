@@ -40,63 +40,16 @@
         <views:boolToVisibility x:Key="_boolToVisibility_" />
         <views:uintToVisibility x:Key="_uintToVisibility_" />
         <views:OneToVisibility x:Key="_OneToVisibility_" />
+        <views:PresenceStatus x:Key="_PresenceStatus_" />
         <views:MoreThanOneToVisibility x:Key="_MoreThanOneToVisibility_" />
+        <views:UnreadAccountNotificationsString x:Key="_UnreadAccountNotificationsString_" />
+        <views:PartialTrustToVisibility x:Key="_PartialTrustToVisibility_" />
+        <views:TrustedToVisibility x:Key="_TrustedToVisibility_" />
         <views:SelectedAccountToVisibility x:Key="_SelectedAccountToVisibility_" />
         <views:CallStatusToSpinnerVisibility x:Key="_CallStatusToSpinnerVisibility_" />
         <views:CallStatusForIncomingCallAnimatedEllipse x:Key="_CallStatusForIncomingCallAnimatedEllipse_" />
         <views:CallStatusForIncomingCallStaticEllipse x:Key="_CallStatusForIncomingCallStaticEllipse_" />
 
-        <!-- template for contacts. -->
-        <DataTemplate x:Key="ContactTemplate"
-                      x:DataType="local:Contact">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="310"/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="60"/>
-                    <!-- use the height of _contactBar_ to make it visible or collapsed. -->
-                    <RowDefinition x:Name="_contactBar_"
-                                   Height="{x:Bind _contactBarHeight, Mode=OneWay}"/>
-                </Grid.RowDefinitions>
-                <Grid Grid.Row="0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="60"/>
-                        <ColumnDefinition Width="*"
-                                          MinWidth="200"/>
-                    </Grid.ColumnDefinitions>
-                    <Image x:Name="_XcontactAvatar_"
-                           VerticalAlignment="Center"
-                           HorizontalAlignment="Center"
-                           Grid.Column="0"
-                           Width="55"
-                           Height="55"
-                           Source="Assets\TESTS\contactAvatar.png"/>
-                    <!-- visual notifications. -->
-                    <Border x:Name="_visualNotificationVideoChat_"
-                            Visibility="Collapsed"
-                            Style="{StaticResource BorderStyle1}">
-                        <TextBlock Text="&#xE8AA;"
-                                   Style="{StaticResource TextSegoeStyle1}"/>
-                        <Border.RenderTransform>
-                            <TranslateTransform X="17" Y="-14"/>
-                        </Border.RenderTransform>
-                    </Border>
-                    <Grid Grid.Column="1">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="30"/>
-                            <RowDefinition Height="30"/>
-                        </Grid.RowDefinitions>
-                        <!-- name of the contact. -->
-                        <TextBlock  x:Name="_contactName_"
-                                    Grid.Row="0"
-                                    Text="{x:Bind _name, Mode=OneWay}"
-                                    TextTrimming="CharacterEllipsis">
-                        </TextBlock>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </DataTemplate>
         <!-- template for AccountListItems. -->
         <DataTemplate x:Key="AccountListItemsTemplate"
                       x:DataType="controls:AccountListItem">
@@ -139,33 +92,15 @@
                     <TextBlock x:Name="_ringID_"
                                Grid.ColumnSpan="2"
                                Style="{StaticResource TextStyle6}"
-                               Visibility="{x:Bind  _account.ringID_, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}"
+                               Visibility="{x:Bind _account.ringID_, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}"
                                Text="{x:Bind  _account.ringID_, Mode=OneWay}"/>
-                    <TextBlock x:Name="_sipUsername_"
-                               Grid.ColumnSpan="2"
-                               Visibility="{x:Bind  _account._sipUsername, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}"
-                               Style="{StaticResource TextStyle6}"
-                               Text="{x:Bind  _account._sipUsername, Mode=OneWay}"/>
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock x:Name="_unreadMessagesNotification_"
+                        <TextBlock x:Name="_unreadAccountNotifications_"
                                Grid.ColumnSpan="2"
-                               Visibility="{x:Bind  _account._unreadMessages, Converter={StaticResource _uintToVisibility_}, Mode=OneWay}"
                                FontSize="12"
                                FontWeight="Bold"
                                Foreground="OrangeRed"
-                               Text="{x:Bind  _account._unreadMessages, Mode=OneWay}"/>
-                        <TextBlock Grid.ColumnSpan="2"
-                               Visibility="{x:Bind  _account._unreadMessages, Converter={StaticResource _OneToVisibility_}, Mode=OneWay}"
-                               FontSize="12"
-                               FontWeight="Bold"
-                               Foreground="OrangeRed"
-                               Text=" Unread message"/>
-                        <TextBlock Grid.ColumnSpan="2"
-                               Visibility="{x:Bind  _account._unreadMessages, Converter={StaticResource _MoreThanOneToVisibility_}, Mode=OneWay}"
-                               FontSize="12"
-                               FontWeight="Bold"
-                               Foreground="OrangeRed"
-                               Text=" Unread messages"/>
+                               Text="{x:Bind _account, Converter={StaticResource _UnreadAccountNotificationsString_}, Mode=OneWay}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -173,48 +108,256 @@
         <!-- template for smartpanelitems. -->
         <DataTemplate x:Key="SmartPanelItemsTemplate"
                       x:DataType="controls:SmartPanelItem">
-            <StackPanel Visibility="{x:Bind _contact, Converter={StaticResource _SelectedAccountToVisibility_}, Mode=OneWay}">
-                <Grid PointerReleased="Grid_PointerReleased"
-                  PointerEntered="Grid_PointerEntered"
-                  PointerExited="Grid_PointerExited"
-                  PointerMoved="Grid_PointerMoved"
-                  Visibility="{x:Bind _showMe, Mode=OneWay}">
-                    <Grid.RowDefinitions>
-                        <!-- row definition for the contact. -->
-                        <RowDefinition Height="auto"/>
-                        <!-- row definition for the incoming call bar. -->
-                        <RowDefinition Height="auto"/>
-                    </Grid.RowDefinitions>
-                    <!-- the first rectangle helps to detect mouse overing-->
-                    <Rectangle Fill="Transparent"
+            <!--<StackPanel Visibility="{x:Bind _contact, Converter={StaticResource _TrustedToVisibility_}, Mode=OneWay}">-->
+            <StackPanel>
+                <!--<StackPanel Visibility="{x:Bind _contact, Converter={StaticResource _SelectedAccountToVisibility_}, Mode=OneWay}">-->
+                <StackPanel >
+                    <Grid   PointerReleased="SmartPanelItem_Grid_PointerReleased"
+                            PointerEntered="SmartPanelItem_Grid_PointerEntered"
+                            PointerExited="SmartPanelItem_Grid_PointerExited"
+                            PointerMoved="SmartPanelItem_Grid_PointerMoved"
+                            Visibility="{x:Bind _isVisible, Mode=OneWay}">
+                        <Grid.RowDefinitions>
+                            <!-- row definition for the contact. -->
+                            <RowDefinition Height="auto"/>
+                            <!-- row definition for the incoming call bar. -->
+                            <RowDefinition Height="auto"/>
+                        </Grid.RowDefinitions>
+                        <!-- the first rectangle helps to detect mouse overing-->
+                        <Rectangle Fill="Transparent"
                            Width="320"
                            Grid.Row="0"/>
-                    <!-- the two next rectangles offer a better visibility correlation between the call button and the
-                     backgrounds. Using them, avoid some visual bugs -->
-                    <!-- the second rectangle controls the background for a selected item -->
-                    <Rectangle Fill="#3bc1d3"
-                           Width="320"
-                           Visibility="{x:Bind _isSelected, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
-                           Grid.Row="0"/>
-                    <!-- the thirs rectangle controls the background for an hovered item -->
-                    <Rectangle Fill="#ced9e1"
-                           Width="320"
-                           Visibility="{x:Bind _isHovered, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
-                           Grid.Row="0"/>
-                    <!-- curtain over item with contact not ready (e.g. lookup is in progress) -->
-                    <Rectangle Fill="White"
-                           Width="320"
-                           Grid.Row="0"
-                           Canvas.ZIndex="2"
-                           Opacity="0.6"
-                           Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"/>
-                    <ProgressBar Canvas.ZIndex="3"
-                             Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"
-                             IsIndeterminate="True"/>
-                    <!-- contact. -->
+                        <!-- curtain over item with contact not ready (e.g. lookup is in progress) -->
+                        <Rectangle  Fill="White"
+                                    Width="320"
+                                    Grid.Row="0"
+                                    Canvas.ZIndex="2"
+                                    Opacity="0.6"
+                                    Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"/>
+                        <ProgressBar    Canvas.ZIndex="3"
+                                        Visibility="{x:Bind _contact._contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}"
+                                        IsIndeterminate="True"/>
+                        <!-- contact. -->
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="320"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60"/>
+                                <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                                <RowDefinition x:Name="_contactBar_"
+                                       Height="{x:Bind _contact._contactBarHeight, Mode=OneWay}"/>
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="60"/>
+                                    <ColumnDefinition Width="*"
+                                              MinWidth="200"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <!-- so far, I haven't fond any way to make a nested animation, inside a datatemplate, starting with the begin method from the code.
+                                    I use a black magic workaround with two ellipses... -->
+                                    <Ellipse    x:Name="_incomingCallAnimatedEllipse_"
+                                                Height="50"
+                                                Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallAnimatedEllipse_}, Mode=OneWay}"
+                                                Width="50"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Margin="5">
+                                        <Ellipse.Fill>
+                                            <ImageBrush x:Name="_contactAvatar2_"
+                                                        ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                                        </Ellipse.Fill>
+                                        <Ellipse.Triggers>
+                                            <EventTrigger>
+                                                <BeginStoryboard>
+                                                    <Storyboard x:Name="_toto_">
+                                                        <DoubleAnimation Storyboard.TargetName="_incomingCallAnimatedEllipse_"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1"
+                                                             AutoReverse="True"
+                                                             RepeatBehavior="Forever"
+                                                             To="0"
+                                                             Duration="0:0:1"/>
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Ellipse.Triggers>
+                                    </Ellipse>
+                                    <StackPanel>
+                                        <Grid>
+                                            <!--<Ellipse Height="50"
+                                                Width="50"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Margin="5"
+                                                     Canvas.ZIndex="1">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush x:Name="_defaultContactAvatar_"
+                                                            ImageSource="ms-appx:///Assets/TESTS/contactAvatar.png"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>-->
+                                            <Ellipse    Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallStaticEllipse_}, Mode=OneWay}"
+                                                Height="50"
+                                                Width="50"
+                                                VerticalAlignment="Center"
+                                                HorizontalAlignment="Center"
+                                                Margin="5"
+                                                Canvas.ZIndex="0">
+                                                <Ellipse.Fill>
+                                                    <ImageBrush x:Name="_contactAvatar_"
+                                                                ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"
+                                                                ImageOpened="_contactAvatar__ImageOpened"/>
+                                                </Ellipse.Fill>
+                                            </Ellipse>
+                                        </Grid>
+                                        <Grid>
+                                            <Ellipse    x:Name="_presenceNotificationCircle_"
+                                                Visibility="Visible"
+                                                IsHitTestVisible="False"
+                                                Fill="{x:Bind _contact._presenceStatus, Converter={StaticResource _PresenceStatus_}, Mode=OneWay}"
+                                                Height="14"
+                                                Width="14"
+                                                StrokeThickness="1.5"
+                                                Stroke="{x:Bind _contact._presenceStatus, Converter={StaticResource _PresenceStatus_},  ConverterParameter=Border, Mode=OneWay}">
+                                                <Ellipse.RenderTransform>
+                                                    <TranslateTransform X="16" Y="-21"/>
+                                                </Ellipse.RenderTransform>
+                                            </Ellipse>
+                                        </Grid>
+                                    </StackPanel>
+                                    <Border x:Name="_visualNotificationNewMessage_"
+                                            Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
+                                            Style="{StaticResource BorderStyle2}">
+                                        <TextBlock  Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
+                                                    Style="{StaticResource TextStyle3}"/>
+                                        <Border.RenderTransform>
+                                            <TranslateTransform X="-17" Y="-58"/>
+                                        </Border.RenderTransform>
+                                    </Border>
+                                </StackPanel>
+
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="60"/>
+                                        <RowDefinition Height="30"/>
+                                    </Grid.RowDefinitions>
+                                    <StackPanel Grid.Row="0"
+                                                Padding="0,4,0,0">
+                                        <!-- name of the contact. -->
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="180"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock  x:Name="_contactName_"
+                                                        Grid.Column="0"
+                                                        Text="{x:Bind _contact._name, Mode=OneWay}"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        MaxWidth="180">
+                                            </TextBlock>
+                                            <StackPanel Orientation="Horizontal"
+                                                        Grid.Column="1">
+                                                <ProgressBar    Foreground="#333333"
+                                                                HorizontalAlignment="Right"
+                                                                Width="80"
+                                                                Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusToSpinnerVisibility_}, Mode=OneWay}"
+                                                                IsIndeterminate="True"
+                                                                Padding="4,0,4,0"/>
+                                            </StackPanel>
+                                        </Grid>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock  x:Name="_contactLastTime_"
+                                                        FontStyle="Italic"
+                                                        Foreground="#FF333333"
+                                                        MaxWidth="180"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        FontSize="10"
+                                                        Text="{x:Bind _contact._lastTime, Mode=OneWay}"/>
+                                        </StackPanel>
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock  x:Uid="_contactRequestSent_"
+                                                        Visibility="{x:Bind _contact, Converter={StaticResource _PartialTrustToVisibility_}, Mode=OneWay}"
+                                                        Grid.Column="0"
+                                                        FontStyle="Italic"
+                                                        Foreground="#FF339933"
+                                                        MaxWidth="200"
+                                                        TextTrimming="CharacterEllipsis"
+                                                        FontSize="12"/>
+                                            <!-- call action buttons. -->
+                                            <Grid x:Name="_callActionButtonGrid_"
+                                                  Grid.Column="1"
+                                                  HorizontalAlignment="Right"
+                                                  Margin="5,5,5,5">
+                                                <Grid.RenderTransform>
+                                                    <TranslateTransform X="0" Y="-10"/>
+                                                </Grid.RenderTransform>
+                                                <Button Grid.Row="0"
+                                                        Visibility="{x:Bind _isCallable, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
+                                                        GotFocus="_callContact__Click"
+                                                        VerticalAlignment="Bottom"
+                                                        HorizontalAlignment="Left"
+                                                        Style="{StaticResource ButtonStyleForCallBar}"
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Content="&#xE116;"/>
+                                                <StackPanel Orientation="Horizontal"
+                                                            Visibility="Visible"
+                                                            Grid.Row="0"
+                                                            VerticalAlignment="Bottom"
+                                                            HorizontalAlignment="Right">
+                                                    <Button x:Name="_acceptIncomingCallBtn_"
+                                                            GotFocus="_acceptIncomingCallBtn__Click"
+                                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                                            VerticalAlignment="Bottom"
+                                                            HorizontalAlignment="Center"
+                                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                                            FontFamily="Segoe MDL2 Assets"
+                                                            Content="&#xE10B;"/>
+                                                    <Button x:Name="_rejectIncomingCallBtn_"
+                                                            GotFocus="_rejectIncomingCallBtn__Click"
+                                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                                            VerticalAlignment="Bottom"
+                                                            HorizontalAlignment="Center"
+                                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                                            FontFamily="Segoe MDL2 Assets"
+                                                            Content="&#xE10A;"/>
+                                                </StackPanel>
+                                                <Button x:Name="_cancelCallBtn_"
+                                                        GotFocus="_cancelCallBtn__Click"
+                                                        Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
+                                                        VerticalAlignment="Bottom"
+                                                        HorizontalAlignment="Right"
+                                                        Style="{StaticResource ButtonStyleForCallBar}"
+                                                        FontFamily="Segoe MDL2 Assets"
+                                                        Content="&#xE10A;"/>
+                                            </Grid>
+                                        </Grid>
+                                    </StackPanel>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </StackPanel>
+            </StackPanel>
+        </DataTemplate>
+
+        <!-- template for ContactRequestItems. -->
+        <DataTemplate x:Key="ContactRequestItemsTemplate"
+                      x:DataType="controls:ContactRequestItem">
+            <!--<StackPanel Visibility="{x:Bind _contact, Converter={StaticResource _SelectedAccountToVisibility_}, Mode=OneWay}">-->
+            <StackPanel>
+                <Grid   PointerReleased="ContactRequestItem_Grid_PointerReleased"
+                        PointerEntered="ContactRequestItem_Grid_PointerEntered"
+                        PointerExited="ContactRequestItem_Grid_PointerExited"
+                        PointerMoved="ContactRequestItem_Grid_PointerMoved"
+                        Visibility="{x:Bind _isVisible, Mode=OneWay}">
                     <Grid Grid.Row="0">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="310"/>
+                            <ColumnDefinition Width="320"/>
                         </Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="60"/>
@@ -224,129 +367,141 @@
                         </Grid.RowDefinitions>
                         <Grid Grid.Row="0">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="60"/>
-                                <ColumnDefinition Width="*"
-                                              MinWidth="200"/>
+                                <ColumnDefinition   Width="60"/>
+                                <ColumnDefinition   Width="*"
+                                                    MinWidth="200"/>
                             </Grid.ColumnDefinitions>
                             <StackPanel Grid.Column="0">
-                                <!-- so far, I haven't fond any way to make a nested animation, inside a datatemplate, starting with the begin method from the code.
-                            I use a black magic workaround with two ellipses... -->
-                                <Ellipse x:Name="_incomingCallAnimatedEllipse_"
-                                Height="50"
-                                     Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallAnimatedEllipse_}, Mode=OneWay}"
-                                        Width="50"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        Margin="5">
-                                    <Ellipse.Fill>
-                                        <ImageBrush  x:Name="_contactAvatar2_"
-                                            ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
-                                    </Ellipse.Fill>
-                                    <Ellipse.Triggers>
-                                        <EventTrigger>
-                                            <BeginStoryboard>
-                                                <Storyboard x:Name="_toto_">
-                                                    <DoubleAnimation Storyboard.TargetName="_incomingCallAnimatedEllipse_"
-                                                             Storyboard.TargetProperty="Opacity"
-                                                             From="1"
-                                                             AutoReverse="True"
-                                                             RepeatBehavior="Forever"
-                                                             To="0"
-                                                             Duration="0:0:1"/>
-                                                </Storyboard>
-                                            </BeginStoryboard>
-                                        </EventTrigger>
-                                    </Ellipse.Triggers>
-                                </Ellipse>
-                                <Ellipse Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallStaticEllipse_}, Mode=OneWay}"
-
-                                Height="50"
-                                        Width="50"
-                                        VerticalAlignment="Center"
-                                        HorizontalAlignment="Center"
-                                        Margin="5">
+                                <Ellipse    Height="50"
+                                            Width="50"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Margin="5">
                                     <Ellipse.Fill>
                                         <ImageBrush  x:Name="_contactAvatar_"
                                             ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
                                     </Ellipse.Fill>
                                 </Ellipse>
-                                <Border x:Name="_visualNotificationNewMessage_"
-                                    Visibility="{x:Bind _contact._unreadMessages, Converter={StaticResource _NewMessageBubleNotification_}, Mode=OneWay}"
-                                    Style="{StaticResource BorderStyle2}">
-                                    <TextBlock Text="{x:Bind _contact._unreadMessages, Mode=OneWay}"
-                                           Style="{StaticResource TextStyle3}"/>
-                                    <Border.RenderTransform>
-                                        <TranslateTransform X="-17" Y="-58"/>
-                                    </Border.RenderTransform>
-                                </Border>
                             </StackPanel>
-
                             <Grid Grid.Column="1">
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="60"/>
                                     <RowDefinition Height="30"/>
                                 </Grid.RowDefinitions>
-                                <StackPanel Grid.Row="0">
+                                <StackPanel Grid.Row="0"
+                                            Orientation="Vertical"
+                                            Margin="0,6,0,0">
                                     <!-- name of the contact. -->
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock  x:Name="_contactName_"
-                                            Text="{x:Bind _contact._name, Mode=OneWay}"
-                                            TextTrimming="CharacterEllipsis">
-                                        </TextBlock>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal">
-                                        <TextBlock  x:Name="_contactLastTime_"
+                                    <TextBlock  x:Name="_contactName_"
+                                                Text="{x:Bind _contact._name, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                MaxWidth="240"
+                                                FontSize="14"
+                                                HorizontalAlignment="Left"/>
+                                    <TextBlock  x:Uid="_contactRequestPending_"
                                                 FontStyle="Italic"
-                                                Foreground="#333333"
+                                                Foreground="#FF339933"
                                                 MaxWidth="200"
                                                 TextTrimming="CharacterEllipsis"
-                                                FontSize="10"
-                                                Text="{x:Bind _contact._lastTime, Mode=OneWay}"/>
-                                        <ProgressBar Foreground="#333333"
-                                                 HorizontalAlignment="Right"
-                                                 Width="150"
-                                                 Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusToSpinnerVisibility_}, Mode=OneWay}"
-                                                 IsIndeterminate="True"/>
-                                    </StackPanel>
-                                    <!-- call action buttons. -->
-                                    <Button Grid.Row="0"
-                                    Visibility="{x:Bind _isCallable, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}"
-                                    Click="_callContact__Click"
-                                    VerticalAlignment="Bottom"
-                                    HorizontalAlignment="Left"
-                                    Style="{StaticResource ButtonStyleForCallBar}"
-                                    FontFamily="Segoe MDL2 Assets"
-                                    Content="&#xE116;"/>
-                                    <StackPanel Orientation="Horizontal"
+                                                FontSize="12"
+                                                HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
                                             Visibility="Visible"
                                             Grid.Row="0"
                                             VerticalAlignment="Bottom"
-                                            HorizontalAlignment="Right">
-                                        <Button x:Name="_acceptIncomingCallBtn_"
-                                            Click="_acceptIncomingCallBtn__Click"
-                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                            HorizontalAlignment="Right"
+                                            Margin="0,0,6,6">
+                                    <Button x:Name="_acceptContactRequestBtn_"
+                                            Click="_acceptContactRequestBtn__Click"
                                             VerticalAlignment="Bottom"
                                             HorizontalAlignment="Center"
                                             Style="{StaticResource ButtonStyleForCallBar}"
                                             FontFamily="Segoe MDL2 Assets"
                                             Content="&#xE10B;"/>
-                                        <Button x:Name="_rejectIncomingCallBtn_"
-                                            Click="_rejectIncomingCallBtn__Click"
-                                            Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}"
+                                    <Button x:Name="_rejectContactRequestBtn_"
+                                            Click="_rejectContactRequestBtn__Click"
                                             VerticalAlignment="Bottom"
                                             HorizontalAlignment="Center"
                                             Style="{StaticResource ButtonStyleForCallBar}"
                                             FontFamily="Segoe MDL2 Assets"
                                             Content="&#xE10A;"/>
-                                    </StackPanel>
-                                    <Button x:Name="_cancelCallBtn_"
-                                        Click="_cancelCallBtn__Click"
-                                        Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}"
-                                        VerticalAlignment="Bottom"
-                                        HorizontalAlignment="Right"
-                                        Style="{StaticResource ButtonStyleForCallBar}"
-                                        FontFamily="Segoe MDL2 Assets"
-                                        Content="&#xE10A;"/>
+                                    <Button x:Name="_blockContactBtn_"
+                                            Click="_blockContactBtn__Click"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Content="&#xE8F8;"/>
+                                </StackPanel>
+                            </Grid>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </StackPanel>
+        </DataTemplate>
+        <!-- template for BannedContactTemplate. -->
+        <DataTemplate x:Key="BannedContactTemplate"
+                      x:DataType="controls:ContactRequestItem">
+            <StackPanel>
+                <Grid Visibility="{x:Bind _isVisible, Mode=OneWay}">
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="220"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="60"/>
+                            <!-- use the height of _contactBar_ to make it visible or collapsed. -->
+                            <RowDefinition x:Name="_contactBar_"
+                                       Height="{x:Bind _contact._contactBarHeight, Mode=OneWay}"/>
+                        </Grid.RowDefinitions>
+                        <Grid Grid.Row="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition   Width="60"/>
+                                <ColumnDefinition   Width="*"
+                                                    MinWidth="100"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <Ellipse    Height="50"
+                                            Width="50"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            Margin="5">
+                                    <Ellipse.Fill>
+                                        <ImageBrush  x:Name="_contactAvatar_"
+                                            ImageSource="{x:Bind _contact._avatarImage, Mode=OneWay}"/>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </StackPanel>
+                            <Grid Grid.Column="1">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="60"/>
+                                    <RowDefinition Height="30"/>
+                                </Grid.RowDefinitions>
+                                <StackPanel Grid.Row="0"
+                                            Orientation="Vertical"
+                                            Margin="0,6,0,0">
+                                    <!-- name of the contact. -->
+                                    <TextBlock  x:Name="_contactName_"
+                                                Text="{x:Bind _contact._name, Mode=OneWay}"
+                                                TextTrimming="CharacterEllipsis"
+                                                MaxWidth="200"
+                                                FontSize="14"
+                                                HorizontalAlignment="Left"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal"
+                                            Visibility="Visible"
+                                            Grid.Row="0"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Right"
+                                            Margin="0,0,6,6">
+                                    <Button x:Name="_acceptContactRequestBtn_"
+                                            Click="_acceptContactRequestBtn__Click"
+                                            VerticalAlignment="Bottom"
+                                            HorizontalAlignment="Center"
+                                            Style="{StaticResource ButtonStyleForCallBar}"
+                                            FontFamily="Segoe MDL2 Assets"
+                                            Content="&#xE10B;"/>
                                 </StackPanel>
                             </Grid>
                         </Grid>
@@ -417,27 +572,20 @@
                 <StackPanel Grid.Column="1"
                             VerticalAlignment="Bottom">
                     <TextBlock x:Name="_selectedAccountName_"
-                               Text="the wizard will be summoned..."
+                               Text="[TEXT MISSING]"
                                Margin="10"
                                VerticalAlignment="Center"
                                TextTrimming="CharacterEllipsis"
                                Style="{StaticResource TextStyle2}"/>
                     <StackPanel Orientation="Horizontal">
                         <!-- contacts list -->
-                        <ToggleButton x:Name="_contactsListMenuButton_"
+                        <Grid>
+                            <ToggleButton x:Name="_contactsListMenuButton_"
                                       VerticalAlignment="Bottom"
                                       Content="&#xe716;"
                                       Click="_contactsListMenuButton__Click"
                                       Style="{StaticResource ToggleButtonStyle2}"/>
-                        <!-- account menu -->
-                        <Grid>
-                            <ToggleButton x:Name="_accountsMenuButton_"
-                                      VerticalAlignment="Bottom"
-                                      Click="_accountsMenuButton__Click"
-                                      Content="&#xE168;"
-                                      Style="{StaticResource ToggleButtonStyle2}">
-                            </ToggleButton>
-                            <Ellipse x:Name="_unreadAccountMessagesCircle_"
+                            <Ellipse x:Name="_unreadMessagesCircle_"
                                      Visibility="Collapsed"
                                     IsHitTestVisible="False"
                                     Fill="OrangeRed"
@@ -446,13 +594,85 @@
                                     StrokeThickness="1"
                                     Stroke="OrangeRed">
                                 <Ellipse.RenderTransform>
-                                    <TranslateTransform X="10" Y="-10"/>
+                                    <TranslateTransform X="12" Y="-8"/>
+                                </Ellipse.RenderTransform>
+                                <Ellipse.Triggers>
+                                    <EventTrigger>
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="_unreadMessagesAnimation_">
+                                                <DoubleAnimation Storyboard.TargetName="_unreadMessagesCircle_"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1.0"
+                                                             AutoReverse="True"
+                                                             RepeatBehavior="Forever"
+                                                             To="0.4"
+                                                             Duration="0:0:1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Ellipse.Triggers>
+                            </Ellipse>
+                        </Grid>
+                        <!-- contact request list -->
+                        <Grid>
+                            <ToggleButton x:Name="_contactRequestListMenuButton_"
+                                          VerticalAlignment="Bottom"
+                                          Content="&#xe8fa;"
+                                          Click="_contactRequestListMenuButton__Click"
+                                          Style="{StaticResource ToggleButtonStyle2}">
+                            </ToggleButton>
+                            <Ellipse x:Name="_unreadContactRequestsCircle_"
+                                     Visibility="Collapsed"
+                                    IsHitTestVisible="False"
+                                    Fill="OrangeRed"
+                                    Height="8"
+                                    Width="8"
+                                    StrokeThickness="1"
+                                    Stroke="OrangeRed">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform X="12" Y="-8"/>
+                                </Ellipse.RenderTransform>
+                                <Ellipse.Triggers>
+                                    <EventTrigger>
+                                        <BeginStoryboard>
+                                            <Storyboard x:Name="_unreadContactRequestsAnimation_">
+                                                <DoubleAnimation Storyboard.TargetName="_unreadContactRequestsCircle_"
+                                                             Storyboard.TargetProperty="Opacity"
+                                                             From="1.0"
+                                                             AutoReverse="True"
+                                                             RepeatBehavior="Forever"
+                                                             To="0.4"
+                                                             Duration="0:0:1"/>
+                                            </Storyboard>
+                                        </BeginStoryboard>
+                                    </EventTrigger>
+                                </Ellipse.Triggers>
+                            </Ellipse>
+                        </Grid>
+                        <!-- account menu -->
+                        <Grid>
+                            <ToggleButton x:Name="_accountsMenuButton_"
+                                      VerticalAlignment="Bottom"
+                                      Click="_accountsMenuButton__Click"
+                                      Content="&#xE168;"
+                                      Style="{StaticResource ToggleButtonStyle2}">
+                            </ToggleButton>
+                            <Ellipse x:Name="_unreadAccountNotificationsCircle_"
+                                     Visibility="Collapsed"
+                                    IsHitTestVisible="False"
+                                    Fill="OrangeRed"
+                                    Height="8"
+                                    Width="8"
+                                    StrokeThickness="1"
+                                    Stroke="OrangeRed">
+                                <Ellipse.RenderTransform>
+                                    <TranslateTransform X="12" Y="-8"/>
                                 </Ellipse.RenderTransform>
                                 <Ellipse.Triggers>
                                     <EventTrigger>
                                         <BeginStoryboard>
                                             <Storyboard x:Name="_unreadAccountMessagesAnimation_">
-                                                <DoubleAnimation Storyboard.TargetName="_unreadAccountMessagesCircle_"
+                                                <DoubleAnimation Storyboard.TargetName="_unreadAccountNotificationsCircle_"
                                                              Storyboard.TargetProperty="Opacity"
                                                              From="1.0"
                                                              AutoReverse="True"
@@ -493,6 +713,12 @@
                                       VerticalAlignment="Bottom"
                                       Content="&#xE115;"
                                       Style="{StaticResource ToggleButtonStyle2}"/>
+                        <!-- _homeButton_ -->
+                        <Button x:Name="_homeButton_"
+                                VerticalAlignment="Bottom"
+                                Click="_homeButton__Click"
+                                Content="&#xE80F;"
+                                Style="{StaticResource ButtonStyleHome}"/>
                     </StackPanel>
                 </StackPanel>
             </Grid>
@@ -501,6 +727,7 @@
             same row. To summon them we use the visibility of their own grid, by linking it to a toggle button-->
 
         </Grid>
+
         <!-- smartList and settings. -->
         <Grid Grid.Row="1"
               Background="#FFE4F1F9">
@@ -508,16 +735,28 @@
             <Grid x:Name="_accountsMenuGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
+                <Rectangle  Grid.Row="0"
+                                Fill="LightBlue"
+                                Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountsTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
                 <ScrollViewer x:Name="_accountsListScrollView_"
                               ScrollViewer.VerticalScrollBarVisibility="Auto"
-                              ScrollViewer.VerticalScrollMode="Enabled">
+                              ScrollViewer.VerticalScrollMode="Enabled"
+                              Grid.Row="1">
                     <ListBox x:Name="_accountsList_"
-                         Grid.Row="0"
                          SelectionChanged="_accountList__SelectionChanged"
                          Width="320"
                          ItemContainerStyle="{StaticResource contactsListBoxStyle}"
@@ -525,15 +764,14 @@
                          ItemTemplate="{StaticResource AccountListItemsTemplate}"/>
                 </ScrollViewer>
                 <StackPanel Orientation="Horizontal"
-                            Grid.Row="1">
-                    <!--Style="{StaticResource ButtonStyle6}"-->
+                            Grid.Row="2"
+                            Background="#3bc1d3">
                     <Button x:Name="_addAccountBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
                             Content="&#xE948;"
                             Click="_addAccountBtn__Click"
                             Style="{StaticResource ButtonStyle5}"/>
-                    <!--Style="{StaticResource ButtonStyle6}"-->
                     <Button x:Name="_linkThisDeviceBtn_"
                             VerticalAlignment="Center"
                             HorizontalAlignment="Center"
@@ -546,26 +784,40 @@
             <Grid x:Name="_accountEditionGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#ffe4f1f9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountEditionTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
                 <ScrollViewer x:Name="_scrollViewerEditionMenu_"
-                              Grid.Row="0">
+                              Grid.Row="1">
                     <StackPanel Orientation="Vertical"
-                                Padding="10,0"
-                                Grid.Row="0"
+                                Padding="0,0"
                                 Background="#FFE4F1F9">
                         <!-- alias sub menu. -->
                         <StackPanel Orientation="Horizontal"
-                                    Margin="0,20">
+                                    Margin="10,20,0,10"
+                                    Padding="10,0">
                             <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                        Margin="0,0,10,0"
                                        Text="&#xE8EC;"/>
-                            <TextBlock Text="Alias"/>
+                            <TextBlock x:Uid="_accountsAlias_"
+                                       Text=""/>
                         </StackPanel>
-                        <Grid Margin="10,0,10,10">
+                        <Grid Margin="10,0,10,10"
+                              Padding="10,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="25"/>
@@ -587,35 +839,36 @@
                                                Text="&#xE10A;"/>
                         </Grid>
                         <!-- edition sub menu. -->
-                        <StackPanel x:Name="_ringStackEdition_">
+                        <StackPanel x:Name="_ringStackEdition_"
+                                    Padding="10,0">
                             <!-- register account on blockachain -->
                             <StackPanel Orientation="Horizontal"
-                                        Margin="0,20">
+                                        Margin="10,20,0,10">
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                            Margin="0,0,10,0"
                                            Text="&#xE167;"/>
-                                <TextBlock Text="Register public username"/>
+                                <TextBlock  x:Uid="_accountsRegisterPublicName_"/>
                             </StackPanel>
                             <ToggleSwitch x:Name="_RegisterStateEdition_"
                                       IsOn="True"
                                       Toggled="_RegisterStateEdition__Toggled"
-                                      Margin="0,10"/>
-                            <TextBlock x:Name="_whatWilHappenEdition_"
-                                       Margin="0,10,0,0"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="peoples will find you with your username"/>
-                            <HyperlinkButton Content="Learn more"
-                                             Margin="0,0,0,10"
+                                      Margin="10"/>
+                            <TextBlock x:Uid="_whatWillHappenEditionUid_"
+                                       x:Name="_whatWillHappenEdition_"
+                                       Margin="10,10,0,0"
+                                       Style="{StaticResource BodyTextBlockStyle}"/>
+                            <HyperlinkButton x:Uid="_accountsEditionLearnMore_"
+                                             Margin="10,0,0,10"
                                              NavigateUri="http://ring.cx"/>
                             <Grid Margin="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="_usernameTextBoxEdition_"
-                                         Grid.Column="0"
-                                         PlaceholderText="Enter your full name"
-                                         KeyUp="_usernameTextBoxEdition__KeyUp"/>
+                                <TextBox    x:Uid="_usernameTextBoxEditionUid_"
+                                            x:Name="_usernameTextBoxEdition_"
+                                            Grid.Column="0"
+                                            KeyUp="_usernameTextBoxEdition__KeyUp"/>
                                 <TextBlock x:Name="_usernameValidEdition_"
                                                    Grid.Column="1"
                                                    Padding="10,0"
@@ -628,21 +881,33 @@
                                                    Style="{StaticResource TextSegoeStyle-20pt-red}"
                                                    Text="&#xE10A;"/>
                             </Grid>
-                            <Button x:Name="_registerOnBlockchainEdition_"
-                                Content="register"
-                                Visibility="Collapsed"
-                                Click="_registerOnBlockchainEdition__Click"/>
+                            <Button x:Uid="_registerOnBlockchainEditionUid_"
+                                    x:Name="_registerOnBlockchainEdition_"
+                                    Visibility="Collapsed"
+                                    Click="_registerOnBlockchainEdition__Click"/>
+                            <!-- enabled -->
                             <StackPanel Orientation="Horizontal" Margin="10">
-                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                       Text="&#xE15E;"/>
-                                <TextBlock Text="UPnP" Margin="10"/>
+                                <TextBlock  Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                            Text="&#xED5C;"/>
+                                <TextBlock  x:Uid="_accountsEnabled_"
+                                            Margin="10"/>
                             </StackPanel>
-                            <ToggleSwitch x:Name="_upnpState_"
-                                      Margin="20,10"/>
+                            <ToggleSwitch   x:Name="_enabledState_"
+                                            Margin="20,10"/>
+                            <!-- upnp state -->
+                            <StackPanel Orientation="Horizontal" Margin="10">
+                                <TextBlock  Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                            Text="&#xE15E;"/>
+                                <TextBlock  x:Uid="_accountsUPnP_"
+                                            Margin="10"/>
+                            </StackPanel>
+                            <ToggleSwitch   x:Name="_upnpState_"
+                                            Margin="20,10"/>
                         </StackPanel>
                         <!-- SIP parameters. -->
                         <StackPanel x:Name="_sipAccountStackEdition_"
-                                Visibility="Collapsed">
+                                    Visibility="Collapsed"
+                                    Padding="10,0">
                             <StackPanel Orientation="Horizontal"
                                     Margin="10">
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
@@ -650,18 +915,23 @@
                                 <TextBlock Text="SIP account parameters"
                                        Margin="10"/>
                             </StackPanel>
-                            <TextBox  x:Name="_sipHostnameEdition_"
-                                  Margin="10"
-                                  PlaceholderText="Enter hostname"/>
-                            <TextBox  x:Name="_sipUsernameEditionTextBox_"
-                                  Margin="10"
-                                  PlaceholderText="Enter username"/>
-                            <PasswordBox x:Name="_sipPasswordEdition_"
-                                     Margin="10"
-                                     PlaceholderText="Enter password"/>
+                            <TextBox
+                                x:Uid="_sipHostnameEditionUid_"
+                                x:Name="_sipHostnameEdition_"
+                                Margin="10"/>
+                            <TextBox
+                                x:Uid="_sipUsernameEditionTextBoxUid_"
+                                x:Name="_sipUsernameEditionTextBox_"
+                                Margin="10"/>
+                            <PasswordBox
+                                x:Uid="_sipPasswordEditionUid_"
+                                x:Name="_sipPasswordEdition_"
+                                Margin="10"/>
                         </StackPanel>
                         <!-- delete account sub menu. -->
-                        <StackPanel Orientation="Horizontal" Margin="10">
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10"
+                                    Padding="10,0">
                             <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                    Text="&#xE74D;"/>
                             <TextBlock Text="Delete account" Margin="10"/>
@@ -669,27 +939,114 @@
                         <ToggleSwitch x:Name="_deleteAccountEdition_"
                                       Toggled="_deleteAccountEdition__Toggled"
                                       Margin="20,10"/>
-                        <TextBlock x:Name="_whatWilHappendeleteRingAccountEdition_"
-                                   Margin="0,10,0,0"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   Foreground="Red"
-                                   Visibility="Collapsed"
-                                   Text="Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted."/>
-                        <TextBlock x:Name="_whatWilHappendeleteSipAccountEdition_"
-                                   Margin="0,10,0,0"
-                                   Style="{StaticResource BodyTextBlockStyle}"
-                                   Foreground="Red"
-                                   Visibility="Collapsed"
-                                   Text="Your account will be deleted from this computer."/>
-                        <HyperlinkButton x:Name="_learnMoreDeleteAccountEdition_"
-                                         Content="Learn more"
-                                         Visibility="Collapsed"
-                                         Margin="0,0,0,10"
-                                         NavigateUri="http://ring.cx"/>
+                        <TextBlock
+                            x:Uid="_whatWillHappendeleteRingAccountEditionUid_"
+                            x:Name="_whatWillHappendeleteRingAccountEdition_"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Foreground="Red"
+                            Visibility="Collapsed"/>
+                        <TextBlock
+                            x:Uid="_whatWillHappendeleteSipAccountEditionUid_"
+                            x:Name="_whatWillHappendeleteSipAccountEdition_"
+                            Margin="0,10,0,0"
+                            Style="{StaticResource BodyTextBlockStyle}"
+                            Foreground="Red"
+                            Visibility="Collapsed"/>
+                        <HyperlinkButton
+                            x:Uid="_learnMoreDeleteAccountEditionUid_"
+                            x:Name="_learnMoreDeleteAccountEdition_"
+                            Visibility="Collapsed"
+                            Margin="0,0,0,10"
+                            NavigateUri="http://ring.cx"/>
+                        <!--banned list-->
+                        <StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="10"
+                                        Padding="10,0">
+                                <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                   Text="&#xE8F8;"/>
+                                <HyperlinkButton x:Name="_accountsShowBannedList_"
+                                             Content="Show banned contact list"
+                                             Margin="10,0,0,10"
+                                             Click="_showBannedList__PointerPressed"/>
+                            </StackPanel>
+
+                            <Grid x:Name="_bannedContactListGrid_"
+                                  Visibility="Collapsed">
+                                <TextBlock x:Uid="_accountsBannedList_"/>
+                                <Border Margin="0"
+                                        Padding="10,0">
+                                    <ListBox    x:Name="_bannedContactList_"
+                                                Background="GreenYellow"
+                                                Margin="0"
+                                                Padding="0"
+                                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                                ScrollViewer.HorizontalScrollMode="Disabled"
+                                                MaxWidth="320"
+                                                ItemContainerStyle="{StaticResource contactsListBoxStyle}"
+                                                ItemTemplate="{StaticResource BannedContactTemplate}"/>
+                                </Border>
+                            </Grid>
+                        </StackPanel>
+                        <!--label/divider for other-->
+                        <Grid Margin="0,20,0,0"
+                              Padding="10,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle  Grid.Column="0"
+                                            Fill="Gray"
+                                            Height="2"
+                                            Margin="16,4,4,4"/>
+                            <TextBlock  Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            Text="Other"
+                                            Margin="4"/>
+                            <Rectangle  Grid.Column="2"
+                                            Fill="Gray"
+                                            Height="2"
+                                            Margin="4,4,16,4"/>
+                        </Grid>
+                        <!--other settings-->
+                        <StackPanel Orientation="Horizontal"
+                                    Margin="10"
+                                    Padding="10,0">
+                            <TextBlock  Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                        Text="&#xE8D0;"/>
+                            <TextBlock
+                                x:Uid="_accountsAutoAnswer_"
+                                Margin="10,20,10,10"
+                                TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ToggleSwitch   x:Name="_autoAnswerToggle_"
+                                        Toggled="_autoAnswerToggle__Toggled"
+                                        IsOn="False"
+                                        Margin="20,10"
+                                        Padding="10,0"/>
+                        <StackPanel     Orientation="Horizontal"
+                                        Margin="10"
+                                        Padding="10,0">
+                            <TextBlock  Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                        Text="&#xE8D7;"/>
+                            <TextBlock
+                                x:Uid="_accountsIncognitoContacts_"
+                                Width="240"
+                                Margin="10"
+                                TextWrapping="Wrap"/>
+                        </StackPanel>
+                        <ToggleSwitch   x:Name="_dhtPublicInCallsToggle_"
+                                        Toggled="_dhtPublicInCalls__Toggled"
+                                        IsOn="True"
+                                        Margin="20,10,20,20"
+                                        Padding="10,0"/>
                     </StackPanel>
                 </ScrollViewer>
                 <!-- buttons yes/no to accept the modification. -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_acceptAccountModification_"
@@ -713,12 +1070,26 @@
             <Grid x:Name="_accountCreationMenuGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#ffe4f1f9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer Grid.Row="0">
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Name="_accountsCreation_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text=""/>
+                <ScrollViewer x:Name="_accountCreationMenuScrollViewer_"
+                              Grid.Row="1">
                     <StackPanel Orientation="Vertical"
                                 Padding="10,0"
                                 Background="#FFE4F1F9">
@@ -735,37 +1106,42 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="25"/>
                             </Grid.ColumnDefinitions>
-                            <TextBox  x:Name="_accountAliasTextBox_"
-                                      Grid.Column="0"
-                                      TextChanged="_accountAliasTextBox__TextChanged"
-                                      PlaceholderText="Enter alias"/>
-                            <TextBlock x:Name="_accountAliasValid_"
-                                               Grid.Column="1"
-                                               Padding="10,0"
-                                               Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                               Visibility="Collapsed"
-                                               Text="&#xE10B;"/>
-                            <TextBlock x:Name="_accountAliasInvalid_"
-                                               Grid.Column="1"
-                                               Padding="10,0"
-                                               Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                               Text="&#xE10A;"/>
+                            <TextBox
+                                x:Uid="_accountAliasTextBoxUid_"
+                                x:Name="_accountAliasTextBox_"
+                                Grid.Column="0"
+                                TextChanged="_accountAliasTextBox__TextChanged"/>
+                            <TextBlock
+                                x:Name="_accountAliasValid_"
+                                Grid.Column="1"
+                                Padding="10,0"
+                                Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                Visibility="Collapsed"
+                                Text="&#xE10B;"/>
+                            <TextBlock
+                                x:Name="_accountAliasInvalid_"
+                                Grid.Column="1"
+                                Padding="10,0"
+                                Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                Text="&#xE10A;"/>
                         </Grid>
-
                         <!-- account type chooser -->
-                        <StackPanel Orientation="Horizontal"
-                                    Margin="0,20">
-                            <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
-                                       Margin="0,0,10,0"
-                                       Text="&#xE168;"/>
-                            <TextBlock Text="Account type"/>
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Margin="0,20">
+                            <TextBlock
+                                Style="{StaticResource TextSegoeStyle-20pt-black}"
+                                Margin="0,0,10,0"
+                                Text="&#xE168;"/>
+                            <TextBlock x:Uid="_accountsType_"/>
                         </StackPanel>
-                        <ComboBox x:Name="_accountTypeComboBox_"
-                                      SelectedIndex="0"
-                                      Margin="10,10,0,0"
-                                      SelectionChanged="_accountTypeComboBox__SelectionChanged"
-                                      VerticalAlignment="Center"
-                                      Width="195">
+                        <ComboBox
+                            x:Name="_accountTypeComboBox_"
+                            SelectedIndex="0"
+                            Margin="10,10,0,0"
+                            SelectionChanged="_accountTypeComboBox__SelectionChanged"
+                            VerticalAlignment="Center"
+                            Width="195">
                             <ComboBoxItem Content="Ring"/>
                             <ComboBoxItem Content="Sip"/>
                         </ComboBox>
@@ -779,16 +1155,18 @@
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                            Margin="0,0,10,0"
                                            Text="&#xE167;"/>
-                                <TextBlock Text="Register public username"/>
+                                <TextBlock x:Uid="_accountsRegisterPublicName_"/>
                             </StackPanel>
-                            <ToggleSwitch x:Name="_RegisterState_"
-                                      IsOn="True"
-                                      Toggled="_RegisterState__Toggled"
-                                      Margin="0,10"/>
-                            <TextBlock x:Name="_whatWilHappen_"
-                                       Margin="0,10,0,0"
-                                       Style="{StaticResource BodyTextBlockStyle}"
-                                       Text="peoples will find you with your username"/>
+                            <ToggleSwitch
+                                x:Name="_RegisterState_"
+                                IsOn="True"
+                                Toggled="_RegisterState__Toggled"
+                                Margin="0,10"/>
+                            <TextBlock
+                                x:Name="_whatWillHappen_"
+                                Margin="0,10,0,0"
+                                Style="{StaticResource BodyTextBlockStyle}"
+                                Text="People can find you with your username"/>
                             <HyperlinkButton Content="Learn more"
                                              Margin="0,0,0,10"
                                              NavigateUri="http://ring.cx"/>
@@ -797,29 +1175,31 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
-                                <TextBox x:Name="_usernameTextBox_"
-                                         Grid.Column="0"
-                                         PlaceholderText="Enter your full name"
-                                         KeyUp="_usernameTextBox__KeyUp"
-                                                 />
-                                <TextBlock x:Name="_usernameValid_"
-                                                   Grid.Column="1"
-                                                   Padding="10,0"
-                                                   Style="{StaticResource TextSegoeStyle-20pt-green}"
-                                                   Visibility="Collapsed"
-                                                   Text="&#xE10B;"/>
-                                <TextBlock x:Name="_usernameInvalid_"
-                                                   Grid.Column="1"
-                                                   Padding="10,0"
-                                                   Style="{StaticResource TextSegoeStyle-20pt-red}"
-                                                   Text="&#xE10A;"/>
+                                <TextBox
+                                    x:Uid="_usernameTextBoxEditionUid_"
+                                    x:Name="_usernameTextBox_"
+                                    Grid.Column="0"
+                                    KeyUp="_usernameTextBox__KeyUp"/>
+                                <TextBlock
+                                    x:Name="_usernameValid_"
+                                    Grid.Column="1"
+                                    Padding="10,0"
+                                    Style="{StaticResource TextSegoeStyle-20pt-green}"
+                                    Visibility="Collapsed"
+                                    Text="&#xE10B;"/>
+                                <TextBlock
+                                    x:Name="_usernameInvalid_"
+                                    Grid.Column="1"
+                                    Padding="10,0"
+                                    Style="{StaticResource TextSegoeStyle-20pt-red}"
+                                    Text="&#xE10A;"/>
                             </Grid>
                             <!-- password sub menu. -->
                             <StackPanel Orientation="Horizontal"
                                         Margin="0,20">
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                         Margin="0,0,10,0"
-                                       Text="&#xE8D7;"/>
+                                        Text="&#xE8D7;"/>
                                 <TextBlock Text="Password"/>
                             </StackPanel>
                             <Grid Margin="10">
@@ -827,10 +1207,11 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
-                                <PasswordBox x:Name="_ringPasswordBoxAccountCreation_"
-                                             Grid.Column="0"
-                                             PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
-                                             PlaceholderText="Enter password"/>
+                                <PasswordBox
+                                    x:Uid="_ringPasswordBoxAccountCreationUid_"
+                                    x:Name="_ringPasswordBoxAccountCreation_"
+                                    Grid.Column="0"
+                                    PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"/>
                                 <TextBlock x:Name="_passwordValid_"
                                            Grid.Column="1"
                                            Padding="10,0"
@@ -848,10 +1229,11 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="25"/>
                                 </Grid.ColumnDefinitions>
-                                <PasswordBox x:Name="_ringPasswordBoxAccountCreationCheck_"
+                                <PasswordBox
+                                    x:Uid="_ringPasswordBoxAccountCreationCheckUid_"
+                                    x:Name="_ringPasswordBoxAccountCreationCheck_"
                                              Grid.Column="0"
-                                             PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"
-                                             PlaceholderText="Repeat password"/>
+                                             PasswordChanged="_passwordBoxAccountCreationCheck__PasswordChanged"/>
                                 <TextBlock x:Name="_passwordCheckValid_"
                                            Grid.Column="1"
                                            Padding="10,0"
@@ -870,7 +1252,7 @@
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                             Margin="0,0,10,0"
                                            Text="&#xE15E;"/>
-                                <TextBlock Text="UPnP"/>
+                                <TextBlock x:Uid="_accountsUPnP_"/>
                             </StackPanel>
                             <ToggleSwitch x:Name="_upnpStateAccountCreation_"
                                           IsOn="True"
@@ -883,24 +1265,28 @@
                                         Margin="10">
                                 <TextBlock Style="{StaticResource TextSegoeStyle-20pt-black}"
                                            Text="&#xE717;"/>
-                                <TextBlock Text="SIP account parameters"
+                                <TextBlock x:Uid="_accountsSIPParameters_"
                                            Margin="10"/>
                             </StackPanel>
-                            <TextBox  x:Name="_sipHostnameTextBox_"
-                                      Margin="10"
-                                      PlaceholderText="Enter hostname"/>
-                            <TextBox  x:Name="_sipUsernameTextBox_"
-                                      Margin="10"
-                                      PlaceholderText="Enter username"/>
-                            <PasswordBox x:Name="_sipPasswordBoxAccountCreation_"
-                                         Margin="10"
-                                         PlaceholderText="Enter password"/>
+                            <TextBox
+                                x:Uid="_sipHostnameEditionUid_"
+                                x:Name="_sipHostnameTextBox_"
+                                Margin="10"/>
+                            <TextBox
+                                x:Uid="_sipUsernameEditionTextBoxUid_"
+                                x:Name="_sipUsernameTextBox_"
+                                Margin="10"/>
+                            <PasswordBox
+                                x:Uid="_sipPasswordEditionUid_"
+                                x:Name="_sipPasswordBoxAccountCreation_"
+                                Margin="10"/>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
 
                 <!-- buttons yes/no to create the new account. -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_createAccountYes_"
@@ -920,19 +1306,32 @@
                     </StackPanel>
                 </Grid>
             </Grid>
+
             <!-- add account menu. -->
             <Grid x:Name="_accountAddMenuGrid_"
                   Visibility="Collapsed"
                   Grid.Row="0"
-                  Background="#3bc1d3">
+                  Background="#ffe4f1f9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountsAddDevice_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
                 <StackPanel Orientation="Horizontal"
                             Background="#FFE4F1F9"
                             Padding="10"
-                                    Grid.Row="0">
+                            Grid.Row="1">
                     <Button x:Name="_step1button_"
                             Click="_step1button__Click"
                             Content="Step 1"/>
@@ -945,33 +1344,40 @@
                 <StackPanel x:Name="_step1Menu_"
                                     Background="#FFE4F1F9"
                                     Padding="10"
-                                    Grid.Row="0">
-                    <TextBlock Text="To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account."
-                                        TextWrapping="Wrap"
-                                        TextAlignment="Justify"/>
-                    <HyperlinkButton Content="Learn more"
-                                                Margin="0,0,0,10"
-                                                NavigateUri="http://ring.cx"/>
+                                    Grid.Row="1">
+                    <TextBlock
+                        x:Uid="_accountsAddStep1_"
+                        TextWrapping="Wrap"
+                        TextAlignment="Justify"/>
+                    <HyperlinkButton
+                        x:Uid="_accountsEditionLearnMore_"
+                        Margin="0,0,0,10"
+                        NavigateUri="http://ring.cx"/>
                 </StackPanel>
                 <!-- step 2. -->
                 <StackPanel x:Name="_step2Menu_"
-                                    Background="#FFE4F1F9"
-                                    Visibility="Collapsed"
-                                    Grid.Row="0">
-                    <TextBox  x:Name="_PINTextBox_"
-                                    Margin="10"
-                                    GotFocus="_PINTextBox__GotFocus"
-                                    PlaceholderText="Enter PIN"/>
-                    <PasswordBox x:Name="_ArchivePassword_"
-                                    Margin="10"
-                                    PlaceholderText="Enter your password"/>
+                            Background="#FFE4F1F9"
+                            Visibility="Collapsed"
+                            Grid.Row="1">
+                    <TextBox
+                        x:Uid="_accountsAddEnterPIN_"
+                        x:Name="_PINTextBox_"
+                        Margin="10"
+                        GotFocus="_PINTextBox__GotFocus"
+                        KeyUp="_addAccountInputValidation__KeyUp"/>
+                    <PasswordBox
+                        x:Uid="_accountsEnterArchivePassword_"
+                        x:Name="_ArchivePassword_"
+                        Margin="10"
+                        KeyUp="_addAccountInputValidation__KeyUp"/>
                     <TextBlock x:Name="_response_"
                                Foreground="Red"
                                HorizontalAlignment="Center"
                                Text=""/>
                 </StackPanel>
                 <!-- buttons next step and yes/no to add the account. -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
                     <StackPanel Orientation="Horizontal"
                                         Padding="10,0"
                                         HorizontalAlignment="Center">
@@ -1002,12 +1408,26 @@
             <Grid x:Name="_shareMenuGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#ffe4f1f9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Grid Background="#FFE4F1F9">
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountsShare_"
+                            x:Name="_shareTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                <Grid Background="#FFE4F1F9"
+                      Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
@@ -1034,24 +1454,39 @@
                                IsTextSelectionEnabled="True"
                                HorizontalAlignment="Center"/>
                 </Grid>
-                <Button x:Name="_shareMenuDone_"
-                        Grid.Row="1"
+                <Grid Background="#3bc1d3"
+                      Grid.Row="2">
+                    <Button x:Name="_shareMenuDone_"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Content="&#xE081;"
                         Click="_shareMenuDone__Click"
                         Style="{StaticResource ButtonStyle6}"/>
+                </Grid>
             </Grid>
             <!-- devices menu. -->
             <Grid x:Name="_devicesMenuGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Grid Background="#FFE4F1F9">
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountsDevices_"
+                            x:Name="_devicesMenuTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                <Grid   Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
@@ -1086,11 +1521,11 @@
                                        Text="&#xEBD2;"/>
                         <TextBlock Text="other linked devices"/>
                     </StackPanel>
-                    <TextBlock x:Name="_waitingDevicesList_"
-                               Text="waiting for devices list..."
-                               Grid.Row="3"
-                               IsTextSelectionEnabled="True"
-                               HorizontalAlignment="Center"/>
+                    <TextBlock  x:Uid="_waitingDevicesListUid_"
+                                x:Name="_waitingDevicesList_"
+                                Grid.Row="3"
+                                IsTextSelectionEnabled="True"
+                                HorizontalAlignment="Center"/>
                     <ListBox x:Name="_devicesIdList_"
                              Visibility="Collapsed"
                              Padding="10,0"
@@ -1098,42 +1533,61 @@
                              Grid.Row="3"/>
                 </Grid>
                 <!-- button to add device. -->
-                <Button x:Name="_addDevice_"
-                        Grid.Row="1"
-                        VerticalAlignment="Center"
-                        HorizontalAlignment="Center"
-                        Content="&#xE948;"
-                        Click="_addDevice__Click"
-                        Style="{StaticResource ButtonStyle6}"/>
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
+                    <Button x:Name="_addDevice_"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Content="&#xE948;"
+                            Click="_addDevice__Click"
+                            Style="{StaticResource ButtonStyle6}"/>
+                </Grid>
             </Grid>
             <!-- add device (pin generator) menu. -->
             <Grid x:Name="_addingDeviceGrid_"
                   Grid.Row="0"
                   Visibility="Collapsed"
-                  Background="#3bc1d3">
+                  Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Grid Background="#FFE4F1F9">
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Name="_addDeviceMenuTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text="Add Device"/>
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock VerticalAlignment="Center"
-                                       Text="PIN generator"
-                               HorizontalAlignment="Center"
-                               Grid.Row="0"
-                                       Margin="10,10,0,10"/>
-                    <PasswordBox x:Name="_passwordForPinGenerator_"
-                                 Margin="10"
-                                 Grid.Row="1"
-                                 KeyUp="_passwordForPinGenerator__KeyUp"
-                                 PlaceholderText="Enter your password"/>
+                    <TextBlock
+                        x:Uid="_accountsPINGenerator_"
+                        VerticalAlignment="Center"
+                        HorizontalAlignment="Center"
+                        Grid.Row="0"
+                        Margin="10,10,0,10"/>
+                    <PasswordBox
+                        x:Uid="_accountsEnterArchivePassword_"
+                        x:Name="_passwordForPinGenerator_"
+                        Margin="10"
+                        Grid.Row="1"
+                        KeyUp="_passwordForPinGenerator__KeyUp"
+                        PlaceholderText="Enter your password"/>
                 </Grid>
                 <!-- buttons yes/no to generate a PIN. -->
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_pinGeneratorYes_"
@@ -1157,25 +1611,40 @@
             <Grid x:Name="_waitingForPin_"
                 Grid.Row="0"
                 Visibility="Collapsed"
-                Background="#3bc1d3">
+                Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="30"/>
                 </Grid.RowDefinitions>
-                <Grid Background="#FFE4F1F9">
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_accountsAddDevice_"
+                            x:Name="_waitingForPinTitle_"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            Grid.Row="0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="auto"/>
                         <RowDefinition Height="*"/>
                     </Grid.RowDefinitions>
-                    <TextBlock x:Name="_waitingAndResult_"
+                    <TextBlock
+                        x:Uid="_accountsWaitingAndResult_"
+                        x:Name="_waitingAndResult_"
                                VerticalAlignment="Center"
-                               Text="Exporting account on the Ring..."
                                HorizontalAlignment="Center"
                                Grid.Row="0"
                                Margin="10,10,0,10"/>
                 </Grid>
-                <Grid Grid.Row="1">
+                <Grid Grid.Row="2"
+                      Background="#3bc1d3">
                     <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Center">
                         <Button x:Name="_closePin_"
@@ -1192,12 +1661,25 @@
             <Grid x:Name="_smartGrid_"
                   Grid.Row="0">
                 <Grid.RowDefinitions>
+                    <RowDefinition x:Name="_contactsTitleRow_"
+                                   Height="30"/>
                     <RowDefinition x:Name="_rowRingTxtBx_"
                                    Height="40"/>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <Grid>
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,0"/>
+                <TextBlock  x:Uid="_contactsTitle_"
+                            x:Name="_contactsTitle_"
+                            Grid.Row="0"
+                            FontSize="18"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"/>
+                <Grid Grid.Row="1">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
@@ -1243,7 +1725,8 @@
                     </Button>
                 </Grid>
                 <ListBox    x:Name="_smartList_"
-                            Grid.Row="2"
+                            GotFocus="_smartList__GotFocus"
+                            Grid.Row="3"
                             Background="Transparent"
                             Margin="0"
                             SelectionChanged="_smartList__SelectionChanged"
@@ -1254,40 +1737,107 @@
                             ItemContainerStyle="{StaticResource contactsListBoxStyle}"
                             ItemTemplate="{StaticResource SmartPanelItemsTemplate}"/>
             </Grid>
+            <!-- trust requests -->
+            <Grid x:Name="_incomingContactRequestGrid_"
+                  Grid.Row="0">
+                <Grid.RowDefinitions>
+                        <RowDefinition Height="36"/>
+                        <RowDefinition Height="auto"/>
+                    </Grid.RowDefinitions>
+                    <Rectangle  Grid.Row="0"
+                                Fill="LightBlue"
+                                Margin="6,6,6,6"/>
+                    <TextBlock
+                        x:Uid="_contactRequestsTitle_"
+                        x:Name="_contactRequestsTitle_"
+                                FontSize="18"
+                                Padding="0,0,0,4"
+                                Foreground="#FF404040"
+                                FontWeight="SemiBold"
+                                Grid.Row="0"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"/>
+                    <ListBox    x:Name="_incomingContactRequestList_"
+                                Grid.Row="1"
+                                Background="Transparent"
+                                Margin="0"
+                                Padding="0"
+                                ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                                ScrollViewer.HorizontalScrollMode="Disabled"
+                                MaxWidth="320"
+                                ItemContainerStyle="{StaticResource contactsListBoxStyle}"
+                                ItemTemplate="{StaticResource ContactRequestItemsTemplate}"/>
+            </Grid>
             <!-- settings. -->
             <Grid x:Name="_settingsMenu_"
                   Grid.Row="0"
                   Visibility="Collapsed"
                   Background="#FFE4F1F9">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="36"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                <ScrollViewer
-                    ScrollViewer.VerticalScrollBarVisibility="Auto">
-                    <Grid x:Name="_videoSettings_"
-                      Grid.Row="0">
-                        <StackPanel Margin="10">
-                            <TextBlock Text="Video Device"
+                <Rectangle  Grid.Row="0"
+                            Fill="LightBlue"
+                            Margin="6,6,6,6"/>
+                <TextBlock  x:Uid="_settingsTitle_"
+                            x:Name="_settingsTitle_"
+                            Grid.Row="0"
+                            FontSize="18"
+                            Padding="0,0,0,4"
+                            Foreground="#FF404040"
+                            FontWeight="SemiBold"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            Text=""/>
+                <ScrollViewer x:Name="_settingsScrollView_"
+                              ScrollViewer.VerticalScrollBarVisibility="Auto"
+                              ScrollViewer.VerticalScrollMode="Enabled"
+                              Grid.Row="1">
+                    <!--video settings-->
+                    <StackPanel Margin="4">
+                        <!--label/divider for video-->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Rectangle  Grid.Column="0"
+                                            Fill="Gray"
+                                            Height="2"
+                                            Margin="16,4,4,4"/>
+                            <TextBlock  x:Uid="_settingsVideo_"
+                                        Grid.Column="1"
+                                            HorizontalAlignment="Center"
+                                            Text=""
+                                            Margin="4"/>
+                            <Rectangle  Grid.Column="2"
+                                            Fill="Gray"
+                                            Height="2"
+                                            Margin="4,4,16,4"/>
+                        </Grid>
+                        <TextBlock x:Uid="_settingsVideoDevice_"
                                    Margin="10"/>
-                            <ComboBox x:Name="_videoDeviceComboBox_"
+                        <ComboBox x:Name="_videoDeviceComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoDeviceComboBox__SelectionChanged">
-                            </ComboBox>
-                            <TextBlock Text="Video Resolution" Margin="10"/>
-                            <ComboBox x:Name="_videoResolutionComboBox_"
+                        </ComboBox>
+                        <TextBlock x:Uid="_settingsVideoResolution_"
+                                   Margin="10"/>
+                        <ComboBox x:Name="_videoResolutionComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoResolutionComboBox__SelectionChanged">
-                            </ComboBox>
-                            <TextBlock Text="Video Rate" Margin="10"/>
-                            <ComboBox x:Name="_videoRateComboBox_"
+                        </ComboBox>
+                        <TextBlock x:Uid="_settingsVideoRate_"
+                                   Margin="10"/>
+                        <ComboBox x:Name="_videoRateComboBox_"
                                   Margin="10"
                                   SelectionChanged="_videoRateComboBox__SelectionChanged">
-                            </ComboBox>
-                        </StackPanel>
-                    </Grid>
+                        </ComboBox>
+                    </StackPanel>
                 </ScrollViewer>
             </Grid>
         </Grid>
     </Grid>
-
 </Page>

@@ -20,6 +20,8 @@
 
 #include "SmartPanelItemsViewModel.h"
 
+#include "configurationmanager_interface.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
@@ -34,6 +36,8 @@ using namespace ViewModel;
 SmartPanelItemsViewModel::SmartPanelItemsViewModel()
 {
     itemsList_ = ref new Vector<SmartPanelItem^>();
+    itemsListFiltered_ = ref new Vector<SmartPanelItem^>();
+
     RingD::instance->stateChange += ref new RingClientUWP::StateChange(this, &RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange);
 }
 
@@ -102,12 +106,28 @@ SmartPanelItemsViewModel::getIndex(Contact^ contact)
     return i;
 }
 
+unsigned int
+SmartPanelItemsViewModel::getFilteredIndex(Contact^ contact)
+{
+    unsigned int i;
+    for (i = 0; i < itemsList_->Size; i++) {
+        if (itemsListFiltered_->GetAt(i)->_contact == contact)
+            break;
+    }
+    return i;
+}
+
 void RingClientUWP::ViewModel::SmartPanelItemsViewModel::removeItem(SmartPanelItem ^ item)
 {
     unsigned int index;
 
-    if (itemsList->IndexOf(item, &index))
+    if (itemsList->IndexOf(item, &index)) {
         itemsList->RemoveAt(index);
+
+        if (itemsListFiltered->IndexOf(item, &index)) {
+            itemsListFiltered->RemoveAt(index);
+        }
+    }
 }
 
 void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartPanelItem ^ item)
@@ -127,6 +147,12 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartP
 
                 itemsList->RemoveAt(spi_index);
                 itemsList->InsertAt(0, item);
+            }
+        }
+        if (itemsListFiltered->IndexOf(item, &spi_index)) {
+            if (spi_index != 0) {
+                itemsListFiltered->RemoveAt(spi_index);
+                itemsListFiltered->InsertAt(0, item);
                 item->_isHovered = false;
             }
         }
@@ -149,12 +175,17 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     auto timestampFormatter = ref new DateTimeFormatter("day month year hour minute second");
 
     switch (state) {
+    case CallStatus::NONE:
+    {
+        break;
+    }
     case CallStatus::ENDED:
     {
         item->_contact->_lastTime = "Last call : " + timestampFormatter->Format(dateTime) + ".";
         String^ accountIdAssociated = getAssociatedAccountId(item);
         if (auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountIdAssociated)))
             contactListModel->saveContactsToFile();
+        refreshFilteredData();
         break;
     }
     case CallStatus::IN_PROGRESS:
@@ -181,6 +212,7 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     }
     case CallStatus::INCOMING_RINGING:
         item->_contact->_lastTime = "incoming call from " + item->_contact->_name + ".";
+        refreshFilteredData();
         break;
     default:
         break;
@@ -199,8 +231,45 @@ SmartPanelItemsViewModel::getAssociatedAccountId(SmartPanelItem^ item)
 void
 SmartPanelItemsViewModel::update()
 {
-    for each (SmartPanelItem^ item in itemsList) {
-        item->notifyPropertyChanged("");
-        item->_contact->notifyPropertyChanged("");
+    for each (SmartPanelItem^ item in itemsListFiltered_) {
+        item->raiseNotifyPropertyChanged("");
+        item->_contact->raiseNotifyPropertyChanged("");
     }
+    //selectedItemUpdated();
+}
+
+void
+SmartPanelItemsViewModel::refreshFilteredData()
+{
+    MSG_("refreshFilteredData - contacts");
+
+    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+
+    std::for_each(begin(itemsList_), end(itemsList_),
+        [selectedAccountId, this](SmartPanelItem^ item) {
+        static unsigned spi_index;
+        auto isInList = itemsListFiltered->IndexOf(item, &spi_index);
+        auto isCall = ( item->_callStatus != CallStatus::NONE &&
+                        item->_callStatus != CallStatus::ENDED ) ? true : false;
+        auto account = AccountsViewModel::instance->findItem(item->_contact->_accountIdAssociated);
+        // 1. Filters out non-account contacts that are NOT incoming calls
+        // 2. Filters out account contacts that don't trust us yet
+        if ((item->_contact->_accountIdAssociated == selectedAccountId || isCall) &&
+            (item->_contact->_isTrusted ||
+            (account->_dhtPublicInCalls &&
+             item->_contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST ||
+             item->_contact->_trustStatus == TrustStatus::UNKNOWN))) {
+            if (!isInList) {
+                if (isCall)
+                    itemsListFiltered_->InsertAt(0, item);
+                else
+                    itemsListFiltered_->Append(item);
+            }
+        }
+        else if (isInList) {
+            itemsListFiltered_->RemoveAt(spi_index);
+        }
+    });
+
+    contactsListUpdated();
 }
