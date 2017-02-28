@@ -71,5 +71,7 @@ private:
 
 };
 
+task<Windows::UI::Xaml::Media::Imaging::BitmapImage^> getProfileImageAsync();
+//void    getProfileImageAsync();
 }
 }

@@ -55,6 +55,12 @@ AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ name)
 }
 
 void
+AccountsViewModel::raiseUnreadContactRequest()
+{
+    newUnreadContactRequest();
+}
+
+void
 AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState)
 {
     auto account = ref new Account(
@@ -114,13 +120,9 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
 ContactListModel^
 AccountsViewModel::getContactListModel(std::string& accountId)
 {
-    try {
+    if (contactListModels_->Size)
         return contactListModels_->Lookup(Utils::toPlatformString(accountId));
-    }
-    catch (Platform::OutOfBoundsException^ e) {
-        EXC_(e);
-        return nullptr;
-    }
+    return nullptr;
 }
 
 int
@@ -129,10 +131,26 @@ AccountsViewModel::unreadMessages(String ^ accountId)
     int messageCount = 0;
     if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
         for each (auto contact in contactListModel->_contactsList) {
-            messageCount += contact->_unreadMessages;
+            if (contact->_isTrusted) {
+                messageCount += contact->_unreadMessages;
+            }
         }
     }
     return messageCount;
+}
+
+int
+AccountsViewModel::unreadContactRequests(String ^ accountId)
+{
+    int contactRequestCount = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
+                contactRequestCount += contact->_unreadMessages;
+            }
+        }
+    }
+    return contactRequestCount;
 }
 
 void
@@ -143,16 +161,14 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
     if (contact == nullptr)
-        contact = contactListModel->addNewContact(fromRingId, fromRingId);
+        return;
+
+    if (!contact->_isTrusted)
+        return;
 
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
-    if (contact == nullptr) {
-        ERR_("contact not handled!");
-        return;
-    }
-
-    RingD::instance->lookUpAddress(fromRingId);
+    RingD::instance->lookUpAddress(Utils::toString(accountId), fromRingId);
 
     contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
 
