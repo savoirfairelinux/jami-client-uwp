@@ -42,7 +42,7 @@ AccountListItemsViewModel::AccountListItemsViewModel()
 void RingClientUWP::ViewModel::AccountListItemsViewModel::OnaccountAdded(RingClientUWP::Account ^account)
 {
     auto item = ref new AccountListItem(account);
-    itemsList_->Append(item);
+    itemsList_->InsertAt(0, item);
 }
 
 
@@ -54,7 +54,8 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
 void
 AccountListItemsViewModel::updateContactsViewModel()
 {
-    SmartPanelItemsViewModel::instance->update();
+    SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+    //SmartPanelItemsViewModel::instance->update();
 }
 
 AccountListItem^
@@ -95,4 +96,23 @@ AccountListItemsViewModel::unreadMessages()
         messageCount += account->_unreadMessages;
     }
     return messageCount;
+}
+
+int
+AccountListItemsViewModel::unreadContactRequests()
+{
+    int unreadContactRequestCount = 0;
+    for each (auto account in AccountsViewModel::instance->accountsList) {
+        account->_unreadContactRequests = AccountsViewModel::instance->unreadContactRequests(account->accountID_);
+        unreadContactRequestCount += account->_unreadContactRequests;
+    }
+    return unreadContactRequestCount;
+}
+
+void
+AccountListItemsViewModel::update()
+{
+    for each (AccountListItem^ item in itemsList) {
+        item->raiseNotifyPropertyChanged("");
+    }
 }
