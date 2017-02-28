@@ -15,6 +15,15 @@ public enum class CallStatus {
     CONNECTED
 };
 
+public enum class TrustStatus {
+    UNKNOWN,
+    INCOMING_CONTACT_REQUEST,
+    INGNORED,
+    BLOCKED,
+    CONTACT_REQUEST_SENT,
+    TRUSTED
+};
+
 public enum class LookupStatus {
     SUCCESS,
     INVALID_NAME,
@@ -23,7 +32,7 @@ public enum class LookupStatus {
 };
 
 public enum class ContactStatus {
-    WAITING_FOR_ACTIVATION, // waiting for lookup
+    WAITING_FOR_ACTIVATION,
     READY
 };
 
