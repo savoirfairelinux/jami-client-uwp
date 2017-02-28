@@ -44,7 +44,7 @@ struct Symbols {
     constexpr static const char* SEPERATOR1             =   ";";
     constexpr static const char* SEPERATOR2             =   ":";
     constexpr static const char* PHOTO_ENC              =   "ENDCODING=BASE64";
-    constexpr static const char* PHOTO_TYPE             =   "TYPE=JPEG";
+    constexpr static const char* PHOTO_TYPE             =   "TYPE=PNG";
 };
 
 struct Property {
@@ -70,14 +70,18 @@ internal:
     void                    encodePNGToBase64();
 
     void                    completeReception();
+    void                    parseFromString();
     void                    setData(std::map<std::string, std::string> data);
 
 private:
+    std::string             m_data;
     std::map<std::string, std::string>  m_mParts     {       };
     Contact^                m_Owner;
     int                     m_type;
     std::string             m_accountId;
 };
+
+std::map<std::string, std::string> parseContactRequestPayload(const std::string& payload);
 
 }
 }

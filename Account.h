@@ -30,8 +30,15 @@ ref class Contact;
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
-    Account(String^ name, String^ ringID, String^ accountType, String^ accountID, String^ deviceId, bool upnpState
-            , String^ sipHostname, String^ sipUsername, String^ sipPassword);
+    Account(String^ name,
+            String^ ringID,
+            String^ accountType,
+            String^ accountID,
+            String^ deviceId,
+            bool upnpState,
+            String^ sipHostname,
+            String^ sipUsername,
+            String^ sipPassword);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
@@ -89,6 +96,17 @@ public:
         }
     }
 
+    property unsigned _unreadContactRequests
+    {
+        unsigned get() {
+            return unreadContactRequests_;
+        }
+        void set(unsigned value) {
+            unreadContactRequests_ = value;
+            NotifyPropertyChanged("_unreadContactRequests");
+        }
+    }
+
     property String^ _sipPassword; // refacto : think to encrypt password in memory
 
     property IVector<Contact^>^ _contactsList {
@@ -111,6 +129,7 @@ private:
     String^ ringID__;
     String^ sipUsername_;
     unsigned unreadMessages_;
+    unsigned unreadContactRequests_;
 };
 }
 
