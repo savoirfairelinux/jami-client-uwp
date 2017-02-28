@@ -1,4 +1,3 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
@@ -17,52 +16,85 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
+
 using namespace Platform;
 using namespace Windows::UI::Xaml::Data;
 
 /* strings required by Windows::Data::Json. Defined here on puprose */
 String^ conversationKey = "conversation";
 String^ messageKey      = "message";
-String^ dateKey         = "date";
 String^ fromContactKey  = "fromContact";
 String^ payloadKey      = "payload";
+String^ timeReceivedKey = "timeReceived";
+String^ isReceivedKey   = "isReceived";
+String^ messageIdKey    = "messageId";
 
 namespace RingClientUWP
 {
-public ref class ConversationMessage sealed
+
+public ref class ConversationMessage sealed : public INotifyPropertyChanged
 {
 public:
-    property String^ Date;
+    void raiseNotifyPropertyChanged(String^ propertyName);
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
     property bool FromContact;
     property String^ Payload;
+    property std::time_t TimeReceived;
+    property bool IsReceived;
+    property String^ MessageId;
+
+    property String^ MessageAvatar {
+        String^ get() {
+            return getMessageAvatar();
+        }
+    }
+
+    property uint64_t MessageIdInteger {
+        uint64_t get() {
+            return strtoull(Utils::toString(MessageId).c_str(), nullptr, 0);
+        }
+    }
 
     /* functions */
     JsonObject^ ToJsonObject();
+    String^ getMessageAvatar();
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
 };
 
 public ref class Conversation sealed
 {
-private:
-
-
 public:
-    /* functions */
     Conversation();
-    void addMessage(String^ date, bool fromContact, String^ payload);
+
+    /* functions */
+    void addMessage(bool fromContact,
+                    String^ payload,
+                    std::time_t timeReceived,
+                    bool isReceived,
+                    String^ MessageId);
 
 internal:
     /* properties */
-    property Vector<ConversationMessage^>^ _messages
-    {
-        Vector<ConversationMessage^>^ get()
-        {
+    property IObservableVector<ConversationMessage^>^ _messages {
+        IObservableVector<ConversationMessage^>^ get() {
             return messagesList_;
         }
     }
 
+    /* functions */
+    void update(const std::vector<std::string>& properties);
+    ConversationMessage^ findMessage(uint64_t messageId);
+    unsigned getMessageIndex(uint64_t messageId);
+
 private:
     /* members */
-    Vector<ConversationMessage^>^ messagesList_;
+    IObservableVector<ConversationMessage^>^ messagesList_;
+    ListBox^ messageListBox_;
 
 };
 #define MSG_FROM_CONTACT true
