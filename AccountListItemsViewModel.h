@@ -33,7 +33,9 @@ public ref class AccountListItemsViewModel sealed
 {
 public:
     String^ getSelectedAccountId();
+    void update();
     int unreadMessages();
+    int unreadContactRequests();
 
 internal:
     /* singleton */
@@ -48,25 +50,23 @@ internal:
 
     /* functions */
     AccountListItem^ findItem(String^ accountId);
+    int getIndex(String^ accountId);
     void removeItem(AccountListItem^ item);
 
     /* properties */
     property Vector<AccountListItem^>^ itemsList
     {
-        Vector<AccountListItem^>^ get()
-        {
+        Vector<AccountListItem^>^ get() {
             return itemsList_;
         }
     }
 
     property AccountListItem^ _selectedItem
     {
-        AccountListItem^ get()
-        {
+        AccountListItem^ get() {
             return currentItem_;
         }
-        void set(AccountListItem^ value)
-        {
+        void set(AccountListItem^ value) {
             if (currentItem_)
                 currentItem_->_isSelected = false;
             currentItem_ = value;
