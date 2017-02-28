@@ -34,7 +34,8 @@ delegate void ClearAccountsList();
 delegate void ContactAdded(String^, Contact^);
 delegate void ContactDeleted(String^, Contact^);
 delegate void ContactDataModified(String^, Contact^);
-delegate void NewUnreadMessage();
+delegate void NewUnreadMessage(Contact^);
+delegate void NewUnreadContactRequest();
 
 namespace ViewModel
 {
@@ -42,9 +43,10 @@ namespace ViewModel
 public ref class AccountsViewModel sealed
 {
 public:
-    void raiseContactAdded(String^ accountId, Contact^ name);
-    void raiseContactDeleted(String^ accountId, Contact^ name);
-    void raiseContactDataModified(String^ accountId, Contact^ name);
+    void raiseContactAdded(String^ accountId, Contact^ contact);
+    void raiseContactDeleted(String^ accountId, Contact^ contact);
+    void raiseContactDataModified(String^ accountId, Contact^ contact);
+    void raiseUnreadContactRequest();
 
 internal:
     /* properties */
@@ -55,21 +57,38 @@ internal:
         }
     }
 
-    property Vector<Account^>^ accountsList
-    {
-        Vector<Account^>^ get()
-        {
+    property Vector<Account^>^ accountsList {
+        Vector<Account^>^ get() {
             return accountsList_;
         }
     }
 
     /* functions */
-    void addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState);
-    void addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword);
+    void addRingAccount(std::string& alias,
+                        std::string& ringID,
+                        std::string& accountID,
+                        std::string& deviceId,
+                        std::string& deviceName,
+                        bool active,
+                        bool upnpState,
+                        bool autoAnswer,
+                        bool dhtPublicInCalls,
+                        bool turnEnabled,
+                        std::string& turnAddress);
+    void addSipAccount( std::string& alias,
+                        std::string& accountID,
+                        bool active,
+                        std::string& sipHostname,
+                        std::string& sipUsername,
+                        std::string& sipPassword);
     void clearAccountList();
     Account^ findItem(String^ accountId);
+    Account^ findAccountByRingID(String ^ ringId);
     ContactListModel^ getContactListModel(std::string& accountId);
     int unreadMessages(String^ accountId);
+    int unreadContactRequests(String^ accountId);
+    int bannedContacts(String^ accountId);
+    int activeAccounts();
 
     /* events */
     event NewAccountSelected^ newAccountSelected;
@@ -81,6 +100,7 @@ internal:
     event ContactDeleted^ contactDeleted;
     event ContactDataModified^ contactDataModified;
     event NewUnreadMessage^ newUnreadMessage;
+    event NewUnreadContactRequest^ newUnreadContactRequest;
 
 private:
     AccountsViewModel();
