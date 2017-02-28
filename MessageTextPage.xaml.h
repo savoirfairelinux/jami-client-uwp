@@ -57,10 +57,10 @@ private:
     void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
     void OnSelectionChanged(Platform::Object ^sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs ^e);
 
-    void _deleteContact__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _clearConversation__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _audioCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void _videoCall__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _deleteContactBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _clearConversationBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _audioCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _videoCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }

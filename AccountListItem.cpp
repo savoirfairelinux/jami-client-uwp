@@ -47,3 +47,9 @@ AccountListItem::NotifyPropertyChanged(String^ propertyName)
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     }));
 }
+
+void
+AccountListItem::notifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
+}
