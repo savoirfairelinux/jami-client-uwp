@@ -84,6 +84,14 @@ private:
     bool isResizingPreview = false;
     int lastQuadrant = 0;
     int quadrant = 0;
+
+    bool chatBoxOpen = false;
+    double chatBoxSize = 1;
+    enum class Orientation {
+        Horizontal,
+        Vertical
+    } chtBoxOrientation = Orientation::Vertical;
+
     TransformGroup^ PreviewImage_transforms;
     MatrixTransform^ PreviewImage_previousTransform;
     CompositeTransform^ PreviewImage_deltaTransform;
@@ -115,8 +123,9 @@ private:
     void OnstopPreviewing();
     void OnaudioMuted(const std::string &callId, bool state);
     void OnvideoMuted(const std::string &callId, bool state);
-
-    // For transforming the preview image
+    void openChatPanel();
+    void closeChatPanel();
+    void resizeChatPanel();
     void computeQuadrant();
     void arrangeResizer();
     void anchorPreview();
