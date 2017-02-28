@@ -12,7 +12,24 @@ public enum class CallStatus {
     PEER_PAUSED,
     ENDED,
     TERMINATING,
-    CONNECTED
+    CONNECTED,
+    AUTO_ANSWERING
+};
+
+public enum class TrustStatus {
+    UNKNOWN,
+    INCOMING_CONTACT_REQUEST,
+    INGNORED,
+    BLOCKED,
+    CONTACT_REQUEST_SENT,
+    TRUSTED
+};
+
+public enum class RegistrationState {
+    UNKNOWN,
+    TRYING,
+    REGISTERED,
+    UNREGISTERED
 };
 
 public enum class LookupStatus {
@@ -23,7 +40,7 @@ public enum class LookupStatus {
 };
 
 public enum class ContactStatus {
-    WAITING_FOR_ACTIVATION, // waiting for lookup
+    WAITING_FOR_ACTIVATION,
     READY
 };
 
