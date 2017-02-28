@@ -105,6 +105,15 @@ MainPage::MainPage()
     });
 
     RingD::instance->fullScreenToggled += ref new RingClientUWP::FullScreenToggled(this, &RingClientUWP::MainPage::OnFullScreenToggled);
+
+}
+
+void
+MainPage::focusOnMessagingTextbox()
+{
+    auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+    auto messageTextBox = dynamic_cast<TextBox^>(messageTextPage->FindName("_messageTextBox_"));
+    messageTextBox->Focus(Windows::UI::Xaml::FocusState::Programmatic);
 }
 
 void
@@ -200,9 +209,25 @@ RingClientUWP::MainPage::hideLoadingOverlay()
 void RingClientUWP::MainPage::OnsummonMessageTextPage()
 {
     auto messageTextPage = dynamic_cast<MessageTextPage^>(_messageTextFrame_->Content);
+
+    
+
+    /*TimeSpan delay;
+    delay.Duration = 10000 * 1;
+    ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
+        ref new TimerElapsedHandler([this](ThreadPoolTimer^ source)
+    {
+        Dispatcher->RunAsync(CoreDispatcherPriority::High,
+            ref new DispatchedHandler([=]()
+        {
+            focusTextbox();
+        }));
+    }), delay);*/
+
     messageTextPage->updatePageContent();
     showFrame(_messageTextFrame_);
 
+    //focusTextbox();
 }
 
 
@@ -250,7 +275,8 @@ void RingClientUWP::MainPage::OnpressHangUpCall()
     OnsummonMessageTextPage();
 }
 
-void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+void
+MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
@@ -258,8 +284,15 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     /* send the user to the peer's message text page */
     case CallStatus::ENDED:
     {
-        if (item)
+        auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
+
+        if (!selectedItem) {
+            return;
+        }
+
+        if (item && selectedItem->_callId == callId) {
             OnsummonMessageTextPage();
+        }
         break;
     }
     default:
@@ -355,7 +388,7 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
 }
 
 
-void RingClientUWP::MainPage::OnregistrationStateRegistered()
+void RingClientUWP::MainPage::OnregistrationStateRegistered(const std::string& accountId)
 {
     showLoadingOverlay(false, false);
 
