@@ -1,0 +1,336 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" id="root">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace"/>
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string"/>
+              <xsd:attribute name="type" type="xsd:string"/>
+              <xsd:attribute name="mimetype" type="xsd:string"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string"/>
+              <xsd:attribute name="name" type="xsd:string"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1"/>
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3"/>
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4"/>
+              <xsd:attribute ref="xml:space"/>
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1"/>
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required"/>
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="_aboutBasicButton_.Content" xml:space="preserve">
+    <value>Относно</value>
+  </data>
+  <data name="_aboutCloseButton_.Content" xml:space="preserve">
+    <value>Затваряне</value>
+  </data>
+  <data name="_aboutCreditsButton_.Content" xml:space="preserve">
+    <value>Заслуги</value>
+  </data>
+  <data name="_aboutDisclaimer_.Text" xml:space="preserve">
+    <value>This program comes with absolutely no warranty</value>
+  </data>
+  <data name="_aboutGPL_0_.Text" xml:space="preserve">
+    <value>Вижте</value>
+  </data>
+  <data name="_aboutGPL_1_.Content" xml:space="preserve">
+    <value>Общия публичен лиценз на ГНУ, версия 3 или по-нова</value>
+  </data>
+  <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
+    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
+  </data>
+  <data name="_aboutGPL_2_.Text" xml:space="preserve">
+    <value>за подробности.</value>
+  </data>
+  <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
+    <value>Ring е сигурен и разпределен софтуер за общуване.</value>
+  </data>
+  <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
+    <value>Клиентът на Ring за „Microsoft Windows Runtime“.</value>
+  </data>
+  <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
+    <value>Release: Beta 2 - Gaston Miron</value>
+  </data>
+  <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете псевдоним</value>
+  </data>
+  <data name="_accountEditionTitle_.Text" xml:space="preserve">
+    <value>Редактиране на акаунта</value>
+  </data>
+  <data name="_accountsAddDevice_.Text" xml:space="preserve">
+    <value>Добавяне на устройство</value>
+  </data>
+  <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
+    <value>Въведете ПИН</value>
+  </data>
+  <data name="_accountsAddStep1_.Text" xml:space="preserve">
+    <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
+  </data>
+  <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
+    <value>Авт. отговор</value>
+  </data>
+  <data name="_accountsDevices_.Text" xml:space="preserve">
+    <value>Устройства</value>
+  </data>
+  <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
+    <value>Научете повече</value>
+  </data>
+  <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
+    <value>Въведете паролата си</value>
+  </data>
+  <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
+    <value>Accept calls and messages from incognito contacts</value>
+  </data>
+  <data name="_accountsPINGenerator_.Text" xml:space="preserve">
+    <value>PIN generator</value>
+  </data>
+  <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
+    <value>Регистриране на публично потребителско име</value>
+  </data>
+  <data name="_accountsShare_.Text" xml:space="preserve">
+    <value>Споделяне</value>
+  </data>
+  <data name="_accountsSIPParameters_.Text" xml:space="preserve">
+    <value>SIP account parameters</value>
+  </data>
+  <data name="_accountsTitle_.Text" xml:space="preserve">
+    <value>Акаунти</value>
+  </data>
+  <data name="_accountsType_.Text" xml:space="preserve">
+    <value>Тип на акаунта</value>
+  </data>
+  <data name="_accountsUPnP_.Text" xml:space="preserve">
+    <value>UPnP</value>
+  </data>
+  <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
+    <value>Exporting account on the Ring...</value>
+  </data>
+  <data name="_callsLookingFor_" xml:space="preserve">
+    <value>looking for </value>
+  </data>
+  <data name="_contactRequestPending_.Text" xml:space="preserve">
+    <value>Ви добави като контакт.</value>
+  </data>
+  <data name="_contactRequestSent_.Text" xml:space="preserve">
+    <value>Contact request sent.</value>
+  </data>
+  <data name="_contactRequestsTitle_.Text" xml:space="preserve">
+    <value>Contact Requests</value>
+  </data>
+  <data name="_contactsTitle_.Text" xml:space="preserve">
+    <value>Контакти</value>
+  </data>
+  <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
+    <value>Научете повече</value>
+  </data>
+  <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
+    <value>Beginning of Time</value>
+  </data>
+  <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
+    <value>Регистриране</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
+    <value>Повторете паролата</value>
+  </data>
+  <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете парола</value>
+  </data>
+  <data name="_settingsTitle_.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="_settingsVideoDevice_.Text" xml:space="preserve">
+    <value>Устройство</value>
+  </data>
+  <data name="_settingsVideoRate_.Text" xml:space="preserve">
+    <value>Скорост</value>
+  </data>
+  <data name="_settingsVideoResolution_.Text" xml:space="preserve">
+    <value>Разделителна способност</value>
+  </data>
+  <data name="_settingsVideo_.Text" xml:space="preserve">
+    <value>Видео</value>
+  </data>
+  <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете име на сървър</value>
+  </data>
+  <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете парола</value>
+  </data>
+  <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете потребителско име</value>
+  </data>
+  <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
+    <value>Въведете потребителското си име</value>
+  </data>
+  <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
+    <value>изчакване на списъка с устройства…</value>
+  </data>
+  <data name="_welcomeAboutButton_.Content" xml:space="preserve">
+    <value>Относно</value>
+  </data>
+  <data name="_welcomeDescription_.Text" xml:space="preserve">
+    <value>Ring is free software for universal communication which respects the freedoms and privacy of its users.</value>
+  </data>
+  <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
+    <value>Декларация за поверителност</value>
+  </data>
+  <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
+    <value>Акаунтът Ви ще бъде изтрит от този компютър. На другите устройства няма да има промени. Публичната Ви регистрация не може да бъде изтрита по никакъв начин.</value>
+  </data>
+  <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
+    <value>Акаунтът Ви ще бъде изтрит от този компютър.</value>
+  </data>
+  <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
+    <value>Хората могат да Ви намерят по потребителското Ви име</value>
+  </data>
+  <data name="_whatWillHappen_0_" xml:space="preserve">
+    <value>Вече имате регистрация.</value>
+  </data>
+  <data name="_whatWillHappen_1_" xml:space="preserve">
+    <value>Все още нямате регистрация.</value>
+  </data>
+  <data name="_whatWillHappen_2_" xml:space="preserve">
+    <value>You&apos;ll have to send your ringId.</value>
+  </data>
+  <data name="_accountsCredentialsExpired_" xml:space="preserve">
+    <value>Credentials error or PIN expired.</value>
+  </data>
+  <data name="_accountsNoDeviceId_" xml:space="preserve">
+    <value>Няма открит идентификатор на устройство!</value>
+  </data>
+  <data name="_contactsContactExists_" xml:space="preserve">
+    <value>you already have a contact with this ring id.</value>
+  </data>
+  <data name="_contactsNetworkError_" xml:space="preserve">
+    <value>мрежова грешка!</value>
+  </data>
+  <data name="_contactsRingIdAdded_" xml:space="preserve">
+    <value>ring id added.</value>
+  </data>
+  <data name="_contactsUserAdded_" xml:space="preserve">
+    <value>потребителското име е намерено и добавено.</value>
+  </data>
+  <data name="_contactsUsernameInvalid_" xml:space="preserve">
+    <value>потребителското име е грешно.</value>
+  </data>
+  <data name="_contactsUsernameNotFound_" xml:space="preserve">
+    <value>потребителското име не е намерено.</value>
+  </data>
+  <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
+    <value>Добавяне на съществуващ акаунт</value>
+  </data>
+  <data name="_wizardCreateAccount_.Content" xml:space="preserve">
+    <value>Създаване на нов акаунт</value>
+  </data>
+  <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
+    <value>Въведете пълното си име</value>
+  </data>
+  <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
+    <value>Парола за акаунта в Ring</value>
+  </data>
+  <data name="_wizardStep1_.Content" xml:space="preserve">
+    <value>Стъпка 1</value>
+  </data>
+  <data name="_wizardStep2_.Content" xml:space="preserve">
+    <value>Стъпка 2</value>
+  </data>
+</root>

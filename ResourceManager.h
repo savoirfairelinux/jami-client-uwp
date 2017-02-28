@@ -1,7 +1,6 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -16,23 +15,47 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "pch.h"
+#pragma once
 
-#include "CallsViewModel.h"
+#include <pch.h>
 
-using namespace RingClientUWP;
-using namespace ViewModel;
-using namespace Windows::UI::Core;
-using namespace Windows::ApplicationModel::Core;
+using namespace Platform;
+using namespace Platform::Collections;
+using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+using namespace Windows::System;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::ApplicationModel::Resources;
 
-CallsViewModel::CallsViewModel()
+namespace RingClientUWP
 {
-    callIdsList_ = ref new Vector<String^>();
 
-    /* connect to delegates. */
+public ref class ResourceMananger sealed
+{
+public:
+    /* properties */
+    static property ResourceMananger^ instance {
+        ResourceMananger^ get() {
+            static ResourceMananger^ instance_ = ref new ResourceMananger();
+            return instance_;
+        }
+    }
 
-    RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
-    String^ accountId, String^ callId, String^ from) {
-        callIdsList_->Append(callId); // TODO : check if the string is remove when the call ends.
-    });
+    void            preloadImage(String^ path);
+    BitmapImage^    imageFromRelativePath(String^ path);
+
+    String^         getStringResource(String^ key);
+
+private:
+    ResourceMananger();
+
+    Map<String^ , BitmapImage^> preload;
+    ResourceLoader^ stringLoader;
+
+};
+
 }
