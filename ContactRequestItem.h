@@ -1,6 +1,5 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -16,62 +15,76 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #pragma once
 
 using namespace Platform;
+using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
-
-/* strings required by Windows::Data::Json. Defined here on puprose */
-String^ conversationKey = "conversation";
-String^ messageKey      = "message";
-String^ fromContactKey  = "fromContact";
-String^ payloadKey      = "payload";
-String^ timeReceivedKey = "timeReceived";
-String^ isReceivedKey       = "isReceived";
-String^ messageIdKey    = "messageId";
 
 namespace RingClientUWP
 {
-public ref class ConversationMessage sealed
+namespace Controls
+{
+
+public ref class ContactRequestItem sealed : public INotifyPropertyChanged
 {
 public:
-    property bool FromContact;
-    property String^ Payload;
-    property std::time_t TimeReceived;
-    property bool IsReceived;
-    property uint64_t MessageId;
+    ContactRequestItem();
 
-    /* functions */
-    JsonObject^ ToJsonObject();
-};
+    void raiseNotifyPropertyChanged(String^ propertyName);
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
 
-public ref class Conversation sealed
-{
-private:
+    property Contact^ _contact {
+        Contact^ get() { return contact_; }
+        void set(Contact^ value) {
+            contact_ = value;
+            NotifyPropertyChanged("_contact");
+        }
+    };
 
-public:
-    /* functions */
-    Conversation();
-    void addMessage(bool fromContact,
-                    String^ payload,
-                    std::time_t timeReceived,
-                    bool isReceived,
-                    uint64_t MessageId);
-
-internal:
-    /* properties */
-    property Vector<ConversationMessage^>^ _messages {
-        Vector<ConversationMessage^>^ get() {
-            return messagesList_;
+    property Visibility _isVisible
+    {
+        Visibility get() {
+            return isVisible_;
+        }
+        void set(Visibility value) {
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
         }
     }
 
+    property bool _isSelected
+    {
+        bool get() {
+            return isSelected_;
+        }
+        void set(bool value) {
+            isSelected_ = value;
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered
+    {
+        bool get() {
+            return isHovered_;
+        }
+        void set(bool value) {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
+        }
+    }
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
 private:
-    /* members */
-    Vector<ConversationMessage^>^ messagesList_;
+    Visibility isVisible_;
+    bool isSelected_;
+    bool isHovered_;
 
+    Contact^ contact_;
 };
-#define MSG_FROM_CONTACT true
-#define MSG_FROM_ME false
 }
-
+}
