@@ -250,7 +250,8 @@ void RingClientUWP::MainPage::OnpressHangUpCall()
     OnsummonMessageTextPage();
 }
 
-void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+void
+MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
@@ -258,8 +259,15 @@ void RingClientUWP::MainPage::OnstateChange(Platform::String ^callId, RingClient
     /* send the user to the peer's message text page */
     case CallStatus::ENDED:
     {
-        if (item)
+        auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
+
+        if (!selectedItem) {
+            return;
+        }
+
+        if (item && selectedItem->_callId == callId) {
             OnsummonMessageTextPage();
+        }
         break;
     }
     default:
