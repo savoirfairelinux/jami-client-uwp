@@ -67,7 +67,7 @@ SmartPanelItem::OncallPlaced(Platform::String ^callId)
 }
 
 void
-SmartPanelItem::notifyPropertyChanged(String^ propertyName)
+SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }
