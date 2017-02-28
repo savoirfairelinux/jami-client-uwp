@@ -32,7 +32,10 @@ Account::Account(String^ name,
                  String^ accountType,
                  String^ accountID,
                  String^ deviceId,
+                 bool active,
                  bool upnpState,
+                 bool autoAnswer,
+                 bool dhtPublicInCalls,
                  String^ sipHostname,
                  String^ sipUsername,
                  String^ sipPassword)
@@ -42,7 +45,10 @@ Account::Account(String^ name,
     accountType_ = accountType;
     accountID_ = accountID;
     _deviceId = deviceId;
+    _active = active;
     _upnpState = upnpState;
+    _autoAnswer = autoAnswer;
+    _dhtPublicInCalls = dhtPublicInCalls;
     _sipHostname = sipHostname;
     _sipUsername = sipUsername;
     _sipPassword = sipPassword;
