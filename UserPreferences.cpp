@@ -20,10 +20,17 @@
 
 #include "base64.h"
 
+#include <direct.h>
+
+#include "lodepng.h"
+
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;
 using namespace Windows::ApplicationModel::Core;
+using namespace Windows::Media::Capture;
+using namespace Windows::Media::MediaProperties;
+using namespace Windows::UI::Xaml::Media::Imaging;
 
 using namespace RingClientUWP;
 using namespace Platform;
@@ -104,6 +111,12 @@ UserPreferences::getVCard()
 }
 
 void
+UserPreferences::raiseSelectIndex(int index)
+{
+    selectIndex(index);
+}
+
+void
 UserPreferences::saveProfileToVCard()
 {
     std::map<std::string, std::string> vcfData;
@@ -124,4 +137,51 @@ UserPreferences::sendVCard(std::string callID)
 {
     vCard_->send(callID,
         (RingD::instance->getLocalFolder() + "\\.vcards\\" + std::to_string(PREF_PROFILE_UID) + ".vcard").c_str());
+}
+
+task<BitmapImage^>
+Configuration::getProfileImageAsync()
+{
+    CameraCaptureUI^ cameraCaptureUI = ref new CameraCaptureUI();
+    cameraCaptureUI->PhotoSettings->Format = CameraCaptureUIPhotoFormat::Png;
+    cameraCaptureUI->PhotoSettings->CroppedSizeInPixels = Size(100, 100);
+
+    return create_task(cameraCaptureUI->CaptureFileAsync(CameraCaptureUIMode::Photo))
+    .then([](StorageFile^ photoFile)
+    {
+        auto bitmapImage = ref new Windows::UI::Xaml::Media::Imaging::BitmapImage();
+        if (photoFile != nullptr) {
+            auto path = photoFile->Path;
+            auto uri = ref new Windows::Foundation::Uri(path);
+            bitmapImage->UriSource = uri;
+
+            std::string fileName = Utils::toString(photoFile->Path);
+            std::string fileBuffer = Utils::getStringFromFile(fileName);
+
+            // re-encode to remove windows meta-data
+            std::vector<uint8_t> image;
+            unsigned width, height;
+            unsigned err = lodepng::decode(image, width, height, fileName);
+            if (!err) {
+                lodepng::encode(fileName, image, width, height);
+            }
+
+            std::string profilePath = RingD::instance->getLocalFolder() + ".profile";
+            _mkdir(profilePath.c_str());
+            std::ofstream file((profilePath + "\\profile_image.png"),
+                               std::ios::out | std::ios::trunc | std::ios::binary);
+            if (file.is_open()) {
+                file << fileBuffer;
+                file.close();
+            }
+
+            Configuration::UserPreferences::instance->PREF_PROFILE_HASPHOTO = true;
+            Configuration::UserPreferences::instance->save();
+        }
+        else {
+            bitmapImage = nullptr;
+        }
+
+        return bitmapImage;
+    });
 }
