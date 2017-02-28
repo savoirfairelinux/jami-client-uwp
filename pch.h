@@ -38,10 +38,15 @@
 #include "Contact.h"
 #include "ContactListModel.h"
 #include "Conversation.h"
+#include "RingDevice.h"
+#include "RingDeviceItem.h"
+#include "RingDeviceItemsViewModel.h"
 #include "UserModel.h"
 #include "MainPage.xaml.h"
 #include "SmartPanelItem.h"
 #include "SmartPanelItemsViewModel.h"
+#include "ContactRequestItem.h"
+#include "ContactRequestItemsViewModel.h"
 
 /* ensure to be accessed from anywhere */
 #include "RingD.h"
@@ -49,6 +54,7 @@
 #include "Utils.h"
 #include "UserPreferences.h"
 #include "VCardUtils.h"
+#include "ResourceManager.h"
 
 /* video */
 #include "Video.h"
@@ -58,3 +64,6 @@
 
 /* audio */
 #include "Ringtone.h"
+
+/* custom controls */
+#include "TextBlockExtension.h"
