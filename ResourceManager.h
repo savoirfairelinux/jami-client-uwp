@@ -1,8 +1,6 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -17,49 +15,47 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
+
+#include <pch.h>
+
+using namespace Platform;
 using namespace Platform::Collections;
+using namespace Windows::Foundation;
+using namespace Windows::Foundation::Collections;
+using namespace Windows::Storage;
+using namespace Windows::Storage::Streams;
+using namespace Windows::System;
+using namespace Windows::UI::Xaml;
+using namespace Windows::UI::Xaml::Media;
+using namespace Windows::UI::Xaml::Media::Imaging;
+using namespace Windows::ApplicationModel::Resources;
 
 namespace RingClientUWP
 {
-/* delegate */
-delegate void CallRecieved(Call^ call);
-delegate void CallStatusUpdated(Call^ call);
-delegate void CallStarted();
-delegate void CallEnded();
 
-namespace ViewModel {
-public ref class CallsViewModel sealed
+public ref class ResourceMananger sealed
 {
-internal:
-    /* singleton */
-    static property CallsViewModel^ instance
-    {
-        CallsViewModel^ get()
-        {
-            static CallsViewModel^ instance_ = ref new CallsViewModel();
+public:
+    /* properties */
+    static property ResourceMananger^ instance {
+        ResourceMananger^ get() {
+            static ResourceMananger^ instance_ = ref new ResourceMananger();
             return instance_;
         }
     }
 
-    /* properties */
-    property Vector<String^>^ _callIdList
-    {
-        Vector<String^>^ get()
-        {
-            return callIdsList_;
-        }
-    }
+    void            preloadImage(String^ path);
+    BitmapImage^    imageFromRelativePath(String^ path);
 
-    /* events */
-    event CallRecieved^ callRecieved;
-    event CallStatusUpdated^ callStatusUpdated;
-    event CallStarted^ callStarted;
-    event CallEnded^ callEnded;
+    String^         getStringResource(String^ key);
 
 private:
-    CallsViewModel(); // singleton
-    Vector<String^>^ callIdsList_;
+    ResourceMananger();
+
+    Map<String^ , BitmapImage^> preload;
+    ResourceLoader^ stringLoader;
 
 };
-}
+
 }

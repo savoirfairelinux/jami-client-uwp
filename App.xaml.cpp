@@ -49,36 +49,38 @@ App::App()
 void
 App::OnLaunched(LaunchActivatedEventArgs^ e)
 {
-    rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
+    if (e->PreviousExecutionState != ApplicationExecutionState::Running) {
+        rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
 
-    if (rootFrame == nullptr) {
-        rootFrame = ref new Frame();
+        if (rootFrame == nullptr) {
+            rootFrame = ref new Frame();
 
-        if (rootFrame->Content == nullptr)
+            if (rootFrame->Content == nullptr)
+                rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
+
+            Window::Current->Content = rootFrame;
+        }
+        else {
             rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
+            Window::Current->Content = rootFrame;
+        }
 
-        Window::Current->Content = rootFrame;
+        ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
+        Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
+        Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
+            = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;
+
+        Window::Current->Activate();
+
+        auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
+
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = color;
+        ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
+        ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
     }
-    else {
-        rootFrame->Navigate(TypeName(Views::LoadingPage::typeid), e->Arguments);
-        Window::Current->Content = rootFrame;
-    }
-
-    ApplicationView::GetForCurrentView()->SetPreferredMinSize(Size(500, 500));
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchViewSize = Size(800, 700);
-    Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode
-        = Windows::UI::ViewManagement::ApplicationViewWindowingMode::PreferredLaunchViewSize;
-
-    Window::Current->Activate();
-
-    auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
-
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->InactiveBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonInactiveBackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->BackgroundColor = color;
-    ApplicationView::GetForCurrentView()->TitleBar->ForegroundColor = Colors::White;
-    ApplicationView::GetForCurrentView()->TitleBar->ButtonForegroundColor = Colors::White;
 }
 
 void App::OnsummonWizard()
@@ -103,7 +105,12 @@ void App::OnActivated(IActivatedEventArgs^ e)
     if (e->Kind == ActivationKind::ToastNotification) {
         auto toastArgs = safe_cast<ToastNotificationActivatedEventArgs^>(e);
         std::string args = Utils::toString(toastArgs->Argument);
-        if (!args.empty())
-            RingD::instance->acceptIncommingCall(Utils::toPlatformString(args));
+        if (!args.empty()) {
+            auto callId = args.substr(2);
+            if (args[0] == 'a')
+                RingD::instance->acceptIncommingCall(Utils::toPlatformString(callId));
+            else if (args[0] == 'r')
+                RingD::instance->refuseIncommingCall(Utils::toPlatformString(callId));
+        }
     }
 }
