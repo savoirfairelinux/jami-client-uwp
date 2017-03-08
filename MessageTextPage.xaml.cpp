@@ -16,7 +16,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 #include "pch.h"
-#include "ContactsViewModel.h"
+#include "ContactListModel.h"
 
 #include "MainPage.xaml.h"
 
@@ -202,7 +202,9 @@ void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Obje
     messageDialog->Commands->Append(ref new UICommand("Remove", ref new UICommandInvokedHandler([=](IUICommand^ command)
     {
         closeMessageTextPage();
-        ContactsViewModel::instance->deleteContact(contact);
+        String^ accountIdAssociated = SmartPanelItemsViewModel::instance->getAssociatedAccountId(item);
+        if (auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountIdAssociated)))
+            contactListModel->deleteContact(contact);
         SmartPanelItemsViewModel::instance->removeItem(item);
     })));
 

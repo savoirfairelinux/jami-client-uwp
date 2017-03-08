@@ -126,17 +126,17 @@ RingClientUWP::RingD::reloadAccountList()
 /* nb: send message during conversation not chat video message */
 void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
 {
-    /* account id */
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
-    std::wstring accountId2(accountId->Begin());
-    std::string accountId3(accountId2.begin(), accountId2.end());
-
     /* recipient */
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
     auto contact = item->_contact;
     auto toRingId = contact->ringID_;
     std::wstring toRingId2(toRingId->Begin());
     std::string toRingId3(toRingId2.begin(), toRingId2.end());
+
+    /* account id */
+    auto accountId = contact->_accountIdAssociated;
+    std::wstring accountId2(accountId->Begin());
+    std::string accountId3(accountId2.begin(), accountId2.end());
 
     /* payload(s) */
     std::wstring message2(message->Begin());
@@ -483,11 +483,13 @@ RingD::registerCallbacks()
                 incomingCall(accountId2, callId2, from2);
                 stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
 
-                auto contact = ContactsViewModel::instance->findContactByRingId(from2);
-                if (contact) {
-                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                    if (item)
-                        item->_callId = callId2;
+                if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(accountId))) {
+                    auto contact = contactListModel->findContactByRingId(from2);
+                    if (contact) {
+                        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                        if (item)
+                            item->_callId = callId2;
+                    }
                 }
             }));
         }),
@@ -954,19 +956,16 @@ RingD::dequeueTasks()
             break;
         case Request::PlaceCall:
         {
-            auto callId = DRing::placeCall(task->_accountId_new, std::string("ring:" + task->_ringId_new));
+            auto callId = DRing::placeCall(task->_accountId_new, "ring:" + task->_ringId_new);
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
-
-                auto contact = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
-                auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                item->_callId = Utils::toPlatformString(callId);
-                //MSG_("$1 place call with id : " + Utils::toString(item->_callId));
-
-                /* if for any reason there is no callid, do not propagate the event*/
-                if (!callId.empty())
-                    callPlaced(Utils::toPlatformString(callId));
-
+                if (auto contactListModel = AccountsViewModel::instance->getContactListModel(task->_accountId_new)) {
+                    auto contact = contactListModel->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    item->_callId = Utils::toPlatformString(callId);
+                    if (!callId.empty())
+                        callPlaced(Utils::toPlatformString(callId));
+                }
             }));
         }
         break;

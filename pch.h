@@ -36,7 +36,7 @@
 #include "AccountListItemsViewModel.h"
 #include "AccountsViewModel.h"
 #include "Contact.h"
-#include "ContactsViewModel.h"
+#include "ContactListModel.h"
 #include "Conversation.h"
 #include "UserModel.h"
 #include "MainPage.xaml.h"
