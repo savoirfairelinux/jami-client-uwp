@@ -24,7 +24,9 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-namespace Controls {
+namespace Controls
+{
+
 public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 {
 public:
@@ -32,6 +34,7 @@ public:
     void muteVideo(bool state);
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;
+
     property Contact^ _contact;
 
     property String^ _callId; /*{
@@ -108,7 +111,6 @@ public:
             return ((callStatus_ == CallStatus::ENDED || callStatus_ == CallStatus::NONE) && isHovered_)? true : false;
         }
     }
-
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

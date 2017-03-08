@@ -148,7 +148,7 @@ void RingConsolePanel::sendCommand()
         return;
     }
     else if (input == "getContactsList") {
-        auto list = ContactsViewModel::instance->contactsList;
+        auto list = ContactListModel::instance->contactsList;
         MSG_("list of calls returned by the daemon :");
         for (auto contact : list) {
             MSG_("name : " + Utils::toString(contact->_name));
@@ -161,7 +161,7 @@ void RingConsolePanel::sendCommand()
             MSG_("contact name missing");
             return;
         }
-        auto contact = ContactsViewModel::instance->findContactByName(Utils::toPlatformString(parameter1));
+        auto contact = ContactListModel::instance->findContactByName(Utils::toPlatformString(parameter1));
         if (!contact) {
             MSG_("contact "+parameter1+" not found");
             return;

@@ -32,6 +32,8 @@ public ref class SmartPanelItemsViewModel sealed
 {
 public:
     bool isInCall();
+    String^ getAssociatedAccountId(SmartPanelItem^ item);
+    void update();
 
 internal:
     /* singleton */
@@ -76,6 +78,8 @@ internal:
 
             if (currentItem_ != nullptr)
                 currentItem_->_isSelected = true;
+
+            //newContactSelected();
         }
     }
 
