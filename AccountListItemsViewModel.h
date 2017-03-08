@@ -30,6 +30,9 @@ namespace ViewModel {
 
 public ref class AccountListItemsViewModel sealed
 {
+public:
+    String^ getSelectedAccountId();
+
 internal:
     /* singleton */
     static property AccountListItemsViewModel^ instance

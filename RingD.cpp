@@ -446,11 +446,13 @@ RingD::registerCallbacks()
                 incomingCall(accountId2, callId2, from2);
                 stateChange(callId2, CallStatus::INCOMING_RINGING, 0);
 
-                auto contact = ContactsViewModel::instance->findContactByRingId(from2);
-                if (contact) {
-                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                    if (item)
-                        item->_callId = callId2;
+                if (auto cvm = AccountsViewModel::instance->getContactsViewModel(std::string(accountId))) {
+                    auto contact = cvm->findContactByRingId(from2);
+                    if (contact) {
+                        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                        if (item)
+                            item->_callId = callId2;
+                    }
                 }
             }));
         }),
@@ -958,16 +960,16 @@ RingD::dequeueTasks()
             auto callId = DRing::placeCall(task->_accountId_new, std::string("ring:" + task->_ringId_new));
             CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
             ref new DispatchedHandler([=]() {
+                if (auto cvm = AccountsViewModel::instance->getContactsViewModel(task->_ringId_new)) {
+                    auto contact = cvm->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
+                    auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+                    item->_callId = Utils::toPlatformString(callId);
+                    //MSG_("$1 place call with id : " + Utils::toString(item->_callId));
 
-                auto contact = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
-                auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                item->_callId = Utils::toPlatformString(callId);
-                //MSG_("$1 place call with id : " + Utils::toString(item->_callId));
-
-                /* if for any reason there is no callid, do not propagate the event*/
-                if (!callId.empty())
-                    callPlaced(Utils::toPlatformString(callId));
-
+                    /* if for any reason there is no callid, do not propagate the event*/
+                    if (!callId.empty())
+                        callPlaced(Utils::toPlatformString(callId));
+                }
             }));
         }
         break;

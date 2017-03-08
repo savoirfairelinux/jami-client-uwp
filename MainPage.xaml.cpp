@@ -21,7 +21,7 @@
 #include "ContactsViewModel.h"
 #include "MessageTextPage.xaml.h"
 #include "SmartPanel.xaml.h"
-#include "RingConsolePanel.xaml.h"
+//#include "RingConsolePanel.xaml.h"
 #include "VideoPage.xaml.h"
 #include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
@@ -62,7 +62,7 @@ MainPage::MainPage()
 
     _welcomeFrame_->Navigate(TypeName(RingClientUWP::Views::WelcomePage::typeid));
     _smartPanel_->Navigate(TypeName(RingClientUWP::Views::SmartPanel::typeid));
-    _consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
+    //_consolePanel_->Navigate(TypeName(RingClientUWP::Views::RingConsolePanel::typeid));
     _videoFrame_->Navigate(TypeName(RingClientUWP::Views::VideoPage::typeid));
     _previewFrame_->Navigate(TypeName(RingClientUWP::Views::PreviewPage::typeid));
     _messageTextFrame_->Navigate(TypeName(RingClientUWP::Views::MessageTextPage::typeid));

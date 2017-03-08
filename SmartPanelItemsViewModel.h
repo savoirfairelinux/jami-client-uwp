@@ -32,6 +32,7 @@ public ref class SmartPanelItemsViewModel sealed
 {
 public:
     bool isInCall();
+    String^ getAssociatedAccountId(SmartPanelItem^ item);
 
 internal:
     /* singleton */

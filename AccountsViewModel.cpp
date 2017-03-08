@@ -26,6 +26,25 @@ using namespace ViewModel;
 AccountsViewModel::AccountsViewModel()
 {
     accountsList_ = ref new Vector<Account^>();
+    contactsViewModelList_ = ref new Map<String^, ContactsViewModel^>();
+}
+
+void
+AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ name)
+{
+    contactAdded(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDeleted(String^ accountId, Contact ^ name)
+{
+    contactDeleted(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ name)
+{
+    contactDataModified(accountId, name);
 }
 
 void
@@ -43,6 +62,7 @@ AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::
                        "" /* sip password not used with ring */ );
 
     accountsList_->Append(account);
+    contactsViewModelList_->Insert(account->accountID_, ref new ContactsViewModel(account->accountID_));
     updateScrollView();
     accountAdded(account);
 }
@@ -81,4 +101,10 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
             return item;
 
     return nullptr;
+}
+
+ContactsViewModel^
+AccountsViewModel::getContactsViewModel(std::string& accountId)
+{
+    return contactsViewModelList_->Lookup(Utils::toPlatformString(accountId));
 }

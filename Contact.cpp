@@ -33,13 +33,14 @@ using namespace Windows::UI::Core;
 using namespace RingClientUWP;
 using namespace ViewModel;
 
-Contact::Contact(String^ name,
-                 String^ ringID,
-                 String^ GUID,
-                 unsigned int unreadmessages,
-                 ContactStatus contactStatus)
+Contact::Contact(   String^ accountId,
+                    String^ name,
+                    String^ ringID,
+                    String^ GUID,
+                    unsigned int unreadmessages,
+                    ContactStatus contactStatus)
 {
-    vCard_ = ref new VCardUtils::VCard(this);
+    vCard_ = ref new VCardUtils::VCard(this, accountId);
 
     name_   = name;
     ringID_ = ringID;
@@ -70,7 +71,7 @@ Contact::Contact(String^ name,
         NotifyPropertyChanged("unreadMessages");
     }
 
-    _accountIdAssociated = "";
+    _accountIdAssociated = accountId;
     _vcardUID = "";
     _avatarImage = ref new String(L"ms-appx:///Assets/TESTS/contactAvatar.png");
     _displayName = "";

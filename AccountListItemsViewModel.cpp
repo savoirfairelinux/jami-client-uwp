@@ -71,3 +71,9 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::removeItem(AccountList
     itemsList_->RemoveAt(index);
 
 }
+
+String^
+AccountListItemsViewModel::getSelectedAccountId()
+{
+    return _selectedItem->_account->accountID_;
+}

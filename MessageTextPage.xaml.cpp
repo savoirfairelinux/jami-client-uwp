@@ -202,7 +202,9 @@ void RingClientUWP::Views::MessageTextPage::_deleteContact__Click(Platform::Obje
     messageDialog->Commands->Append(ref new UICommand("Remove", ref new UICommandInvokedHandler([=](IUICommand^ command)
     {
         closeMessageTextPage();
-        ContactsViewModel::instance->deleteContact(contact);
+        String^ accountIdAssociated = SmartPanelItemsViewModel::instance->getAssociatedAccountId(item);
+        if (auto cvm = AccountsViewModel::instance->getContactsViewModel(Utils::toString(accountIdAssociated)))
+            cvm->deleteContact(contact);
         SmartPanelItemsViewModel::instance->removeItem(item);
     })));
 
