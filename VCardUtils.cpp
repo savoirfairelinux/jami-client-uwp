@@ -23,6 +23,7 @@
 #include <direct.h>
 
 using namespace RingClientUWP;
+using namespace ViewModel;
 using namespace VCardUtils;
 
 using namespace Windows::UI::Core;
@@ -37,7 +38,8 @@ getBetweenTokens(   const std::string& str,
     return str.substr(start, length);
 }
 
-VCard::VCard(Contact^ owner) : m_Owner(owner)
+VCard::VCard(Contact^ owner, String^ accountId)
+    : m_Owner(owner), m_accountId(Utils::toString(accountId))
 {}
 
 int
@@ -115,7 +117,8 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
             if (!m_mParts[Property::FN].empty())
                 m_Owner->_displayName = Utils::toPlatformString(m_mParts[Property::FN]);
             m_Owner->_vcardUID = Utils::toPlatformString(m_mParts[Property::UID]);
-            ViewModel::ContactsViewModel::instance->saveContactsToFile();
+            if (auto cvm =  AccountsViewModel::instance->getContactsViewModel(m_accountId))
+                cvm->saveContactsToFile();
             MSG_("VCARD_COMPLETE");
             return VCARD_COMPLETE;
         }

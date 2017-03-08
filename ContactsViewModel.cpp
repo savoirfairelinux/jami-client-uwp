@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-#include "pch.h"
 
+#include "pch.h"
 #include "ContactsViewModel.h"
 
 #include "fileutils.h"
@@ -31,14 +31,18 @@ using namespace Windows::UI::Core;
 using namespace RingClientUWP;
 using namespace ViewModel;
 
-ContactsViewModel::ContactsViewModel()
+ContactsViewModel::ContactsViewModel(String^ account) : m_Owner(account)
 {
     contactsList_ = ref new Vector<Contact^>();
     openContactsFromFile();
 
     /* connect delegates. */
-    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId,
-    String^ fromRingId, String^ payload) {
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([=](String^ accountId,
+        String^ fromRingId, String^ payload)
+    {
+        if (accountId != m_Owner)
+            return;
+
         auto contact = findContactByRingId(fromRingId);
 
         if (contact == nullptr)
@@ -57,7 +61,6 @@ ContactsViewModel::ContactsViewModel()
 
         /* save contacts conversation to disk */
         contact->saveConversationToFile();
-
 
         auto selectedContact = (item) ? item->_contact : nullptr;
 
@@ -85,7 +88,8 @@ ContactsViewModel::findContactByName(String^ name)
     return nullptr;
 }
 
-Contact ^ RingClientUWP::ViewModel::ContactsViewModel::findContactByRingId(String^ ringId)
+Contact^
+ContactsViewModel::findContactByRingId(String^ ringId)
 {
     for each (Contact^ contact in contactsList_)
         if (contact->ringID_ == ringId)
@@ -100,10 +104,10 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId, ContactStatus con
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
         //if (contactsList_ && !findContactByName(trimmedName) && !findContactByRingId(ringId)) {
-        Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0, contactStatus);
+        Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus);
         contactsList_->Append(contact);
         saveContactsToFile();
-        contactAdded(contact);
+        AccountsViewModel::instance->raiseContactAdded(m_Owner, contact);
         return contact;
     }
 
@@ -114,9 +118,9 @@ void
 ContactsViewModel::saveContactsToFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ contactsFile = localfolder->Path + "\\" + ".profile\\contacts.json";
+    String^ contactsFile = localfolder->Path + "\\" + ".profile\\" + m_Owner + "\\contacts.json";
 
-    if (ring::fileutils::recursive_mkdir(Utils::toString(localfolder->Path + "\\" + ".profile\\").c_str())) {
+    if (ring::fileutils::recursive_mkdir(Utils::toString(localfolder->Path + "\\" + ".profile\\" + m_Owner).c_str())) {
         std::ofstream file(Utils::toString(contactsFile).c_str());
         if (file.is_open())
         {
@@ -130,7 +134,7 @@ void
 ContactsViewModel::openContactsFromFile()
 {
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
-    String^ contactsFile = localfolder->Path + "\\" + ".profile\\contacts.json";
+    String^ contactsFile = localfolder->Path + "\\" + ".profile\\" + m_Owner + "\\contacts.json";
 
     String^ fileContents = Utils::toPlatformString(Utils::getStringFromFile(Utils::toString(contactsFile)));
 
@@ -187,7 +191,7 @@ ContactsViewModel::Destringify(String^ data)
                 if (contactObject->HasKey(lastTimeKey))
                     lastTime = contactObject->GetNamedString(lastTimeKey);
             }
-            auto contact = ref new Contact(name, ringid, guid, unreadmessages, ContactStatus::READY);
+            auto contact = ref new Contact(m_Owner, name, ringid, guid, unreadmessages, ContactStatus::READY);
             contact->_displayName = displayname;
             contact->_accountIdAssociated = accountIdAssociated;
             // contact image
@@ -201,12 +205,13 @@ ContactsViewModel::Destringify(String^ data)
                 contact->_avatarImage = Utils::toPlatformString(contactImageFile);
             }
             contactsList_->Append(contact);
-            contactAdded(contact);
+            AccountsViewModel::instance->raiseContactAdded(m_Owner, contact);
         }
     }
 }
 
-void RingClientUWP::ViewModel::ContactsViewModel::deleteContact(Contact ^ contact)
+void
+ContactsViewModel::deleteContact(Contact ^ contact)
 {
     unsigned int index;
     auto itemsList = SmartPanelItemsViewModel::instance->itemsList;
@@ -221,7 +226,8 @@ void RingClientUWP::ViewModel::ContactsViewModel::deleteContact(Contact ^ contac
 }
 
 
-void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
+void
+ContactsViewModel::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);
@@ -245,17 +251,16 @@ void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::St
             saveContactsToFile();
         }
     }
-
 }
 
 void
 ContactsViewModel::modifyContact(Contact^ contact)
 {
-    contactDataModified(contact);
+    AccountsViewModel::instance->raiseContactDataModified(m_Owner, contact);
 }
 
-
-void RingClientUWP::ViewModel::ContactsViewModel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name)
+void
+ContactsViewModel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name)
 {
     if (status == LookupStatus::SUCCESS) {
         for each (Contact^ contact in contactsList_)
