@@ -16,8 +16,8 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-#include "pch.h"
 
+#include "pch.h"
 #include "ContactsViewModel.h"
 
 #include "fileutils.h"
@@ -31,7 +31,7 @@ using namespace Windows::UI::Core;
 using namespace RingClientUWP;
 using namespace ViewModel;
 
-ContactsViewModel::ContactsViewModel()
+ContactsViewModel::ContactsViewModel(String^ account) : m_Owner(account)
 {
     contactsList_ = ref new Vector<Contact^>();
     openContactsFromFile();
@@ -103,7 +103,7 @@ ContactsViewModel::addNewContact(String^ name, String^ ringId, ContactStatus con
         Contact^ contact = ref new Contact(trimmedName, ringId, nullptr, 0, contactStatus);
         contactsList_->Append(contact);
         saveContactsToFile();
-        contactAdded(contact);
+        AccountsViewModel::instance->raiseContactAdded(m_Owner, contact);
         return contact;
     }
 
@@ -201,7 +201,7 @@ ContactsViewModel::Destringify(String^ data)
                 contact->_avatarImage = Utils::toPlatformString(contactImageFile);
             }
             contactsList_->Append(contact);
-            contactAdded(contact);
+            AccountsViewModel::instance->raiseContactAdded(m_Owner, contact);
         }
     }
 }
@@ -251,7 +251,7 @@ void RingClientUWP::ViewModel::ContactsViewModel::OnincomingMessage(Platform::St
 void
 ContactsViewModel::modifyContact(Contact^ contact)
 {
-    contactDataModified(contact);
+    AccountsViewModel::instance->raiseContactDataModified(m_Owner, contact);
 }
 
 

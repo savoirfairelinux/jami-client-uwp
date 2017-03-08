@@ -67,12 +67,14 @@ SmartPanel::SmartPanel()
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
         if (_accountsList_) {
             auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
-            if (accountsListSize > index)
+            if (accountsListSize > index) {
                 _accountsList_->SelectedIndex = index;
+            }
             else {
                 if (accountsListSize > 0)
                     _accountsList_->SelectedIndex = 0;
             }
+            updatePageContent();
         }
     });
     Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
@@ -183,6 +185,9 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     auto accountListItem = AccountListItemsViewModel::instance->_selectedItem;
     if (!accountListItem)
         return;
+
+    // update ContactsViewModel with account's contact list
+    //ContactsViewModel::instance->_contactsList =  accountListItem->_account->_contactsList;
 
     auto name = accountListItem->_account->name_; // refacto remove name variable and use the link directly on the next line... like _upnpnState..._
 
@@ -870,7 +875,6 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
     auto accountId = account->accountID_;
 
-
     // mettre ca en visibility du bouton delete
     auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
 
@@ -901,6 +905,8 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
 
         RingD::instance->updateAccount(accountId);
     }
+
+    updatePageContent();
 
     selectMenu(MenuOpen::CONTACTS_LIST);
 
@@ -1151,7 +1157,7 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
             }
             else {
                 /* in that case we delete a possible suroggate */
-                for each (Contact^ co in ContactsViewModel::instance->contactsList) {
+                for each (Contact^ co in ContactsViewModel::instance->_contactsList) {
                     if (co->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION
                             && co->_name == Utils::toPlatformString(name)) {
                         auto item = SmartPanelItemsViewModel::instance->findItem(co);

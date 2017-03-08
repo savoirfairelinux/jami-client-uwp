@@ -106,17 +106,19 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartP
 
     if (itemsList->IndexOf(item, &spi_index)) {
         if (spi_index != 0) {
+            String^ accountIdAssociated = getAssociatedAccountId(item);
+            if (auto cvm = AccountsViewModel::instance->getContactsViewModel(Utils::toString(accountIdAssociated))) {
+                auto contactList = cvm->_contactsList;
+                auto contactListItem = cvm->findContactByName(item->_contact->_name);
+                contactList->IndexOf(contactListItem, &cl_index);
+                contactList->RemoveAt(cl_index);
+                contactList->Append(contactListItem);
+                cvm->saveContactsToFile();
 
-            auto contactList = ContactsViewModel::instance->contactsList;
-            auto contactListItem = ContactsViewModel::instance->findContactByName(item->_contact->_name);
-            contactList->IndexOf(contactListItem, &cl_index);
-            contactList->RemoveAt(cl_index);
-            contactList->Append(contactListItem);
-            ContactsViewModel::instance->saveContactsToFile();
-
-            itemsList->RemoveAt(spi_index);
-            itemsList->InsertAt(0, item);
-            item->_isHovered = false;
+                itemsList->RemoveAt(spi_index);
+                itemsList->InsertAt(0, item);
+                item->_isHovered = false;
+            }
         }
     }
 }
@@ -140,7 +142,9 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     case CallStatus::ENDED:
     {
         item->_contact->_lastTime = "Last call : " + timestampFormatter->Format(dateTime) + ".";
-        ContactsViewModel::instance->saveContactsToFile();
+        String^ accountIdAssociated = getAssociatedAccountId(item);
+        if (auto cvm = AccountsViewModel::instance->getContactsViewModel(Utils::toString(accountIdAssociated)))
+            cvm->saveContactsToFile();
         break;
     }
     case CallStatus::IN_PROGRESS:
@@ -171,4 +175,13 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     default:
         break;
     }
+}
+
+String^
+SmartPanelItemsViewModel::getAssociatedAccountId(SmartPanelItem^ item)
+{
+    if (item->_contact->_accountIdAssociated->IsEmpty())
+        return AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+    else
+        return item->_contact->_accountIdAssociated;
 }

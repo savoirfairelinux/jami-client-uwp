@@ -29,6 +29,24 @@ AccountsViewModel::AccountsViewModel()
 }
 
 void
+AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ name)
+{
+    contactDataModified(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDeleted(String^ accountId, Contact ^ name)
+{
+    raiseContactDeleted(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ name)
+{
+    raiseContactDataModified(accountId, name);
+}
+
+void
 AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::string& accountID, std::string& deviceId, bool upnpState)
 {
     auto account = ref new Account(
@@ -81,4 +99,10 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
             return item;
 
     return nullptr;
+}
+
+ContactsViewModel^
+AccountsViewModel::getContactsViewModel(std::string& accountId)
+{
+    return contactsViewModelList_.Lookup(Utils::toPlatformString(accountId));
 }

@@ -45,7 +45,13 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ name, String^ ringID, String^ GUID, unsigned int unreadmessages, ContactStatus contactStatus);
+    Contact(String^ accountId,
+            String^ name,
+            String^ ringID,
+            String^ GUID,
+            unsigned int unreadmessages,
+            ContactStatus contactStatus);
+
     JsonObject^ ToJsonObject();
 
     virtual event PropertyChangedEventHandler^ PropertyChanged;

@@ -24,7 +24,9 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-namespace Controls {
+namespace Controls
+{
+
 public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 {
 public:
@@ -108,7 +110,6 @@ public:
             return ((callStatus_ == CallStatus::ENDED || callStatus_ == CallStatus::NONE) && isHovered_)? true : false;
         }
     }
-
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

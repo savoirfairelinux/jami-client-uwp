@@ -19,10 +19,13 @@
 
 #pragma once
 
+#include "ContactsViewModel.h"
+
 using namespace Platform::Collections;
 
 namespace RingClientUWP
 {
+ref class Contact;
 
 delegate void NewAccountSelected();
 delegate void NoAccountSelected();
@@ -30,10 +33,21 @@ delegate void UpdateScrollView();
 delegate void AccountAdded(Account^ account);
 delegate void ClearAccountsList();
 
-namespace ViewModel {
+/* delegates */
+delegate void ContactAdded(String^, Contact^);
+delegate void ContactDeleted(String^, Contact^);
+delegate void ContactDataModified(String^, Contact^);
+
+namespace ViewModel
+{
 
 public ref class AccountsViewModel sealed
 {
+public:
+    void raiseContactAdded(String^ accountId, Contact^ name);
+    void raiseContactDeleted(String^ accountId, Contact^ name);
+    void raiseContactDataModified(String^ accountId, Contact^ name);
+
 internal:
     /* singleton */
     static property AccountsViewModel^ instance
@@ -50,6 +64,7 @@ internal:
     void addSipAccount(std::string& alias, std::string& accountID, std::string& sipHostname, std::string& sipUsername, std::string& sipPassword);
     void clearAccountList();
     Account^ findItem(String^ accountId);
+    ContactsViewModel^ getContactsViewModel(std::string& accountId);
 
     /* properties */
     property Vector<Account^>^ accountsList
@@ -67,10 +82,14 @@ internal:
     event AccountAdded^ accountAdded;
     event ClearAccountsList^ clearAccountsList;
 
+    event ContactAdded^ contactAdded;
+    event ContactDeleted^ contactDeleted;
+    event ContactDataModified^ contactDataModified;
+
 private:
     AccountsViewModel(); // singleton
     Vector<Account^>^ accountsList_;
-
+    Map<String^, ContactsViewModel^> contactsViewModelList_;
 };
 }
 }
