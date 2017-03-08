@@ -31,7 +31,7 @@ using namespace Configuration;
 
 UserPreferences::UserPreferences()
 {
-    vCard_ = ref new VCardUtils::VCard(nullptr);
+    vCard_ = ref new VCardUtils::VCard(nullptr, nullptr);
     PREF_PROFILE_HASPHOTO = false;
     PREF_PROFILE_UID = stoull(Utils::genID(0LL, 9999999999999LL));
 }

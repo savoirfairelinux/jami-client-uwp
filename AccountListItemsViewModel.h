@@ -26,10 +26,14 @@ using namespace RingClientUWP::Controls;
 
 namespace RingClientUWP
 {
-namespace ViewModel {
+namespace ViewModel
+{
 
 public ref class AccountListItemsViewModel sealed
 {
+public:
+    String^ getSelectedAccountId();
+
 internal:
     /* singleton */
     static property AccountListItemsViewModel^ instance
@@ -65,6 +69,7 @@ internal:
             if (currentItem_)
                 currentItem_->_isSelected = false;
             currentItem_ = value;
+            updateContactItemsViewModel();
         }
     }
 
@@ -75,6 +80,7 @@ private:
 
     void OnaccountAdded(RingClientUWP::Account ^account);
     void OnclearAccountsList();
+    void updateContactItemsViewModel();
 };
 }
 }
