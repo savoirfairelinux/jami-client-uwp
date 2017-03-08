@@ -64,9 +64,6 @@
     <ClCompile Include="AccountsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
-    <ClCompile Include="ContactsViewModel.cpp">
-      <Filter>ModelViews</Filter>
-    </ClCompile>
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
       <Filter>ModelViews</Filter>
     </ClCompile>
@@ -81,6 +78,9 @@
       <Filter>Media\Audio</Filter>
     </ClCompile>
     <ClCompile Include="AboutPage.xaml.cpp" />
+    <ClCompile Include="ContactListModel.cpp">
+      <Filter>Model</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -141,9 +141,6 @@
     <ClInclude Include="AccountsViewModel.h">
       <Filter>ModelViews</Filter>
     </ClInclude>
-    <ClInclude Include="ContactsViewModel.h">
-      <Filter>ModelViews</Filter>
-    </ClInclude>
     <ClInclude Include="SmartPanelItemsViewModel.h">
       <Filter>ModelViews</Filter>
     </ClInclude>
@@ -158,6 +155,9 @@
       <Filter>Media\Audio</Filter>
     </ClInclude>
     <ClInclude Include="AboutPage.xaml.h" />
+    <ClInclude Include="ContactListModel.h">
+      <Filter>Model</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\AccountTypeRING.png">
