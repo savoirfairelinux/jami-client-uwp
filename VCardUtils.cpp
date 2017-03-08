@@ -23,6 +23,7 @@
 #include <direct.h>
 
 using namespace RingClientUWP;
+using namespace ViewModel;
 using namespace VCardUtils;
 
 using namespace Windows::UI::Core;
@@ -37,7 +38,8 @@ getBetweenTokens(   const std::string& str,
     return str.substr(start, length);
 }
 
-VCard::VCard(Contact^ owner) : m_Owner(owner)
+VCard::VCard(Contact^ owner, String^ accountId)
+    : m_Owner(owner), m_accountId(Utils::toString(accountId))
 {}
 
 int

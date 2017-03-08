@@ -58,7 +58,7 @@ struct Property {
 public ref class VCard sealed
 {
 public:
-    VCard(Contact^ owner);
+    VCard(Contact^ owner, String^ accountId);
 
 internal:
     int                     receiveChunk(const std::string& args, const std::string& payload);
@@ -76,7 +76,7 @@ private:
     std::map<std::string, std::string>  m_mParts     {       };
     Contact^                m_Owner;
     int                     m_type;
-
+    std::string             m_accountId;
 };
 
 }

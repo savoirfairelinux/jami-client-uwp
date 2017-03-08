@@ -45,9 +45,16 @@ ref class Conversation;
 public ref class Contact sealed : public INotifyPropertyChanged
 {
 public:
-    Contact(String^ name, String^ ringID, String^ GUID, unsigned int unreadmessages, ContactStatus contactStatus);
+    Contact(String^ accountId,
+            String^ name,
+            String^ ringID,
+            String^ GUID,
+            unsigned int unreadmessages,
+            ContactStatus contactStatus);
+
     JsonObject^ ToJsonObject();
 
+    void notifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ _name
@@ -120,7 +127,15 @@ public:
             NotifyPropertyChanged("_contactBarHeight");
         }
     }
-    property String^ _accountIdAssociated;
+    property String^ _accountIdAssociated {
+        String^ get() {
+            return accountIdAssociated_;
+        }
+        void set(String^ value) {
+            accountIdAssociated_ = value;
+            NotifyPropertyChanged("_accountIdAssociated");
+        }
+    }
     property String^ _vcardUID;
     property String^ _displayName
     {
@@ -181,6 +196,7 @@ private:
     unsigned int unreadMessages_;
     String^ avatarImage_;
     String^ displayName_;
+    String^ accountIdAssociated_;
     Windows::UI::Xaml::GridLength contactBarHeight_ = 0;
     ContactStatus contactStatus_;
     String^ name_;

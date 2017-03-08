@@ -59,20 +59,19 @@ SmartPanel::SmartPanel()
     /* populate the smartlist */
     _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsList;
 
-
-    /* populate the device list*/
-///	_devicesIdList_ // not used so far
-
     /* connect delegates */
-    Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([this](int index) {
+    Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([&](int index) {
         if (_accountsList_) {
             auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
-            if (accountsListSize > index)
+            if (accountsListSize > index) {
                 _accountsList_->SelectedIndex = index;
+            }
             else {
                 if (accountsListSize > 0)
                     _accountsList_->SelectedIndex = 0;
             }
+            updatePageContent();
+            updateUnreadMessagesState();
         }
     });
     Configuration::UserPreferences::instance->loadProfileImage += ref new LoadProfileImage([this]() {
@@ -81,29 +80,28 @@ SmartPanel::SmartPanel()
         auto uri = ref new Windows::Foundation::Uri(image_path);
         _selectedAccountAvatar_->ImageSource = ref new BitmapImage(uri);
     });
-    ContactsViewModel::instance->contactDataModified += ref new ContactDataModified([this](Contact^ contact) {
-    });
     AccountsViewModel::instance->updateScrollView += ref new UpdateScrollView([this]() {
         _accountsListScrollView_->UpdateLayout();
         _accountsListScrollView_->ScrollToVerticalOffset(_accountsListScrollView_->ScrollableHeight);
     });
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
-    String^ accountId, String^ callId, String^ from) {
-        ///auto from = call->from;
-        auto contact = ContactsViewModel::instance->findContactByRingId(from);
+        String^ accountId, String^ callId, String^ from)
+    {
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountId));
+        auto contact = contactListModel->findContactByRingId(from);
 
         if (contact == nullptr)
-            contact = ContactsViewModel::instance->addNewContact(from, from); // contact checked inside addNewContact.
+            contact = contactListModel->addNewContact(from, from);
 
         if (contact == nullptr) {
-            ERR_("contact not handled!");
             return;
         }
 
         RingD::instance->lookUpAddress(from);
-        contact->_accountIdAssociated = accountId;
 
-        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
+        SmartPanelItem^ item;
+
+        item = SmartPanelItemsViewModel::instance->findItem(contact);
         item->_callId = callId;
 
         /* move the item of the top of the list */
@@ -114,14 +112,14 @@ SmartPanel::SmartPanel()
             _smartList_->ScrollIntoView(item);
         }
 
+        SmartPanelItemsViewModel::instance->update();
     });
+    AccountsViewModel::instance->newUnreadMessage += ref new NewUnreadMessage(this, &SmartPanel::updateUnreadMessagesState);
     RingD::instance->stateChange += ref new StateChange(this, &SmartPanel::OnstateChange);
     RingD::instance->devicesListRefreshed += ref new RingClientUWP::DevicesListRefreshed(this, &RingClientUWP::Views::SmartPanel::OndevicesListRefreshed);
-
-    ContactsViewModel::instance->contactAdded += ref new ContactAdded([this](Contact^ contact) {
+    AccountsViewModel::instance->contactAdded += ref new ContactAdded([this](String^ accountId, Contact^ contact) {
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
-        contact->_lastTime;
         SmartPanelItemsViewModel::instance->itemsList->InsertAt(0, smartPanelItem);
     });
 
@@ -157,6 +155,8 @@ SmartPanel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus st
         auto callsList = DRing::getCallList();
         if (callsList.empty())
             _settingsMenuButton_->Visibility = VIS::Visible;
+
+        SmartPanelItemsViewModel::instance->update();
         break;
     }
     case CallStatus::IN_PROGRESS:
@@ -184,6 +184,9 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     if (!accountListItem)
         return;
 
+    // update ContactListModel with account's contact list
+    //ContactListModel::instance->_contactsList =  accountListItem->_account->_contactsList;
+
     auto name = accountListItem->_account->name_; // refacto remove name variable and use the link directly on the next line... like _upnpnState..._
 
     accountListItem->_isSelected = true;
@@ -192,7 +195,7 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     Configuration::UserPreferences::instance->save();
 
     _selectedAccountName_->Text = name; // refacto : bind this in xaml directly
-///    _devicesIdList_->ItemsSource = account->_devicesIdList;
+    ///_devicesIdList_->ItemsSource = account->_devicesIdList;
     _deviceId_->Text = accountListItem->_account->_deviceId; /* this is the current device ...
     ... in the way to get all associated devices, we have to querry the daemon : */
 
@@ -870,7 +873,6 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
     auto accountId = account->accountID_;
 
-
     // mettre ca en visibility du bouton delete
     auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
 
@@ -901,6 +903,8 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
 
         RingD::instance->updateAccount(accountId);
     }
+
+    updatePageContent();
 
     selectMenu(MenuOpen::CONTACTS_LIST);
 
@@ -1135,7 +1139,9 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
 
     }
     else { // if false, we are looking for a registered user (contact)
-        auto contact = ContactsViewModel::instance->findContactByName(Utils::toPlatformString(name));
+        auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
+        auto contact = contactListModel->findContactByName(Utils::toPlatformString(name));
 
         if (contact == nullptr)
             return;
@@ -1147,15 +1153,15 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = Utils::toPlatformString(address);
                 ringTxtBxPlaceHolderDelay("username found and added.", 5000);
-                ContactsViewModel::instance->saveContactsToFile();
+                contactListModel->saveContactsToFile();
             }
             else {
                 /* in that case we delete a possible suroggate */
-                for each (Contact^ co in ContactsViewModel::instance->contactsList) {
+                for each (Contact^ co in contactListModel->_contactsList) {
                     if (co->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION
                             && co->_name == Utils::toPlatformString(name)) {
                         auto item = SmartPanelItemsViewModel::instance->findItem(co);
-                        ContactsViewModel::instance->deleteContact(co);
+                        contactListModel->deleteContact(co);
                         SmartPanelItemsViewModel::instance->removeItem(item);
                     }
 
@@ -1176,12 +1182,12 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
             if (name.length() == 40) {
 
                 /* first we check if some contact is registred with this ring id */
-                auto contactAlreadyRecorded = ContactsViewModel::instance->findContactByRingId(Utils::toPlatformString(name));
+                auto contactAlreadyRecorded = contactListModel->findContactByRingId(Utils::toPlatformString(name));
                 if (contactAlreadyRecorded) {
                     ringTxtBxPlaceHolderDelay("you already have a contact with this ring id.", 5000);
                     /* delete the contact added recently */
                     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                    ContactsViewModel::instance->deleteContact(contact);
+                    contactListModel->deleteContact(contact);
                     SmartPanelItemsViewModel::instance->removeItem(item);
 
                     /* open the message text with the contact already recorder*/
@@ -1197,31 +1203,31 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
                 ringTxtBxPlaceHolderDelay("ring id added.", 5000); // refacto : we should check if it's an actual ring id
                 contact->ringID_ = Utils::toPlatformString(name);
                 contact->_contactStatus = ContactStatus::READY;
-                ContactsViewModel::instance->saveContactsToFile();
+                contactListModel->saveContactsToFile();
             }
             else {
                 ringTxtBxPlaceHolderDelay("username invalid.", 5000);
                 auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                ContactsViewModel::instance->deleteContact(contact);
+                contactListModel->deleteContact(contact);
                 SmartPanelItemsViewModel::instance->removeItem(item);
-                ContactsViewModel::instance->saveContactsToFile();
+                contactListModel->saveContactsToFile();
             }
             break;
         case LookupStatus::NOT_FOUND:
         {
             ringTxtBxPlaceHolderDelay("username not found.", 5000);
             auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-            ContactsViewModel::instance->deleteContact(contact);
+            contactListModel->deleteContact(contact);
             SmartPanelItemsViewModel::instance->removeItem(item);
-            ContactsViewModel::instance->saveContactsToFile();
+            contactListModel->saveContactsToFile();
             break;
         }
         case LookupStatus::ERRORR:
             ringTxtBxPlaceHolderDelay("network error!", 5000);
             auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-            ContactsViewModel::instance->deleteContact(contact);
+            contactListModel->deleteContact(contact);
             SmartPanelItemsViewModel::instance->removeItem(item);
-            ContactsViewModel::instance->saveContactsToFile();
+            contactListModel->saveContactsToFile();
             break;
         }
     }
@@ -1474,7 +1480,9 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__KeyUp(Platform::Object^ sende
             }
         }
 
-        auto contact = ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
+        auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
+        auto contact = contactListModel->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
         RingD::instance->lookUpName(_ringTxtBx_->Text);
 
         _ringTxtBx_->Text = "";
@@ -1699,12 +1707,15 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerReleased(Platform::Object^ se
         SmartPanelItemsViewModel::instance->_selectedItem = item;
 
         /* at this point we check if a call is in progress with the current selected contact*/
+        auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
         if (item->_callStatus == CallStatus::IN_PROGRESS
                 || item->_callStatus == CallStatus::PAUSED
                 || item->_callStatus == CallStatus::PEER_PAUSED) {
             if (contact) {
                 contact->_unreadMessages = 0;
-                ContactsViewModel::instance->saveContactsToFile();
+                updateUnreadMessagesState();
+                contactListModel->saveContactsToFile();
             }
 
             summonVideoPage();
@@ -1714,8 +1725,16 @@ void RingClientUWP::Views::SmartPanel::Grid_PointerReleased(Platform::Object^ se
         /* else, summont the message text page*/
         summonMessageTextPage();
         contact->_unreadMessages = 0;
-        ContactsViewModel::instance->saveContactsToFile();
+        updateUnreadMessagesState();
+        contactListModel->saveContactsToFile();
     }
+}
+
+void
+SmartPanel::updateUnreadMessagesState()
+{
+    _unreadAccountMessagesCircle_->Visibility = AccountListItemsViewModel::instance->unreadMessages() ?
+            VIS::Visible : VIS::Collapsed;
 }
 
 Object ^ RingClientUWP::Views::boolToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
@@ -1731,13 +1750,49 @@ Object ^ RingClientUWP::Views::boolToVisibility::ConvertBack(Object ^ value, Win
     throw ref new Platform::NotImplementedException();
 }
 
-RingClientUWP::Views::boolToVisibility::boolToVisibility()
-{}
+Object^
+uintToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    if (static_cast<unsigned>(value))
+        return Windows::UI::Xaml::Visibility::Visible;
 
+    return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object^
+OneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    if (static_cast<unsigned>(value) == 1)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object^
+MoreThanOneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    if (static_cast<unsigned>(value) > 1)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return  Windows::UI::Xaml::Visibility::Collapsed;
+}
+
+Object^
+SelectedAccountToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto contact = static_cast<Contact^>(value);
+    auto callStatus = SmartPanelItemsViewModel::instance->findItem(contact)->_callStatus;
+    auto isCall = ( callStatus != CallStatus::NONE && callStatus != CallStatus::ENDED ) ? true : false;
+    if (contact->_accountIdAssociated == AccountListItemsViewModel::instance->getSelectedAccountId() || isCall)
+        return Windows::UI::Xaml::Visibility::Visible;
+
+    return  Windows::UI::Xaml::Visibility::Collapsed;
+}
 
 void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload)
 {
-    auto contact = ContactsViewModel::instance->findContactByRingId(from);
+    auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountId));
+    auto contact = contactListModel->findContactByRingId(from);
     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
 
     /* move the item of the top of the list */
@@ -1747,6 +1802,9 @@ void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String
         _smartList_->UpdateLayout();
         _smartList_->ScrollIntoView(item);
     }
+
+    _unreadAccountMessagesCircle_->Visibility = AccountListItemsViewModel::instance->unreadMessages() ?
+        VIS::Visible : VIS::Collapsed;
 }
 
 Object ^ RingClientUWP::Views::CallStatusToSpinnerVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
@@ -1819,7 +1877,9 @@ void RingClientUWP::Views::SmartPanel::_ringTxtBx__Click(Platform::Object^ sende
             summonMessageTextPage();
         }
 
-        auto contact = ContactsViewModel::instance->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
+        auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
+        auto contact = contactListModel->addNewContact(_ringTxtBx_->Text, "", ContactStatus::WAITING_FOR_ACTIVATION);
         RingD::instance->lookUpName(_ringTxtBx_->Text);
 
         _ringTxtBx_->Text = "";
