@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #pragma once
 
 using namespace Platform::Collections;
@@ -24,26 +23,15 @@ using namespace Concurrency;
 
 namespace RingClientUWP
 {
-
-/* delegates */
-delegate void ContactAdded(Contact^);
-delegate void ContactDeleted(Contact^);
-delegate void ContactDataModified(Contact^);
-
-namespace ViewModel {
-public ref class ContactsViewModel sealed
+namespace ViewModel
 {
-internal:
-    /* singleton */
-    static property ContactsViewModel^ instance
-    {
-        ContactsViewModel^ get()
-        {
-            static ContactsViewModel^ instance_ = ref new ContactsViewModel();
-            return instance_;
-        }
-    }
 
+public ref class ContactListModel sealed
+{
+public:
+    ContactListModel(String^ m_Owner);
+
+internal:
     /* functions */
     Contact^    findContactByName(String^ name);
     Contact^    findContactByRingId(String^ ringId);
@@ -56,26 +44,21 @@ internal:
     void        modifyContact(Contact^ contact);
 
     /* properties */
-    property Vector<Contact^>^ contactsList
-    {
-        Vector<Contact^>^ get()
-        {
+    property IVector<Contact^>^ _contactsList {
+        IVector<Contact^>^ get() {
             return contactsList_;
+        }
+        void set(IVector<Contact^>^ value) {
+            contactsList_ = value;
         }
     }
 
-    /* events */
-    event ContactAdded^ contactAdded;
-    event ContactDeleted^ contactDeleted;
-    event ContactDataModified^ contactDataModified;
-
 private:
-    ContactsViewModel(); // singleton
-    Vector<Contact^>^ contactsList_;
+    IVector<Contact^>^ contactsList_;
     Contact^ currentItem_;
     Contact^ oldItem_;
+    String^ m_Owner;
 
-    void OnincomingMessage(Platform::String ^callId, Platform::String ^payload);
     void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string &address, const std::string &name);
 };
 }

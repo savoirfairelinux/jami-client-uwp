@@ -51,6 +51,12 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::OnclearAccountsList()
     itemsList_->Clear();
 }
 
+void
+AccountListItemsViewModel::updateContactItemsViewModel()
+{
+    SmartPanelItemsViewModel::instance->update();
+}
+
 AccountListItem^
 RingClientUWP::ViewModel::AccountListItemsViewModel::findItem(String^ accountId)
 {
@@ -70,4 +76,21 @@ void RingClientUWP::ViewModel::AccountListItemsViewModel::removeItem(AccountList
 
     itemsList_->RemoveAt(index);
 
+}
+
+String^
+AccountListItemsViewModel::getSelectedAccountId()
+{
+    if (_selectedItem)
+        return _selectedItem->_account->accountID_;
+    return nullptr;
+}
+
+int
+AccountListItemsViewModel::unreadMessages()
+{
+    int messageCount = 0;
+    for each (auto account in AccountsViewModel::instance->accountsList)
+        messageCount += AccountsViewModel::instance->unreadMessages(account->accountID_);
+    return messageCount;
 }
