@@ -16,15 +16,17 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #pragma once
 
 using namespace Platform;
 using namespace Windows::UI::Xaml::Data;
 using namespace Platform::Collections;
+using namespace Windows::Foundation::Collections;
 
 namespace RingClientUWP
 {
+ref class Contact;
+
 public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
@@ -55,11 +57,11 @@ public:
     property String^ accountType_; // refacto : create a enum accountType
     property String^ accountID_;
     property String^ _deviceId;
-    property Windows::Foundation::Collections::IVector<String^>^ _devicesIdList {
-        Windows::Foundation::Collections::IVector<String^>^ get() {
+    property IVector<String^>^ _devicesIdList {
+        IVector<String^>^ get() {
             return devicesIdList_;
         }
-        void set(Windows::Foundation::Collections::IVector<String^>^ value) {
+        void set(IVector<String^>^ value) {
             devicesIdList_ = value;
         }
     };
@@ -75,17 +77,40 @@ public:
             NotifyPropertyChanged("_sipUsername");
         }
     }
+
+    property unsigned _unreadMessages
+    {
+        unsigned get() {
+            return unreadMessages_;
+        }
+        void set(unsigned value) {
+            unreadMessages_ = value;
+            NotifyPropertyChanged("_unreadMessages");
+        }
+    }
+
     property String^ _sipPassword; // refacto : think to encrypt password in memory
+
+    property IVector<Contact^>^ _contactsList {
+        IVector<Contact^>^ get() {
+            return contactsList_;
+        }
+        void set(IVector<Contact^>^ value) {
+            contactsList_ = value;
+        }
+    };
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    Windows::Foundation::Collections::IVector<String^>^ devicesIdList_;
+    IVector<String^>^ devicesIdList_;
+    IVector<Contact^>^ contactsList_;
+
     String^ alias_;
     String^ ringID__;
     String^ sipUsername_;
-
+    unsigned unreadMessages_;
 };
 }
 

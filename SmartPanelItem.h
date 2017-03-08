@@ -1,4 +1,3 @@
-#pragma once
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
@@ -17,6 +16,8 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+#pragma once
+
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
@@ -24,91 +25,75 @@ using namespace Windows::UI::Xaml::Data;
 
 namespace RingClientUWP
 {
-namespace Controls {
+namespace Controls
+{
+
 public ref class SmartPanelItem sealed : public INotifyPropertyChanged
 {
 public:
     SmartPanelItem();
+
     void muteVideo(bool state);
 
+    void notifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
-    property Contact^ _contact;
 
-    property String^ _callId; /*{
-        String^ get() {
-            return callId_;
+    property Contact^ _contact {
+        Contact^ get() { return contact_; }
+        void set(Contact^ value) {
+            contact_ = value;
+            NotifyPropertyChanged("_contact");
         }
-        void set(String^ value) {
-            _callId = value;
-        }
-    }*/
+    };
+
+    property String^ _callId;
+
     property CallStatus _callStatus {
-        CallStatus get() {
-            return callStatus_;
-        }
+        CallStatus get() { return callStatus_; }
         void set(CallStatus value) {
             callStatus_ = value;
             NotifyPropertyChanged("_callStatus");
         }
     }
-    property bool _videoMuted // refacto : add set and remove void muteVideo(bool state);
-    {
-        bool get()
-        {
-            return videoMuted_;
-        }
+
+    property bool _videoMuted {
+        bool get() { return videoMuted_; }
     }
 
     property bool _audioMuted;
 
-    property Visibility _showMe
-    {
-        Visibility get()
-        {
-            return showMe_;
-        }
-        void set(Visibility value)
-        {
+    property Visibility _showMe {
+        Visibility get() { return showMe_; }
+        void set(Visibility value) {
             showMe_ = value;
             NotifyPropertyChanged("_showMe");
         }
     }
 
-    property bool _isSelected
-    {
-        bool get()
-        {
-            return isSelected_;
-        }
-        void set(bool value)
-        {
+    property bool _isSelected {
+        bool get() { return isSelected_; }
+        void set(bool value) {
             isSelected_ = value;
             NotifyPropertyChanged("_isSelected");
         }
     }
 
-    property bool _isHovered
-    {
-        bool get()
-        {
-            return isHovered_;
-        }
-        void set(bool value)
-        {
+    property bool _isHovered {
+        bool get() { return isHovered_; }
+        void set(bool value) {
             isHovered_ = value;
             NotifyPropertyChanged("_isHovered");
             NotifyPropertyChanged("_isCallable");
         }
     }
 
-    property bool _isCallable
-    {
-        bool get()
-        {
-            return ((callStatus_ == CallStatus::ENDED || callStatus_ == CallStatus::NONE) && isHovered_)? true : false;
+    property bool _isCallable {
+        bool get() {
+            return ((   callStatus_ == CallStatus::ENDED ||
+                        callStatus_ == CallStatus::NONE)
+                        && isHovered_) ? true : false;
         }
     }
-
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);
@@ -116,6 +101,7 @@ protected:
 private:
     Visibility showMe_ = Visibility::Visible;
     CallStatus callStatus_;
+    Contact^ contact_;
     String^ callId_;
     bool videoMuted_;
     bool isSelected_;

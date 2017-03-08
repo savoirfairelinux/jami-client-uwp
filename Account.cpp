@@ -46,7 +46,7 @@ Account::Account(String^ name,
     _sipHostname = sipHostname;
     _sipUsername = sipUsername;
     _sipPassword = sipPassword;
-
+    _unreadMessages = 0;
 }
 
 void

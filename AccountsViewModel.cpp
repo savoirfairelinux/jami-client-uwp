@@ -23,9 +23,35 @@
 using namespace RingClientUWP;
 using namespace ViewModel;
 
+using namespace Windows::UI::Core;
+
 AccountsViewModel::AccountsViewModel()
 {
     accountsList_ = ref new Vector<Account^>();
+    contactListModels_ = ref new Map<String^, ContactListModel^>();
+
+    RingD::instance->incomingAccountMessage +=
+        ref new RingClientUWP::IncomingAccountMessage(this, &AccountsViewModel::OnincomingAccountMessage);
+    RingD::instance->incomingMessage +=
+        ref new RingClientUWP::IncomingMessage(this, &AccountsViewModel::OnincomingMessage);
+}
+
+void
+AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ name)
+{
+    contactAdded(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDeleted(String^ accountId, Contact ^ name)
+{
+    contactDeleted(accountId, name);
+}
+
+void
+AccountsViewModel::raiseContactDataModified(String^ accountId, Contact ^ name)
+{
+    contactDataModified(accountId, name);
 }
 
 void
@@ -43,6 +69,7 @@ AccountsViewModel::addRingAccount(std::string& alias, std::string& ringID, std::
                        "" /* sip password not used with ring */ );
 
     accountsList_->Append(account);
+    contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
     updateScrollView();
     accountAdded(account);
 }
@@ -63,6 +90,7 @@ AccountsViewModel::addSipAccount(std::string& alias, std::string& accountID, std
                    );
 
     accountsList_->Append(account);
+    contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
     updateScrollView();
     accountAdded(account);
 }
@@ -81,4 +109,90 @@ Account ^ RingClientUWP::ViewModel::AccountsViewModel::findItem(String ^ account
             return item;
 
     return nullptr;
+}
+
+ContactListModel^
+AccountsViewModel::getContactListModel(std::string& accountId)
+{
+    try {
+        return contactListModels_->Lookup(Utils::toPlatformString(accountId));
+    }
+    catch (Platform::OutOfBoundsException^ e) {
+        EXC_(e);
+        return nullptr;
+    }
+}
+
+int
+AccountsViewModel::unreadMessages(String ^ accountId)
+{
+    int messageCount = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            messageCount += contact->_unreadMessages;
+        }
+    }
+    return messageCount;
+}
+
+void
+AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRingId, String ^ payload)
+{
+    auto contactListModel = getContactListModel(Utils::toString(accountId));
+
+    auto contact = contactListModel->findContactByRingId(fromRingId);
+
+    if (contact == nullptr)
+        contact = contactListModel->addNewContact(fromRingId, fromRingId);
+
+    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+    if (contact == nullptr) {
+        ERR_("contact not handled!");
+        return;
+    }
+
+    RingD::instance->lookUpAddress(fromRingId);
+
+    contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
+
+    /* save contacts conversation to disk */
+    contact->saveConversationToFile();
+
+    auto selectedContact = (item) ? item->_contact : nullptr;
+
+    if (contact->ringID_ == fromRingId && contact != selectedContact) {
+        contact->_unreadMessages++;
+        newUnreadMessage();
+        /* saveContactsToFile used to save the notification */
+        contactListModel->saveContactsToFile();
+    }
+}
+
+void
+AccountsViewModel::OnincomingMessage(String ^callId, String ^payload)
+{
+    auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
+    auto item = SmartPanelItemsViewModel::instance->findItem(callId);
+    auto contact = item->_contact;
+    auto contactListModel = getContactListModel(Utils::toString(contact->_accountIdAssociated));
+
+    /* the contact HAS TO BE already registered */
+    if (contact) {
+        auto item = SmartPanelItemsViewModel::instance->_selectedItem;
+
+        contact->_conversation->addMessage(""/* date not yet used*/, MSG_FROM_CONTACT, payload);
+
+        /* save contacts conversation to disk */
+        contact->saveConversationToFile();
+
+        auto selectedContact = (item) ? item->_contact : nullptr;
+
+        if (contact != selectedContact) {
+            contact->_unreadMessages++;
+            newUnreadMessage();
+            /* saveContactsToFile used to save the notification */
+            contactListModel->saveContactsToFile();
+        }
+    }
 }

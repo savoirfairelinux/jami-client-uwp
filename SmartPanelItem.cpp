@@ -27,7 +27,6 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Controls;
-using namespace ViewModel;
 
 SmartPanelItem::SmartPanelItem()
 {
@@ -37,10 +36,11 @@ SmartPanelItem::SmartPanelItem()
     isHovered_ = false;
     _callStatus = CallStatus::NONE;
 
-    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &RingClientUWP::Controls::SmartPanelItem::OncallPlaced);
+    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &SmartPanelItem::OncallPlaced);
 }
 
-void RingClientUWP::Controls::SmartPanelItem::muteVideo(bool state)
+void
+SmartPanelItem::muteVideo(bool state)
 {
     videoMuted_ = state;
     RingD::instance->muteVideo(_callId, state);
@@ -58,9 +58,16 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
     }));
 }
 
-void RingClientUWP::Controls::SmartPanelItem::OncallPlaced(Platform::String ^callId)
+void
+SmartPanelItem::OncallPlaced(Platform::String ^callId)
 {
     if (_callId == callId) {
         _callStatus = CallStatus::SEARCHING;
     }
+}
+
+void
+SmartPanelItem::notifyPropertyChanged(String^ propertyName)
+{
+    NotifyPropertyChanged(propertyName);
 }
