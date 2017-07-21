@@ -268,7 +268,7 @@
     <value>Apie</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring yra visuotiniam susisiekimui skirta laisva programinė įranga, kuri gerbia savo naudotojų laisves ir privatumą.</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privatumo politika</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Remove contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Sveiki atvykę į</value>
   </data>
 </root>

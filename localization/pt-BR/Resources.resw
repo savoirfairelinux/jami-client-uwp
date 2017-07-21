@@ -268,7 +268,7 @@
     <value>Sobre</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring é um software livre para comunicação universal que respeita as liberdades e privacidade de seus usuários.</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Política de Privacidade</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Remove contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welcome to</value>
   </data>
 </root>

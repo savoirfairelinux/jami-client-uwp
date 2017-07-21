@@ -148,7 +148,7 @@
     <value>De Microsoft Windows Runtime-cliënt voor Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! -  versie 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Voer een alias in</value>
@@ -268,7 +268,7 @@
     <value>Over</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is vrije software voor universele communicatie, die de vrijheden en privacy van haar gebruikers eerbiedigt.</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privacybeleid</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Contact verwijderen</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welkom bij</value>
   </data>
 </root>

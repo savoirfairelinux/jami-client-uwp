@@ -148,7 +148,7 @@
     <value>The Microsoft Windows Runtime client for Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! -  Sürüm 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Takma ad gir</value>
@@ -208,10 +208,10 @@
     <value>arıyor</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>sizi kişi olarak ekledi</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contact request sent</value>
+    <value>İletişim isteği gönderildi</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>İletişim istekleri</value>
@@ -268,7 +268,7 @@
     <value>Hakkında</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring; kullanıcılarının özgürlüklerine ve gizliliğine önem veren, evrensel iletişim için özgür yazılımdır.</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Gizlilik Politikası</value>
@@ -295,7 +295,7 @@
     <value>Credentials error or PIN expired.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
-    <value>No device id found!</value>
+    <value>Aygıt kimliği bulunamadı!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
     <value>you already have a contact with this ring id</value>
@@ -310,10 +310,10 @@
     <value>username found and added</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>kullanıcı adı geçersiz</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>kullanıcı adı bulunamadı</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Var Olan Hesabı Ekle</value>
@@ -340,25 +340,25 @@
     <value>Hesap Oluştur</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Hesap etkinleştirildi</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Engellenen kişileri gizle</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Engellenen kişileri göster</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Kullanılabilir bağlantı yok</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>Hesap düzenlemelerini kabul et</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>Gelen aramayı kabul et</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>Bu kullanıcıyı kişilerinize ekleyin</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>İptal</value>
@@ -367,22 +367,22 @@
     <value>Hesaplar</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Create a new account</value>
+    <value>Yeni bir hesap oluştur</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>Sonraki adım</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
     <value>Hesap ekle</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>Engeli kaldır ve bu kullanıcıyı kişilere ekle</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>Bu hesaba yeni bir aygıt ekle</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>Sesli arama başlat</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Block this user from making any further contact</value>
@@ -394,13 +394,13 @@
     <value>Cancel account modifications</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>Giden aramayı iptal et</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
     <value>Change message panel orientation</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>Bu konuşmayı sil</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>Kişiler</value>
@@ -430,19 +430,19 @@
     <value>Bu aygıtı var olan bir hesaba bağla</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>PIN oluşturmayı iptal et</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>Hesap PIN&apos;i oluştur</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
     <value>Reject the incoming call</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Bu kişiyi kaldır</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>Aygıtı bu hesaptan kaldır</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>İleti gönder</value>
@@ -451,49 +451,49 @@
     <value>Ayarlar</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>QR kodu ve RingID&apos;sini göster</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Görüntülü arama başlat</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>TURN sunucusunu etkinleştir</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>Kişilere ekle</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Ses çözücüsü:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Kare sayısı:</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Çözünürlük:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Video çözücüsü:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>Aygıt Ekle</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Yeni veya var olan kişi ara</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Yeni veya var olan kişi ara</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>Bu aygıt</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>TURN sunucu adresi</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Hesabı sil</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Bir ileti yaz</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Kapat</value>
@@ -505,19 +505,19 @@
     <value>Ara</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>RingID&apos;yi kopyala</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Ad</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>Ağ kullanılamıyor</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Diğer bağlı aygıtlar</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Kişiyi kaldır</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>Var Olan Hesabı Ekle</value>
@@ -538,21 +538,24 @@
     <value>Attempting to add this device...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Hesap oluşturuluyor...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Hesap siliniyor...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>PIN oluşturuluyor</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
     <value>Revoking device with ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Hesap güncelleniyor...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Kişiyi kaldır</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Hoş Geldiniz</value>
   </data>
 </root>
