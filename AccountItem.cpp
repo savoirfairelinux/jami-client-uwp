@@ -1,6 +1,5 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -18,7 +17,9 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "SmartPanelItem.h"
+#include "AccountItem.h"
+
+#include "account_const.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
@@ -28,64 +29,34 @@ using namespace Windows::UI::Core;
 using namespace RingClientUWP;
 using namespace RingClientUWP::Controls;
 
-SmartPanelItem::SmartPanelItem()
+AccountItem::AccountItem(Map<String^, String^>^ details)
 {
-    _callId = "";
-    videoMuted_ = false;
-    isSelected_ = false;
-    isHovered_ = false;
-    _callStatus = CallStatus::NONE;
-
-    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &SmartPanelItem::OncallPlaced);
+    account_ = std::make_unique<Models::Account>();
+    SetDetails(details);
 }
 
 void
-SmartPanelItem::muteVideo(bool state)
+AccountItem::SetDetails(Map<String^, String^>^ details)
 {
-    videoMuted_ = state;
-    RingD::instance->muteVideo(_callId, state);
+    using namespace DRing::Account::ConfProperties;
+
+    _id                 = Utils::getDetailsStringValue( details, ID);
+    _username           = Utils::getDetailsStringValue( details, USERNAME);
+    _hostname           = Utils::getDetailsStringValue( details, HOSTNAME);
+    _alias              = Utils::getDetailsStringValue( details, ALIAS);
+    _accountType        = Utils::getDetailsStringValue( details, TYPE);
+    _autoAnswerEnabled  = Utils::getDetailsBoolValue(   details, AUTOANSWER);
+    _enabled            = Utils::getDetailsBoolValue(   details, ENABLED);
+    _upnpEnabled        = Utils::getDetailsBoolValue(   details, UPNP_ENABLED);
+    _turnEnabled        = Utils::getDetailsBoolValue(   details, TURN::ENABLED);
+    _turnAddress        = Utils::getDetailsStringValue( details, TURN::SERVER);
+    _publicDhtInCalls   = Utils::getDetailsBoolValue(   details, DHT::PUBLIC_IN_CALLS);
+    _sipPassword        = Utils::getDetailsStringValue( details, PASSWORD);
+    _deviceName         = Utils::getDetailsStringValue( details, RING_DEVICE_NAME);
 }
 
 void
-SmartPanelItem::startCallTimer()
-{
-    call_.callStartTime = std::chrono::steady_clock::now();;
-}
-
-void
-SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
-{
-    CoreApplicationView^ view = CoreApplication::MainView;
-    view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High,
-        ref new DispatchedHandler([this, propertyName]()
-    {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-    }));
-}
-
-void
-SmartPanelItem::OncallPlaced(Platform::String ^callId)
-{
-    if (_callId == callId) {
-        _callStatus = CallStatus::SEARCHING;
-    }
-}
-
-void
-SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
-{
-    NotifyPropertyChanged(propertyName);
-}
-
-//////////////////////////////
-//
-// NEW
-//
-//////////////////////////////
-
-void
-SmartItemBase::NotifyPropertyChanged(String^ propertyName)
+AccountItem::NotifyPropertyChanged(String^ propertyName)
 {
     Utils::runOnUIThread([this, propertyName]() {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));

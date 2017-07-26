@@ -136,6 +136,55 @@ private:
 
     void OncallPlaced(Platform::String ^callId);
 };
+
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+public ref class SmartItemBase sealed : public INotifyPropertyChanged
+{
+public:
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    property Visibility _isVisible {
+        Visibility get() { return isVisible_; }
+        void set(Visibility value) {
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
+        }
+    }
+
+    property bool _isSelected {
+        bool get() { return isSelected_; }
+        void set(bool value) {
+            isSelected_ = value;
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered {
+        bool get() { return isHovered_; }
+        void set(bool value) {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
+        }
+    }
+
+internal:
+    SmartItemBase();
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+private:
+    Visibility  isVisible_;
+    bool        isSelected_;
+    bool        isHovered_;
+};
+
 }
 }
 
