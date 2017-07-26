@@ -397,7 +397,8 @@
                         Orientation="Horizontal">
                 <!--  avatar  -->
                 <Grid>
-                    <Grid Grid.Column="0" x:Name="_contactBarAvatarGrid_">
+                    <Grid Grid.Column="0"
+                          x:Name="_contactBarAvatarGrid_">
                         <Ellipse Width="36"
                                  Height="36"
                                  Margin="0,2,0,0"
@@ -408,9 +409,13 @@
                             </Ellipse.Fill>
                         </Ellipse>
                     </Grid>
-                    <Grid Grid.Column="0" x:Name="_defaultContactBarAvatarGrid_"
+                    <Grid Grid.Column="0"
+                          x:Name="_defaultContactBarAvatarGrid_"
                           Width="36"
-                          Height="36">
+                          Height="36"
+                          Margin="0,2,0,0"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Top">
                         <Ellipse x:Name="_defaultAvatar_" Fill="#ff808080" />
                         <TextBlock x:Name="_defaultAvatarInitial_"
                                    HorizontalAlignment="Center"
@@ -687,6 +692,7 @@
                       PointerReleased="_chatPanelResizeBarGrid__PointerReleased" />
                 <ScrollViewer Grid.Row="1"
                               x:Name="_scrollView_"
+                              VerticalAlignment="Bottom"
                               BorderBrush="{StaticResource RingBlueMidBrush}"
                               BorderThickness="0,0,0,0"
                               ScrollViewer.VerticalScrollBarVisibility="Auto">
