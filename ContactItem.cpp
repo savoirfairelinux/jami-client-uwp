@@ -1,6 +1,5 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -18,7 +17,7 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "SmartPanelItem.h"
+#include "ContactItem.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
@@ -27,65 +26,28 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Controls;
+using namespace ViewModel;
 
-SmartPanelItem::SmartPanelItem()
+ContactItem::ContactItem(Map<String^, String^>^ details)
 {
-    _callId = "";
-    videoMuted_ = false;
-    isSelected_ = false;
-    isHovered_ = false;
-    _callStatus = CallStatus::NONE;
-
-    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &SmartPanelItem::OncallPlaced);
+    contact_ = std::make_unique<Models::Contact>();
+    SetDetails(details);
 }
 
 void
-SmartPanelItem::muteVideo(bool state)
+ContactItem::SetDetails(Map<String^, String^>^ details)
 {
-    videoMuted_ = state;
-    RingD::instance->muteVideo(_callId, state);
+    using namespace Models::Conf::Contacts;
+
+    _id             = Utils::getDetailsStringValue(details, ID);
+    _contactType    = Utils::getDetailsStringValue(details, DISPLAYNAME);
+    _alias          = Utils::getDetailsStringValue(details, ALIAS);
+    _ringId         = Utils::getDetailsStringValue(details, RINGID);
+    _contactType    = Utils::getDetailsStringValue(details, TYPE);
 }
 
 void
-SmartPanelItem::startCallTimer()
-{
-    call_.callStartTime = std::chrono::steady_clock::now();;
-}
-
-void
-SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
-{
-    CoreApplicationView^ view = CoreApplication::MainView;
-    view->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High,
-        ref new DispatchedHandler([this, propertyName]()
-    {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-    }));
-}
-
-void
-SmartPanelItem::OncallPlaced(Platform::String ^callId)
-{
-    if (_callId == callId) {
-        _callStatus = CallStatus::SEARCHING;
-    }
-}
-
-void
-SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
-{
-    NotifyPropertyChanged(propertyName);
-}
-
-//////////////////////////////
-//
-// NEW
-//
-//////////////////////////////
-
-void
-SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
+ContactItem::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
