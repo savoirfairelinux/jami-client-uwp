@@ -31,20 +31,20 @@ public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
     Account(String^ name,
-            String^ ringID,
-            String^ accountType,
-            String^ accountID,
-            String^ deviceId,
-            String^ deviceName,
-            bool active,
-            bool upnpState,
-            bool autoAnswer,
-            bool dhtPublicInCalls,
-            bool turnEnabled,
-            String^ turnAddress,
-            String^ sipHostname,
-            String^ sipUsername,
-            String^ sipPassword);
+        String^ ringID,
+        String^ accountType,
+        String^ accountID,
+        String^ deviceId,
+        String^ deviceName,
+        bool active,
+        bool upnpState,
+        bool autoAnswer,
+        bool dhtPublicInCalls,
+        bool turnEnabled,
+        String^ turnAddress,
+        String^ sipHostname,
+        String^ sipUsername,
+        String^ sipPassword);
 
     void raiseNotifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -189,5 +189,87 @@ private:
     unsigned unreadMessages_;
     unsigned unreadContactRequests_;
 };
+
+namespace Models
+{
+
+struct Contact2;
+
+struct AccountBase
+{
+    AccountBase() { };
+    AccountBase(const std::string& id)
+        : id(id)
+        , username()
+        , hostname()
+        , alias()
+        , accountType("")
+        , active(true)
+        , autoAnswerEnabled(false)
+        , registrationState(RegistrationState::UNREGISTERED)
+    { }
+
+    // own id
+    std::string         id;
+
+    // account credentials
+    std::string         username;
+    std::string         hostname;
+    std::string         alias;
+
+    // account type == SIP / Ring
+    std::string         accountType;
+
+    // state of the account
+    bool                active;
+    bool                autoAnswerEnabled;
+    RegistrationState   registrationState;
+
+    std::vector<std::shared_ptr<Models::Contact2>> contacts;
+};
+
+struct RingAccount : public AccountBase
+{
+    RingAccount() { };
+    RingAccount(const std::string& id)
+        : AccountBase(id)
+    {
+        accountType = "RING";
+        registrationState = RegistrationState::UNREGISTERED;
+    }
+
+    // Ring specific credentials
+    std::string         ringId;
+    std::string         deviceId;
+    std::string         deviceName;
+
+    // upnp
+    bool                upnpEnabled;
+
+    // turn
+    bool                turnEnabled;
+    std::string         turnAddress;
+
+    // Ring account options
+    bool                publicDhtInCalls;
+
+};
+
+struct SIPAccount : public AccountBase
+{
+    SIPAccount() { };
+    SIPAccount(const std::string& id)
+        : AccountBase(id)
+    {
+        accountType = "SIP";
+        registrationState = RegistrationState::UNKNOWN;
+    }
+
+    // SIP specific credentials
+    std::string         sipPassword;
+
+};
+
 }
 
+}

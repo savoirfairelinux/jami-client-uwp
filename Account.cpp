@@ -80,3 +80,10 @@ Account::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }
+
+#define find_iter()                                     \
+    const auto& iter = details.find(key);               \
+    if (iter == details.end()) {                        \
+        MSG_("Couldn't find key: " + key);              \
+        return;                                         \
+    }
