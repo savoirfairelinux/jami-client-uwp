@@ -136,6 +136,126 @@ private:
 
     void OncallPlaced(Platform::String ^callId);
 };
+
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+public ref class SmartItem: public INotifyPropertyChanged
+{
+public:
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    //////////////////////////////
+    //
+    // CONTACT
+    //
+    //////////////////////////////
+    property String^ _id {
+        String^ get() {
+            auto contact = dynamic_cast<ContactItem^>(itemBase_);
+            return Utils::toPlatformString(item->contact_->id);
+        }
+        void set(String^ value) {
+            auto contact = dynamic_cast<ContactItem^>(itemBase_);
+            contact->_id = Utils::toString(value);
+        }
+    }
+
+    property String^ _displayName {
+        String^ get() {
+            return Utils::toPlatformString(contact_->displayName);
+        }
+        void set(String^ value) {
+            contact_->displayName = Utils::toString(value);
+            NotifyPropertyChanged("_displayName");
+        }
+    }
+
+    property String^ _username {
+        String^ get() {
+            return Utils::toPlatformString(contact_->username);
+        }
+        void set(String^ value) {
+            contact_->username = Utils::toString(value);
+            NotifyPropertyChanged("_username");
+        }
+    }
+
+    property String^ _alias {
+        String^ get() {
+            return Utils::toPlatformString(contact_->alias);
+        }
+        void set(String^ value) {
+            contact_->alias = Utils::toString(value);
+            NotifyPropertyChanged("_alias");
+        }
+    }
+
+    property String^ _ringId {
+        String^ get() {
+            return Utils::toPlatformString(contact_->ringId);
+        }
+        void set(String^ value) {
+            contact_->ringId = Utils::toString(value);
+            NotifyPropertyChanged("_ringId");
+        }
+    }
+
+    property String^ _contactType {
+        String^ get() {
+            return Utils::toPlatformString(contact_->contactType);
+        }
+        void set(String^ value) {
+            contact_->contactType = Utils::toString(value);
+            NotifyPropertyChanged("_contactType");
+        }
+    }
+
+    property Visibility _isVisible {
+        Visibility get() { return isVisible_; }
+        void set(Visibility value) {
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
+        }
+    }
+
+    property bool _isSelected {
+        bool get() { return isSelected_; }
+        void set(bool value) {
+            isSelected_ = value;
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered {
+        bool get() { return isHovered_; }
+        void set(bool value) {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
+        }
+    }
+
+    ContactItem^ AsContactItem();
+    ContactGroupItem^ AsContactGroupItem();
+
+internal:
+    SmartItem();
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+private:
+    Controls::ItemBase^ itemBase_;
+
+    Visibility  isVisible_;
+    bool        isSelected_;
+    bool        isHovered_;
+};
+
 }
 }
 
