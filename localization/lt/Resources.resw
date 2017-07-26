@@ -148,7 +148,7 @@
     <value>The Microsoft Windows Runtime client for Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! -  Versija 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter alias</value>
@@ -208,7 +208,7 @@
     <value>ieškoma </value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>pridėjo jus kaip kontaktą</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>Kontakto užklausa išsiųsta</value>
@@ -268,7 +268,7 @@
     <value>Apie</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring yra visuotiniam susisiekimui skirta laisva programinė įranga, kuri gerbia savo naudotojų laisves ir privatumą.</value>
+    <value>Ring yra laisva ir universali bendravimo platforma, kuri išsaugo naudotojo privatumą ir laisves.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privatumo politika</value>
@@ -283,10 +283,10 @@
     <value>People can find you with your username</value>
   </data>
   <data name="_whatWillHappen_0_" xml:space="preserve">
-    <value>You are already registered.</value>
+    <value>Jūs jau esate užsiregistravę.</value>
   </data>
   <data name="_whatWillHappen_1_" xml:space="preserve">
-    <value>You are not yet registered.</value>
+    <value>Jūs dar nesate užsiregistravę.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
     <value>Jums reikės išsiųsti savo ringId.</value>
@@ -307,13 +307,13 @@
     <value>ring id added</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>naudotojo vardas rastas ir pridėtas</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
     <value>username invalid</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>naudotojo vardas nerastas</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Pridėti esamą paskyrą</value>
@@ -340,13 +340,13 @@
     <value>Sukurti paskyrą</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Paskyra įjungta</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Slėpti užblokuotus kontaktus</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Rodyti užblokuotus kontaktus</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
     <value>No connection available</value>
@@ -370,7 +370,7 @@
     <value>Create a new account</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>Kitas žingsnis</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
     <value>Pridėti paskyrą</value>
@@ -382,7 +382,7 @@
     <value>Add a new device to this account</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>Pradėti garso skambutį</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Block this user from making any further contact</value>
@@ -436,10 +436,10 @@
     <value>Generate account PIN</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>Atmesti gaunamąjį skambutį</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Šalinti šį kontaktą</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
     <value>Revoke the device from this account</value>
@@ -454,7 +454,7 @@
     <value>Display QR code and RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Pradėti vaizdo skambutį</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>Enable TURN server</value>
@@ -463,16 +463,16 @@
     <value>Pridėti prie kontaktų</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Garso kodekas: </value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Kadrų dažnis: </value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Raiška: </value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Vaizdo kodekas: </value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>Pridėti įrenginį</value>
@@ -487,13 +487,13 @@
     <value>This device</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>TURN serverio adresas</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Ištrinti paskyrą</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Rašykite žinutę</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Užverti</value>
@@ -505,19 +505,19 @@
     <value>Skambutis</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>Kopijuoti RingID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
     <value>Name </value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>Tinklas neprieinamas</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
     <value>Other linked devices</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Šalinti kontaktą</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>Pridėti esamą paskyrą</value>
@@ -535,13 +535,13 @@
     <value>Sukūrė:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Bandoma pridėti šį įrenginį...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Kuriama paskyra...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Ištrinama paskyra...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
     <value>Generating PIN</value>
@@ -550,9 +550,12 @@
     <value>Revoking device with ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Atnaujinama paskyra...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Šalinti kontaktą</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Sveiki atvykę į</value>
   </data>
 </root>

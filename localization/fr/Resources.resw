@@ -130,25 +130,25 @@
     <value>Ce programme est proposé sans aucune garantie</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
-    <value>See the </value>
+    <value>Voir la</value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
     <value>GNU General Public License, version 3 or later</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
-    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
+    <value>https://www.gnu.org/licenses/gpl-3.0.fr.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
     <value> for details.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring is a secured and distributed communication software.</value>
+    <value>Ring est un logiciel de communication sécurisé et distribué.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
     <value>The Microsoft Windows Runtime client for Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! - Version 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Entrez l&apos;alias</value>
@@ -181,7 +181,7 @@
     <value>Accepter les appels et messages de contacts inconnus</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
-    <value>PIN generator</value>
+    <value>Générateur de NIP</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
     <value>Enregistrer un nom d&apos;utilisateur public</value>
@@ -208,10 +208,10 @@
     <value>rechercher</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>vous ajouté(e) comme contact</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contact request sent</value>
+    <value>Invitation envoyée</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>Invitations</value>
@@ -262,7 +262,7 @@
     <value>Entrez votre nom d&apos;utilisateur</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>waiting for devices list...</value>
+    <value>en attente de la liste d&apos;appareils</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
     <value>À Propos</value>
@@ -274,7 +274,7 @@
     <value>Privacy Policy</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted.</value>
+    <value>Ce compte sera supprimé de cet ordinateur. Les autres appareils ne sont pas affectés. Votre inscription publique ne peut être supprimée.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
     <value>Votre compte va être supprimé de cet ordinateur</value>
@@ -298,25 +298,25 @@
     <value>No device id found!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>vus avez déjà un contact possédant cet id Ring</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
-    <value>network error!</value>
+    <value>Erreur réseau!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>Id Ring ajouté</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>nom d&apos;utilisateur trouvé et ajouté</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>Nom d&apos;utilisateur invalide</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>nom d&apos;utilisateur non trouvé</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Ajouter un compte existant</value>
   </data>
   <data name="_wizardCreateAccount_.Content" xml:space="preserve">
     <value>Créer un nouveau compte</value>
@@ -340,25 +340,25 @@
     <value>Créer un compte</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Compte activé</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Cacher les contacts bannis</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Afficher les contacts bannis</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Aucune connexion disponible</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>Accepter les modifications au compte</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>Accepter appel entrant</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>Ajouter cet utilisateur à vos contacts</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>Annuler</value>
@@ -370,19 +370,19 @@
     <value>Créer un nouveau compte</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>Étape suivante</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
     <value>Ajouter le compte</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>Débloquer et ajouter cet utilisateur à vos contacts</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>Ajouter un nouvel appareil à ce compte</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>Démarrer un appel audio</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Block this user from making any further contact</value>
@@ -391,16 +391,16 @@
     <value>(the user can be unblocked from the Account Settings panel)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>Annuler les modifications au compte</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>Annuler l&apos;appel sortant</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
     <value>Change message panel orientation</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>Effacer cette conversation</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>Contacts</value>
@@ -421,25 +421,25 @@
     <value>Open the Account Settings panel</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Accueil/À propos</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Ignorer l&apos;invitation de ce contact</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Lier cet appareil à un compte existant</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>Annuler la génération de NIP</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>Générer NIP du compte</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>Rejeter appel entrant</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Retirer ce contact</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
     <value>Revoke the device from this account</value>
@@ -451,10 +451,10 @@
     <value>Paramètres</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>Afficher code QR et RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Démarrer un appel vidéo</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>Enable TURN server</value>
@@ -463,16 +463,16 @@
     <value>Ajouter aux contacts</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Codec audio:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
     <value>Framerate: </value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Résolution</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Codec vidéo</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>Ajouter un appareil</value>
@@ -484,13 +484,13 @@
     <value>Search for new or existing contacts</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>Cet appareil</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>TURN server address</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Supprimer le compte</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
     <value>Type a message</value>
@@ -499,34 +499,34 @@
     <value>Fermer</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>Ajouter à la conférence</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>Appelez</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>Copier le RindID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Nom</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>Réseau indisponible</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Autres appareils liés</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Retirer le contact</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Ajouter un compte existant</value>
   </data>
   <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
     <value>Créer un nouveau compte</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>jamais appelé</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>Graphismes par :</value>
@@ -538,21 +538,24 @@
     <value>Attempting to add this device...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Création du compte...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Suppression du compte...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>Génération du NIP</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
     <value>Revoking device with ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Mise à jour du compte...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Retirer le contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welcome to</value>
   </data>
 </root>

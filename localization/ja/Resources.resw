@@ -268,7 +268,7 @@
     <value>About</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring は、ユーザーの自由とプライバシーを尊重する普遍的なコミュニケーションのためのフリーソフトウェアです。</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privacy Policy</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Remove contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welcome to</value>
   </data>
 </root>

@@ -148,7 +148,7 @@
     <value>El cliente de Microsoft Windows Runtime para Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Libertad, igualdad y fraternidad. Versión 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Introducir alias</value>
@@ -208,7 +208,7 @@
     <value>buscando</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>te ha añadido como contacto</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>Solicitud de contacto enviada</value>
@@ -268,7 +268,7 @@
     <value>Acerca de</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring es software libre de comunicaciones que respeta las libertades y privacidad de sus usuarios.</value>
+    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Política de privacidad</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Remove contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welcome to</value>
   </data>
 </root>

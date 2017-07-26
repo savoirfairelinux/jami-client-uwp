@@ -127,7 +127,7 @@
     <value>Credits</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
-    <value>This program comes with absolutely no warranty</value>
+    <value>Používanie aplikácie je bez akejkoľvek záruky.</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
     <value>See the </value>
@@ -157,10 +157,10 @@
     <value>Edit Account</value>
   </data>
   <data name="_accountsAddDevice_.Text" xml:space="preserve">
-    <value>Add Device</value>
+    <value>Pridaj zariadenie</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Enter PIN</value>
+    <value>Zadaj PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
@@ -178,7 +178,7 @@
     <value>Enter your password</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>Accept calls and messages from incognito contacts</value>
+    <value>Príjmanie hovorov a správ od ľudí, ktorí nie sú vo vašom zozname.</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
     <value>PIN generator</value>
@@ -190,13 +190,13 @@
     <value>Share</value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
-    <value>SIP account parameters</value>
+    <value>Parametre SIP účtu</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
-    <value>Účet</value>
+    <value>Nastavenie účtov</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
-    <value>Account type</value>
+    <value>Typ účtu</value>
   </data>
   <data name="_accountsUPnP_.Text" xml:space="preserve">
     <value>UPnP</value>
@@ -229,10 +229,10 @@
     <value>Register</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Zopakuj heslo</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Zadaj heslo</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
     <value>Nastavenie</value>
@@ -253,13 +253,13 @@
     <value>Enter hostname</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Zadaj heslo</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter username</value>
+    <value>Zadaj užívateľské meno</value>
   </data>
   <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter your username</value>
+    <value>Zadaj svoje užívateľské meno</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
     <value>waiting for devices list...</value>
@@ -268,7 +268,7 @@
     <value>O programe</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is free software for universal communication which respects the freedoms and privacy of its users.</value>
+    <value>Ring je slobodná a univerzálna komunikačná platforma, ktorá zachováva súkromie a slobody používateľov.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privacy Policy</value>
@@ -316,10 +316,10 @@
     <value>username not found</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Pridať existujúci účet</value>
   </data>
   <data name="_wizardCreateAccount_.Content" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>Vytvoriť nový účet</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
     <value>Enter your full name</value>
@@ -337,7 +337,7 @@
     <value>Alias</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Create Account</value>
+    <value>Vytvor účet</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
     <value>Account enabled</value>
@@ -418,7 +418,7 @@
     <value>Done</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>Nastavenia účtu</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
     <value>Home/About</value>
@@ -475,7 +475,7 @@
     <value>Video codec: </value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
-    <value>Add Device</value>
+    <value>Pridaj zariadenie</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
     <value>Search for new or existing contacts</value>
@@ -493,7 +493,7 @@
     <value>Delete account</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Napíš správu</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Close</value>
@@ -520,10 +520,10 @@
     <value>Remove contact</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Vytvoriť nový účet</value>
   </data>
   <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>Vytvoriť nový účet</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
     <value>never called</value>
@@ -554,5 +554,8 @@
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Remove contact</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Welcome to</value>
   </data>
 </root>

@@ -148,7 +148,7 @@
     <value>Windows-klienten för för Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! - Ring 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Ange alias</value>
@@ -268,7 +268,7 @@
     <value>Om</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring är fri mjukvara för universell kommunikation, med respekt för användarens frihet och integritet.</value>
+    <value>Ring är en fri och universell kommunikationsplattform som månar om användarens frihet, integritet och sekretess.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Sekretesspolicy</value>
@@ -388,19 +388,19 @@
     <value>Blockera denna användare från vidare kontakt</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(användaren kan avblockeras i kontoinställningspanelen)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>Avbryt kontoändringen</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>Avbryt utgående samtal</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>Byt orientering på meddelandepanelen</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>Radera den här konversationen</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>Kontakter</value>
@@ -418,31 +418,31 @@
     <value>Klar</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>Öppna kontoinställningspanelen</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Hem/Om</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Ignorera den här användarens kontaktförfrågan</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Koppla den här enheten till ett befintligt konto</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>Avbryt PIN-generering</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>Generera PIN-kod</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>Avvisa inkommande samtal</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Ta bort den här kontakten</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>Återkalla enheten från detta konto</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>Skicka meddelande</value>
@@ -451,73 +451,73 @@
     <value>Inställningar</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>Visa QR-kod och Ring-ID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Starta ett videosamtal</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>Aktivera TURN-server</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>Lägg till i kontakter</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Ljudkodek:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Bildfrekvens:</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Upplösning:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Videokodek:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>Lägg till enhet</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Sök efter nya eller befintliga kontakter</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Sök efter nya eller befintliga kontakter</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>Denna enhet</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>TURN-serveradress</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Ta bort konto</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Skriv ett meddelande</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Stäng</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>Lägg till i konferensen</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>Samtal</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>Kopiera Ring-ID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Namn</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>Nätverk otillgängligt</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Andra länkade enheter</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Ta bort kontakt</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>Lägg till befintligt konto</value>
@@ -526,7 +526,7 @@
     <value>Skapa nytt konto</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>aldrig kontaktad</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>Bildkonst av:</value>
@@ -535,24 +535,27 @@
     <value>Skapad av:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Försöker lägga till denna enhet</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Skapar konto...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Tar bort konto...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>Genererar PIN-kod</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Återkallar enhet med ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Uppdaterar konto...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Ta bort kontakt</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Välkommen till</value>
   </data>
 </root>

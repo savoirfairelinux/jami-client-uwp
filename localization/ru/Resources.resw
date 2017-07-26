@@ -148,7 +148,7 @@
     <value>Клиент RIng для Microsoft Windows</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Свобода, равенство и братство — Версия 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Введите псевдоним</value>
@@ -208,7 +208,7 @@
     <value>поиск</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>добавил(а) вас в контакты</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>Запрос на добавление в контакты отправлен</value>
@@ -268,7 +268,7 @@
     <value>О программе</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring — это свободная программа для всеобщей связи, уважающая свободы и конфиденциальность ее пользователей.</value>
+    <value>Ring — это свободная и универсальная платформа для общения, оберегающая приватность и свободы пользователей.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Политика конфиденциальности</value>
@@ -298,22 +298,22 @@
     <value>Не найден идентификатор устройства!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>у вас уже есть контакт с таким ring id</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>ошибка сети!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>ring id добавлен</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>имя пользователя найдено и добавлено</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>недопустимое имя пользователя</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>имя пользователя не найдено</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Добавить существующий аккаунт</value>
@@ -340,25 +340,25 @@
     <value>Создать учётную запись</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Аккаунт активирован</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Скрыть заблокированные контакты</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Показать заблокированные контакты</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
     <value>No connection available</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>Принять изменения аккаунта</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>Принять входящий вызов</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>Добавить этого пользователя в ваши контакты</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>Отмена</value>
@@ -367,40 +367,40 @@
     <value>Аккаунты</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Create a new account</value>
+    <value>Создать новый аккаунт</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>Следующий шаг</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
     <value>Добавить учётную запись</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>Разблокировать и добавить пользователя в контакты</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>Добавить новое устройство к этому аккаунту</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>Начать голосовой вызов</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>Блокировать дальнейшие попытки связи от этого пользователя</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(пользователь может быть разблокирован из панели настроек аккаунта)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>Отменить изменения аккаунта</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>Отменить исходящий вызов</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>Изменить ориентацию панели сообщений</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>Очистить этот разговор</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>Контакты</value>
@@ -418,31 +418,31 @@
     <value>Готово</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>Открыть панель настройки аккаунта</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
     <value>Home/About</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Игнорировать запрос этого пользователя на добавление в контакты</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Привязать это устройство к существующему аккаунту</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>Отменить создание PIN</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>Сгенерировать PIN для аккаунта</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>Отклонить входящий вызов</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Удалить этот контакт</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>Отозвать доступ этого устройства к аккаунту</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>Отправить сообщение</value>
@@ -451,10 +451,10 @@
     <value>Настройки</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>Показать QR код и Ring ID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Начать видео вызов</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>Enable TURN server</value>
@@ -463,61 +463,61 @@
     <value>Добавить в контакты</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Аудио кодек: </value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Частота кадров: </value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Разрешение: </value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Видео кодек: </value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>Добавить устройство</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Поиск новых или существующих контактов</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Поиск новых или существующих контактов</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>Это устройство</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>Адрес TURN сервера</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Удалить аккаунт</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Введите сообщение</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Закрыть</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>Добавить к конференции</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>Звонок</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>Скопировать Ring ID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Имя</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>Сеть недоступна</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Другие связанные устройства</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Удалить контакт</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>Добавить существующий аккаунт</value>
@@ -535,24 +535,27 @@
     <value>Авторы проекта:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Пытаемся добавить устройство…</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Создаём аккаунт…</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Удаляем аккаунт…</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>Генерируем PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Отзыв доступа устройства с ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Обновляем аккаунт…</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Удалить контакт</value>
+  </data>
+  <data name="_welcome_.Text" xml:space="preserve">
+    <value>Добро пожаловать в</value>
   </data>
 </root>
