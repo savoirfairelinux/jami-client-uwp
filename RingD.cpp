@@ -1296,7 +1296,7 @@ RingD::startDaemon()
         ERR_("daemon already runnging");
         return;
     }
-    //eraseCacheFolder();
+
     editModeOn_ = true;
 
     IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
