@@ -251,3 +251,6 @@ _Pvt_Extensions
 
 !config.h
 Generated\ Files/
+
+# Visual Studio generated app install files 
+.appx

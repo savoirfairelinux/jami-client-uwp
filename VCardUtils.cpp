@@ -99,45 +99,48 @@ VCard::receiveChunk(const std::string& args, const std::string& payload)
     return VCARD_INCOMPLETE;
 }
 
+std::string
+getVCardValue(std::string data, std::string key)
+{
+    std::string value;
+    std::stringstream _data(data);
+    std::string _line;
+    while (std::getline(_data, _line)) {
+        if (_line.find(key) != std::string::npos) {
+            value = _line.substr(key.length());
+            break;
+        }
+    }
+    value.erase(std::remove(value.begin(), value.end(), '\r'), value.end());
+    return value;
+}
+
 int
 VCard::parseFromString()
 {
     std::stringstream _data(m_data);
     std::string _line;
 
-    // save hash of old photo
-    auto md5_0 = Utils::computeMD5(Utils::toPlatformString(m_mParts[Property::PHOTO]));
-
     m_mParts.clear();
 
-    bool foundUID = false;
-    while (std::getline(_data, _line)) {
-        if (_line.find("UID:") != std::string::npos) {
-            foundUID =  true;
-            break;
-        }
-    }
-    if (foundUID)
-        m_mParts[Property::UID] = _line.substr(4);
-    else
+    m_mParts[Property::UID] = getVCardValue(m_data, "UID:");
+    if (m_mParts[Property::UID].empty())
         m_mParts[Property::UID] = Utils::genID(0LL, 9999999999999LL);
+    MSG_(m_mParts[Property::UID]);
 
-    bool foundFN = false;
-    while (std::getline(_data, _line)) {
-        if (_line.find("FN:") != std::string::npos) {
-            foundFN = true;
-            break;
-        }
-    }
-    if (foundFN)
-        m_mParts[Property::FN] = _line.substr(3);
+    m_mParts[Property::FN] = getVCardValue(m_data, "FN:");
+    MSG_(m_mParts[Property::FN]);
 
     while (std::getline(_data, _line)) {
         if (_line.find("PHOTO;") != std::string::npos)
             break;
     }
 
-    // because android client builds vcard differently (TYPE=PNG: vs PNG:)
+    while (std::getline(_data, _line)) {
+        if (_line.find("PHOTO;") != std::string::npos)
+            break;
+    }
+
     size_t pos = _line.find("PNG:");
     if (pos == std::string::npos) {
         pos = _line.find("JPEG:");
@@ -146,13 +149,6 @@ VCard::parseFromString()
     }
     else
         m_mParts[Property::PHOTO].append(_line.substr(pos + 4));
-
-    // avoid updating an unchanged photo
-    auto md5_1 = Utils::computeMD5(Utils::toPlatformString(m_mParts[Property::PHOTO]));
-    if (md5_0 == md5_1) {
-        MSG_("Duplicate Vcard PHOTO received");
-        return 0;
-    }
 
     return 1;
 }
@@ -323,5 +319,12 @@ VCard::setData(const std::string& data)
 std::string
 VCard::getPart(const std::string& part)
 {
-    return m_mParts.at(part);
+    std::string p;
+    try {
+        p = m_mParts.at(part);
+    }
+    catch (std::exception& e) {
+        MSG_(e.what());
+    }
+    return p;
 }
