@@ -1818,7 +1818,7 @@
                             Background="Transparent"
                             BorderThickness="0"
                             Click="_ringTxtBx__Click"
-                            Content=" &#xE1E2;"
+                            Content="&#xE71E;"
                             FontFamily="Segoe MDL2 Assets"
                             FontSize="18"
                             Foreground="{StaticResource RingBlueMidBrush}"
