@@ -136,6 +136,171 @@ private:
 
     void OncallPlaced(Platform::String ^callId);
 };
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+public ref class SmartItem sealed
+    : public INotifyPropertyChanged
+{
+public:
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+    //////////////////////////////
+    //
+    // BEGIN CONTACTITEM
+    //
+    //////////////////////////////
+    property String^ _id {
+        String^ get() {
+            if (auto contact = As<ContactItem^>())
+                return contact->_id;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>())
+                contact->_id = value;
+        }
+    }
+
+    property String^ _displayName {
+        String^ get() {
+            if (auto contact = As<ContactItem^>())
+                return contact->_displayName;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>())
+                contact->_displayName = value;
+            NotifyPropertyChanged("_displayName");
+        }
+    }
+
+    property String^ _username {
+        String^ get() {
+            if (auto contact = As<ContactItem^>())
+                return contact->_username;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>())
+                contact->_username = value;
+            NotifyPropertyChanged("_username");
+        }
+    }
+
+    property String^ _alias {
+        String^ get() {
+            if (auto contact = As<ContactItem^>())
+                return contact->_alias;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>())
+                contact->_alias = value;
+            NotifyPropertyChanged("_alias");
+        }
+    }
+
+    property String^ _ringId {
+        String^ get() {
+            if (auto contact = As<ContactItem^>())
+                return contact->_ringId;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>())
+                contact->_ringId = value;
+            NotifyPropertyChanged("_ringId");
+        }
+    }
+    //////////////////////////////
+    //
+    // END CONTACTITEM
+    //
+    //////////////////////////////
+
+    //////////////////////////////
+    //
+    // BEGIN GROUPITEM
+    //
+    //////////////////////////////
+    property String^ _name {
+        String^ get() {
+            if (auto group = As<GroupItem^>())
+                return group->_name;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto group = As<GroupItem^>())
+                group->_name = value;
+        }
+    }
+
+    //////////////////////////////
+    //
+    // END GROUPITEM
+    //
+    //////////////////////////////
+
+    //////////////////////////////
+    //
+    // COMMON
+    //
+    //////////////////////////////
+    property Visibility _isVisible {
+        Visibility get() { return isVisible_; }
+        void set(Visibility value) {
+            isVisible_ = value;
+            NotifyPropertyChanged("_isVisible");
+        }
+    }
+
+    property bool _isSelected {
+        bool get() { return isSelected_; }
+        void set(bool value) {
+            isSelected_ = value;
+            NotifyPropertyChanged("_isSelected");
+        }
+    }
+
+    property bool _isHovered {
+        bool get() { return isHovered_; }
+        void set(bool value) {
+            isHovered_ = value;
+            NotifyPropertyChanged("_isHovered");
+        }
+    }
+
+internal:
+    SmartItem() {};
+    SmartItem(Controls::ContactItem^ contact)
+        :itemBase_(contact)
+    {};
+    SmartItem(Controls::GroupItem^ group)
+        :itemBase_(group)
+    {};
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+private:
+
+    template<typename T>
+    T As() {
+        return dynamic_cast<T>(itemBase_);
+    }
+
+    Platform::Object^ itemBase_;
+
+    Visibility  isVisible_;
+    bool        isSelected_;
+    bool        isHovered_;
+};
+
 }
 }
 

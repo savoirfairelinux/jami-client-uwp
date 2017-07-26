@@ -31,20 +31,20 @@ public ref class Account sealed : public INotifyPropertyChanged
 {
 public:
     Account(String^ name,
-            String^ ringID,
-            String^ accountType,
-            String^ accountID,
-            String^ deviceId,
-            String^ deviceName,
-            bool active,
-            bool upnpState,
-            bool autoAnswer,
-            bool dhtPublicInCalls,
-            bool turnEnabled,
-            String^ turnAddress,
-            String^ sipHostname,
-            String^ sipUsername,
-            String^ sipPassword);
+        String^ ringID,
+        String^ accountType,
+        String^ accountID,
+        String^ deviceId,
+        String^ deviceName,
+        bool active,
+        bool upnpState,
+        bool autoAnswer,
+        bool dhtPublicInCalls,
+        bool turnEnabled,
+        String^ turnAddress,
+        String^ sipHostname,
+        String^ sipUsername,
+        String^ sipPassword);
 
     void raiseNotifyPropertyChanged(String^ propertyName);
     virtual event PropertyChangedEventHandler^ PropertyChanged;
@@ -189,5 +189,68 @@ private:
     unsigned unreadMessages_;
     unsigned unreadContactRequests_;
 };
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+namespace Models
+{
+
+struct Contact;
+
+struct Account
+{
+    Account() { };
+    Account(const std::string& id,
+            const std::string& type)
+        : id(id)
+        , username()
+        , hostname()
+        , alias()
+        , accountType(type)
+        , enabled(true)
+        , autoAnswerEnabled(false)
+        , registrationState(RegistrationState::UNKNOWN)
+    { }
+
+    //
+    // DETAILS
+    //
+    std::string         id;
+    std::string         username;
+    std::string         hostname;
+    std::string         alias;
+    std::string         accountType;
+    bool                autoAnswerEnabled;
+    bool                enabled;
+    // Ring specific
+    bool                upnpEnabled;
+    bool                turnEnabled;
+    std::string         turnAddress;
+    bool                publicDhtInCalls;
+    // SIP specific
+    std::string         sipPassword;
+    //
+    // END DETAILS
+    //
+
+    //
+    // Ring specific
+    //
+    RegistrationState   registrationState;
+
+    std::string         ringId;
+    std::string         deviceId;
+    std::string         deviceName;
+
+    // contacts
+    std::vector<std::shared_ptr<Models::Contact>> contacts;
+
+};
+
 }
 
+}

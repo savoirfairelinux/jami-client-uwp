@@ -1290,6 +1290,49 @@ RingD::initDaemon(int flags)
 }
 
 void
+test()
+{
+    using namespace RingClientUWP::Controls;
+
+    // create a list of contact data objects (from daemon)
+    auto contactList = std::vector<std::shared_ptr<Models::Contact>>();
+    contactList.emplace_back(std::make_shared<Models::Contact>("id0"));
+    contactList.emplace_back(std::make_shared<Models::Contact>("id1"));
+
+    // create a list of contact item control objects (from contact data objects)
+    auto contactItem0 = ref new ContactItem(contactList.at(0));
+    auto contactItem1 = ref new ContactItem(contactList.at(1));
+
+    // set some details
+    contactItem0->_alias = "chewy";
+    contactItem1->_alias = "groot";
+
+    // verify sub-control ownership
+    MSG_("***TEST***  c0.id : " + contactList.at(0)->id);
+    MSG_("***TEST***  c1.id : " + contactList.at(1)->id);
+    MSG_("***TEST***  c0.alias : " + contactList.at(0)->alias);
+    MSG_("***TEST***  c1.alias : " + contactList.at(1)->alias);
+
+    // create a list of generic item control objects (from contact item control objects)
+    auto itemList = ref new Vector<SmartItem^>();
+    itemList->Append(ref new SmartItem(contactItem0));
+    itemList->Append(ref new SmartItem(contactItem1));
+    itemList->Append(ref new SmartItem(ref new RingClientUWP::Controls::GroupItem("group0")));
+
+    // change some details
+    itemList->GetAt(0)->_alias = "thunder";
+    itemList->GetAt(1)->_alias = "tjcombo";
+
+    // verify control ownership
+    MSG_("***TEST***  c0.id : " + contactList.at(0)->id);
+    MSG_("***TEST***  c1.id : " + contactList.at(1)->id);
+    MSG_("***TEST***  c0.alias : " + contactList.at(0)->alias);
+    MSG_("***TEST***  c1.alias : " + contactList.at(1)->alias);
+    MSG_("***TEST***  i1.name : " + itemList->GetAt(1)->_name);
+    MSG_("***TEST***  i2.name : " + itemList->GetAt(2)->_name);
+}
+
+void
 RingD::startDaemon()
 {
     if (daemonRunning_) {
@@ -1298,6 +1341,8 @@ RingD::startDaemon()
     }
     //eraseCacheFolder();
     editModeOn_ = true;
+
+    test();
 
     IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
     {
