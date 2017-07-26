@@ -296,5 +296,40 @@ private:
     String^ lastTime_;
     TrustStatus trustStatus_;
 };
+
+namespace Models
+{
+
+namespace Conf
+{
+namespace Contacts
+{
+constexpr static const char ID[] = "Contact.id";
+constexpr static const char DISPLAYNAME[] = "Contact.displayName";
+constexpr static const char ALIAS[] = "Contact.alias";
+constexpr static const char TYPE[] = "Contact.type";
+}
 }
 
+struct Contact
+{
+    Contact() { };
+    Contact(const std::string& id,
+            const std::string& type)
+        : id(id)
+        , displayName()
+        , alias()
+        , contactType(type)
+    { }
+
+    std::string         id;
+    std::string         displayName;
+    std::string         alias;
+    std::string         ringId;
+    std::string         contactType;
+
+};
+
+}
+
+}
