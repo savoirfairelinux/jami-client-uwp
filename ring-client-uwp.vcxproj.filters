@@ -94,6 +94,8 @@
     <ClCompile Include="RingDeviceItem.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="AccountItem.cpp">
+      <Filter>Controls</Filter>
     <ClCompile Include="Converters.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -205,6 +207,8 @@
     <ClInclude Include="HttpUtils.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="AccountItem.h">
+      <Filter>Controls</Filter>
     <ClInclude Include="Converters.h">
       <Filter>Common</Filter>
     </ClInclude>
