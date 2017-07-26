@@ -447,6 +447,24 @@ genID(uint64_t lower, uint64_t upper)
     return o.str();
 }
 
+String^
+getDetailsStringValue(Map<String^, String^>^ details, const char* key)
+{
+    auto Key = toPlatformString(key);
+    if (details->HasKey(Key))
+        return details->Lookup(Key);
+    return nullptr;
+}
+
+bool
+getDetailsBoolValue(Map<String^, String^>^ details, const char* key)
+{
+    auto Key = toPlatformString(key);
+    if (details->HasKey(Key))
+        return details->Lookup(Key) == "true";
+    return false;
+}
+
 bool
 hasInternet()
 {

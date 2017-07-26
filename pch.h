@@ -32,11 +32,13 @@
 /* required by generated headers. */
 #include "App.xaml.h"
 #include "Account.h"
+#include "AccountItem.h"
 #include "AccountListItem.h"
 #include "AccountListItemsViewModel.h"
 #include "AccountsViewModel.h"
 #include "Call.h"
 #include "Contact.h"
+#include "ContactItem.h"
 #include "ContactListModel.h"
 #include "Conversation.h"
 #include "RingDevice.h"

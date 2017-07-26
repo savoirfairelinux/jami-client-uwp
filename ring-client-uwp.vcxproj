@@ -173,11 +173,15 @@
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </ClInclude>
     <ClInclude Include="Account.h" />
+    <ClInclude Include="AccountItem.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Call.h" />
     <ClInclude Include="Contact.h" />
+    <ClInclude Include="ContactItem.h" />
     <ClInclude Include="ContactRequestItem.h" />
     <ClInclude Include="ContactRequestItemsViewModel.h" />
     <ClInclude Include="ContactListModel.h" />
@@ -351,6 +355,9 @@
       <DependentUpon>AboutPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="Account.cpp" />
+    <ClCompile Include="AccountItem.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="AccountListItem.cpp" />
     <ClCompile Include="AccountListItemsViewModel.cpp" />
     <ClCompile Include="AccountsViewModel.cpp" />
@@ -359,6 +366,7 @@
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
+    <ClCompile Include="ContactItem.cpp" />
     <ClCompile Include="ContactRequestItem.cpp" />
     <ClCompile Include="ContactRequestItemsViewModel.cpp" />
     <ClCompile Include="ContactListModel.cpp" />
@@ -392,6 +400,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
