@@ -182,6 +182,7 @@
     <ClInclude Include="ContactRequestItemsViewModel.h" />
     <ClInclude Include="ContactListModel.h" />
     <ClInclude Include="Conversation.h" />
+    <ClInclude Include="Converters.h" />
     <ClInclude Include="HttpUtils.h" />
     <ClInclude Include="RingDevice.h" />
     <ClInclude Include="RingDeviceItemsViewModel.h" />
@@ -367,6 +368,7 @@
     <ClCompile Include="ContactRequestItemsViewModel.cpp" />
     <ClCompile Include="ContactListModel.cpp" />
     <ClCompile Include="Conversation.cpp" />
+    <ClCompile Include="Converters.cpp" />
     <ClCompile Include="RingDeviceItemsViewModel.cpp" />
     <ClCompile Include="RingDeviceItem.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">
