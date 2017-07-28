@@ -94,6 +94,9 @@
     <ClCompile Include="RingDeviceItem.cpp">
       <Filter>Controls</Filter>
     </ClCompile>
+    <ClCompile Include="Converters.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -200,6 +203,9 @@
       <Filter>Models</Filter>
     </ClInclude>
     <ClInclude Include="HttpUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Converters.h">
       <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>

@@ -56,6 +56,7 @@
 #include "UserPreferences.h"
 #include "VCardUtils.h"
 #include "ResourceManager.h"
+#include "Converters.h"
 
 /* video */
 #include "Video.h"
