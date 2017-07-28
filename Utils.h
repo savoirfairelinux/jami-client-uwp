@@ -473,30 +473,25 @@ ColorFromString(String^ s)
         return Windows::UI::ColorHelper::FromArgb(255, 0, 0, 0);
 }
 
-// 21 XBOX/Web ready colors
-// https://docs.microsoft.com/en-us/windows/uwp/style/color
+// 16 Web ready colors
+// https://material.io/guidelines/style/color.html#color-color-palette
 auto colorStrings = ref new Vector<String^>({
-    "#ffEB8C10",
-    "#ffED5588",
-    "#ff1073D6",
-    "#ff148282",
-    "#ff107C10",
-    "#ff4C4A4B",
-    "#ff00CC6A",
-    "#ffBF1077",
-    "#ff193E91",
-    "#ff54A81B",
-    "#ff737373",
-    "#ff7E715C",
-    "#ff6B69D6",
-    "#ffB144C0",
-    "#ff1081CA",
-    "#ff547A72",
-    "#ff677488",
-    "#ff724F2F",
-    "#ffA21025",
-    "#ff744DA9",
-    "#ff108272"
+    "#fff44336", // { 0.956862,     0.262745, 0.211764 }    #fff44336   // red 244, green 67,   blue 54     (red)
+    "#ffe91e63", // { 0.913725,     0.117647, 0.388235 }    #ffe91e63   // red 233, green 30,   blue 99     (pink)
+    "#ff9c27b0", // { 0.611764,     0.152941, 0.690196 }    #ff9c27b0   // red 156, green 39,   blue 176    (purple)
+    "#ff673ab7", // { 0.956862,     0.262745, 0.211764 }    #ff673ab7   // red 244, green 67,   blue 54     (deep purple)
+    "#ff3f51b5", // { 0.403921,     0.227450, 0.717647 }    #ff3f51b5   // red 103, green 58,   blue 183    (indigo)
+    "#ff2196f3", // { 0.247058,     0.317647, 0.211764 }    #ff2196f3   // red 63,  green 81,   blue 54     (blue)
+    "#ff00bcd4", // { 0, 0.737254,  0.831372, 1.0 }         #ff00bcd4   // red 0,   green 188,  blue 212    (cyan)
+    "#ff009688", // { 0, 0.588235,  0.533333, 1.0 }         #ff009688   // red 0,   green 150,  blue 136    (teal)
+    "#ff4caf50", // { 0.298039,     0.682745, 0.313725 }    #ff4caf50   // red 76,  green 175,  blue 80     (green)
+    "#ff8bc34a", // { 0.545098,     0.764705, 0.290196 }    #ff8bc34a   // red 138, green 194,  blue 73     (light green)
+    "#ff9e9e9e", // { 0.619607,     0.619607, 0.619607 }    #ff9e9e9e   // red 157, green 157,  blue 157    (grey)
+    "#ffcddc39", // { 0.803921,     0.862745, 0.223529 }    #ffcddc39   // red 204, green 219,  blue 56     (lime)
+    "#ffffc107", // { 1, 0.756862,  0.027450, 1.0 }         #ffffc107   // red 255, green 192,  blue 6      (amber)
+    "#ffff5722", // { 1, 0.341176,  0.133333, 1.0 }         #ffff5722   // red 255, green 86,   blue 33     (deep orange)
+    "#ff795548", // { 0.474509,     0.333333, 0.282352 }    #ff795548   // red 120, green 84,   blue 71     (brown)
+    "#ff607d8b"  // { 0.376470,     0.490196, 0.545098 }    #ff607d8b   // red 95,  green 124,  blue 138,   (blue grey)
 });
 
 String^
@@ -541,14 +536,14 @@ generateRandomNumberInRange(uint32_t min, uint32_t max)
 String^
 getRandomColorString()
 {
-    auto index = generateRandomNumberInRange(0, 21);
+    auto index = generateRandomNumberInRange(0, colorStrings->Size - 1);
     return colorStrings->GetAt(index);
 }
 
 String^
 getRandomColorStringFromString(String^ str)
 {
-    auto index = hashToRange(toString(computeMD5(str)), 0, 21);
+    auto index = hashToRange(toString(computeMD5(str)), 0, colorStrings->Size - 1);
     return colorStrings->GetAt(index);
 }
 
