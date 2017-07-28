@@ -496,7 +496,19 @@ auto colorStrings = ref new Vector<String^>({
     "#ff724F2F",
     "#ffA21025",
     "#ff744DA9",
-    "#ff108272"
+    "#ff108272",
+    "#ffF44336",
+    "#ffE91E63",
+    "#ff9C27B0",
+    "#ff673AB7",
+    "#ff3F51B5",
+    "#ff2196F3",
+    "#ff03A9F4",
+    "#ff00BCD4",
+    "#ff009688",
+    "#ff4CAF50",
+    "#ff8BC34A",
+    "#ffCDDC39"
 });
 
 String^
@@ -541,14 +553,14 @@ generateRandomNumberInRange(uint32_t min, uint32_t max)
 String^
 getRandomColorString()
 {
-    auto index = generateRandomNumberInRange(0, 21);
+    auto index = generateRandomNumberInRange(0, colorStrings->Size - 1);
     return colorStrings->GetAt(index);
 }
 
 String^
 getRandomColorStringFromString(String^ str)
 {
-    auto index = hashToRange(toString(computeMD5(str)), 0, 21);
+    auto index = hashToRange(toString(computeMD5(str)), 0, colorStrings->Size - 1);
     return colorStrings->GetAt(index);
 }
 
