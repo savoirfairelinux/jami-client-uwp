@@ -237,37 +237,6 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     }
 }
 
-Object ^ RingClientUWP::Views::BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
-{
-    auto c1 = Utils::ColorFromString("#ffebefef");
-    auto c2 = Utils::ColorFromString("#ffcfebf5");
-    return ((bool)value) ? ref new SolidColorBrush(c1) : ref new SolidColorBrush(c2);
-}
-
-// we only do OneWay so the next function is not used
-Object ^ RingClientUWP::Views::BubbleBackground::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
-{
-    throw ref new Platform::NotImplementedException();
-}
-
-RingClientUWP::Views::BubbleBackground::BubbleBackground()
-{}
-
-Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
-{
-    return ((bool)value) ? Windows::UI::Xaml::HorizontalAlignment::Left : Windows::UI::Xaml::HorizontalAlignment::Right;
-}
-
-// we only do OneWay so the next function is not used
-Object ^ RingClientUWP::Views::BubbleHorizontalAlignement::ConvertBack(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
-{
-    throw ref new Platform::NotImplementedException();
-}
-
-RingClientUWP::Views::BubbleHorizontalAlignement::BubbleHorizontalAlignement()
-{}
-
-
 void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
 {
     scrollDown();
