@@ -502,7 +502,7 @@
     <value>Add to conference</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
-    <value>Call</value>
+    <value>呼叫</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
     <value>Copy RingID</value>

@@ -208,7 +208,7 @@
     <value>procurando por</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>adicionou você como um contato</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>Solicitação de contato enviada</value>
@@ -268,7 +268,7 @@
     <value>Sobre</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring é uma plataforma de comunicação livre e universal que preserva a privacidade e liberdade dos usuários.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Política de Privacidade</value>
@@ -298,22 +298,22 @@
     <value>Nenhum ID de dispositivo encontrado!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>você já possui um contato com este ring id</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>erro de conectividade!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>ring id adicionado</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>usuário encontrado e adicionado</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>usuário inválido</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>usuário não encontrado</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Adicionar Conta Existente</value>
@@ -340,19 +340,19 @@
     <value>Criar Conta</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Conta habilitada</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Esconder contatos banidos</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Mostrar contatos banidos</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Conexão não disponível</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>Modificações de conta aceitas</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
     <value>Accept the incoming call</value>
@@ -517,7 +517,7 @@
     <value>Other linked devices</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Remover contato</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>Adicionar Conta Existente</value>
@@ -538,24 +538,24 @@
     <value>Attempting to add this device...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Criando conta...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Deletando conta...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>Gerando PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
     <value>Revoking device with ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Atualizando conta...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Remover contato</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>Bem-vindo à</value>
   </data>
 </root>
