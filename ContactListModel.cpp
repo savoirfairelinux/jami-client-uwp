@@ -127,7 +127,9 @@ ContactListModel::Stringify()
     JsonArray^ jsonArray = ref new JsonArray();
 
     for (int i = contactsList_->Size - 1; i >= 0; i--) {
-        jsonArray->Append(contactsList_->GetAt(i)->ToJsonObject());
+        auto contact = contactsList_->GetAt(i);
+        if (contact->_contactStatus != ContactStatus::WAITING_FOR_ACTIVATION)
+            jsonArray->Append(contact->ToJsonObject());
     }
 
     JsonObject^ jsonObject = ref new JsonObject();
