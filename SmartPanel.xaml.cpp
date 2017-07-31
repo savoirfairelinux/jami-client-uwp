@@ -1669,13 +1669,13 @@ void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String
 }
 
 void
-SmartPanel::addToContactList(String^ name)
+SmartPanel::addToContactList(String^ uri)
 {
     // invalidate temporary contact item creation early for poorly formatted searches
     static const std::regex RINGID_VALIDATOR("[0-9a-f]{40}");
     static const std::regex NAME_VALIDATOR{ "^[a-zA-Z0-9-_]{3,32}$" };
-    auto isUsername = std::regex_match(Utils::toString(name), NAME_VALIDATOR);
-    auto isRingId = std::regex_match(Utils::toString(name), RINGID_VALIDATOR);
+    auto isUsername = std::regex_match(Utils::toString(uri), NAME_VALIDATOR);
+    auto isRingId = std::regex_match(Utils::toString(uri), RINGID_VALIDATOR);
     if (!(isUsername || isRingId)) {
         ringTxtBxPlaceHolderDelay(ResourceMananger::instance->getStringResource("_contactsUsernameInvalid_"), 5000);
         return;
@@ -1693,24 +1693,24 @@ SmartPanel::addToContactList(String^ name)
 
     auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
     for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-        if ((item->_contact->_name == name || item->_contact->ringID_ == name) &&
+        if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
             selectedAccountId == item->_contact->_accountIdAssociated &&
             item->_contact->_trustStatus >= TrustStatus::CONTACT_REQUEST_SENT) {
             SmartPanelItemsViewModel::instance->_selectedItem = item;
             summonMessageTextPage();
             return;
         }
-        else if ((item->_contact->_name == name || item->_contact->ringID_ == name) &&
-                 item->_contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
+        else if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
+            item->_contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
             // In this case, we are potentially attempting to send a trust request to a
             // peer who has already sent us one. For now we shall just send a trust request,
             // so they receive our vcard and remove our corresponding contact request control item.
             /* DRing::acceptTrustRequest(  Utils::toString(item->_contact->_accountIdAssociated),
-                                        Utils::toString(item->_contact->ringID_)); */
+            Utils::toString(item->_contact->ringID_)); */
             auto vcard = Configuration::UserPreferences::instance->getVCard();
             RingD::instance->sendContactRequest(Utils::toString(item->_contact->_accountIdAssociated),
-                                                Utils::toString(item->_contact->ringID_),
-                                                vcard->asString());
+                Utils::toString(item->_contact->ringID_),
+                vcard->asString());
             item->_contact->_trustStatus = TrustStatus::TRUSTED;
             contactListModel->saveContactsToFile();
 
@@ -1731,12 +1731,12 @@ SmartPanel::addToContactList(String^ name)
     }
 
     if (isRingId) {
-        contactListModel->addNewContact(_ringTxtBx_->Text, "", TrustStatus::UNKNOWN, false, ContactStatus::READY);
-        RingD::instance->lookUpAddress(Utils::toString(selectedAccountId), name);
+        contactListModel->addNewContact(uri, uri, TrustStatus::UNKNOWN, false, ContactStatus::READY);
+        RingD::instance->lookUpAddress(Utils::toString(selectedAccountId), uri);
     }
     else {
-        contactListModel->addNewContact(_ringTxtBx_->Text, "", TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
-        RingD::instance->lookUpName(Utils::toString(selectedAccountId), name);
+        contactListModel->addNewContact(uri, nullptr, TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
+        RingD::instance->lookUpName(Utils::toString(selectedAccountId), uri);
     }
 
     for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
