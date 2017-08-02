@@ -141,8 +141,8 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\build\include;..\ring-daemon\contrib\build\include\pjlib;..\ring-daemon\contrib\build\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\build\include;..\ring-daemon\contrib\build\include\pjlib;..\ring-daemon\contrib\build\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
       <CompileAsManaged>false</CompileAsManaged>
@@ -181,6 +181,8 @@
     <ClInclude Include="ContactRequestItem.h" />
     <ClInclude Include="ContactRequestItemsViewModel.h" />
     <ClInclude Include="ContactListModel.h" />
+    <ClInclude Include="contrib\sqlite-win32\sqlite3.h" />
+    <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h" />
     <ClInclude Include="Conversation.h" />
     <ClInclude Include="Converters.h" />
     <ClInclude Include="HttpUtils.h" />
@@ -367,6 +369,13 @@
     <ClCompile Include="ContactRequestItem.cpp" />
     <ClCompile Include="ContactRequestItemsViewModel.cpp" />
     <ClCompile Include="ContactListModel.cpp" />
+    <ClCompile Include="contrib\sqlite-win32\shell.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="contrib\sqlite-win32\sqlite3.c">
+      <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsWinRT>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Conversation.cpp" />
     <ClCompile Include="Converters.cpp" />
     <ClCompile Include="RingDeviceItemsViewModel.cpp" />

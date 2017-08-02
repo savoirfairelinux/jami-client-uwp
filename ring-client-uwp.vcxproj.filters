@@ -76,9 +76,6 @@
     <ClCompile Include="ContactRequestItemsViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
-    <ClCompile Include="lodepng.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="ContactListModel.cpp">
       <Filter>Models</Filter>
     </ClCompile>
@@ -96,6 +93,15 @@
     </ClCompile>
     <ClCompile Include="Converters.cpp">
       <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="lodepng.cpp">
+      <Filter>Common\lodepng</Filter>
+    </ClCompile>
+    <ClCompile Include="contrib\sqlite-win32\shell.c">
+      <Filter>Common\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="contrib\sqlite-win32\sqlite3.c">
+      <Filter>Common\sqlite</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -177,9 +183,6 @@
     <ClInclude Include="ContactRequestItemsViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="lodepng.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="ContactListModel.h">
       <Filter>Models</Filter>
     </ClInclude>
@@ -207,6 +210,15 @@
     </ClInclude>
     <ClInclude Include="Converters.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="lodepng.h">
+      <Filter>Common\lodepng</Filter>
+    </ClInclude>
+    <ClInclude Include="contrib\sqlite-win32\sqlite3.h">
+      <Filter>Common\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h">
+      <Filter>Common\sqlite</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -543,6 +555,12 @@
     </Filter>
     <Filter Include="Strings\en-GB">
       <UniqueIdentifier>{83248a19-b0d2-4b71-b0be-c5e9cd98fd65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\lodepng">
+      <UniqueIdentifier>{c62ee4e6-c4f0-43fa-b431-50df3e43f401}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\sqlite">
+      <UniqueIdentifier>{5797d71a-e85a-41ae-b793-1bc38765eb47}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
