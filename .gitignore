@@ -6,6 +6,7 @@ DebugLib/
 Debug/
 ReleaseLib/
 Release/
+contrib/sqlite-win32/
 .config/
 # User-specific files
 *.suo
