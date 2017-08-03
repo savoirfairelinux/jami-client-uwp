@@ -148,7 +148,7 @@
     <value>Ring的Microsoft Windows Runtime客户端。</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>自由、平等、博爱 - 版本 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>输入别名</value>
@@ -208,7 +208,7 @@
     <value>查找</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>将您加为了联系人</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>联系人请求已发送</value>
@@ -223,7 +223,7 @@
     <value>了解更多</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
-    <value>Beginning of Time</value>
+    <value>最开始</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
     <value>注册</value>
@@ -268,7 +268,7 @@
     <value>关于</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring 是一个保护用户的隐私和自由的通用自由软件。</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>隐私政策</value>
@@ -298,22 +298,22 @@
     <value>设备ID未找到！</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>您的通讯录里已存在该 RingID</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>网络错误！</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>已添加 RingID</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>已找到并添加该用户名</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>该用户名无效</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>找不到该用户名</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>添加已有帐户</value>
@@ -337,28 +337,28 @@
     <value>别名</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Create Account</value>
+    <value>创建账户</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>帐户已启用</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>隐藏被屏蔽的联系人</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>显示被屏蔽的联系人</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>无法建立连接</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>完成帐户修改</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>接听通话</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>将该用户添加为联系人</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>取消</value>
@@ -367,40 +367,40 @@
     <value>帐户</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Create a new account</value>
+    <value>新建帐户</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>下一步</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
-    <value>Add account</value>
+    <value>添加帐户</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>取消屏蔽并添加该用户为联系人</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>连接一个新设备到该帐户</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>发起语音通话</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>屏蔽该用户的所有会话</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(可从帐户设置中取消屏蔽该用户)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>取消帐户修改</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>取消呼出</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>切换消息面板方向</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>删除该会话</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>通讯录</value>
@@ -415,34 +415,34 @@
     <value>设备</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
-    <value>Done</value>
+    <value>已完成</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>打开帐户设置</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>主页/关于</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>无视该用户的联系人请求</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>将此设备与已有帐户进行连接</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>取消 PIN 的生成</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>生成帐户 PIN</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>拒接来电</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>删除这个联系人</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>取消该设备与该帐户的连接</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>发消息</value>
@@ -451,73 +451,73 @@
     <value>设置</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>显示二维码和 RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>发起视频通话</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>启用 TURN 服务器</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>加入通讯录</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>音频编码:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>码率:</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>分辨率:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>视频编码:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>添加设备</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>搜索已有联系人或新联系人</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>搜索已有联系人或新联系人</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>该设备</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>TURN 服务器地址</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>删除帐户</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>输入信息</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>关闭</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>添加至会议</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>通话</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>复制 RingID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>姓名</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>网络不可用</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>其他设备</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>删除联系人</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
     <value>添加已有帐户</value>
@@ -526,7 +526,7 @@
     <value>创建新帐户</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>从未呼叫</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>界面设计：</value>
@@ -535,27 +535,27 @@
     <value>开发者：</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>正在尝试添加这台设备...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>正在创建帐户...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>正在删除帐户...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>正在生成 PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>吊销设备 ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>正在更新帐户...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>删除联系人</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>欢迎来到</value>
   </data>
 </root>

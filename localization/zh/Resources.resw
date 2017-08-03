@@ -322,7 +322,7 @@
     <value>Create New Account</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
-    <value>Enter your full name</value>
+    <value>输入你的全名</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
     <value>Ring account password</value>

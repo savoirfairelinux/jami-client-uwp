@@ -139,7 +139,7 @@
     <value>https://www.gnu.org/licenses/gpl-3.0.fr.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value> for details.</value>
+    <value>pour plus d&apos;infos.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
     <value>Ring est un logiciel de communication sécurisé et distribué.</value>
@@ -163,7 +163,7 @@
     <value>Entrez votre code PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
+    <value>Pour relier cet appareil à un compte Ring, il est nécessaire de générer un PIN depuis une appareil qui héberge ledit compte.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Décrocher automatiquement</value>
@@ -223,7 +223,7 @@
     <value>En savoir plus</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
-    <value>Beginning of Time</value>
+    <value>Nuit des temps</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
     <value>Enregistrer</value>
@@ -271,7 +271,7 @@
     <value>Ring est un logiciel libre de communication universelle qui respecte les libertés et la vie privée de ses utilisateurs.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Politique de confidentialité</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
     <value>Ce compte sera supprimé de cet ordinateur. Les autres appareils ne sont pas affectés. Votre inscription publique ne peut être supprimée.</value>
@@ -289,13 +289,13 @@
     <value>Vous n&apos;êtes pas encore enregistré</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>You&apos;ll have to send your ringId.</value>
+    <value>Il sera nécessaire d&apos;envoyer votre ringId.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
-    <value>Credentials error or PIN expired.</value>
+    <value>Identifiants incorrects ou PIN expiré.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
-    <value>No device id found!</value>
+    <value>Pas de numéro d&apos;appareil trouvé !</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
     <value>vus avez déjà un contact possédant cet id Ring</value>
@@ -385,10 +385,10 @@
     <value>Démarrer un appel audio</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>Empêcher cet utilisateur d&apos;entrer en contact</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(l&apos;utilisateur peut être débloqué depuis le panneau Paramètres Compte)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
     <value>Annuler les modifications au compte</value>
@@ -442,7 +442,7 @@
     <value>Retirer ce contact</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>Révoquer cet appareil de ce compte</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>Envoyer le message</value>
@@ -457,7 +457,7 @@
     <value>Démarrer un appel vidéo</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>Activer le relais TURN</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>Ajouter aux contacts</value>
@@ -466,7 +466,7 @@
     <value>Codec audio:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Images/seconde :</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
     <value>Résolution</value>
@@ -478,22 +478,22 @@
     <value>Ajouter un appareil</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Chercher des contacts</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Chercher des contacts</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
     <value>Cet appareil</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>Adresse du relai TURN</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
     <value>Supprimer le compte</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Ecrivez un message</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>Fermer</value>
@@ -535,7 +535,7 @@
     <value>Créé par :</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Ajout de l&apos;appareil…</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
     <value>Création du compte...</value>
@@ -547,7 +547,7 @@
     <value>Génération du NIP</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Révocation de l&apos;appareil :</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
     <value>Mise à jour du compte...</value>
@@ -556,6 +556,6 @@
     <value>Retirer le contact</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>Bienvenue sur</value>
   </data>
 </root>
