@@ -189,9 +189,17 @@ SmartPanel::SmartPanel()
 
     RingD::instance->newBuddyNotification += ref new RingClientUWP::NewBuddyNotification(this, &RingClientUWP::Views::SmartPanel::OnnewBuddyNotification);
 
+    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &SmartPanel::OnnameRegistred);
+
     _networkConnectivityNotificationRow_->Height = Utils::hasInternet() ? 0 : 32;
 
     selectMenu(MenuOpen::CONTACTS_LIST);
+}
+
+void
+SmartPanel::OnnameRegistred(bool status, String ^accountId)
+{
+    updatePageContent();
 }
 
 void
@@ -890,6 +898,8 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     account->name_ = _accountAliasTextBoxEdition_->Text;
 
     if (account->accountType_ == "RING") {
+        if (_RegisterStateEdition_->IsOn)
+            account->_username = _usernameTextBoxEdition_->Text;
         account->_active = _enabledState_->IsOn;
         account->_upnpState = _upnpState_->IsOn;
         account->_autoAnswer = _autoAnswerToggle_->IsOn;
@@ -911,7 +921,7 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     updatePageContent();
 
     if (_usernameValidEdition_->Visibility == Windows::UI::Xaml::Visibility::Visible && _usernameTextBoxEdition_->Text->Length() > 2)
-        RingD::instance->registerName_new(Utils::toString(account->accountID_), "", Utils::toString(_usernameTextBoxEdition_->Text));
+        RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEdition_->Text);
 }
 
 
@@ -1007,7 +1017,7 @@ void RingClientUWP::Views::SmartPanel::_smartList__PointerExited(Platform::Objec
 void RingClientUWP::Views::SmartPanel::_registerOnBlockchainEdition__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
-    RingD::instance->registerName_new(Utils::toString(account->accountID_), "", Utils::toString(_usernameTextBoxEdition_->Text));
+    RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEdition_->Text);
 }
 
 
@@ -1854,7 +1864,7 @@ void RingClientUWP::Views::SmartPanel::requestPin()
     /* hide the button while we are waiting... */
     _closePin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    RingD::instance->askToExportOnRing(accountId, password);
+    RingD::instance->ExportOnRing(accountId, password);
 }
 
 void

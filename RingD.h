@@ -1,7 +1,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -53,7 +53,6 @@ delegate void SetOverlayStatusText(String^ statusText, String^ color);
 delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
 delegate void VideoMuted(const std::string& callId, bool state);
-delegate void NameRegistred(bool status);
 delegate void FullScreenToggled(bool state);
 delegate void WindowResized(float width, float height);
 delegate void NetworkChanged();
@@ -64,6 +63,7 @@ delegate void VolatileDetailsChanged(const std::string& accountId, const std::ma
 delegate void NewBuddyNotification(const std::string& accountId, const std::string& uri, int status);
 delegate void VCardUpdated(Contact^ owner);
 delegate void ShareRequested();
+delegate void NameRegistered(bool status, String^ accountId);
 
 using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
 using namespace std::placeholders;
@@ -206,19 +206,14 @@ internal: // why this property has to be internal and not public ?
     void pauseCall(String ^ callId);
     void unPauseCall(String ^ callId);
     void getKnownDevices(String^ accountId);
-    void askToExportOnRing(String^ accountId, String^ password);
-    void eraseCacheFolder();
+    void ExportOnRing(String^ accountId, String^ password);
     void updateAccount(String^ accountId);
     void deleteAccount(String^ accountId);
     void registerThisDevice(String^ pin, String^ archivePassword);
-    void getCallsList();
-    void killCall(String^ callId);
-    void switchDebug();
     void muteVideo(String^ callId, bool muted);
     void muteAudio(const std::string& callId, bool muted);
     void subscribeBuddy(const std::string& accountId, const std::string& uri, bool flag);
     void registerName(String^ accountId, String^ password, String^ username);
-    void registerName_new(const std::string& accountId, const std::string& password, const std::string& username);
     std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
     void lookUpName(const std::string& accountId, String^ name);
     void lookUpAddress(const std::string& accountId, String^ address);
@@ -230,7 +225,7 @@ internal: // why this property has to be internal and not public ?
     void revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId);
     void showLoadingOverlay(String^ text, String^ color);
     void hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds = 2000);
-    void OnaccountAdded();
+    void OnaccountAdded(const std::string& accountId);
     void OnaccountUpdated();
     void OnaccountDeleted();
 
@@ -262,7 +257,6 @@ internal: // why this property has to be internal and not public ?
     event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
     event AudioMuted^ audioMuted;
     event VideoMuted^ videoMuted;
-    event NameRegistred^ nameRegistred;
     event FullScreenToggled^ fullScreenToggled;
     event WindowResized^ windowResized;
     event NetworkChanged^ networkChanged;
@@ -273,90 +267,14 @@ internal: // why this property has to be internal and not public ?
     event NewBuddyNotification^ newBuddyNotification;
     event VCardUpdated^ vCardUpdated;
     event ShareRequested^ shareRequested;
+    event NameRegistered^ nameRegistered;
 
 private:
-    /* sub classes */
-    enum class Request {
-        None,
-        AddRingAccount,
-        AddSIPAccount,
-        RefuseIncommingCall,
-        AcceptIncommingCall,
-        CancelOutGoingCall,
-        PlaceCall,
-        HangUpCall,
-        PauseCall,
-        UnPauseCall,
-        RegisterDevice,
-        GetKnownDevices,
-        ExportOnRing,
-        UpdateAccount,
-        DeleteAccount,
-        GetCallsList,
-        KillCall,
-        switchDebug,
-        MuteVideo,
-        MuteAudio,
-        LookUpName,
-        LookUpAddress,
-        SendContactRequest,
-        AcceptContactRequest,
-        DiscardContactRequest,
-        RegisterName,
-        RemoveContact,
-        RevokeDevice,
-        SubscribeBuddy,
-        SendSIPMessage
-    };
-
     Vector<String^>^ callIdsList_;
-
-    ref class Task
-    {
-    internal:
-        Task(Request r) {
-            request = r;
-        }
-        Task(Request r, String^ c) {
-            request = r;
-            _callId = c;
-        }
-        Task(Request r, String^ p, String^ P) {
-            request = r;
-            _pin = p;
-            _password = P;
-        }
-    public:
-        property Request request;
-        property String^ _alias;
-        property String^ _callId;
-        property String^ _pin;
-        property String^ _password; // refacto : is it safe ? are tasks destroy quickly after been used ?
-        property String^ _accountId;
-        property bool _upnp;
-        property String^ _sipPassword;
-        property String^ _sipHostname;
-        property String^ _sipUsername;
-        property bool _muted;
-        property String^ _registeredName; // public username
-        property String^ _address; // ringId
-
-    internal:
-        std::string _accountId_new;
-        std::string _payload;
-        std::map<std::string, std::string> _payload2;
-        std::string _password_new;
-        std::string _publicUsername_new;
-        std::string _callid_new;
-        std::string _ringId_new;
-        std::string _deviceId;
-        bool _audioMuted_new;
-    };
 
     /* functions */
     RingD(); // singleton
 
-    void dequeueTasks();
     void InternetConnectionChanged(Platform::Object^ sender);
     //CallStatus translateCallStatus(String^ state);
 
@@ -366,18 +284,19 @@ private:
     bool hasInternet_;
     bool isAddingDevice     = false;
     bool isAddingAccount    = false;
+    bool shouldRegister     = false;
+    String^ nameToRegister  = "";
     bool isUpdatingAccount  = false;
     bool isDeletingAccount  = false;
     bool isInBackground_    = false;
     bool isInvisible_       = false;
     bool daemonInitialized_ = false;
     bool daemonRunning_     = false;
-    bool editModeOn_        = false;
     bool debugModeOn_       = true;
     bool callToastPopped_   = false;
 
     std::string localFolder_;
-    std::queue<Task^> tasksList_;
+    Utils::task_queue tasks_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     Ringtone^ ringtone_;
 

@@ -96,7 +96,7 @@ private:
     void OnregistrationStateUnregistered(const std::string& accountId);
     void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
-    void OnnameRegistred(bool status);
+    void OnnameRegistred(bool status, String ^accountId);
     void OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string>& details);
 };
 }
