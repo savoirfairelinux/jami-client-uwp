@@ -21,7 +21,6 @@
 /* daemon */
 #include <dring.h>
 #include "dring/call_const.h"
-
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
@@ -227,281 +226,467 @@ RingD::connectivityChanged()
     DRing::connectivityChanged();
 }
 
-/* nb: send message during conversation not chat video message */
-void RingClientUWP::RingD::sendAccountTextMessage(String^ message)
+void
+RingD::sendAccountTextMessage(String^ message)
 {
-    /* recipient */
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-    auto contact = item->_contact;
-    auto toRingId = contact->ringID_;
-    std::wstring toRingId2(toRingId->Begin());
-    std::string toRingId3(toRingId2.begin(), toRingId2.end());
+    tasks_.add_task([this, message]() {
+        if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
+            auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+            auto contact = item->_contact;
+            auto uri = contact->ringID_;
 
-    /* account id */
-    auto accountId = contact->_accountIdAssociated;
-    std::wstring accountId2(accountId->Begin());
-    std::string accountId3(accountId2.begin(), accountId2.end());
+            auto _accountId = Utils::toString(accountId);
+            auto _uri = Utils::toString(uri);
 
-    /* payload(s) */
-    IBuffer^ buffUTF8 = CryptographicBuffer::ConvertStringToBinary(message, BinaryStringEncoding::Utf8);
-    auto stdMessage = Utils::getData(buffUTF8);
-    std::map<std::string, std::string> payloads;
-    payloads["text/plain"] = stdMessage;
+            /* payload(s) */
+            IBuffer^ buffUTF8 = CryptographicBuffer::ConvertStringToBinary(message, BinaryStringEncoding::Utf8);
+            auto _message = Utils::getData(buffUTF8);
+            std::map<std::string, std::string> _payload;
+            _payload["text/plain"] = _message;
 
-    /* daemon */
-    auto sentToken = DRing::sendAccountTextMessage(accountId3, toRingId3, payloads);
+            auto sentToken = DRing::sendAccountTextMessage(_accountId, _uri, _payload);
 
-    /* conversation */
-    if (sentToken) {
-        contact->_conversation->addMessage(MSG_FROM_ME, message, std::time(nullptr), false, sentToken.ToString());
-
-        /* save contacts conversation to disk */
-        contact->saveConversationToFile();
-    } else {
-        WNG_("message not sent, see daemon outputs");
-    }
+            Utils::runOnUIThread([this, sentToken, contact, message]() {
+                if (sentToken) {
+                    contact->_conversation->addMessage(MSG_FROM_ME, message, std::time(nullptr), false, sentToken.ToString());
+                    contact->saveConversationToFile();
+                }
+            });
+        }
+    });
 }
 
-// send message during video call
-void RingClientUWP::RingD::sendSIPTextMessage(String^ message)
+void
+RingD::sendSIPTextMessage(String^ message)
 {
-    /* account id */
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
-    std::wstring accountId2(accountId->Begin());
-    std::string accountId3(accountId2.begin(), accountId2.end());
+    tasks_.add_task([this, message]() {
+        if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
+            auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+            auto callId = item->_callId;
 
-    /* call */
-    auto item = SmartPanelItemsViewModel::instance->_selectedItem;
-    auto callId = item->_callId;
-    std::wstring callId2(callId->Begin());
-    std::string callId3(callId2.begin(), callId2.end());
+            auto _accountId = Utils::toString(accountId);
+            auto _callId = Utils::toString(callId);
+            auto _message = Utils::toString(message);
+            std::map<std::string, std::string> _payload;
+            _payload["text/plain"] = _message;
 
-    /* recipient */
-    auto contact = item->_contact;
+            DRing::sendTextMessage(_callId, _payload, _accountId, true /*not used*/);
 
-    /* payload(s) */
-    std::wstring message2(message->Begin());
-    std::string message3(message2.begin(), message2.end());
-    std::map<std::string, std::string> payloads;
-    payloads["text/plain"] = message3;
+            Utils::runOnUIThread([this, item, message]() {
+                // No id generated for sip messages within a conversation, so let's generate one
+                // so we can track message order.
+                auto contact = item->_contact;
+                auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
+                contact->_conversation->addMessage(MSG_FROM_ME, message, std::time(nullptr), false, messageId);
 
-    auto task = ref new RingD::Task(Request::SendSIPMessage);
-
-    task->_callid_new = callId3;
-    task->_accountId_new = accountId3;
-    task->_payload2 = payloads;
-
-    tasksList_.push(task);
-
-    // No id generated for sip messages within a conversation, so let's generate one
-    // so we can track message order.
-    auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
-    contact->_conversation->addMessage(MSG_FROM_ME, message, std::time(nullptr), false, messageId);
-
-    /* save contacts conversation to disk */
-    contact->saveConversationToFile();
+                contact->saveConversationToFile();
+            });
+        }
+    });
 }
 
-// send vcard
-void RingClientUWP::RingD::sendSIPTextMessageVCF(std::string callID, std::map<std::string, std::string> message)
+void
+RingD::sendSIPTextMessageVCF(std::string callID, std::map<std::string, std::string> message)
 {
-    /* account id */
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
-    std::wstring accountId2(accountId->Begin());
-    std::string accountId3(accountId2.begin(), accountId2.end());
-
-    auto task = ref new RingD::Task(Request::SendSIPMessage);
-
-    task->_callid_new = callID;
-    task->_accountId_new = accountId3;
-    task->_payload2 = message;
-
-    tasksList_.push(task);
+    tasks_.add_task([this, callID, message]() {
+        auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        auto _accountId = Utils::toString(accountId);
+        auto _callId = callID;
+        DRing::sendTextMessage(_callId, message, _accountId, true /*not used*/);
+    });
 }
 
 void
 RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp, String^ registeredName)
 {
-    editModeOn_ = true;
+    Utils::runOnUIThread([this]() {
+        showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
+        isAddingAccount = true;
+    });
 
-    showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
+    tasks_.add_task([this, alias, archivePassword, registeredName]() {
+        auto _alias = Utils::toString(alias);
+        auto _password = Utils::toString(archivePassword);
+        auto _registeredName = Utils::toString(registeredName);
 
-    isAddingAccount = true;
+        std::map<std::string, std::string> ringAccountDetails;
+        ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, _alias));
+        ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, _password));
+        ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
+        ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED, ring::TRUE_STR));
+        ringAccountDetails.insert(std::make_pair(DRing::Account::VolatileProperties::REGISTERED_NAME, _registeredName));
 
-    auto task = ref new RingD::Task(Request::AddRingAccount);
+        auto newAccountId = DRing::addAccount(ringAccountDetails);
 
-    task->_alias = alias;
-    task->_password = archivePassword;
-    task->_upnp = upnp;
-    task->_registeredName = registeredName;
-
-    tasksList_.push(task);
+        if (!_registeredName.empty())
+            registerName_new(newAccountId, _password, _registeredName);
+    });
 }
 
 void
 RingD::createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername)
 {
-    editModeOn_ = true;
+    Utils::runOnUIThread([this]() {
+        showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
+        isAddingAccount = true;
+    });
 
-    showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
+    tasks_.add_task([this, alias, sipPassword, sipHostname, sipusername]() {
+        auto _alias = Utils::toString(alias);
+        auto _sipPassword = Utils::toString(sipPassword);
+        auto _sipHostname = Utils::toString(sipHostname);
+        auto _sipUsername = Utils::toString(sipusername);
 
-    isAddingAccount = true;
+        std::map<std::string, std::string> sipAccountDetails;
+        sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS, _alias));
+        sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "SIP"));
+        sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::PASSWORD, _sipPassword));
+        sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::HOSTNAME, _sipHostname));
+        sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::USERNAME, _sipUsername));
 
-    auto task = ref new RingD::Task(Request::AddSIPAccount);
-
-    task->_alias = alias;
-    task->_sipPassword = sipPassword;
-    task->_sipHostname = sipHostname;
-    task->_sipUsername = sipusername;
-
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::refuseIncommingCall(String^ callId)
-{
-    tasksList_.push(ref new RingD::Task(Request::RefuseIncommingCall, callId));
-}
-
-void RingClientUWP::RingD::acceptIncommingCall(String^ callId)
-{
-    tasksList_.push(ref new RingD::Task(Request::AcceptIncommingCall, callId));
-}
-
-void RingClientUWP::RingD::placeCall(Contact^ contact)
-{
-    MSG_("!--->> placeCall");
-
-    if (contact->_accountIdAssociated->IsEmpty()) {
-        MSG_("adding account id to contact");
-        contact->_accountIdAssociated = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
-    }
-
-    auto task = ref new RingD::Task(Request::PlaceCall);
-    task->_accountId_new = Utils::toString(contact->_accountIdAssociated);
-    task->_ringId_new = Utils::toString(contact->ringID_);
-    task->_sipUsername = contact->_name;
-    tasksList_.push(task);
-
-}
-
-void RingClientUWP::RingD::pauseCall(const std::string & callId)
-{
-    auto task = ref new RingD::Task(Request::PauseCall);
-    task->_callid_new = callId;
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::unPauseCall(const std::string & callId)
-{
-    auto task = ref new RingD::Task(Request::UnPauseCall);
-    task->_callid_new = callId;
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::raiseWindowResized(float width, float height)
-{
-    windowResized(width, height);
+        DRing::addAccount(sipAccountDetails);
+    });
 }
 
 void
-RingD::raiseVCardUpdated(Contact^ contact)
+RingD::refuseIncommingCall(String^ callId)
 {
-    vCardUpdated(contact);
+    tasks_.add_task([this, callId]() {
+        auto _callId = Utils::toString(callId);
+        DRing::refuse(_callId);
+    });
 }
 
 void
-RingD::raiseShareRequested()
+RingD::acceptIncommingCall(String^ callId)
 {
-    shareRequested();
+    tasks_.add_task([this, callId]() {
+        auto _callId = Utils::toString(callId);
+        DRing::accept(_callId);
+    });
 }
 
-void RingClientUWP::RingD::cancelOutGoingCall2(String ^ callId)
+void
+RingD::placeCall(Contact^ contact)
 {
-    MSG_("$1 cancelOutGoingCall2 : " + Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
+    tasks_.add_task([this, contact]() {
+        auto _accountId = Utils::toString(contact->_accountIdAssociated);
+        auto _ringId = Utils::toString(contact->ringID_);
+        auto _sipUsername = Utils::toString(contact->_name);
+
+        auto selectedAccount = AccountListItemsViewModel::instance->_selectedItem->_account;
+        std::string callId;
+        if (selectedAccount->accountType_ == "RING")
+            callId = DRing::placeCall(_accountId, "ring:" + _ringId);
+        else if (selectedAccount->accountType_ == "SIP")
+            callId = DRing::placeCall(_accountId, "sip:" + _sipUsername);
+
+        // TODO: this UI response should be called at state change?
+        Utils::runOnUIThread([this, callId, _accountId, _ringId, _sipUsername, selectedAccount]() {
+            if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(_accountId))) {
+                Contact^ contact;
+                if (selectedAccount->accountType_ == "RING")
+                    contact = contactListModel->findContactByRingId(Utils::toPlatformString(_ringId));
+                else if (selectedAccount->accountType_ == "SIP")
+                    contact = contactListModel->findContactByName(Utils::toPlatformString(_sipUsername));
+                if (auto item = SmartPanelItemsViewModel::instance->findItem(contact)) {
+                    item->_callId = Utils::toPlatformString(callId);
+                    if (!callId.empty())
+                        callPlaced(Utils::toPlatformString(callId));
+                }
+            }
+        });
+    });
 }
 
-
-void RingClientUWP::RingD::hangUpCall2(String ^ callId)
+void
+RingD::pauseCall(const std::string & callId)
 {
-    MSG_("$1 hangUpCall2 : "+Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::HangUpCall, callId));
+    tasks_.add_task([this, callId]() {
+       DRing::hold(callId);
+    });
 }
 
-void RingClientUWP::RingD::pauseCall(String ^ callId) // do not use it, rm during refacto
+void
+RingD::pauseCall(String ^ callId)
 {
-    MSG_("$1 pauseCall : " + Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::PauseCall, callId));
+    tasks_.add_task([this, callId]() {
+        auto _callId = Utils::toString(callId);
+        DRing::hold(_callId);
+    });
 }
 
-void RingClientUWP::RingD::unPauseCall(String ^ callId) // do not use it, rm during refacto
+void
+RingD::unPauseCall(const std::string & callId)
 {
-    MSG_("$1 unPauseCall : " + Utils::toString(callId));
-    tasksList_.push(ref new RingD::Task(Request::UnPauseCall, callId));
+    tasks_.add_task([this, callId]() {
+        DRing::unhold(callId);
+    });
 }
 
-void RingClientUWP::RingD::getKnownDevices(String^ accountId)
+void
+RingD::unPauseCall(String ^ callId)
 {
-    auto task = ref new RingD::Task(Request::GetKnownDevices);
-    task->_accountId = accountId;
-
-    tasksList_.push(task);
+    tasks_.add_task([this, callId]() {
+        auto _callId = Utils::toString(callId);
+        DRing::unhold(_callId);
+    });
 }
 
-void RingClientUWP::RingD::askToExportOnRing(String ^ accountId, String ^ password)
+void
+RingD::hangUpCall2(String ^ callId)
 {
-    auto task = ref new RingD::Task(Request::ExportOnRing);
-    task->_accountId = accountId;
-    task->_password = password;
-
-    tasksList_.push(task);
+    tasks_.add_task([this, callId]() {
+        auto _callId = Utils::toString(callId);
+        DRing::hangUp(_callId);
+    });
 }
 
-void RingClientUWP::RingD::eraseCacheFolder()
+void
+RingD::cancelOutGoingCall2(String ^ callId)
 {
-    StorageFolder^ localFolder = ApplicationData::Current->LocalFolder;
-    String^ folderName = ".cache";
+    hangUpCall2(callId);
+}
 
-    task<IStorageItem^>(localFolder->TryGetItemAsync(folderName)).then([this](IStorageItem^ folder)
-    {
-        if (folder) {
-            MSG_("erasing cache folder.");
-            folder->DeleteAsync();
+void
+RingD::getKnownDevices(String^ accountId)
+{
+    tasks_.add_task([this, accountId]() {
+        auto _accountId = Utils::toString(accountId);
+
+        auto devicesList = DRing::getKnownRingDevices(_accountId);
+        if (devicesList.empty())
+            return;
+
+       Utils::runOnUIThread([=]() {
+            devicesListRefreshed(Utils::convertMap(devicesList));
+        });
+    });
+}
+
+void
+RingD::ExportOnRing(String ^ accountId, String ^ password)
+{
+    tasks_.add_task([this, accountId, password]() {
+        auto _accountId = Utils::toString(accountId);
+        auto _password = Utils::toString(password);
+        DRing::exportOnRing(_accountId, _password);
+    });
+}
+
+void
+RingD::updateAccount(String^ accountId)
+{
+    Utils::runOnUIThread([this]() {
+        isUpdatingAccount = true;
+        setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_updating_account_"), SuccessColor);
+        mainPage->showLoadingOverlay(true, true);
+    });
+
+    tasks_.add_task([this, accountId]() {
+        auto _accountId = Utils::toString(accountId);
+
+        auto account = AccountListItemsViewModel::instance->findItem(accountId)->_account;
+        std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(_accountId);
+        std::map<std::string, std::string> accountDetailsOld(accountDetails);
+
+        accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
+        accountDetails[DRing::Account::ConfProperties::ENABLED] = (account->_active) ? ring::TRUE_STR : ring::FALSE_STR;
+        accountDetails[DRing::Account::ConfProperties::RING_DEVICE_NAME] = Utils::toString(account->_deviceName);
+
+        if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
+            accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
+            accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (account->_autoAnswer) ? ring::TRUE_STR : ring::FALSE_STR;
+            accountDetails[DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS] = (account->_dhtPublicInCalls) ? ring::TRUE_STR : ring::FALSE_STR;
+            accountDetails[DRing::Account::ConfProperties::TURN::ENABLED] = (account->_turnEnabled) ? ring::TRUE_STR : ring::FALSE_STR;
+            accountDetails[DRing::Account::ConfProperties::TURN::SERVER] = Utils::toString(account->_turnAddress);
+            if (accountDetails == accountDetailsOld)
+                return;
         }
         else {
-            WNG_("cache folder not found.");
+            accountDetails[DRing::Account::ConfProperties::HOSTNAME] = Utils::toString(account->_sipHostname);
+            accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
+            accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
+            if (accountDetails == accountDetailsOld)
+                return;
+        }
+
+        DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
+        Configuration::UserPreferences::instance->save();
+    });
+}
+
+void
+RingD::deleteAccount(String ^ accountId)
+{
+    Utils::runOnUIThread([this]() {
+        isDeletingAccount = true;
+        setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_deleting_account_"), "#ffff0000");
+        mainPage->showLoadingOverlay(true, true);
+    });
+
+    tasks_.add_task([this, accountId]() {
+        auto _accountId = Utils::toString(accountId);
+
+        DRing::removeAccount(_accountId);
+    });
+}
+
+void
+RingD::registerThisDevice(String ^ pin, String ^ archivePassword)
+{
+    Utils::runOnUIThread([this]() {
+        showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
+        isAddingAccount = true;
+    });
+
+    tasks_.add_task([this, pin, archivePassword]() {
+        auto _pin = Utils::toString(pin);
+        auto _password = Utils::toString(archivePassword);
+
+        std::map<std::string, std::string> deviceDetails;
+        deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
+        deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PIN, _pin));
+        deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, _password));
+
+        DRing::addAccount(deviceDetails);
+    });
+}
+
+void
+RingD::muteVideo(String ^ callId, bool muted)
+{
+    tasks_.add_task([this, callId, muted]() {
+        auto _callId = Utils::toString(callId);
+        DRing::muteLocalMedia(_callId, DRing::Media::Details::MEDIA_TYPE_VIDEO, muted);
+    });
+}
+
+void
+RingD::muteAudio(const std::string& callId, bool muted)
+{
+    tasks_.add_task([this, callId, muted]() {
+        auto _callId = callId;
+        DRing::muteLocalMedia(_callId, DRing::Media::Details::MEDIA_TYPE_AUDIO, muted);
+    });
+}
+
+void
+RingD::lookUpName(const std::string& accountId, String^ name)
+{
+    tasks_.add_task([this, accountId, name]() {
+        auto _accountId = accountId;
+        auto _name = Utils::toString(name);
+        DRing::lookupName(_accountId, "", _name);
+    });
+}
+
+void
+RingD::lookUpAddress(const std::string& accountId, String^ address)
+{
+    tasks_.add_task([this, accountId, address]() {
+        auto _accountId = accountId;
+        auto _address = Utils::toString(address);
+        DRing::lookupAddress(_accountId, "", _address);
+    });
+}
+
+void
+RingD::revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId)
+{
+    Utils::runOnUIThread([this, deviceId]() {
+        auto msg = ResourceMananger::instance->getStringResource("_m_revoking_device_");
+        showLoadingOverlay(msg + Utils::toPlatformString(deviceId), SuccessColor);
+    });
+
+    tasks_.add_task([this, accountId, password, deviceId]() {
+        auto _accountId = accountId;
+        auto _password = password;
+        auto _deviceId = deviceId;
+
+        DRing::revokeDevice(_accountId, _password, _deviceId);
+    });
+}
+
+void
+RingD::registerName(String^ accountId, String^ password, String^ username)
+{
+    tasks_.add_task([this, accountId, password, username]() {
+        auto _accountId = Utils::toString(accountId);
+        auto _password = Utils::toString(password);
+        auto _username = Utils::toString(username);
+
+        auto accountDetails = DRing::getAccountDetails(_accountId);
+        bool result;
+
+        if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty()) {
+            registerName_new(_accountId, _password, _username);
+        }
+        else {
+            result = DRing::registerName(_accountId, _password, _username);
+
+            Utils::runOnUIThread([this, result]() {
+                nameRegistred(result);
+            });
         }
     });
 }
 
-void RingClientUWP::RingD::updateAccount(String^ accountId)
+void
+RingD::subscribeBuddy(const std::string& accountId, const std::string& uri, bool flag)
 {
-    editModeOn_ = true;
+    tasks_.add_task([this, accountId, uri, flag]() {
+        auto _accountId = accountId;
+        auto _uri = uri;
 
-    auto task = ref new RingD::Task(Request::UpdateAccount);
-    task->_accountId_new = Utils::toString(accountId);
-
-    tasksList_.push(task);
+        DRing::subscribeBuddy(_accountId, _uri, true);
+    });
 }
 
-void RingClientUWP::RingD::deleteAccount(String ^ accountId)
+void
+RingD::registerName_new(const std::string & accountId, const std::string & password, const std::string & username)
 {
-    isDeletingAccount = true;
+    tasks_.add_task([this, accountId, password, username]() {
+        auto _accountId = accountId;
+        auto _password = password;
+        auto _username = username;
 
-    editModeOn_ = true;
+        auto accountDetails = DRing::getAccountDetails(_accountId);
+        bool result;
 
-    auto task = ref new RingD::Task(Request::DeleteAccount);
-    task->_accountId_new = Utils::toString(accountId);
+        if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty()) {
+            registerName_new(_accountId, _password, _username);
+        }
+        else {
+            result = DRing::registerName(_accountId, _password, _username);
 
-    tasksList_.push(task);
+            Utils::runOnUIThread([this, result]() {
+                nameRegistred(result);
+            });
+        }
+    });
 }
 
-void RingClientUWP::RingD::registerThisDevice(String ^ pin, String ^ archivePassword)
+void
+RingD::removeContact(const std::string& accountId, const std::string& uri)
 {
-    isAddingDevice = true;
-    tasksList_.push(ref new RingD::Task(Request::RegisterDevice, pin, archivePassword));
-    archivePassword = "";
-    pin = "";
+    tasks_.add_task([this, accountId, uri]() {
+        auto _accountId = accountId;
+        auto _uri = uri;
+        DRing::removeContact(_accountId, _uri, false);
+    });
+}
+
+void
+RingD::sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload)
+{
+    tasks_.add_task([this, accountId, uri, payload]() {
+        auto _accountId = accountId;
+        auto _uri = uri;
+        auto _payload = payload;
+        std::vector<uint8_t> payload(_payload.begin(), _payload.end());
+        DRing::sendTrustRequest(_accountId, _uri, payload);
+    });
 }
 
 void
@@ -1296,8 +1481,6 @@ RingD::startDaemon()
         ERR_("daemon already runnging");
         return;
     }
-    //eraseCacheFolder();
-    editModeOn_ = true;
 
     IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
     {
@@ -1360,7 +1543,7 @@ RingD::startDaemon()
 
             while (daemonRunning) {
                 DRing::pollEvents();
-                dequeueTasks();
+                tasks_.dequeue_tasks();
                 Sleep(5);
             }
         }
@@ -1443,454 +1626,21 @@ RingD::hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds)
     });
 }
 
-void
-RingD::dequeueTasks()
-{
-    for (int i = 0; i < tasksList_.size(); i++) {
-        auto task = tasksList_.front();
-        auto request = dynamic_cast<Task^>(task)->request;
-        switch (request) {
-        case Request::None:
-            break;
-        case Request::PlaceCall:
-        {
-            auto selectedAccount = AccountListItemsViewModel::instance->_selectedItem->_account;
-            std::string callId;
-            if (selectedAccount->accountType_ == "RING")
-                callId = DRing::placeCall(task->_accountId_new, "ring:" + task->_ringId_new);
-            else if (selectedAccount->accountType_ == "SIP")
-                callId = DRing::placeCall(task->_accountId_new, "sip:" + Utils::toString(task->_sipUsername));
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                if (auto contactListModel = AccountsViewModel::instance->getContactListModel(task->_accountId_new)) {
-                    Contact^ contact;
-                    if (selectedAccount->accountType_ == "RING")
-                        contact = contactListModel->findContactByRingId(Utils::toPlatformString(task->_ringId_new));
-                    else if (selectedAccount->accountType_ == "SIP")
-                        contact = contactListModel->findContactByName(task->_sipUsername);
-                    if (auto item = SmartPanelItemsViewModel::instance->findItem(contact)) {
-                        item->_callId = Utils::toPlatformString(callId);
-                        if (!callId.empty())
-                            callPlaced(Utils::toPlatformString(callId));
-                    }
-                }
-            }));
-        }
-        break;
-        case Request::AddRingAccount:
-        {
-            std::map<std::string, std::string> ringAccountDetails;
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS
-                                      , Utils::toString(task->_alias)));
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD,
-                                      Utils::toString(task->_password)));
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"RING"));
-            ringAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED
-                                      , (task->_upnp)? ring::TRUE_STR : ring::FALSE_STR));
-            ringAccountDetails.insert(std::make_pair(DRing::Account::VolatileProperties::REGISTERED_NAME
-                                      , Utils::toString(task->_registeredName)));
-
-
-            auto newAccountId = DRing::addAccount(ringAccountDetails);
-
-            if (!task->_registeredName->IsEmpty())
-                registerName_new(newAccountId, Utils::toString(task->_password), Utils::toString(task->_registeredName));
-        }
-        break;
-        case Request::AddSIPAccount:
-        {
-            std::map<std::string, std::string> sipAccountDetails;
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::ALIAS
-                                                    , Utils::toString(task->_alias)));
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE,"SIP"));
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::PASSWORD
-                                                    , Utils::toString(task->_sipPassword)));
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::HOSTNAME
-                                                    , Utils::toString(task->_sipHostname)));
-            sipAccountDetails.insert(std::make_pair(DRing::Account::ConfProperties::USERNAME
-                                                    , Utils::toString(task->_sipUsername)));
-            DRing::addAccount(sipAccountDetails);
-        }
-        break;
-        case Request::RefuseIncommingCall:
-        {
-            auto callId = task->_callId;
-            auto callId2 = Utils::toString(callId);
-            DRing::refuse(callId2);
-        }
-        break;
-        case Request::AcceptIncommingCall:
-        {
-            auto callId = task->_callId;
-            auto callId2 = Utils::toString(callId);
-            DRing::accept(callId2);
-        }
-        break;
-        case Request::CancelOutGoingCall:
-        case Request::HangUpCall:
-        {
-            auto callId = task->_callId;
-
-            DRing::hangUp(Utils::toString(callId));
-
-        }
-        break;
-        case Request::PauseCall:
-        {
-            DRing::hold(task->_callid_new);
-        }
-        break;
-        case Request::UnPauseCall:
-        {
-            DRing::unhold(task->_callid_new);
-        }
-        break;
-        case Request::RegisterDevice:
-        {
-            auto pin = Utils::toString(task->_pin);
-            auto password = Utils::toString(task->_password);
-
-            std::map<std::string, std::string> deviceDetails;
-            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
-            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PIN, pin));
-            deviceDetails.insert(std::make_pair(DRing::Account::ConfProperties::ARCHIVE_PASSWORD, password));
-
-            DRing::addAccount(deviceDetails);
-        }
-        break;
-        case Request::GetKnownDevices:
-        {
-            auto devicesList = DRing::getKnownRingDevices(Utils::toString(task->_accountId));
-            if (devicesList.empty())
-                break;
-
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
-                devicesListRefreshed(Utils::convertMap(devicesList));
-            }));
-            break;
-        }
-        case Request::ExportOnRing:
-        {
-            auto accountId = task->_accountId;
-            auto password = task->_password;
-
-            auto accountId2 = Utils::toString(accountId);
-            auto password2 = Utils::toString(password);
-
-            DRing::exportOnRing(accountId2, password2);
-            break;
-        }
-        case Request::UpdateAccount:
-        {
-            auto account = AccountListItemsViewModel::instance->findItem(Utils::toPlatformString(task->_accountId_new))->_account;
-            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
-            std::map<std::string, std::string> accountDetailsOld(accountDetails);
-
-            accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
-            accountDetails[DRing::Account::ConfProperties::ENABLED] = (account->_active) ? ring::TRUE_STR : ring::FALSE_STR;
-            accountDetails[DRing::Account::ConfProperties::RING_DEVICE_NAME] = Utils::toString(account->_deviceName);
-
-            if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
-                accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
-                accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (account->_autoAnswer) ? ring::TRUE_STR : ring::FALSE_STR;
-                accountDetails[DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS] = (account->_dhtPublicInCalls) ? ring::TRUE_STR : ring::FALSE_STR;
-                accountDetails[DRing::Account::ConfProperties::TURN::ENABLED] = (account->_turnEnabled) ? ring::TRUE_STR : ring::FALSE_STR;
-                accountDetails[DRing::Account::ConfProperties::TURN::SERVER] = Utils::toString(account->_turnAddress);
-                if (accountDetails == accountDetailsOld)
-                    break;
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_updating_account_"), SuccessColor);
-                    auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                    dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
-                }));
-            }
-            else {
-                accountDetails[DRing::Account::ConfProperties::HOSTNAME] = Utils::toString(account->_sipHostname);
-                accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
-                accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
-                if (accountDetails == accountDetailsOld)
-                    break;
-            }
-
-            isUpdatingAccount = true;
-            DRing::setAccountDetails(Utils::toString(account->accountID_), accountDetails);
-            Configuration::UserPreferences::instance->save();
-
-            break;
-        }
-        case Request::DeleteAccount:
-        {
-            auto accountId = task->_accountId;
-            auto accountId2 = Utils::toString(accountId);
-
-            std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(task->_accountId_new);
-
-            Utils::runOnUIThread([this]() {
-                setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_deleting_account_"), "#ffff0000");
-                auto frame = dynamic_cast<Frame^>(Window::Current->Content);
-                dynamic_cast<RingClientUWP::MainPage^>(frame->Content)->showLoadingOverlay(true, true);
-            });
-
-            DRing::removeAccount(accountId2);
-            break;
-        }
-        case Request::GetCallsList:
-        {
-            auto callsList = DRing::getCallList();
-            dispatcher->RunAsync(CoreDispatcherPriority::High,
-            ref new DispatchedHandler([&]() {
-                callsListRecieved(callsList);
-            }));
-            MSG_("list of calls returned by the daemon :");
-            for (auto call : callsList)
-                MSG_(call);
-            MSG_("[EOL]"); // end of list
-            break;
-        }
-        case Request::KillCall:
-        {
-            auto callId = task->_callId;
-            auto callId2 = Utils::toString(callId);
-            MSG_("asking daemon to kill : " + callId2);
-            DRing::hangUp(callId2);
-            break;
-        }
-        case Request::switchDebug:
-        {
-            debugModeOn_ = !debugModeOn_;
-            break;
-        }
-        case Request::MuteVideo:
-        {
-            auto callId = Utils::toString(task->_callId);
-            bool muted = task->_muted;
-            DRing::muteLocalMedia(callId, DRing::Media::Details::MEDIA_TYPE_VIDEO, muted);
-        }
-        case Request::MuteAudio:
-        {
-            DRing::muteLocalMedia(task->_callid_new
-                                  , DRing::Media::Details::MEDIA_TYPE_AUDIO
-                                  , task->_audioMuted_new);
-        }
-        case Request::LookUpName:
-        {
-            auto alias = task->_alias;
-            DRing::lookupName(task->_accountId_new, "", Utils::toString(alias));
-            break;
-        }
-        case Request::LookUpAddress:
-        {
-            DRing::lookupAddress(task->_accountId_new, "", Utils::toString(task->_address));
-            break;
-        }
-        case Request::RegisterName:
-        {
-            auto accountDetails = DRing::getAccountDetails(task->_accountId_new);
-            bool result;
-
-            if (accountDetails[DRing::Account::ConfProperties::USERNAME].empty())
-                registerName_new(task->_accountId_new, task->_password_new, task->_publicUsername_new);
-            else
-            {
-                result = DRing::registerName(task->_accountId_new, task->_password_new, task->_publicUsername_new);
-
-                CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::High,
-                ref new DispatchedHandler([=]() {
-                    nameRegistred(result);
-                }));
-            }
-
-            break;
-        }
-        case Request::SubscribeBuddy:
-        {
-            DRing::subscribeBuddy(task->_accountId_new, task->_ringId_new, true);
-            break;
-        }
-        case Request::SendContactRequest:
-        {
-            std::vector<uint8_t> payload(task->_payload.begin(), task->_payload.end());
-            DRing::sendTrustRequest(task->_accountId_new, task->_ringId_new, payload);
-            break;
-        }
-        case Request::RemoveContact:
-        {
-            DRing::removeContact(task->_accountId_new, task->_ringId_new, false);
-            break;
-        }
-        case Request::RevokeDevice:
-        {
-            auto msg = ResourceMananger::instance->getStringResource("_m_revoking_device_");
-            showLoadingOverlay(msg + Utils::toPlatformString(task->_deviceId), SuccessColor);
-            DRing::revokeDevice(task->_accountId_new, task->_password_new, task->_deviceId);
-            MSG_("revoking device, (id=" + task->_deviceId + ")");
-            break;
-        }
-        case Request::SendSIPMessage:
-        {
-            DRing::sendTextMessage(task->_callid_new, task->_payload2, task->_accountId_new, true /*not used*/);
-            break;
-        }
-        default:
-            break;
-        }
-        tasksList_.pop();
-    }
-}
-
-void RingClientUWP::RingD::getCallsList()
-{
-    auto task = ref new RingD::Task(Request::GetCallsList);
-
-    tasksList_.push(task);
-
-}
-
-void RingClientUWP::RingD::killCall(String ^ callId)
-{
-    if (callId == "-all") {
-        auto callsList = DRing::getCallList();
-
-        for (auto call : callsList) {
-            auto task = ref new RingD::Task(Request::KillCall);
-            task->_callId = Utils::toPlatformString(call);
-
-            tasksList_.push(task);
-        }
-        return;
-    }
-
-    auto task = ref new RingD::Task(Request::KillCall);
-    task->_callId = callId;
-
-    tasksList_.push(task);
-
-}
-
-void RingClientUWP::RingD::switchDebug()
-{
-    auto task = ref new RingD::Task(Request::switchDebug);
-
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::muteVideo(String ^ callId, bool muted)
-{
-    auto task = ref new RingD::Task(Request::MuteVideo);
-
-    task->_callId = callId;
-    task->_muted = muted;
-
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::muteAudio(const std::string& callId, bool muted)
-{
-    auto task = ref new RingD::Task(Request::MuteAudio);
-
-    task->_callid_new = callId;
-    task->_audioMuted_new = muted;
-
-    tasksList_.push(task);
-}
-
-void
-RingD::registerName(String^ accountId, String^ password, String^ username)
-{
-    auto task = ref new RingD::Task(Request::RegisterName);
-    task->_accountId = ref new String(accountId->Data());
-    task->_password = password;
-    task->_alias = username;
-
-    tasksList_.push(task);
-}
-
-void
-RingD::subscribeBuddy(const std::string& accountId, const std::string& uri, bool flag)
-{
-    auto task = ref new RingD::Task(Request::SubscribeBuddy);
-    task->_accountId_new = accountId;
-    task->_ringId_new = uri;
-
-    tasksList_.push(task);
-}
-
-void RingClientUWP::RingD::registerName_new(const std::string & accountId, const std::string & password, const std::string & username)
-{
-    auto task = ref new RingD::Task(Request::RegisterName);
-    task->_accountId_new = accountId;
-    task->_password_new = password;
-    task->_publicUsername_new = username;
-
-    tasksList_.push(task);
-}
-
-void
-RingD::removeContact(const std::string& accountId, const std::string& uri)
-{
-    auto task = ref new RingD::Task(Request::RemoveContact);
-    task->_accountId_new = accountId;
-    task->_ringId_new = uri;
-    tasksList_.push(task);
-}
-
-void
-RingD::sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload)
-{
-    auto task = ref new RingD::Task(Request::SendContactRequest);
-    task->_accountId_new = accountId;
-    task->_ringId_new = uri;
-    task->_payload = payload;
-    tasksList_.push(task);
-}
-
 std::map<std::string, std::string>
 RingClientUWP::RingD::getVolatileAccountDetails(Account^ account)
 {
     return DRing::getVolatileAccountDetails(Utils::toString(account->accountID_));
 }
 
-void
-RingD::lookUpName(const std::string& accountId, String ^ name)
-{
-    auto task = ref new RingD::Task(Request::LookUpName);
-    task->_alias = name;
-    task->_accountId_new = accountId;
-
-    tasksList_.push(task);
-}
-
-void
-RingD::lookUpAddress(const std::string& accountId, String^ address)
-{
-    auto task = ref new RingD::Task(Request::LookUpAddress);
-    task->_address = address;
-    task->_accountId_new = accountId;
-
-    tasksList_.push(task);
-}
-
-void
-RingD::revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId)
-{
-    auto task = ref new RingD::Task(Request::RevokeDevice);
-
-    task->_accountId_new = accountId;
-    task->_password_new = password;
-    task->_deviceId = deviceId;
-
-    tasksList_.push(task);
-}
-
-std::string RingClientUWP::RingD::registeredName(Account^ account)
+std::string
+RingD::registeredName(Account^ account)
 {
     auto volatileAccountDetails = DRing::getVolatileAccountDetails(Utils::toString(account->accountID_));
     return volatileAccountDetails[DRing::Account::VolatileProperties::REGISTERED_NAME];
 }
 
-RingClientUWP::CallStatus RingClientUWP::RingD::translateCallStatus(String^ state)
+CallStatus
+RingD::translateCallStatus(String^ state)
 {
     if (state == "INCOMING")
         return CallStatus::INCOMING_RINGING;
@@ -1935,7 +1685,8 @@ RingD::stopSmartInfo()
     DRing::stopSmartInfo();
 }
 
-void RingClientUWP::RingD::setFullScreenMode()
+void
+RingD::setFullScreenMode()
 {
     if (ApplicationView::GetForCurrentView()->TryEnterFullScreenMode()) {
         MSG_("TryEnterFullScreenMode succeeded");
@@ -1946,14 +1697,16 @@ void RingClientUWP::RingD::setFullScreenMode()
     }
 }
 
-void RingClientUWP::RingD::setWindowedMode()
+void
+RingD::setWindowedMode()
 {
     ApplicationView::GetForCurrentView()->ExitFullScreenMode();
     MSG_("ExitFullScreenMode");
     fullScreenToggled(false);
 }
 
-void RingClientUWP::RingD::toggleFullScreen()
+void
+RingD::toggleFullScreen()
 {
     if (isFullScreen)
         setWindowedMode();
@@ -1965,4 +1718,22 @@ void
 RingD::raiseMessageDataLoaded()
 {
     messageDataLoaded();
+}
+
+void
+RingD::raiseWindowResized(float width, float height)
+{
+    windowResized(width, height);
+}
+
+void
+RingD::raiseVCardUpdated(Contact^ contact)
+{
+    vCardUpdated(contact);
+}
+
+void
+RingD::raiseShareRequested()
+{
+    shareRequested();
 }

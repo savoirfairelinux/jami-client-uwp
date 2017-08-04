@@ -211,10 +211,6 @@
     </ClInclude>
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
-    <ClInclude Include="RingConsolePanel.xaml.h">
-      <DependentUpon>RingConsolePanel.xaml</DependentUpon>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="RingD.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
@@ -262,9 +258,6 @@
     </Page>
     <Page Include="MessageTextPage.xaml" />
     <Page Include="PreviewPage.xaml" />
-    <Page Include="RingConsolePanel.xaml">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </Page>
     <Page Include="ScrollBars.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -404,10 +397,6 @@
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="ResourceManager.cpp" />
-    <ClCompile Include="RingConsolePanel.xaml.cpp">
-      <DependentUpon>RingConsolePanel.xaml</DependentUpon>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="RingD.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>

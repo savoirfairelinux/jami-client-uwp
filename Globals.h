@@ -20,8 +20,8 @@ const std::vector<std::string> notifySmartPanelItem = {
     "_trustStatus" };
 const std::vector<std::string> notifyContactRequestItem = {
     "_isSelected" };
-const std::vector<std::string> notifyAccountItem = { "nothing" };
-    /*"_isSelected",
+const std::vector<std::string> notifyAccountItem = {
+    "_isSelected",
     "_unreadMessages",
     "_unreadContactRequests",
     "_sipUsername",
@@ -35,11 +35,10 @@ const std::vector<std::string> notifyAccountItem = { "nothing" };
     "_autoAnswer",
     "_dhtPublicInCalls",
     "_turnEnabled",
-    "accountType_",
     "accountID_",
     "_deviceId",
     "_deviceName",
-    "_active" };*/
+    "_active" };
 const std::vector<std::string> notifyConversation = { "" };
 }
 }
