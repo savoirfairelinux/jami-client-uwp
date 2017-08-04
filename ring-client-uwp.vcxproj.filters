@@ -335,9 +335,6 @@
     <Page Include="MessageTextPage.xaml">
       <Filter>Views</Filter>
     </Page>
-    <Page Include="RingConsolePanel.xaml">
-      <Filter>Views</Filter>
-    </Page>
     <Page Include="SmartPanel.xaml">
       <Filter>Views</Filter>
     </Page>

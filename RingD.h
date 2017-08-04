@@ -1,7 +1,7 @@
 /**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -206,14 +206,10 @@ internal: // why this property has to be internal and not public ?
     void pauseCall(String ^ callId);
     void unPauseCall(String ^ callId);
     void getKnownDevices(String^ accountId);
-    void askToExportOnRing(String^ accountId, String^ password);
-    void eraseCacheFolder();
+    void ExportOnRing(String^ accountId, String^ password);
     void updateAccount(String^ accountId);
     void deleteAccount(String^ accountId);
     void registerThisDevice(String^ pin, String^ archivePassword);
-    void getCallsList();
-    void killCall(String^ callId);
-    void switchDebug();
     void muteVideo(String^ callId, bool muted);
     void muteAudio(const std::string& callId, bool muted);
     void subscribeBuddy(const std::string& accountId, const std::string& uri, bool flag);
@@ -356,7 +352,6 @@ private:
     /* functions */
     RingD(); // singleton
 
-    void dequeueTasks();
     void InternetConnectionChanged(Platform::Object^ sender);
     //CallStatus translateCallStatus(String^ state);
 
@@ -372,12 +367,12 @@ private:
     bool isInvisible_       = false;
     bool daemonInitialized_ = false;
     bool daemonRunning_     = false;
-    bool editModeOn_        = false;
     bool debugModeOn_       = true;
     bool callToastPopped_   = false;
 
     std::string localFolder_;
     std::queue<Task^> tasksList_;
+    Utils::task_queue tasks_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     Ringtone^ ringtone_;
 
