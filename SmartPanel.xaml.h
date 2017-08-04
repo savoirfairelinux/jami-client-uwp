@@ -80,7 +80,6 @@ private:
     void _cancelCallBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void SmartPanelItem_Grid_PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
-    void generateQRcode();
     void _videoDeviceComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
     void _videoResolutionComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
     void _videoRateComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
@@ -128,6 +127,7 @@ private:
     void _addAccountYes__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void OnregistrationStateErrorGeneric(const std::string& accountId);
     void _PINTextBox__GotFocus(Platform::Object^ sender, RoutedEventArgs^ e);
+    void OnnameRegistred(bool status, String ^accountId);
     void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OncontactDataModified(Platform::String ^account, Contact^ contact);
