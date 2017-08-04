@@ -890,6 +890,8 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     account->name_ = _accountAliasTextBoxEdition_->Text;
 
     if (account->accountType_ == "RING") {
+        if (_RegisterStateEdition_->IsOn)
+            account->_username = _usernameTextBoxEdition_->Text;
         account->_active = _enabledState_->IsOn;
         account->_upnpState = _upnpState_->IsOn;
         account->_autoAnswer = _autoAnswerToggle_->IsOn;
@@ -1854,7 +1856,7 @@ void RingClientUWP::Views::SmartPanel::requestPin()
     /* hide the button while we are waiting... */
     _closePin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    RingD::instance->askToExportOnRing(accountId, password);
+    RingD::instance->ExportOnRing(accountId, password);
 }
 
 void
