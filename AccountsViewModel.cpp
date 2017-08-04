@@ -60,7 +60,7 @@ AccountsViewModel::raiseUnreadContactRequest()
     newUnreadContactRequest();
 }
 
-void
+Account^
 AccountsViewModel::addRingAccount(  std::string& alias,
                                     std::string& ringID,
                                     std::string& accountID,
@@ -92,9 +92,10 @@ AccountsViewModel::addRingAccount(  std::string& alias,
     accountsList_->InsertAt(0, account);
     contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
     accountAdded(account);
+    return account;
 }
 
-void
+Account^
 AccountsViewModel::addSipAccount(   std::string& alias,
                                     std::string& accountID,
                                     bool active,
@@ -121,6 +122,7 @@ AccountsViewModel::addSipAccount(   std::string& alias,
     accountsList_->InsertAt(0, account);
     contactListModels_->Insert(account->accountID_, ref new ContactListModel(account->accountID_));
     accountAdded(account);
+    return account;
 }
 
 void

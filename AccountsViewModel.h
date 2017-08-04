@@ -64,7 +64,7 @@ internal:
     }
 
     /* functions */
-    void addRingAccount(std::string& alias,
+    Account^ addRingAccount(std::string& alias,
                         std::string& ringID,
                         std::string& accountID,
                         std::string& deviceId,
@@ -75,7 +75,7 @@ internal:
                         bool dhtPublicInCalls,
                         bool turnEnabled,
                         std::string& turnAddress);
-    void addSipAccount( std::string& alias,
+    Account^ addSipAccount( std::string& alias,
                         std::string& accountID,
                         bool active,
                         std::string& sipHostname,
