@@ -1854,7 +1854,7 @@ void RingClientUWP::Views::SmartPanel::requestPin()
     /* hide the button while we are waiting... */
     _closePin_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    RingD::instance->askToExportOnRing(accountId, password);
+    RingD::instance->ExportOnRing(accountId, password);
 }
 
 void
