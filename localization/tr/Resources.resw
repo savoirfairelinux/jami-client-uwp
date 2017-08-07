@@ -145,7 +145,7 @@
     <value>Ring güvenli ve dağıtık bir iletişim yazılımıdır.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
-    <value>The Microsoft Windows Runtime client for Ring.</value>
+    <value>Ring için Microsoft Windows istemcisi.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
     <value>Liberté, Égalité, Fraternité! -  Sürüm 1.0</value>
@@ -163,7 +163,7 @@
     <value>PIN&apos;i gir</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
+    <value>Bu cihazı Ring hesabınıza eklemek için Ring üzerinden bir PIN oluşturmalısınız.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Kendiliğinden Yanıtla</value>
@@ -178,7 +178,7 @@
     <value>Parolanızı girin</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>Accept calls and messages from incognito contacts</value>
+    <value>Gizlenmiş kişilerden mesaj ve aramaları kabul et</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
     <value>PIN üreteci</value>
@@ -268,13 +268,13 @@
     <value>Hakkında</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring kullanıcılarının gizlilik ve özgürlüklerini sağlayan evrensel ve ücretsiz bir platformdur.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Gizlilik Politikası</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted.</value>
+    <value>Hesabınız bu bilgisayar üzerinden silinecektir. Diğer aygıtlar etkilenmeyecektir. Herkese açık kaydınız hiçbir zaman silinemez.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
     <value>Hesabınız bu bilgisayardan silinmiş olacak.</value>
@@ -289,16 +289,16 @@
     <value>Henüz kayıtlı değilsiniz.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>You&apos;ll have to send your ringId.</value>
+    <value>ringId nizi göndermeniz gerekmekte.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
-    <value>Credentials error or PIN expired.</value>
+    <value>Oturum bilgileri hatalı ya da PIN süresi sona ermiş.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
     <value>Aygıt kimliği bulunamadı!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>bu ring id ile zaten bir etkileşiminiz var.</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>Ağ hatası!</value>
@@ -385,10 +385,10 @@
     <value>Sesli arama başlat</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>İleride etkileşimini önlemek için kullanıcıyı engelleyin</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(bu kullanıcının engeli Hesap Seçenekleri sayfasından kaldırılabilir)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
     <value>hesap değiştirmeyi iptal et</value>
@@ -397,7 +397,7 @@
     <value>Giden aramayı iptal et</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>Mesaj paneli oryantasyonunu değiştirin</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
     <value>Bu konuşmayı sil</value>
@@ -421,10 +421,10 @@
     <value>Hesap Ayarları Bölümünü aç</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Anasayfa/Hakkında</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Kişinin etkileşim isteklerini gözardı et</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Bu aygıtı var olan bir hesaba bağla</value>
@@ -499,7 +499,7 @@
     <value>Kapat</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>Konferansa ekle</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>Ara</value>
@@ -526,7 +526,7 @@
     <value>Yeni Hesap Oluştur</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>hiç aranmadı</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>Çizenler:</value>
@@ -535,7 +535,7 @@
     <value>Oluşturanlar:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Aygıta eklenmeye çalışılıyor...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
     <value>Hesap oluşturuluyor...</value>
@@ -547,7 +547,7 @@
     <value>PIN oluşturuluyor</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Aygıt iptal ediliyor. ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
     <value>Hesap güncelleniyor...</value>

@@ -211,7 +211,7 @@
     <value>has added you as a contact</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contact request sent</value>
+    <value>Demande de contact envoyée</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>Contact Requests</value>

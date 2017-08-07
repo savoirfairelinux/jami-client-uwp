@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="_aboutBasicButton_.Content" xml:space="preserve">
-    <value>About</value>
+    <value>Quant a</value>
   </data>
   <data name="_aboutCloseButton_.Content" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
-    <value>Credits</value>
+    <value>Crèdits</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
     <value>This program comes with absolutely no warranty</value>
@@ -169,7 +169,7 @@
     <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Dispositius</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
     <value>Learn more</value>
@@ -211,7 +211,7 @@
     <value>has added you as a contact</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contact request sent</value>
+    <value>S&apos;ha enviat una petició de contacte</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>Contact Requests</value>
@@ -226,19 +226,19 @@
     <value>Beginning of Time</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>Register</value>
+    <value>Registre</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
     <value>Repeat password</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Introduïu la contrasenya</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
     <value>Opcions</value>
   </data>
   <data name="_settingsVideoDevice_.Text" xml:space="preserve">
-    <value>Device</value>
+    <value>Dispositiu</value>
   </data>
   <data name="_settingsVideoRate_.Text" xml:space="preserve">
     <value>Rate</value>
@@ -253,7 +253,7 @@
     <value>Enter hostname</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>Introduïu la contrasenya</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter username</value>
@@ -265,7 +265,7 @@
     <value>waiting for devices list...</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
-    <value>About</value>
+    <value>Quant a</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
     <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
@@ -361,7 +361,7 @@
     <value>Add this user to your contacts</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancel·la</value>
   </data>
   <data name="_tt_account_list_menu_.Text" xml:space="preserve">
     <value>Comptes</value>
@@ -406,13 +406,13 @@
     <value>Contactes</value>
   </data>
   <data name="_tt_create_account_yes_.Text" xml:space="preserve">
-    <value>Create account</value>
+    <value>Crea compte</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Dispositius</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>Fet</value>

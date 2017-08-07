@@ -169,7 +169,7 @@
     <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>התקנים</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
     <value>Learn more</value>
@@ -412,7 +412,7 @@
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>התקנים</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>סיים</value>
