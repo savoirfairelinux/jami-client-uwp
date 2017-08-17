@@ -26,7 +26,6 @@
 #include "presencemanager_interface.h"
 #include "videomanager_interface.h"
 #include "fileutils.h"
-#include "account_schema.h"
 #include "account_const.h"
 #include "string_utils.h"
 #include "gnutls\gnutls.h"
@@ -490,32 +489,36 @@ RingD::updateAccount(String^ accountId)
         auto account = AccountListItemsViewModel::instance->findItem(accountId)->_account;
         std::map<std::string, std::string> accountDetails = DRing::getAccountDetails(_accountId);
         std::map<std::string, std::string> accountDetailsOld(accountDetails);
+        std::vector<std::map<std::string, std::string>> credentials = DRing::getCredentials(_accountId);
+        std::vector<std::map<std::string, std::string>> credentialsOld(credentials);
 
         accountDetails[DRing::Account::ConfProperties::ALIAS] = Utils::toString(account->name_);
         accountDetails[DRing::Account::ConfProperties::ENABLED] = (account->_active) ? ring::TRUE_STR : ring::FALSE_STR;
-        accountDetails[DRing::Account::ConfProperties::RING_DEVICE_NAME] = Utils::toString(account->_deviceName);
+        accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (account->_autoAnswer) ? ring::TRUE_STR : ring::FALSE_STR;
 
         bool userNameAdded = false;
         auto newUsername = Utils::toString(account->_username);
         if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
-            if (account->_username != "" &&
-                newUsername.compare(accountDetails[DRing::Account::VolatileProperties::REGISTERED_NAME]) != 0) {
-                userNameAdded = true;
+            if (account->_username != "") {
+                auto oldUsername = registeredName(account);
+                userNameAdded = newUsername.compare(oldUsername) != 0;
             }
-
+            accountDetails[DRing::Account::ConfProperties::RING_DEVICE_NAME] = Utils::toString(account->_deviceName);
             accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (account->_upnpState) ? ring::TRUE_STR : ring::FALSE_STR;
-            accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (account->_autoAnswer) ? ring::TRUE_STR : ring::FALSE_STR;
             accountDetails[DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS] = (account->_dhtPublicInCalls) ? ring::TRUE_STR : ring::FALSE_STR;
             accountDetails[DRing::Account::ConfProperties::TURN::ENABLED] = (account->_turnEnabled) ? ring::TRUE_STR : ring::FALSE_STR;
             accountDetails[DRing::Account::ConfProperties::TURN::SERVER] = Utils::toString(account->_turnAddress);
         }
         else {
             accountDetails[DRing::Account::ConfProperties::HOSTNAME] = Utils::toString(account->_sipHostname);
-            accountDetails[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
-            accountDetails[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
+            credentials.at(0)[DRing::Account::ConfProperties::PASSWORD] = Utils::toString(account->_sipPassword);
+            credentials.at(0)[DRing::Account::ConfProperties::USERNAME] = Utils::toString(account->_sipUsername);
         }
 
-        if (accountDetails == accountDetailsOld && !userNameAdded) {
+        bool detailsChanged = (accountDetails != accountDetailsOld || userNameAdded);
+        bool credentialsChanged = (credentials != credentialsOld);
+
+        if (!detailsChanged && !credentialsChanged) {
             OnaccountUpdated();
             return;
         }
@@ -525,6 +528,10 @@ RingD::updateAccount(String^ accountId)
             setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_updating_account_"), SuccessColor);
             mainPage->showLoadingOverlay(true, true);
         });
+
+        if (credentialsChanged) {
+            DRing::setCredentials(_accountId, credentials);
+        }
 
         DRing::setAccountDetails(_accountId, accountDetails);
         if (userNameAdded) {
@@ -630,6 +637,10 @@ RingD::revokeDevice(const std::string& accountId, const std::string& password, c
 void
 RingD::registerName(String^ accountId, String^ password, String^ username)
 {
+    auto account = AccountsViewModel::instance->findItem(accountId);
+    if (!account || account->accountType_ != "RING" || !account->ringID_)
+        return;
+
     tasks_.add_task([this, accountId, password, username]() {
         auto _accountId = Utils::toString(accountId);
         auto _password = Utils::toString(password);
@@ -1063,6 +1074,8 @@ RingD::registerCallbacks()
                     registrationStateErrorGeneric(account_id);
                     if (isAddingAccount)
                         OnaccountAdded(account_id);
+                    else if (isUpdatingAccount)
+                        OnaccountUpdated();
                 });
             }
         }),
@@ -1629,7 +1642,7 @@ RingD::hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds)
 }
 
 std::map<std::string, std::string>
-RingClientUWP::RingD::getVolatileAccountDetails(Account^ account)
+RingD::getVolatileAccountDetails(Account^ account)
 {
     return DRing::getVolatileAccountDetails(Utils::toString(account->accountID_));
 }
