@@ -896,13 +896,13 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     auto accountId = account->accountID_;
 
     account->name_ = _accountAliasTextBoxEdition_->Text;
+    account->_active = _enabledState_->IsOn;
+    account->_autoAnswer = _autoAnswerToggle_->IsOn;
 
     if (account->accountType_ == "RING") {
         if (_RegisterStateEdition_->IsOn)
             account->_username = _usernameTextBoxEdition_->Text;
-        account->_active = _enabledState_->IsOn;
         account->_upnpState = _upnpState_->IsOn;
-        account->_autoAnswer = _autoAnswerToggle_->IsOn;
         account->_dhtPublicInCalls = _dhtPublicInCallsToggle_->IsOn;
         account->_turnEnabled = _turnEnabledToggle_->IsOn;
         if (_turnEditionTextBox_->Text != "")
@@ -1694,59 +1694,62 @@ SmartPanel::addToContactList(String^ uri)
     auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
 
     auto account = AccountsViewModel::instance->findItem(selectedAccountId);
-    auto hasInternet = Utils::hasInternet();
-    if (account->accountType_ == "RING" && (!hasInternet || account->_registrationState != RegistrationState::REGISTERED)) {
-        auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
-        ringTxtBxPlaceHolderDelay(loader->GetString("_accountNotRegistered_"), 5000);
-        return;
-    }
-
     auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
-    for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
-        if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
-            selectedAccountId == item->_contact->_accountIdAssociated &&
-            item->_contact->_trustStatus >= TrustStatus::CONTACT_REQUEST_SENT) {
-            SmartPanelItemsViewModel::instance->_selectedItem = item;
-            summonMessageTextPage();
+
+    if (account->accountType_ == "RING") {
+        if (!Utils::hasInternet() || account->_registrationState != RegistrationState::REGISTERED) {
+            auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
+            ringTxtBxPlaceHolderDelay(loader->GetString("_accountNotRegistered_"), 5000);
             return;
         }
-        else if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
-            item->_contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
-            // In this case, we are potentially attempting to send a trust request to a
-            // peer who has already sent us one. For now we shall just send a trust request,
-            // so they receive our vcard and remove our corresponding contact request control item.
-            /* DRing::acceptTrustRequest(  Utils::toString(item->_contact->_accountIdAssociated),
-            Utils::toString(item->_contact->ringID_)); */
-            auto vcard = Configuration::UserPreferences::instance->getVCard();
-            RingD::instance->sendContactRequest(Utils::toString(item->_contact->_accountIdAssociated),
-                Utils::toString(item->_contact->ringID_),
-                vcard->asString());
-            item->_contact->_trustStatus = TrustStatus::TRUSTED;
-            contactListModel->saveContactsToFile();
+        for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
+            if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
+                selectedAccountId == item->_contact->_accountIdAssociated &&
+                item->_contact->_trustStatus >= TrustStatus::CONTACT_REQUEST_SENT) {
+                SmartPanelItemsViewModel::instance->_selectedItem = item;
+                summonMessageTextPage();
+                return;
+            }
+            else if ((item->_contact->_name == uri || item->_contact->ringID_ == uri) &&
+                item->_contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
+                // In this case, we are potentially attempting to send a trust request to a
+                // peer who has already sent us one. For now we shall just send a trust request,
+                // so they receive our vcard and remove our corresponding contact request control item.
+                /* DRing::acceptTrustRequest(  Utils::toString(item->_contact->_accountIdAssociated),
+                Utils::toString(item->_contact->ringID_)); */
+                auto vcard = Configuration::UserPreferences::instance->getVCard();
+                RingD::instance->sendContactRequest(Utils::toString(item->_contact->_accountIdAssociated),
+                    Utils::toString(item->_contact->ringID_),
+                    vcard->asString());
+                item->_contact->_trustStatus = TrustStatus::TRUSTED;
+                contactListModel->saveContactsToFile();
 
-            auto spi = SmartPanelItemsViewModel::instance->findItem(item->_contact);
-            SmartPanelItemsViewModel::instance->moveItemToTheTop(spi);
-            SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
-            SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
+                auto spi = SmartPanelItemsViewModel::instance->findItem(item->_contact);
+                SmartPanelItemsViewModel::instance->moveItemToTheTop(spi);
+                SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+                SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
 
-            if (auto cri = ContactRequestItemsViewModel::instance->findItem(item->_contact))
-                ContactRequestItemsViewModel::instance->removeItem(cri);
+                if (auto cri = ContactRequestItemsViewModel::instance->findItem(item->_contact))
+                    ContactRequestItemsViewModel::instance->removeItem(cri);
 
-            ContactRequestItemsViewModel::instance->refreshFilteredItemsList();
-            ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
+                ContactRequestItemsViewModel::instance->refreshFilteredItemsList();
+                ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
 
-            MSG_("Auto-accepted Contact Request from: " + item->_contact->ringID_);
-            return;
+                MSG_("Auto-accepted Contact Request from: " + item->_contact->ringID_);
+                return;
+            }
         }
-    }
-
-    if (isRingId) {
-        contactListModel->addNewContact(uri, uri, TrustStatus::UNKNOWN, false, ContactStatus::READY);
-        RingD::instance->lookUpAddress(Utils::toString(selectedAccountId), uri);
+        if (isRingId) {
+            contactListModel->addNewContact(uri, uri, TrustStatus::UNKNOWN, false, ContactStatus::READY);
+            RingD::instance->lookUpAddress(Utils::toString(selectedAccountId), uri);
+        }
+        else {
+            contactListModel->addNewContact(uri, nullptr, TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
+            RingD::instance->lookUpName(Utils::toString(selectedAccountId), uri);
+        }
     }
     else {
-        contactListModel->addNewContact(uri, nullptr, TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
-        RingD::instance->lookUpName(Utils::toString(selectedAccountId), uri);
+        contactListModel->addNewContact(uri, nullptr, TrustStatus::TRUSTED, false, ContactStatus::READY);
     }
 
     for (auto item : SmartPanelItemsViewModel::instance->itemsList) {

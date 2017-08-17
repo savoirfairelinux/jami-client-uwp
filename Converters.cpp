@@ -337,13 +337,17 @@ Object^
 AccountRegistrationStateToString::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto account = static_cast<Account^>(value);
-    auto registrationState = account->_registrationState;
 
-    if (account->accountType_ == "SIP")
-        return "Ready";
-
-    if (registrationState == RegistrationState::REGISTERED) {
-        return "Online";
+    if (!account->_active) {
+        return "Disabled";
+    }
+    else {
+        if (account->accountType_ == "SIP") {
+            return "Ready";
+        }
+        if (account->_registrationState == RegistrationState::REGISTERED) {
+            return "Online";
+        }
     }
     return "Offline";
 }
@@ -354,6 +358,9 @@ AccountRegistrationStateToForeground::Convert(Object ^ value, TypeName targetTyp
     auto account = static_cast<Account^>(value);
     auto registrationState = account->_registrationState;
 
+    if (!account->_active) {
+        return ref new SolidColorBrush(Utils::ColorFromString(ErrorColor));
+    }
     if (registrationState == RegistrationState::REGISTERED || account->accountType_ == "SIP") {
         return ref new SolidColorBrush(Utils::ColorFromString(SuccessColor));
     }
