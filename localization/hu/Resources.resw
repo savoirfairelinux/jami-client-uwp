@@ -202,7 +202,7 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Exporting account on the Ring...</value>
+    <value>Fiók exportálása a Ringen…</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
     <value>looking for </value>
@@ -556,6 +556,6 @@
     <value>Remove contact</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>Üdvözli a </value>
   </data>
 </root>

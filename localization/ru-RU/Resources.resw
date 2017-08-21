@@ -349,7 +349,7 @@
     <value>Show banned contacts</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Нет подключения</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
     <value>Accept account modifications</value>

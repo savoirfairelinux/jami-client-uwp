@@ -127,7 +127,7 @@
     <value>Заслуги</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
-    <value>This program comes with absolutely no warranty</value>
+    <value>Тази програма се предоставя за ползване без никакви гаранции</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
     <value>Вижте</value>
@@ -148,7 +148,7 @@
     <value>Клиентът на Ring за „Microsoft Windows Runtime“.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>Liberté, Égalité, Fraternité! – Версия 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Въведете псевдоним</value>
@@ -163,7 +163,7 @@
     <value>Въведете ПИН</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>To link this device to a Ring account, you&apos;ll first need to generate a PIN from Ring on a device hosting the account.</value>
+    <value>За да свържете това устройство с акаунт в Ring, трябва първо да създадете ПИН-код от Ring на устройство, което вече има достъп до акаунта.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Авт. отговор</value>
@@ -178,10 +178,10 @@
     <value>Въведете паролата си</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>Accept calls and messages from incognito contacts</value>
+    <value>Приемане на обаждания и съобщения от скрити контакти</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
-    <value>PIN generator</value>
+    <value>Създаване на ПИН</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
     <value>Регистриране на публично потребителско име</value>
@@ -202,19 +202,19 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Exporting account on the Ring...</value>
+    <value>Изнасяне на акаунта в Ring…</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
-    <value>looking for </value>
+    <value>търсене на</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>Ви добави като контакт</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contact request sent</value>
+    <value>Заявката за свързване с нов контакт е изпратена</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>Заявки за нови контакти</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
     <value>Контакти</value>
@@ -223,7 +223,7 @@
     <value>Научете повече</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
-    <value>Beginning of Time</value>
+    <value>Началото на времето</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
     <value>Регистриране</value>
@@ -268,7 +268,7 @@
     <value>Относно</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring е система за безплатна и универсална комуникация, който уважава свободата и неприкосновеността на потребителите си.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Декларация за поверителност</value>
@@ -307,13 +307,13 @@
     <value>ring id added</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>потребителското име е открито и добавено.</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>потребителското име е неправилно</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>потребителското име не е намерено</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Добавяне на съществуващ акаунт</value>
@@ -409,7 +409,7 @@
     <value>Създаване на акаунт</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>Заявки за нови контакти</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
     <value>Устройства</value>
