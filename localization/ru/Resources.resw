@@ -142,7 +142,7 @@
     <value>для получения более подробной информации.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring — это безопасная и распределённая программа для общения.</value>
+    <value>Ring — это безопасная и распределенная программа для общения.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
     <value>Клиент RIng для Microsoft Windows</value>
@@ -163,7 +163,7 @@
     <value>Введите PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>Чтобы привязать это устройство к аккаунту Ring, надо сперва сгенерировать PIN на устройстве, на котором размещён аккаунт.</value>
+    <value>Чтобы привязать это устройство к аккаунту Ring, необходимо сгенерировать PIN на устройстве, на котором уже размещен аккаунт.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Автоответ</value>
@@ -196,7 +196,7 @@
     <value>Аккаунты</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
-    <value>Тип учётной записи</value>
+    <value>Тип учетной записи</value>
   </data>
   <data name="_accountsUPnP_.Text" xml:space="preserve">
     <value>UPnP</value>
@@ -274,10 +274,10 @@
     <value>Политика конфиденциальности</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Ваш аккаунт будет удалён с этого компьютера. Это действие не затронет другие устройства. Ваш публичный аккаунт не может быть удалён.</value>
+    <value>Ваш аккаунт будет удален с этого компьютера. Это действие не затронет другие устройства. Ваш публичный аккаунт не может быть удален.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
-    <value>Ваш аккаунт будет удалён с этого компьютера.</value>
+    <value>Ваш аккаунт будет удален с этого компьютера.</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
     <value>Люди смогут найти вас по вашему имени пользователя</value>
@@ -286,13 +286,13 @@
     <value>Вы уже зарегистрированы.</value>
   </data>
   <data name="_whatWillHappen_1_" xml:space="preserve">
-    <value>Вы ещё не зарегистрированы.</value>
+    <value>Вы еще не зарегистрированы.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
     <value>Нужно отправить свой Ring ID.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
-    <value>Неверные учётные данные или PIN просрочен</value>
+    <value>Неверные учетные данные или PIN просрочен</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
     <value>Не найден идентификатор устройства!</value>
@@ -337,7 +337,7 @@
     <value>Псевдоним</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Создать учётную запись</value>
+    <value>Создать учетную запись</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
     <value>Аккаунт активирован</value>
@@ -349,7 +349,7 @@
     <value>Показать заблокированные контакты</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Нет подключения</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
     <value>Принять изменения аккаунта</value>
@@ -373,7 +373,7 @@
     <value>Следующий шаг</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
-    <value>Добавить учётную запись</value>
+    <value>Добавить учетную запись</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
     <value>Разблокировать и добавить пользователя в контакты</value>
@@ -538,7 +538,7 @@
     <value>Пытаемся добавить устройство…</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Создаём аккаунт…</value>
+    <value>Создание учетной записи…</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
     <value>Удаляем аккаунт…</value>
