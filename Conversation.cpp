@@ -144,7 +144,7 @@ ConversationMessage::getMessageAvatarColorBrush()
 {
     if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
         return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarColorBrush;
-    return ref new SolidColorBrush(Utils::ColorFromString(L"#ff808080"));
+    return ref new SolidColorBrush(Utils::xaml::ColorFromString(L"#ff808080"));
 }
 
 String^

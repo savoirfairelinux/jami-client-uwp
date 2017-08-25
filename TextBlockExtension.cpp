@@ -17,7 +17,11 @@
 **************************************************************************/
 
 #include "pch.h"
+
 #include "TextBlockExtension.h"
+
+#include "RingD.h"
+#include "NetUtils.h"
 #include "HttpUtils.h"
 
 using namespace RingClientUWP;

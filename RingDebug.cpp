@@ -1,24 +1,27 @@
-/***************************************************************************
- * Copyright (C) 2016 by Savoir-faire Linux                                *
- * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
- * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify    *
- * it under the terms of the GNU General Public License as published by    *
- * the Free Software Foundation; either version 3 of the License, or       *
- * (at your option) any later version.                                     *
- *                                                                         *
- * This program is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License       *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
- **************************************************************************/
+/**************************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+**************************************************************************/
 
-/* client */
 #include "pch.h"
+
+#include "RingDebug.h"
+
+#include "RingD.h"
 
 using namespace RingClientUWP;
 
@@ -59,7 +62,7 @@ void
 RingDebug::print(const  std::string& message, const Type& type,
                         std::string file, int line)
 {
-    Utils::runOnWorkerThread([this, message, type, file, line]()
+    Utils::Threading::runOnWorkerThread([this, message, type, file, line]()
     {
         std::string _message;
 
@@ -97,7 +100,7 @@ void
 RingDebug::print(String^ message, const Type& type,
                         std::string file, int line)
 {
-    Utils::runOnWorkerThread([this, message, type, file, line]()
+    Utils::Threading::runOnWorkerThread([this, message, type, file, line]()
     {
         /* add header */
         auto messageTimestamped = Utils::toPlatformString(getDebugHeader(file, line)) + message;
@@ -127,7 +130,7 @@ RingDebug::print(String^ message, const Type& type,
 void
 RingDebug::print(Exception^ e, std::string file, int line)
 {
-    Utils::runOnWorkerThread([this, e, file, line]()
+    Utils::Threading::runOnWorkerThread([this, e, file, line]()
     {
         /* add header */
         auto message = Utils::toPlatformString(getDebugHeader(file, line)) + "Exception : 0x" + e->HResult.ToString() + ": " + e->Message;

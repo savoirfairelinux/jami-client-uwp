@@ -1,29 +1,37 @@
-﻿﻿﻿/***************************************************************************
- * Copyright (C) 2016 by Savoir-faire Linux                                *
- * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
- * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
- *                                                                         *
- * This program is free software; you can redistribute it and/or modify    *
- * it under the terms of the GNU General Public License as published by    *
- * the Free Software Foundation; either version 3 of the License, or       *
- * (at your option) any later version.                                     *
- *                                                                         *
- * This program is distributed in the hope that it will be useful,         *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of          *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
- * GNU General Public License for more details.                            *
- *                                                                         *
- * You should have received a copy of the GNU General Public License       *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
- **************************************************************************/
+﻿﻿﻿/**************************************************************************
+* Copyright (C) 2016 by Savoir-faire Linux                                *
+* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
+*                                                                         *
+* This program is free software; you can redistribute it and/or modify    *
+* it under the terms of the GNU General Public License as published by    *
+* the Free Software Foundation; either version 3 of the License, or       *
+* (at your option) any later version.                                     *
+*                                                                         *
+* This program is distributed in the hope that it will be useful,         *
+* but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+* GNU General Public License for more details.                            *
+*                                                                         *
+* You should have received a copy of the GNU General Public License       *
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
+**************************************************************************/
 
 #include "pch.h"
+
 #include "SmartPanel.xaml.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
+#include "NetUtils.h"
+#include "UserPreferences.h"
 #include "ResourceManager.h"
 #include "Wizard.xaml.h"
 #include "WelcomePage.xaml.h"
+#include "Video.h"
 
-#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
+#include "lodepng.h"
+
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
@@ -32,7 +40,7 @@
 #include <direct.h>
 #include <regex>
 
-#include "lodepng.h"
+#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace Platform;
 
@@ -166,7 +174,7 @@ SmartPanel::SmartPanel()
 
     RingD::instance->vCardUpdated += ref new VCardUpdated([&](Contact^ contact)
     {
-        Utils::runOnUIThread([this, contact]() {
+        Utils::Threading::runOnUIThread([this, contact]() {
             SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage", "_contact" });
         });
     });
@@ -1108,7 +1116,7 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = Utils::toPlatformString(address);
-                contact->_avatarColorString = Utils::getRandomColorStringFromString(contact->ringID_);
+                contact->_avatarColorString = Utils::xaml::getRandomColorStringFromString(contact->ringID_);
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                 ringTxtBxPlaceHolderDelay(loader->GetString("_contactsUserAdded_"), 5000);
 

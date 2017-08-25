@@ -19,6 +19,7 @@
 
 #pragma once
 
+#include "Converters.h"
 #include "Wizard.g.h"
 
 namespace RingClientUWP

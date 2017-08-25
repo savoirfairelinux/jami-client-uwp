@@ -19,7 +19,9 @@
 
 #include "pch.h"
 
+#include "RingDebug.h"
 #include "VideoRendererManager.h"
+#include "VideoManager.h"
 
 using namespace RingClientUWP;
 using namespace Video;

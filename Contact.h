@@ -19,14 +19,20 @@
 #pragma once
 
 #include "VCardUtils.h"
+#include "XamlUtils.h"
 #include "Utils.h"
+#include "Globals.h"
 
 using namespace Platform;
 using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
 
-/* strings required by Windows::Data::Json. Defined here on puprose */
+namespace RingClientUWP
+{
+
+namespace JSONKeys
+{
 String^ nameKey = "name";
 String^ displayNameKey = "displayname";
 String^ ringIDKey = "ringid";
@@ -41,9 +47,8 @@ String^ lastTimeKey = "lastTime";
 String^ trustStatusKey = "trustStatus";
 String^ isIncognitoContactKey = "isIncognitoContact";
 String^ avatarColorStringKey = "avatarColorString";
+} /*namespace JSONKeys*/
 
-namespace RingClientUWP
-{
 ref class Conversation;
 
 public ref class Contact sealed : public INotifyPropertyChanged
@@ -141,7 +146,7 @@ public:
 
     property SolidColorBrush^ _avatarColorBrush {
         SolidColorBrush^ get() {
-            return Utils::solidColorBrushFromString(avatarColorString_);
+            return Utils::xaml::solidColorBrushFromString(avatarColorString_);
         }
     }
 

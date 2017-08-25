@@ -18,6 +18,10 @@
 **************************************************************************/
 #include "pch.h"
 
+#include "Ringtone.h"
+
+#include "RingDebug.h"
+
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;

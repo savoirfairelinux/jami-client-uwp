@@ -16,10 +16,13 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
 #include "LoadingPage.xaml.h"
 
+#include "RingD.h"
+#include "FileUtils.h"
 #include "MainPage.xaml.h"
 #include "Wizard.xaml.h"
 
@@ -43,7 +46,6 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Graphics::Display;
 using namespace Windows::System;
-using namespace Utils;
 
 LoadingPage::LoadingPage()
 {
@@ -51,10 +53,10 @@ LoadingPage::LoadingPage()
 
     std::string configFile = RingD::instance->getLocalFolder() + ".config\\dring.yml";
     std::string tokenFile = RingD::instance->getLocalFolder() + "creation.token";
-    if (fileExists(configFile)) {
-        if (fileExists(tokenFile)) {
+    if (Utils::fileExists(configFile)) {
+        if (Utils::fileExists(tokenFile)) {
             /* we have a token, the config has to be considered as corrupted, delete the config, summon the wizard */
-            fileDelete(configFile);
+            Utils::fileDelete(configFile);
             this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal,
                 ref new Windows::UI::Core::DispatchedHandler([this]()
             {

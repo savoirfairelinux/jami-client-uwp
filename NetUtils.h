@@ -1,6 +1,5 @@
-﻿/**************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -13,32 +12,37 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
 * GNU General Public License for more details.                            *
 *                                                                         *
-* You should have received a copy of the GNU Gen5eral Public License       *
+* You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 
 #pragma once
 
-#include <iomanip>
-#include <ppltasks.h>
-#include <queue>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "StringUtils.h"
 
-// Refactor: get rid of these (and potentially usage of the pch)
-#include "AccountListItem.h"
-#include "AccountListItemsViewModel.h"
-#include "AccountsViewModel.h"
+using namespace Windows::Networking::Connectivity;
 
-#include "Contact.h"
-#include "ContactItem.h"
-#include "ContactListModel.h"
-#include "Conversation.h"
+namespace RingClientUWP
+{
+namespace Utils
+{
 
-#include "SmartPanelItem.h"
-#include "SmartPanelItemsViewModel.h"
+bool
+hasInternet()
+{
+    auto connectionProfile = NetworkInformation::GetInternetConnectionProfile();
+    return (connectionProfile != nullptr &&
+        connectionProfile->GetNetworkConnectivityLevel() == NetworkConnectivityLevel::InternetAccess);
+}
 
-#include "ContactRequestItem.h"
-#include "ContactRequestItemsViewModel.h"
+std::string
+getHostName()
+{
+    auto hostNames = NetworkInformation::GetHostNames();
+    auto hostName = hostNames != nullptr ? toString(hostNames->GetAt(0)->DisplayName) : "";
+    return hostName;
+}
+
+} /*namespace Utils*/
+
+} /*namespace RingClientUWP*/

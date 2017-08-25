@@ -58,13 +58,7 @@
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
-    <ClCompile Include="UserModel.cpp">
-      <Filter>Models</Filter>
-    </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp" />
-    <ClCompile Include="VCardUtils.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="Ringtone.cpp">
       <Filter>Models\Media\Audio</Filter>
     </ClCompile>
@@ -100,16 +94,19 @@
       <Filter>Controls</Filter>
     </ClCompile>
     <ClCompile Include="lodepng.cpp">
-      <Filter>Common\lodepng</Filter>
+      <Filter>Deps\lodepng</Filter>
     </ClCompile>
     <ClCompile Include="contrib\sqlite-win32\shell.c">
-      <Filter>Common\sqlite</Filter>
+      <Filter>Deps\sqlite</Filter>
     </ClCompile>
     <ClCompile Include="contrib\sqlite-win32\sqlite3.c">
-      <Filter>Common\sqlite</Filter>
+      <Filter>Deps\sqlite</Filter>
     </ClCompile>
     <ClCompile Include="AccountItemsViewModel.cpp">
       <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="VCardUtils.cpp">
+      <Filter>Utils</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -132,9 +129,6 @@
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="UserPreferences.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="AccountListItem.h">
@@ -173,13 +167,7 @@
     <ClInclude Include="SmartPanelItemsViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="UserModel.h">
-      <Filter>Models</Filter>
-    </ClInclude>
     <ClInclude Include="PreviewPage.xaml.h" />
-    <ClInclude Include="VCardUtils.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="Ringtone.h">
       <Filter>Models\Media\Audio</Filter>
     </ClInclude>
@@ -212,9 +200,6 @@
     <ClInclude Include="Call.h">
       <Filter>Models</Filter>
     </ClInclude>
-    <ClInclude Include="HttpUtils.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="AccountItem.h">
       <Filter>Controls</Filter>
     </ClInclude>
@@ -225,16 +210,46 @@
       <Filter>Controls</Filter>
     </ClInclude>
     <ClInclude Include="lodepng.h">
-      <Filter>Common\lodepng</Filter>
+      <Filter>Deps\lodepng</Filter>
     </ClInclude>
     <ClInclude Include="contrib\sqlite-win32\sqlite3.h">
-      <Filter>Common\sqlite</Filter>
+      <Filter>Deps\sqlite</Filter>
     </ClInclude>
     <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h">
-      <Filter>Common\sqlite</Filter>
+      <Filter>Deps\sqlite</Filter>
     </ClInclude>
     <ClInclude Include="AccountItemsViewModel.h">
       <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64Utils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="HttpUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="NetUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="VCardUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="XamlUtils.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -569,11 +584,17 @@
     <Filter Include="Strings\en-GB">
       <UniqueIdentifier>{83248a19-b0d2-4b71-b0be-c5e9cd98fd65}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\lodepng">
-      <UniqueIdentifier>{c62ee4e6-c4f0-43fa-b431-50df3e43f401}</UniqueIdentifier>
+    <Filter Include="Utils">
+      <UniqueIdentifier>{d2b619b5-76e2-47e1-89be-124cb73e6ee3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Common\sqlite">
+    <Filter Include="Deps">
+      <UniqueIdentifier>{c58e8765-f2a3-419e-b130-b22bba80b52f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Deps\sqlite">
       <UniqueIdentifier>{5797d71a-e85a-41ae-b793-1bc38765eb47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Deps\lodepng">
+      <UniqueIdentifier>{c62ee4e6-c4f0-43fa-b431-50df3e43f401}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

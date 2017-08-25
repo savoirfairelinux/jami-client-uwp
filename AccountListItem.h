@@ -24,7 +24,9 @@ using namespace Windows::Data::Json;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
 
-#include <RingDebug.h>
+#include "Account.h"
+//#include "RingDebug.h"
+#include "Globals.h"
 
 namespace RingClientUWP
 {

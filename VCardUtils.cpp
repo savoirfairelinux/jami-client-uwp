@@ -16,11 +16,18 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include <pch.h>
 
-#include <direct.h>
+#include "pch.h"
+
+#include "VCardUtils.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
+#include "Base64Utils.h"
 
 #include "lodepng.h"
+
+#include <direct.h>
 
 using namespace RingClientUWP;
 using namespace ViewModel;

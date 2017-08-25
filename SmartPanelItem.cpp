@@ -20,6 +20,8 @@
 
 #include "SmartPanelItem.h"
 
+#include "RingD.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
 using namespace Windows::Data::Json;
@@ -87,7 +89,7 @@ SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
 void
 SmartItem::NotifyPropertyChanged(String^ propertyName)
 {
-    Utils::runOnUIThread([this, propertyName]() {
+    Utils::Threading::runOnUIThread([this, propertyName]() {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     });
 }
