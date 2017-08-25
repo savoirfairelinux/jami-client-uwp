@@ -89,31 +89,40 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
         [=](std::pair<std::string, AccountDetails> acc) {
         auto accountId = acc.first;
         auto accountDetails = acc.second;
-
         auto type = accountDetails.find(DRing::Account::ConfProperties::TYPE)->second;
+
+        auto account_new = AccountItemsViewModel::instance->findItem(Utils::toPlatformString(accountId));
+        using namespace DRing::Account;
+
+        {
+            if (account_new) {
+                MSG_("************NEW setting account details");
+                account_new->SetDetails(Utils::toPlatformString(accountId), Utils::convertMap(accountDetails));
+                // emit signal : accountUpdated
+            }
+            else {
+                MSG_("************NEW adding account");
+                AccountItemsViewModel::instance->addItem(Utils::toPlatformString(accountId), Utils::convertMap(accountDetails));
+            }
+            // TODO: load contacts for the account
+            if (type == ProtocolNames::RING) {
+                // TODO: load contact requests for the account
+            }
+        }
+
         if (type == "RING") {
-            auto  ringID = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
+            auto  ringID = accountDetails.find(ConfProperties::USERNAME)->second;
             if (!ringID.empty())
                 ringID = ringID.substr(5);
-            bool active = (accountDetails.find(DRing::Account::ConfProperties::ENABLED)->second == ring::TRUE_STR)
-                ? true
-                : false;
-            bool upnpState = (accountDetails.find(DRing::Account::ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR)
-                ? true
-                : false;
-            bool autoAnswer = (accountDetails.find(DRing::Account::ConfProperties::AUTOANSWER)->second == ring::TRUE_STR)
-                ? true
-                : false;
-            bool dhtPublicInCalls = (accountDetails.find(DRing::Account::ConfProperties::DHT::PUBLIC_IN_CALLS)->second == ring::TRUE_STR)
-                ? true
-                : false;
-            bool turnEnabled = (accountDetails.find(DRing::Account::ConfProperties::TURN::ENABLED)->second == ring::TRUE_STR)
-                ? true
-                : false;
-            auto turnAddress = accountDetails.find(DRing::Account::ConfProperties::TURN::SERVER)->second;
-            auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
-            auto deviceId = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
-            auto deviceName = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_NAME)->second;
+            bool active = (accountDetails.find(ConfProperties::ENABLED)->second == ring::TRUE_STR) ? true : false;
+            bool upnpState = (accountDetails.find(ConfProperties::UPNP_ENABLED)->second == ring::TRUE_STR) ? true : false;
+            bool autoAnswer = (accountDetails.find(ConfProperties::AUTOANSWER)->second == ring::TRUE_STR) ? true : false;
+            bool dhtPublicInCalls = (accountDetails.find(ConfProperties::DHT::PUBLIC_IN_CALLS)->second == ring::TRUE_STR) ? true : false;
+            bool turnEnabled = (accountDetails.find(ConfProperties::TURN::ENABLED)->second == ring::TRUE_STR) ? true : false;
+            auto turnAddress = accountDetails.find(ConfProperties::TURN::SERVER)->second;
+            auto alias = accountDetails.find(ConfProperties::ALIAS)->second;
+            auto deviceId = accountDetails.find(ConfProperties::RING_DEVICE_ID)->second;
+            auto deviceName = accountDetails.find(ConfProperties::RING_DEVICE_NAME)->second;
 
             auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
 
@@ -196,13 +205,13 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
             }
         }
         else { /* SIP */
-            auto alias = accountDetails.find(DRing::Account::ConfProperties::ALIAS)->second;
-            bool active = (accountDetails.find(DRing::Account::ConfProperties::ENABLED)->second == ring::TRUE_STR)
+            auto alias = accountDetails.find(ConfProperties::ALIAS)->second;
+            bool active = (accountDetails.find(ConfProperties::ENABLED)->second == ring::TRUE_STR)
                 ? true
                 : false;
-            auto sipHostname = accountDetails.find(DRing::Account::ConfProperties::HOSTNAME)->second;
-            auto sipUsername = accountDetails.find(DRing::Account::ConfProperties::USERNAME)->second;
-            auto sipPassword = accountDetails.find(DRing::Account::ConfProperties::PASSWORD)->second;
+            auto sipHostname = accountDetails.find(ConfProperties::HOSTNAME)->second;
+            auto sipUsername = accountDetails.find(ConfProperties::USERNAME)->second;
+            auto sipPassword = accountDetails.find(ConfProperties::PASSWORD)->second;
 
             auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
 

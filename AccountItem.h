@@ -85,10 +85,10 @@ public:
 
     property String^ _username {
         String^ get() {
-            return Utils::toPlatformString(account_->hostname);
+            return Utils::toPlatformString(account_->username);
         }
         void set(String^ value) {
-            account_->hostname = Utils::toString(value);
+            account_->username = Utils::toString(value);
             NotifyPropertyChanged("_username");
         }
     }
@@ -253,8 +253,8 @@ public:
     }
 
 internal:
-    AccountItem(Map<String^, String^>^ details);
-    void SetDetails(Map<String^, String^>^ details);
+    AccountItem(String^ id, Map<String^, String^>^ details);
+    void SetDetails(String^ id, Map<String^, String^>^ details);
 
 protected:
     void NotifyPropertyChanged(String^ propertyName);

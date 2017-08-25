@@ -9,7 +9,6 @@
     <ClCompile Include="MainPage.xaml.cpp" />
     <ClCompile Include="MessageTextPage.xaml.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="RingConsolePanel.xaml.cpp" />
     <ClCompile Include="SmartPanel.xaml.cpp" />
     <ClCompile Include="VideoPage.xaml.cpp" />
     <ClCompile Include="WelcomePage.xaml.cpp" />
@@ -109,6 +108,9 @@
     <ClCompile Include="contrib\sqlite-win32\sqlite3.c">
       <Filter>Common\sqlite</Filter>
     </ClCompile>
+    <ClCompile Include="AccountItemsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -116,7 +118,6 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h" />
     <ClInclude Include="MainPage.xaml.h" />
-    <ClInclude Include="RingConsolePanel.xaml.h" />
     <ClInclude Include="SmartPanel.xaml.h" />
     <ClInclude Include="VideoPage.xaml.h" />
     <ClInclude Include="WelcomePage.xaml.h" />
@@ -231,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h">
       <Filter>Common\sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="AccountItemsViewModel.h">
+      <Filter>ViewModels</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

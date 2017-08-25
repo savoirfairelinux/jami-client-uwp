@@ -176,6 +176,7 @@
     <ClInclude Include="AccountItem.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
+    <ClInclude Include="AccountItemsViewModel.h" />
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
@@ -358,6 +359,7 @@
     <ClCompile Include="AccountItem.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="AccountItemsViewModel.cpp" />
     <ClCompile Include="AccountListItem.cpp" />
     <ClCompile Include="AccountListItemsViewModel.cpp" />
     <ClCompile Include="AccountsViewModel.cpp" />

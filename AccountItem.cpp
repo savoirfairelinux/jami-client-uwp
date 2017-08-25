@@ -29,30 +29,39 @@ using namespace Windows::UI::Core;
 using namespace RingClientUWP;
 using namespace RingClientUWP::Controls;
 
-AccountItem::AccountItem(Map<String^, String^>^ details)
+AccountItem::AccountItem(String^ id, Map<String^, String^>^ details)
 {
     account_ = std::make_unique<Models::Account>();
-    SetDetails(details);
+    SetDetails(id, details);
 }
 
 void
-AccountItem::SetDetails(Map<String^, String^>^ details)
+AccountItem::SetDetails(String^ id, Map<String^, String^>^ details)
 {
-    using namespace DRing::Account::ConfProperties;
+    using namespace DRing::Account;
 
-    _id                 = Utils::getDetailsStringValue( details, ID);
-    _username           = Utils::getDetailsStringValue( details, USERNAME);
-    _hostname           = Utils::getDetailsStringValue( details, HOSTNAME);
-    _alias              = Utils::getDetailsStringValue( details, ALIAS);
-    _accountType        = Utils::getDetailsStringValue( details, TYPE);
-    _autoAnswerEnabled  = Utils::getDetailsBoolValue(   details, AUTOANSWER);
-    _enabled            = Utils::getDetailsBoolValue(   details, ENABLED);
-    _upnpEnabled        = Utils::getDetailsBoolValue(   details, UPNP_ENABLED);
-    _turnEnabled        = Utils::getDetailsBoolValue(   details, TURN::ENABLED);
-    _turnAddress        = Utils::getDetailsStringValue( details, TURN::SERVER);
-    _publicDhtInCalls   = Utils::getDetailsBoolValue(   details, DHT::PUBLIC_IN_CALLS);
-    _sipPassword        = Utils::getDetailsStringValue( details, PASSWORD);
-    _deviceName         = Utils::getDetailsStringValue( details, RING_DEVICE_NAME);
+    _id                 = id;
+    _accountType        = Utils::getDetailsStringValue( details, ConfProperties::TYPE);
+    _username           = Utils::getDetailsStringValue( details, ConfProperties::USERNAME);
+    _hostname           = Utils::getDetailsStringValue( details, ConfProperties::HOSTNAME);
+    _alias              = Utils::getDetailsStringValue( details, ConfProperties::ALIAS);
+    _autoAnswerEnabled  = Utils::getDetailsBoolValue(   details, ConfProperties::AUTOANSWER);
+    _enabled            = Utils::getDetailsBoolValue(   details, ConfProperties::ENABLED);
+    _upnpEnabled        = Utils::getDetailsBoolValue(   details, ConfProperties::UPNP_ENABLED);
+    _turnEnabled        = Utils::getDetailsBoolValue(   details, ConfProperties::TURN::ENABLED);
+    _turnAddress        = Utils::getDetailsStringValue( details, ConfProperties::TURN::SERVER);
+    _publicDhtInCalls   = Utils::getDetailsBoolValue(   details, ConfProperties::DHT::PUBLIC_IN_CALLS);
+    _sipPassword        = Utils::getDetailsStringValue( details, ConfProperties::PASSWORD);
+    _deviceName         = Utils::getDetailsStringValue( details, ConfProperties::RING_DEVICE_NAME);
+
+    auto username = Utils::toString(_username);
+    if (username.empty()) {
+        ERR_("username empty while parsing account!");
+    }
+    else if (_accountType == Utils::toPlatformString(ProtocolNames::RING)){
+        auto uriPrefixLength = _accountType->Length() + 1;
+        _username = Utils::toPlatformString(username.substr(uriPrefixLength));
+    }
 }
 
 void
