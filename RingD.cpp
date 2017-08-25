@@ -31,6 +31,9 @@
 #include "gnutls\gnutls.h"
 #include "media_const.h"
 
+/* client */
+#include "AccountItemsViewModel.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Storage;
 using namespace Windows::UI::Core;

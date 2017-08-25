@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "RingDevice.h"
+
 using namespace Platform;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;

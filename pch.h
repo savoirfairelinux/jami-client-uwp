@@ -34,26 +34,25 @@
 
 #include "Account.h"
 
-// new
-#include "AccountItemsViewModel.h"
-
 // old
 #include "AccountListItem.h"
 #include "AccountListItemsViewModel.h"
 #include "AccountsViewModel.h"
 
-#include "Call.h"
 #include "Contact.h"
 #include "ContactItem.h"
 #include "ContactListModel.h"
 #include "Conversation.h"
-#include "RingDevice.h"
+
 #include "RingDeviceItem.h"
 #include "RingDeviceItemsViewModel.h"
+
 #include "UserModel.h"
 #include "MainPage.xaml.h"
+
 #include "SmartPanelItem.h"
 #include "SmartPanelItemsViewModel.h"
+
 #include "ContactRequestItem.h"
 #include "ContactRequestItemsViewModel.h"
 
