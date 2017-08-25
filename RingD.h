@@ -16,10 +16,15 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include <dring.h>
 
+#pragma once
+
+#include "MainPage.xaml.h"
 #include "Ringtone.h"
 #include "Utils.h"
+#include "ThreadUtils.h"
+
+#include <dring.h>
 
 using namespace concurrency;
 
@@ -296,7 +301,7 @@ private:
     bool callToastPopped_   = false;
 
     std::string localFolder_;
-    Utils::task_queue tasks_;
+    Utils::Threading::task_queue tasks_;
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     Ringtone^ ringtone_;
 

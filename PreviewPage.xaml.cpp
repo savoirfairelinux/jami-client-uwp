@@ -18,6 +18,8 @@
 **************************************************************************/
 #include "pch.h"
 
+#include "VideoCaptureManager.h"
+#include "VideoManager.h"
 #include "PreviewPage.xaml.h"
 
 using namespace RingClientUWP;

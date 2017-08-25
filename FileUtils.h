@@ -1,6 +1,5 @@
-﻿/**************************************************************************
+/**************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
 * Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
@@ -13,32 +12,46 @@
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
 * GNU General Public License for more details.                            *
 *                                                                         *
-* You should have received a copy of the GNU Gen5eral Public License       *
+* You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
 
 #pragma once
 
-#include <iomanip>
-#include <ppltasks.h>
-#include <queue>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
+#include "../fileutils.h"
 
-// Refactor: get rid of these (and potentially usage of the pch)
-#include "AccountListItem.h"
-#include "AccountListItemsViewModel.h"
-#include "AccountsViewModel.h"
+namespace RingClientUWP
+{
+namespace Utils
+{
 
-#include "Contact.h"
-#include "ContactItem.h"
-#include "ContactListModel.h"
-#include "Conversation.h"
+std::string
+fileNameOnly(const std::string& path)
+{
+    return path.substr(path.find_last_of("\\") + 1);
+}
 
-#include "SmartPanelItem.h"
-#include "SmartPanelItemsViewModel.h"
+inline int
+fileExists(const std::string& name)
+{
+    std::ifstream f(name.c_str());
+    return f.good();
+}
 
-#include "ContactRequestItem.h"
-#include "ContactRequestItemsViewModel.h"
+inline int
+fileDelete(const std::string& file)
+{
+    return std::remove(file.c_str());
+}
+
+std::string
+getStringFromFile(const std::string& filename)
+{
+    std::ifstream file(filename, std::ios::binary);
+    return std::string((std::istreambuf_iterator<char>(file)),
+        (std::istreambuf_iterator<char>()));
+}
+
+} /*namespace Utils*/
+
+} /*namespace RingClientUWP*/

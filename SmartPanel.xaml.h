@@ -18,6 +18,8 @@
 **************************************************************************/
 #pragma once
 
+#include "RingDeviceItemsViewModel.h"
+
 #include "SmartPanel.g.h"
 
 #include <regex>

@@ -18,6 +18,9 @@
 **************************************************************************/
 
 #include "pch.h"
+
+#include "TimeUtils.h"
+#include "ResourceManager.h"
 #include "Converters.h"
 
 using namespace RingClientUWP;
@@ -27,8 +30,8 @@ using namespace ViewModel;
 Object^
 BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto c1 = Utils::ColorFromString("#ffebefef");
-    auto c2 = Utils::ColorFromString("#ffcfebf5");
+    auto c1 = Utils::xaml::ColorFromString("#ffebefef");
+    auto c2 = Utils::xaml::ColorFromString("#ffcfebf5");
     return ((bool)value) ? ref new SolidColorBrush(c1) : ref new SolidColorBrush(c2);
 }
 
@@ -359,12 +362,12 @@ AccountRegistrationStateToForeground::Convert(Object ^ value, TypeName targetTyp
     auto registrationState = account->_registrationState;
 
     if (!account->_active) {
-        return ref new SolidColorBrush(Utils::ColorFromString(ErrorColor));
+        return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));
     }
     if (registrationState == RegistrationState::REGISTERED || account->accountType_ == "SIP") {
-        return ref new SolidColorBrush(Utils::ColorFromString(SuccessColor));
+        return ref new SolidColorBrush(Utils::xaml::ColorFromString(SuccessColor));
     }
-    return ref new SolidColorBrush(Utils::ColorFromString(ErrorColor));
+    return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));
 }
 
 // This converter will be used to determine the visibility of the
@@ -500,14 +503,14 @@ PresenceStatus::Convert(Object ^ value, TypeName targetType, Object ^ parameter,
     auto parameterString = static_cast<String^>(parameter);
     auto presenceStatus = static_cast<int>(value);
 
-    auto offlineColor = ref new SolidColorBrush(Utils::ColorFromString("#00000000"));
+    auto offlineColor = ref new SolidColorBrush(Utils::xaml::ColorFromString("#00000000"));
     SolidColorBrush^ onlineColor;
 
     if (parameterString == "Border") {
-        onlineColor = ref new SolidColorBrush(Utils::ColorFromString("#ffffffff"));
+        onlineColor = ref new SolidColorBrush(Utils::xaml::ColorFromString("#ffffffff"));
     }
     else
-        onlineColor = ref new SolidColorBrush(Utils::ColorFromString(SuccessColor));
+        onlineColor = ref new SolidColorBrush(Utils::xaml::ColorFromString(SuccessColor));
 
     return presenceStatus <= 0 ? offlineColor : onlineColor;
 }

@@ -18,6 +18,7 @@
 **************************************************************************/
 #pragma once
 
+#include "Video.h"
 #include "VideoPage.g.h"
 #include "MessageTextPage.xaml.h"
 

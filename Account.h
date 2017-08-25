@@ -16,7 +16,11 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
+
 #pragma once
+
+#include "App.xaml.h"
+#include "Globals.h"
 
 using namespace Platform;
 using namespace Windows::UI::Xaml::Data;

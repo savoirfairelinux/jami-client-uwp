@@ -15,9 +15,13 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
 #include "AccountItem.h"
+
+#include "ThreadUtils.h"
+#include "RingDebug.h"
 
 #include "account_const.h"
 
@@ -67,7 +71,7 @@ AccountItem::SetDetails(String^ id, Map<String^, String^>^ details)
 void
 AccountItem::NotifyPropertyChanged(String^ propertyName)
 {
-    Utils::runOnUIThread([this, propertyName]() {
+    Utils::Threading::runOnUIThread([this, propertyName]() {
         PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
     });
 }

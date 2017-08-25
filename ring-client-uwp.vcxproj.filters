@@ -58,9 +58,6 @@
     <ClCompile Include="SmartPanelItemsViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
-    <ClCompile Include="UserModel.cpp">
-      <Filter>Models</Filter>
-    </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp" />
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Common</Filter>
@@ -173,9 +170,6 @@
     <ClInclude Include="SmartPanelItemsViewModel.h">
       <Filter>ViewModels</Filter>
     </ClInclude>
-    <ClInclude Include="UserModel.h">
-      <Filter>Models</Filter>
-    </ClInclude>
     <ClInclude Include="PreviewPage.xaml.h" />
     <ClInclude Include="VCardUtils.h">
       <Filter>Common</Filter>
@@ -235,6 +229,27 @@
     </ClInclude>
     <ClInclude Include="AccountItemsViewModel.h">
       <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="TimeUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="NetUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="StringUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Base64Utils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="XamlUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ThreadUtils.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

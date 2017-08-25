@@ -16,12 +16,17 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include "pch.h"
-#include "ContactListModel.h"
 
+#include "pch.h"
+
+#include "MessageTextPage.xaml.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
+#include "ContactListModel.h"
+#include "UserPreferences.h"
 #include "MainPage.xaml.h"
 #include "SmartPanel.xaml.h"
-#include "MessageTextPage.xaml.h"
 
 using namespace RingClientUWP::Views;
 using namespace RingClientUWP::ViewModel;
@@ -85,7 +90,7 @@ MessageTextPage::MessageTextPage()
 
     RingD::instance->vCardUpdated += ref new VCardUpdated([&](Contact^ contact)
     {
-        Utils::runOnUIThread([this, contact]() {
+        Utils::Threading::runOnUIThread([this, contact]() {
             if (auto item = SmartPanelItemsViewModel::instance->findItem(contact)) {
                 updatePageContent(item);
             }
@@ -178,7 +183,7 @@ MessageTextPage::updatePageContent(SmartPanelItem^ item)
             /* show messages */
             _messagesList_->ItemsSource = nullptr;
             _fadeInMessagesPageInfoStoryBoard_->Begin();
-            Utils::runOnUIThreadDelayed(50, [this, contact]() {
+            Utils::Threading::runOnUIThreadDelayed(50, [this, contact]() {
                 auto start = std::chrono::steady_clock::now();
                 /*auto conversationSize = contact->_conversation->_messages->Size;
                 if (conversationSize > 20) {

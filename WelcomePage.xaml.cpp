@@ -19,9 +19,13 @@
 #include "pch.h"
 
 #include "WelcomePage.xaml.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
 #include "AboutPage.xaml.h"
 
 #include "qrencode.h"
+
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace RingClientUWP;

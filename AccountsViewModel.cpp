@@ -18,7 +18,10 @@
  **************************************************************************/
 
 #include "pch.h"
+
 #include "AccountsViewModel.h"
+
+#include "RingD.h"
 
 using namespace RingClientUWP;
 using namespace ViewModel;

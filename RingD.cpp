@@ -18,14 +18,22 @@
 **************************************************************************/
 #include "pch.h"
 
-/* daemon */
+#include "RingD.h"
+
+#include "RingDebug.h"
+#include "NetUtils.h"
+#include "FileUtils.h"
+#include "UserPreferences.h"
+#include "AccountItemsViewModel.h"
+#include "Video.h"
+#include "ResourceManager.h"
+
 #include <dring.h>
 #include "dring/call_const.h"
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
 #include "videomanager_interface.h"
-#include "fileutils.h"
 #include "account_const.h"
 #include "string_utils.h"
 #include "gnutls\gnutls.h"
@@ -261,7 +269,7 @@ RingD::sendAccountTextMessage(String^ message)
 
             auto sentToken = DRing::sendAccountTextMessage(_accountId, _uri, _payload);
 
-            Utils::runOnUIThread([this, sentToken, contact, message]() {
+            Utils::Threading::runOnUIThread([this, sentToken, contact, message]() {
                 if (sentToken) {
                     contact->_conversation->addMessage(MSG_FROM_ME, message, std::time(nullptr), false, sentToken.ToString());
                     contact->saveConversationToFile();
@@ -287,7 +295,7 @@ RingD::sendSIPTextMessage(String^ message)
 
             DRing::sendTextMessage(_callId, _payload, _accountId, true /*not used*/);
 
-            Utils::runOnUIThread([this, item, message]() {
+            Utils::Threading::runOnUIThread([this, item, message]() {
                 // No id generated for sip messages within a conversation, so let's generate one
                 // so we can track message order.
                 auto contact = item->_contact;
@@ -325,7 +333,7 @@ RingD::createRINGAccount(String^ alias, String^ archivePassword, bool upnp, Stri
         accountDetails.insert(std::make_pair(DRing::Account::ConfProperties::TYPE, "RING"));
         accountDetails.insert(std::make_pair(DRing::Account::ConfProperties::UPNP_ENABLED, ring::TRUE_STR));
 
-        Utils::runOnUIThread([this, registeredName]() {
+        Utils::Threading::runOnUIThread([this, registeredName]() {
             showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
             isAddingAccount = true;
             if (registeredName != "") {
@@ -354,7 +362,7 @@ RingD::createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname,
         accountDetails.insert(std::make_pair(DRing::Account::ConfProperties::HOSTNAME, _sipHostname));
         accountDetails.insert(std::make_pair(DRing::Account::ConfProperties::USERNAME, _sipUsername));
 
-        Utils::runOnUIThread([this]() {
+        Utils::Threading::runOnUIThread([this]() {
             showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
             isAddingAccount = true;
         });
@@ -397,7 +405,7 @@ RingD::placeCall(Contact^ contact)
             callId = DRing::placeCall(_accountId, "sip:" + _sipUsername);
 
         // TODO: this UI response should be called at state change?
-        Utils::runOnUIThread([this, callId, _accountId, _ringId, _sipUsername, selectedAccount]() {
+        Utils::Threading::runOnUIThread([this, callId, _accountId, _ringId, _sipUsername, selectedAccount]() {
             if (auto contactListModel = AccountsViewModel::instance->getContactListModel(std::string(_accountId))) {
                 Contact^ contact;
                 if (selectedAccount->accountType_ == "RING")
@@ -473,7 +481,7 @@ RingD::getKnownDevices(String^ accountId)
         if (devicesList.empty())
             return;
 
-       Utils::runOnUIThread([=]() {
+        Utils::Threading::runOnUIThread([=]() {
             devicesListRefreshed(Utils::convertMap(devicesList));
         });
     });
@@ -532,7 +540,7 @@ RingD::updateAccount(String^ accountId)
             return;
         }
 
-        Utils::runOnUIThread([this]() {
+        Utils::Threading::runOnUIThread([this]() {
             isUpdatingAccount = true;
             setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_updating_account_"), SuccessColor);
             mainPage->showLoadingOverlay(true, true);
@@ -554,7 +562,7 @@ RingD::updateAccount(String^ accountId)
 void
 RingD::deleteAccount(String ^ accountId)
 {
-    Utils::runOnUIThread([this]() {
+    Utils::Threading::runOnUIThread([this]() {
         isDeletingAccount = true;
         setOverlayStatusText(ResourceMananger::instance->getStringResource("_m_deleting_account_"), "#ffff0000");
         mainPage->showLoadingOverlay(true, true);
@@ -570,7 +578,7 @@ RingD::deleteAccount(String ^ accountId)
 void
 RingD::registerThisDevice(String ^ pin, String ^ archivePassword)
 {
-    Utils::runOnUIThread([this]() {
+    Utils::Threading::runOnUIThread([this]() {
         showLoadingOverlay(ResourceMananger::instance->getStringResource("_m_creating_account_"), SuccessColor);
         isAddingAccount = true;
     });
@@ -629,7 +637,7 @@ RingD::lookUpAddress(const std::string& accountId, String^ address)
 void
 RingD::revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId)
 {
-    Utils::runOnUIThread([this, deviceId]() {
+    Utils::Threading::runOnUIThread([this, deviceId]() {
         auto msg = ResourceMananger::instance->getStringResource("_m_revoking_device_");
         showLoadingOverlay(msg + Utils::toPlatformString(deviceId), SuccessColor);
     });
@@ -883,7 +891,7 @@ RingD::registerCallbacks()
         DRing::exportable_callback<DRing::CallSignal::SmartInfo>([this](
             const std::map<std::string, std::string>& info)
         {
-            Utils::runOnUIThread([this, info]() {updateSmartInfo(info); });
+            Utils::Threading::runOnUIThread([this, info]() {updateSmartInfo(info); });
         }),
         DRing::exportable_callback<DRing::CallSignal::PeerHold>([this](
                     const std::string& callId,
@@ -1028,7 +1036,7 @@ RingD::registerCallbacks()
             MSG_("<RegistrationStateChanged>: ID = " + account_id + " state = " + state);
             if (state == DRing::Account::States::REGISTERED) {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::runOnUIThread([this, account_id, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
                     if (auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         account->_registrationState = RegistrationState::REGISTERED;
                     parseAccountDetails(allAccountDetails);
@@ -1041,7 +1049,7 @@ RingD::registerCallbacks()
             }
             else if (state == DRing::Account::States::UNREGISTERED) {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::runOnUIThread([this, account_id, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
                     if (auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         account->_registrationState = RegistrationState::UNREGISTERED;
                     parseAccountDetails(allAccountDetails);
@@ -1054,7 +1062,7 @@ RingD::registerCallbacks()
             }
             else if (state == DRing::Account::States::TRYING) {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::runOnUIThread([this, account_id, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
                     if (auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         account->_registrationState = RegistrationState::TRYING;
                     parseAccountDetails(allAccountDetails);
@@ -1078,7 +1086,7 @@ RingD::registerCallbacks()
                 || state == DRing::Account::States::ERROR_NEED_MIGRATION
                 || state == DRing::Account::States::REQUEST_TIMEOUT) {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::runOnUIThread([this, account_id, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
                     parseAccountDetails(allAccountDetails);
                     registrationStateErrorGeneric(account_id);
                     if (isAddingAccount)
@@ -1099,7 +1107,7 @@ RingD::registerCallbacks()
             }
             else {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::runOnUIThread([this, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, allAccountDetails]() {
                     parseAccountDetails(allAccountDetails);
                 });
             }
@@ -1109,7 +1117,7 @@ RingD::registerCallbacks()
         {
             MSG_("<NameRegistrationEnded>");
             bool res = state == 0;
-            Utils::runOnUIThread([this, res, account_id]() {
+            Utils::Threading::runOnUIThread([this, res, account_id]() {
                 nameRegistered(res, Utils::toPlatformString(account_id));
             });
             if (!res)
@@ -1457,7 +1465,7 @@ RingD::OnaccountDeleted()
     if (AccountListItemsViewModel::instance->itemsList->Size == 0) {
         auto configFile = RingD::instance->getLocalFolder() + ".config\\dring.yml";
         Utils::fileDelete(configFile);
-        Utils::runOnUIThreadDelayed(100,[this]() {summonWizard(); });
+        Utils::Threading::runOnUIThreadDelayed(100,[this]() {summonWizard(); });
     }
     else {
         hideLoadingOverlay("Account deleted successfully", SuccessColor, 500);
@@ -1635,7 +1643,7 @@ RingD::getLocalFolder()
 void
 RingD::showLoadingOverlay(String^ text, String^ color)
 {
-    Utils::runOnUIThread([=]() {
+    Utils::Threading::runOnUIThread([=]() {
         setOverlayStatusText(text, color);
         mainPage->showLoadingOverlay(true, true);
     });
@@ -1644,8 +1652,8 @@ RingD::showLoadingOverlay(String^ text, String^ color)
 void
 RingD::hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds)
 {
-    Utils::runOnUIThread([=]() { setOverlayStatusText(text, color); });
-    Utils::runOnUIThreadDelayed(delayInMilliseconds, [=]() {
+    Utils::Threading::runOnUIThread([=]() { setOverlayStatusText(text, color); });
+    Utils::Threading::runOnUIThreadDelayed(delayInMilliseconds, [=]() {
         mainPage->showLoadingOverlay(false, false);
     });
 }

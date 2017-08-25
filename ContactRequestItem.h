@@ -18,6 +18,8 @@
 
 #pragma once
 
+#include "Globals.h"
+
 using namespace Platform;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;

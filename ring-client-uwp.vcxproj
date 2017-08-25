@@ -140,7 +140,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;4334;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\build\include;..\ring-daemon\contrib\build\include\pjlib;..\ring-daemon\contrib\build\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -180,6 +180,7 @@
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
+    <ClInclude Include="Base64Utils.h" />
     <ClInclude Include="Call.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactItem.h" />
@@ -190,7 +191,9 @@
     <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h" />
     <ClInclude Include="Conversation.h" />
     <ClInclude Include="Converters.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="HttpUtils.h" />
+    <ClInclude Include="NetUtils.h" />
     <ClInclude Include="RingDevice.h" />
     <ClInclude Include="RingDeviceItemsViewModel.h" />
     <ClInclude Include="RingDeviceItem.h" />
@@ -228,8 +231,10 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h" />
     <ClInclude Include="SmartPanelItemsViewModel.h" />
+    <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="ThreadUtils.h" />
     <ClInclude Include="TextBlockExtension.h" />
-    <ClInclude Include="UserModel.h" />
+    <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VCardUtils.h">
@@ -248,6 +253,7 @@
     <ClInclude Include="Wizard.xaml.h">
       <DependentUpon>Wizard.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="XamlUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -380,7 +386,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Conversation.cpp" />
-    <ClCompile Include="Converters.cpp" />
+    <ClCompile Include="Converters.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="RingDeviceItemsViewModel.cpp" />
     <ClCompile Include="RingDeviceItem.cpp" />
     <ClCompile Include="LoadingPage.xaml.cpp">
@@ -421,7 +429,6 @@
     <ClCompile Include="SmartPanelItem.cpp" />
     <ClCompile Include="SmartPanelItemsViewModel.cpp" />
     <ClCompile Include="TextBlockExtension.cpp" />
-    <ClCompile Include="UserModel.cpp" />
     <ClCompile Include="UserPreferences.cpp" />
     <ClCompile Include="VCardUtils.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
