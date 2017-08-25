@@ -19,6 +19,8 @@
 
 #include "AboutPage.xaml.h"
 
+#include "MainPage.xaml.h"
+
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
 

@@ -17,8 +17,10 @@
 **************************************************************************/
 #pragma once
 
-#include <pch.h>
+#include "pch.h"
 
+#include "RingDebug.h"
+#include "FileUtils.h"
 #include "ResourceManager.h"
 
 using namespace RingClientUWP;

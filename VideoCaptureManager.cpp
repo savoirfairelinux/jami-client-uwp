@@ -16,14 +16,19 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
 #include "VideoCaptureManager.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
 #include "SmartPanel.xaml.h"
 
-#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 #include <algorithm>
 #include <chrono>
+
+#include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;

@@ -18,11 +18,14 @@
  **************************************************************************/
 #pragma once
 
+#include "Globals.h"
+
 using namespace Platform::Collections;
 using namespace Concurrency;
 
 namespace RingClientUWP
 {
+
 namespace ViewModel
 {
 

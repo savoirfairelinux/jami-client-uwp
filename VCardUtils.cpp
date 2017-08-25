@@ -16,11 +16,18 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
-#include <pch.h>
 
-#include <direct.h>
+#include "pch.h"
+
+#include "VCardUtils.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
+#include "Base64Utils.h"
 
 #include "lodepng.h"
+
+#include <direct.h>
 
 using namespace RingClientUWP;
 using namespace ViewModel;
@@ -245,7 +252,7 @@ VCard::decodeBase64ToPNGFile()
     if (padding)
         m_mParts[Property::PHOTO].append(padding, 0);
 
-    std::vector<uint8_t> decodedData = Utils::base64::decode(m_mParts[Property::PHOTO]);
+    std::vector<uint8_t> decodedData = Utils::Base64::decode(m_mParts[Property::PHOTO]);
 
     std::vector<uint8_t> image;
     unsigned width, height;
@@ -280,7 +287,7 @@ VCard::encodePNGToBase64()
     if (file.is_open()) {
         auto eos = std::istreambuf_iterator<uint8_t>();
         auto data = std::vector<uint8_t>(std::istreambuf_iterator<uint8_t>(file), eos);
-        m_mParts[Property::PHOTO] = Utils::base64::encode(data);
+        m_mParts[Property::PHOTO] = Utils::Base64::encode(data);
         file.close();
         MSG_("Done encoding PNG to b64");
     }

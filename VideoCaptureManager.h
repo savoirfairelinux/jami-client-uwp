@@ -18,6 +18,8 @@
 **************************************************************************/
 #pragma once
 
+#include "Video.h"
+
 using namespace Windows::UI::Xaml;
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Devices::Enumeration;
@@ -37,6 +39,8 @@ delegate void CaptureEnumerationComplete();
 
 namespace Video
 {
+
+ref class Device;
 
 public ref class VideoCaptureManager sealed
 {

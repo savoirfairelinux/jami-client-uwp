@@ -18,11 +18,12 @@
 **************************************************************************/
 #include "pch.h"
 
+#include "FileUtils.h"
 #include "Contact.h"
+#include "ResourceManager.h"
 
 #include <ObjBase.h> // for CoCreateGuid
 
-#include "fileutils.h"
 #include "direct.h"
 
 using namespace Windows::ApplicationModel::Core;
@@ -112,6 +113,8 @@ Contact::NotifyPropertyChanged(String^ propertyName)
 JsonObject^
 Contact::ToJsonObject()
 {
+    using namespace JSONKeys;
+
     JsonObject^ contactObject = ref new JsonObject();
     contactObject->SetNamedValue(nameKey, JsonValue::CreateStringValue(name_));
     contactObject->SetNamedValue(displayNameKey, JsonValue::CreateStringValue(displayName_));

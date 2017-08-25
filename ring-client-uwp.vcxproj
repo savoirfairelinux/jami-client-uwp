@@ -140,7 +140,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
-      <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;4334;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\build\include;..\ring-daemon\contrib\build\include\pjlib;..\ring-daemon\contrib\build\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -180,6 +180,7 @@
     <ClInclude Include="AccountListItem.h" />
     <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
+    <ClInclude Include="Base64Utils.h" />
     <ClInclude Include="Call.h" />
     <ClInclude Include="Contact.h" />
     <ClInclude Include="ContactItem.h" />
@@ -190,7 +191,9 @@
     <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h" />
     <ClInclude Include="Conversation.h" />
     <ClInclude Include="Converters.h" />
+    <ClInclude Include="FileUtils.h" />
     <ClInclude Include="HttpUtils.h" />
+    <ClInclude Include="NetUtils.h" />
     <ClInclude Include="RingDevice.h" />
     <ClInclude Include="RingDeviceItemsViewModel.h" />
     <ClInclude Include="RingDeviceItem.h" />
@@ -214,7 +217,6 @@
     <ClInclude Include="PreviewPage.xaml.h">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
     </ClInclude>
-    <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="RingD.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -228,8 +230,10 @@
     </ClInclude>
     <ClInclude Include="SmartPanelItem.h" />
     <ClInclude Include="SmartPanelItemsViewModel.h" />
+    <ClInclude Include="StringUtils.h" />
+    <ClInclude Include="ThreadUtils.h" />
     <ClInclude Include="TextBlockExtension.h" />
-    <ClInclude Include="UserModel.h" />
+    <ClInclude Include="TimeUtils.h" />
     <ClInclude Include="UserPreferences.h" />
     <ClInclude Include="Utils.h" />
     <ClInclude Include="VCardUtils.h">
@@ -248,6 +252,7 @@
     <ClInclude Include="Wizard.xaml.h">
       <DependentUpon>Wizard.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="XamlUtils.h" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
@@ -354,24 +359,47 @@
   <ItemGroup>
     <ClCompile Include="AboutPage.xaml.cpp">
       <DependentUpon>AboutPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Account.cpp" />
+    <ClCompile Include="Account.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="AccountItem.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="AccountItemsViewModel.cpp" />
-    <ClCompile Include="AccountListItem.cpp" />
-    <ClCompile Include="AccountListItemsViewModel.cpp" />
-    <ClCompile Include="AccountsViewModel.cpp" />
+    <ClCompile Include="AccountItemsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="AccountListItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="AccountListItemsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="AccountsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Contact.cpp" />
-    <ClCompile Include="ContactItem.cpp" />
-    <ClCompile Include="ContactRequestItem.cpp" />
-    <ClCompile Include="ContactRequestItemsViewModel.cpp" />
-    <ClCompile Include="ContactListModel.cpp" />
+    <ClCompile Include="Contact.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ContactItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ContactRequestItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ContactRequestItemsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="ContactListModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="contrib\sqlite-win32\shell.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -379,21 +407,32 @@
       <CompileAsWinRT Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</CompileAsWinRT>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Conversation.cpp" />
-    <ClCompile Include="Converters.cpp" />
-    <ClCompile Include="RingDeviceItemsViewModel.cpp" />
-    <ClCompile Include="RingDeviceItem.cpp" />
+    <ClCompile Include="Conversation.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Converters.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RingDeviceItemsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="RingDeviceItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="LoadingPage.xaml.cpp">
       <DependentUpon>LoadingPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="lodepng.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="MessageTextPage.xaml.cpp">
       <DependentUpon>MessageTextPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -406,38 +445,65 @@
     </ClCompile>
     <ClCompile Include="PreviewPage.xaml.cpp">
       <DependentUpon>PreviewPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="ResourceManager.cpp" />
+    <ClCompile Include="ResourceManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="RingD.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RingDebug.cpp" />
+    <ClCompile Include="RingDebug.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Ringtone.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SmartPanel.xaml.cpp">
       <DependentUpon>SmartPanel.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SmartPanelItem.cpp" />
-    <ClCompile Include="SmartPanelItemsViewModel.cpp" />
-    <ClCompile Include="TextBlockExtension.cpp" />
-    <ClCompile Include="UserModel.cpp" />
-    <ClCompile Include="UserPreferences.cpp" />
+    <ClCompile Include="SmartPanelItem.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SmartPanelItemsViewModel.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="TextBlockExtension.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="UserPreferences.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="VCardUtils.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Video.cpp" />
-    <ClCompile Include="VideoCaptureManager.cpp" />
-    <ClCompile Include="VideoManager.cpp" />
-    <ClCompile Include="VideoRendererManager.cpp" />
+    <ClCompile Include="Video.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VideoCaptureManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VideoManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="VideoRendererManager.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="VideoPage.xaml.cpp">
       <DependentUpon>VideoPage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="WelcomePage.xaml.cpp">
       <DependentUpon>WelcomePage.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Wizard.xaml.cpp">
       <DependentUpon>Wizard.xaml</DependentUpon>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -448,9 +514,6 @@
   <ItemGroup>
     <Media Include="Assets\default.wav" />
     <Media Include="Assets\ringtone_notify.wav" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="ring-client-uwp.rc" />
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="localization\ar\Resources.resw" />

@@ -18,9 +18,13 @@
  **************************************************************************/
 
 #include "pch.h"
+
 #include "ContactListModel.h"
 
-#include "fileutils.h"
+#include "Contact.h"
+#include "RingD.h"
+#include "FileUtils.h"
+
 #include "presencemanager_interface.h"
 
 using namespace Windows::ApplicationModel::Core;
@@ -68,16 +72,16 @@ ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustS
 {
     auto trimmedName = Utils::Trim(name);
     if (contactsList_ && !findContactByName(trimmedName)) {
-        String^ avatarColorString = Utils::getRandomColorString();
+        String^ avatarColorString = Utils::xaml::getRandomColorString();
         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
             if (acc->accountType_ == "RING") {
                 if (ringId)
-                    avatarColorString = Utils::getRandomColorStringFromString(ringId);
+                    avatarColorString = Utils::xaml::getRandomColorStringFromString(ringId);
                 else
-                    avatarColorString = Utils::getRandomColorStringFromString(name);
+                    avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
             }
             else if (name != "") {
-                avatarColorString = Utils::getRandomColorStringFromString(name);
+                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
             }
         }
         Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus, trustStatus, isIncognitoContact, avatarColorString);
@@ -133,7 +137,7 @@ ContactListModel::Stringify()
     }
 
     JsonObject^ jsonObject = ref new JsonObject();
-    jsonObject->SetNamedValue(contactListKey, jsonArray);
+    jsonObject->SetNamedValue(JSONKeys::contactListKey, jsonArray);
 
     return jsonObject->Stringify();
 }
@@ -154,6 +158,8 @@ ContactListModel::Destringify(String^ data)
     bool            unreadContactRequest = false;
     bool            isIncognitoContact = false;
     String^         avatarColorString;
+
+    using namespace JSONKeys;
 
     JsonArray^ contactlist = jsonObject->GetNamedArray(contactListKey, ref new JsonArray());
     for (int i = contactlist->Size - 1; i >= 0; i--) {
@@ -192,17 +198,17 @@ ContactListModel::Destringify(String^ data)
                     else {
                         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
                             if (acc->accountType_ == "RING") {
-                                avatarColorString = Utils::getRandomColorStringFromString(ringid);
+                                avatarColorString = Utils::xaml::getRandomColorStringFromString(ringid);
                             }
                             else if (name != "") {
-                                avatarColorString = Utils::getRandomColorStringFromString(name);
+                                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
                             }
                             else {
-                                avatarColorString = Utils::getRandomColorString();
+                                avatarColorString = Utils::xaml::getRandomColorString();
                             }
                         }
                         else
-                            avatarColorString = Utils::getRandomColorString();
+                            avatarColorString = Utils::xaml::getRandomColorString();
                     }
                 }
             }

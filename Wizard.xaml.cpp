@@ -18,9 +18,15 @@
 **************************************************************************/
 
 #include "pch.h"
-#include <direct.h>
+
 #include "Wizard.xaml.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
+#include "UserPreferences.h"
 #include "MainPage.xaml.h"
+
+#include <direct.h>
 
 using namespace RingClientUWP::Views;
 

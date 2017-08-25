@@ -16,8 +16,13 @@
 * You should have received a copy of the GNU General Public License       *
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
 **************************************************************************/
+
 #include "pch.h"
 
+#include "MainPage.xaml.h"
+
+#include "RingD.h"
+#include "RingDebug.h"
 #include "ContactListModel.h"
 #include "MessageTextPage.xaml.h"
 #include "SmartPanel.xaml.h"
@@ -25,8 +30,6 @@
 #include "PreviewPage.xaml.h"
 #include "WelcomePage.xaml.h"
 #include "AboutPage.xaml.h"
-
-#include "MainPage.xaml.h"
 
 using namespace RingClientUWP;
 using namespace RingClientUWP::Views;
@@ -54,8 +57,6 @@ using namespace Windows::System::Threading;
 MainPage::MainPage()
 {
     InitializeComponent();
-
-    UserModel::instance->getUserData();
 
     Window::Current->SizeChanged += ref new WindowSizeChangedEventHandler(this, &MainPage::OnResize);
 
@@ -119,7 +120,6 @@ MainPage::MainPage()
         RingD::instance->isCtrlPressed = (ctrlState & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down;
         auto shiftState = CoreWindow::GetForCurrentThread()->GetKeyState(VirtualKey::LeftShift);
         RingD::instance->isShiftPressed = (shiftState & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down;
-        //MSG_("KEYUP -- isCtrlDown: " + isCtrlPressed.ToString() + " isShiftDown: " + isShiftPressed.ToString());
     });
 
 }
@@ -128,7 +128,7 @@ void
 MainPage::OnsetOverlayStatusText(String^ statusText, String^ color)
 {
     _loadingStatus_->Text = statusText;
-    auto col = Utils::ColorFromString(color);
+    auto col = Utils::xaml::ColorFromString(color);
     auto brush = ref new Windows::UI::Xaml::Media::SolidColorBrush(col);
     _loadingStatus_->Foreground = brush;
 }

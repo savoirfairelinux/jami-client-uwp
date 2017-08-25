@@ -25,6 +25,9 @@ using namespace Windows::UI::Xaml::Data;
 
 #include <chrono>
 
+#include "Call.h"
+#include "Globals.h"
+
 namespace RingClientUWP
 {
 namespace Controls

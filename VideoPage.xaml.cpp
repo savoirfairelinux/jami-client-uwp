@@ -20,6 +20,9 @@
 
 #include "VideoPage.xaml.h"
 
+#include "RingD.h"
+#include "RingDebug.h"
+
 #include <MemoryBuffer.h>   // IMemoryBufferByteAccess
 
 using namespace RingClientUWP::Views;
@@ -140,7 +143,7 @@ VideoPage::VideoPage()
 
     RingD::instance->vCardUpdated += ref new VCardUpdated([&](Contact^ contact)
     {
-        Utils::runOnUIThread([this, contact]() {
+        Utils::Threading::runOnUIThread([this, contact]() {
             SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage" });
             updatePageContent();
         });
