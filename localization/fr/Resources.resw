@@ -133,7 +133,7 @@
     <value>Voir la</value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
-    <value>GNU General Public License, version 3 or later</value>
+    <value>Licence publique générale GNU, version 3 ou plus</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
     <value>https://www.gnu.org/licenses/gpl-3.0.fr.html</value>
@@ -397,7 +397,7 @@
     <value>Annuler l&apos;appel sortant</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>Changer l&apos;orientation de la fenêtre de message</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
     <value>Effacer cette conversation</value>
@@ -418,7 +418,7 @@
     <value>Effectué</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>Aller dans les paramètres du compte</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
     <value>Accueil/À propos</value>
