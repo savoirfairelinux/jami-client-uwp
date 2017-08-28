@@ -54,7 +54,7 @@ AccountItem::SetDetails(String^ id, Map<String^, String^>^ details)
     _upnpEnabled        = Utils::getDetailsBoolValue(   details, ConfProperties::UPNP_ENABLED);
     _turnEnabled        = Utils::getDetailsBoolValue(   details, ConfProperties::TURN::ENABLED);
     _turnAddress        = Utils::getDetailsStringValue( details, ConfProperties::TURN::SERVER);
-    _publicDhtInCalls   = Utils::getDetailsBoolValue(   details, ConfProperties::DHT::PUBLIC_IN_CALLS);
+    _dhtPublicInCalls   = Utils::getDetailsBoolValue(   details, ConfProperties::DHT::PUBLIC_IN_CALLS);
     _sipPassword        = Utils::getDetailsStringValue( details, ConfProperties::PASSWORD);
     _deviceName         = Utils::getDetailsStringValue( details, ConfProperties::RING_DEVICE_NAME);
 

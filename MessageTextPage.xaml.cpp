@@ -354,7 +354,7 @@ MessageTextPage::_sendContactRequestBtn__Click(Platform::Object^ sender, Windows
 {
     if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
         if (auto contact = item->_contact) {
-            auto accountId = Utils::toString(AccountListItemsViewModel::instance->getSelectedAccountId());
+            auto accountId = Utils::toString(AccountItemsViewModel::instance->getSelectedAccountId());
             auto uri = Utils::toString(contact->ringID_);
             auto vcard = Configuration::UserPreferences::instance->getVCard();
             RingD::instance->sendContactRequest(accountId, uri, vcard->asString());

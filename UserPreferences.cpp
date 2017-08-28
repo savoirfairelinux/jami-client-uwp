@@ -25,6 +25,7 @@
 #include "RingDebug.h"
 #include "FileUtils.h"
 #include "Base64Utils.h"
+#include "AccountItemsViewModel.h"
 
 #include "lodepng.h"
 
@@ -82,8 +83,9 @@ UserPreferences::load()
             if (fileContents != nullptr) {
                 Destringify(fileContents);
                 auto index = PREF_ACCOUNT_INDEX;
-                if (PREF_ACCOUNT_ID != nullptr)
-                    index = ViewModel::AccountListItemsViewModel::instance->getIndex(PREF_ACCOUNT_ID);
+                if (PREF_ACCOUNT_ID != nullptr) {
+                    index = ViewModel::AccountItemsViewModel::instance->getIndex(PREF_ACCOUNT_ID);
+                }
                 selectIndex(index);
                 if (PREF_PROFILE_HASPHOTO && !profileImageLoaded)
                     loadProfileImage();
@@ -148,8 +150,8 @@ UserPreferences::saveProfileToVCard()
     std::basic_ifstream<uint8_t> stream(imageFile, std::ios::in | std::ios::binary);
     auto eos = std::istreambuf_iterator<uint8_t>();
     auto buffer = std::vector<uint8_t>(std::istreambuf_iterator<uint8_t>(stream), eos);
-    auto accountListItem = ViewModel::AccountListItemsViewModel::instance->_selectedItem;
-    vcfData[VCardUtils::Property::FN] = accountListItem ? Utils::toString(accountListItem->_account->name_) : "Unknown";
+    auto accountItem = ViewModel::AccountItemsViewModel::instance->_selectedItem;
+    vcfData[VCardUtils::Property::FN] = accountItem ? Utils::toString(accountItem->_alias) : "Unknown";
     vcfData[VCardUtils::Property::PHOTO] = Utils::Base64::encode( buffer );
     vCard_->setData(vcfData);
     vCard_->saveToFile();

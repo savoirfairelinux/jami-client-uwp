@@ -76,7 +76,7 @@ SmartPanel::SmartPanel()
     InitializeComponent();
 
     /* populate account list */
-    _accountsList_->ItemsSource = AccountListItemsViewModel::instance->itemsList;
+    _accountsList_->ItemsSource = AccountItemsViewModel::instance->_itemsList;
 
     /* populate account's device list */
     // As the user must have the account in question selected before interacting with
@@ -95,7 +95,8 @@ SmartPanel::SmartPanel()
     /* connect delegates */
     Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([&](int index) {
         if (_accountsList_) {
-            auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
+            //auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
+            auto accountsListSize = dynamic_cast<Vector<AccountItem^>^>(_accountsList_->ItemsSource)->Size;
             if (accountsListSize > index) {
                 _accountsList_->SelectedIndex = index;
             }
@@ -167,7 +168,7 @@ SmartPanel::SmartPanel()
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
         SmartPanelItemsViewModel::instance->itemsList->InsertAt(0, smartPanelItem);
-        if (contact->_accountIdAssociated == AccountListItemsViewModel::instance->getSelectedAccountId()) {
+        if (contact->_accountIdAssociated == AccountItemsViewModel::instance->getSelectedAccountId()) {
             SmartPanelItemsViewModel::instance->itemsListFiltered->InsertAt(0, smartPanelItem);
         }
     });
@@ -213,7 +214,6 @@ SmartPanel::OnnameRegistred(bool status, String ^accountId)
 void
 SmartPanel::OnregistrationStateChanged(const std::string& accountId)
 {
-    AccountListItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyAccountItem);
 }
 
 void
@@ -290,25 +290,25 @@ SmartPanel::updateCallAnimationState(SmartPanelItem^ item, bool state)
 void
 RingClientUWP::Views::SmartPanel::updatePageContent()
 {
-    auto accountListItem = AccountListItemsViewModel::instance->_selectedItem;
-    if (!accountListItem)
+    auto accountItem = AccountItemsViewModel::instance->_selectedItem;
+    if (!accountItem)
         return;
 
-    _selectedAccountName_->Text = accountListItem->_account->_bestName;
-    _selectedAccountUsername_->Text = accountListItem->_account->_bestName2;
-    _deviceId_->Text = accountListItem->_account->_deviceId;
-    _deviceName_->Text = accountListItem->_account->_deviceName;
+    _selectedAccountName_->Text = accountItem->_bestName;
+    _selectedAccountUsername_->Text = accountItem->_bestName2;
+    _deviceId_->Text = accountItem->_deviceId;
+    _deviceName_->Text = accountItem->_deviceName;
 
-    _devicesMenuButton_->Visibility = (accountListItem->_account->accountType_ == "RING")
+    _devicesMenuButton_->Visibility = (accountItem->_accountType == "RING")
                                       ? Windows::UI::Xaml::Visibility::Visible
                                       : Windows::UI::Xaml::Visibility::Collapsed;
 
-    _enabledState_->IsOn = accountListItem->_account->_active;
-    _upnpState_->IsOn = accountListItem->_account->_upnpState;
-    _autoAnswerToggle_->IsOn = accountListItem->_account->_autoAnswer;
-    _dhtPublicInCallsToggle_->IsOn = accountListItem->_account->_dhtPublicInCalls;
-    _turnEnabledToggle_->IsOn = accountListItem->_account->_turnEnabled;
-    _turnEditionTextBox_->Text = accountListItem->_account->_turnAddress;
+    _enabledState_->IsOn = accountItem->_enabled;
+    _upnpState_->IsOn = accountItem->_upnpEnabled;
+    _autoAnswerToggle_->IsOn = accountItem->_autoAnswerEnabled;
+    _dhtPublicInCallsToggle_->IsOn = accountItem->_dhtPublicInCalls;
+    _turnEnabledToggle_->IsOn = accountItem->_turnEnabled;
+    _turnEditionTextBox_->Text = accountItem->_turnAddress;
 
     if (_RegisterStateEdition_->IsOn) {
         _usernameTextBoxEdition_->IsEnabled = true;
@@ -416,7 +416,7 @@ SmartPanel::_smartList__SelectionChanged(Platform::Object^ sender, Windows::UI::
         SmartPanelItemsViewModel::instance->_selectedItem = item;
 
         /* at this point we check if a call is in progress with the current selected contact*/
-        auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
         auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
         // TODO: don't clear messages if the user does not see the message panel from the VideoPage
         if (contact) {
@@ -444,15 +444,15 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
     auto listbox = safe_cast<ListBox^>(sender);
     // disable deselection from listbox
     undoListBoxDeselection(listbox, e);
-    auto accountListItem = safe_cast<AccountListItem^>(listbox->SelectedItem);
-    if (accountListItem == nullptr) {
+    auto accountItem = safe_cast<AccountItem^>(listbox->SelectedItem);
+    if (accountItem == nullptr) {
         listbox->SelectedIndex = 0;
-        accountListItem = safe_cast<AccountListItem^>(listbox->SelectedItem);
+        accountItem = safe_cast<AccountItem^>(listbox->SelectedItem);
     }
-    _selectedAccountName_->Text = accountListItem->_account->_bestName;
-    _selectedAccountUsername_->Text = accountListItem->_account->_bestName2;
-    AccountListItemsViewModel::instance->_selectedItem = accountListItem;
-    accountListItem->_isSelected = true;
+    _selectedAccountName_->Text = accountItem->_bestName;
+    _selectedAccountUsername_->Text = accountItem->_bestName2;
+    AccountItemsViewModel::instance->_selectedItem = accountItem;
+    accountItem->_isSelected = true;
 
     SmartPanelItemsViewModel::instance->update({ "_avatarImage" });
     ContactRequestItemsViewModel::instance->update({ "_avatarImage" });
@@ -461,7 +461,7 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
     updateNotificationsState();
 
     Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
-    Configuration::UserPreferences::instance->PREF_ACCOUNT_ID = accountListItem->_account->accountID_;
+    Configuration::UserPreferences::instance->PREF_ACCOUNT_ID = accountItem->_id;
     Configuration::UserPreferences::instance->save();
 }
 
@@ -567,7 +567,7 @@ void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ s
     if (button) {
         auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
         if (item) {
-            RingD::instance->cancelOutGoingCall2(item->_callId);
+            RingD::instance->cancelOutGoingCall(item->_callId);
             item->_callStatus = CallStatus::TERMINATING;
             return;
         }
@@ -685,9 +685,11 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
 
 void RingClientUWP::Views::SmartPanel::checkStateEditionMenu()
 {
-    if (AccountListItemsViewModel::instance->_selectedItem == nullptr)
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    if (selectedAccountItem == nullptr)
         return;
-    bool isRingAccountType = (AccountListItemsViewModel::instance->_selectedItem->_account->accountType_ == "RING")
+
+    bool isRingAccountType = (selectedAccountItem->_accountType == "RING")
                              ? true : false;
 
     bool isAccountAlias = (_accountAliasTextBoxEdition_->Text->IsEmpty()) ? false : true;
@@ -773,7 +775,8 @@ void RingClientUWP::Views::SmartPanel::_addDevice__Click(Platform::Object^ sende
 
 void RingClientUWP::Views::SmartPanel::OndevicesListRefreshed(Map<String^, String^>^ deviceMap)
 {
-    if (!AccountListItemsViewModel::instance->_selectedItem)
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    if (selectedAccountItem == nullptr)
         return;
 
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -781,8 +784,8 @@ void RingClientUWP::Views::SmartPanel::OndevicesListRefreshed(Map<String^, Strin
     RingDeviceItemsViewModel::instance->itemsList->Clear();
 
     for each (auto device in deviceMap) {
-        if (AccountListItemsViewModel::instance->_selectedItem->_account->_deviceId == device->Key) {
-            AccountListItemsViewModel::instance->_selectedItem->_account->_deviceName == device->Value;
+        if (selectedAccountItem->_deviceId == device->Key) {
+            selectedAccountItem->_deviceName == device->Value;
             _deviceName_->Text = device->Value;
         }
         else {
@@ -840,28 +843,30 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
     _scrollViewerEditionMenu_->UpdateLayout();
     _scrollViewerEditionMenu_->ScrollToVerticalOffset(0);
 
-    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    if (selectedAccountItem == nullptr)
+        return;
 
-    _accountAliasTextBoxEdition_->Text = account->name_;
+    _accountAliasTextBoxEdition_->Text = selectedAccountItem->_alias;
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _createAccountYes_->IsEnabled = false;
 
-    _sipAccountStackEdition_->Visibility = (account->accountType_ == "SIP")
+    _sipAccountStackEdition_->Visibility = (selectedAccountItem->_accountType == "SIP")
                                            ? Windows::UI::Xaml::Visibility::Visible
                                            :Windows::UI::Xaml::Visibility::Collapsed;
-    _ringStackEdition_->Visibility = (account->accountType_ == "RING")
+    _ringStackEdition_->Visibility = (selectedAccountItem->_accountType == "RING")
                                      ? Windows::UI::Xaml::Visibility::Visible
                                      : Windows::UI::Xaml::Visibility::Collapsed;
 
-    _ringStackEdition2_->Visibility = (account->accountType_ == "RING")
+    _ringStackEdition2_->Visibility = (selectedAccountItem->_accountType == "RING")
         ? Windows::UI::Xaml::Visibility::Visible
         : Windows::UI::Xaml::Visibility::Collapsed;
 
-    _sipHostnameEdition_->Text = account->_sipHostname;
-    _sipUsernameEditionTextBox_->Text = account->_sipUsername;
-    _sipPasswordEdition_->Password = account->_sipPassword;
+    _sipHostnameEdition_->Text = selectedAccountItem->_sipHostname;
+    _sipUsernameEditionTextBox_->Text = selectedAccountItem->_sipUsername;
+    _sipPasswordEdition_->Password = selectedAccountItem->_sipPassword;
 
-    auto registeredName = Utils::toPlatformString(RingD::instance->registeredName(account));
+    auto registeredName = RingD::instance->getRegisteredName(selectedAccountItem->_id);
 
     if (registeredName) {
         _RegisterStateEdition_->IsOn = true; // keep this before _usernameTextBoxEdition_
@@ -885,7 +890,7 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
         _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     }
 
-    auto nBannedContacts = AccountsViewModel::instance->bannedContacts(account->accountID_);
+    auto nBannedContacts = AccountsViewModel::instance->bannedContacts(selectedAccountItem->_id);
     if (nBannedContacts) {
         _accountsShowBannedList_->IsEnabled = true;
     }
@@ -898,28 +903,29 @@ void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::O
 }
 
 
-void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
-    auto accountId = account->accountID_;
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    auto accountId = selectedAccountItem->_id;
 
-    account->name_ = _accountAliasTextBoxEdition_->Text;
-    account->_active = _enabledState_->IsOn;
-    account->_autoAnswer = _autoAnswerToggle_->IsOn;
+    selectedAccountItem->_alias = _accountAliasTextBoxEdition_->Text;
+    selectedAccountItem->_enabled = _enabledState_->IsOn;
+    selectedAccountItem->_autoAnswerEnabled = _autoAnswerToggle_->IsOn;
 
-    if (account->accountType_ == "RING") {
+    if (selectedAccountItem->_accountType == "RING") {
         if (_RegisterStateEdition_->IsOn)
-            account->_username = _usernameTextBoxEdition_->Text;
-        account->_upnpState = _upnpState_->IsOn;
-        account->_dhtPublicInCalls = _dhtPublicInCallsToggle_->IsOn;
-        account->_turnEnabled = _turnEnabledToggle_->IsOn;
+            selectedAccountItem->_username = _usernameTextBoxEdition_->Text;
+        selectedAccountItem->_upnpEnabled = _upnpState_->IsOn;
+        selectedAccountItem->_dhtPublicInCalls = _dhtPublicInCallsToggle_->IsOn;
+        selectedAccountItem->_turnEnabled = _turnEnabledToggle_->IsOn;
         if (_turnEditionTextBox_->Text != "")
-            account->_turnAddress = _turnEditionTextBox_->Text;
+            selectedAccountItem->_turnAddress = _turnEditionTextBox_->Text;
     }
     else {
-        account->_sipHostname = _sipHostnameEdition_->Text;
-        account->_sipUsername = _sipUsernameEditionTextBox_->Text;
-        account->_sipPassword = _sipPasswordEdition_->Password;
+        selectedAccountItem->_sipHostname = _sipHostnameEdition_->Text;
+        selectedAccountItem->_sipUsername = _sipUsernameEditionTextBox_->Text;
+        selectedAccountItem->_sipPassword = _sipPasswordEdition_->Password;
     }
 
     RingD::instance->updateAccount(accountId);
@@ -929,7 +935,7 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     updatePageContent();
 
     if (_usernameValidEdition_->Visibility == Windows::UI::Xaml::Visibility::Visible && _usernameTextBoxEdition_->Text->Length() > 2)
-        RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEdition_->Text);
+        RingD::instance->registerName(selectedAccountItem->_id, "", _usernameTextBoxEdition_->Text);
 }
 
 
@@ -945,7 +951,8 @@ void RingClientUWP::Views::SmartPanel::OnaccountUpdated(RingClientUWP::Account ^
     updateNotificationsState();
 }
 
-void RingClientUWP::Views::SmartPanel::_passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+SmartPanel::_passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     checkStateAddAccountMenu();
 }
@@ -1021,17 +1028,18 @@ void RingClientUWP::Views::SmartPanel::_smartList__PointerExited(Platform::Objec
 }
 
 // NAME SERVICE
-
-void RingClientUWP::Views::SmartPanel::_registerOnBlockchainEdition__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+SmartPanel::_registerOnBlockchainEdition__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
-    RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEdition_->Text);
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    RingD::instance->registerName(selectedAccountItem->_id, "", _usernameTextBoxEdition_->Text);
 }
 
 
-void RingClientUWP::Views::SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
+void
+SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
-    auto accountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto accountId = AccountItemsViewModel::instance->getSelectedAccountId();
     RingD::instance->lookUpName(Utils::toString(accountId), _usernameTextBoxEdition_->Text);
 
     _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -1040,26 +1048,38 @@ void RingClientUWP::Views::SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::
     checkStateEditionMenu();
 }
 
-void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name)
+void
+SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name)
 {
     // In the case where the lookup was for a local account's username, we need just
     // update the account's username property and return.
     if (status == LookupStatus::SUCCESS) {
-        if (Account^ account = AccountsViewModel::instance->findAccountByRingID(Utils::toPlatformString(address))) {
+        if (auto accountItem = AccountItemsViewModel::instance->findItemByRingID(Utils::toPlatformString(address))) {
             MSG_("Account username lookup complete");
-            account->_username = Utils::toPlatformString(name);
+            accountItem->_username = Utils::toPlatformString(name);
             // If the the account is currently selected, update the account best-name
-            if (AccountListItemsViewModel::instance->_selectedItem->_account == account) {
-                _selectedAccountName_->Text = account->_bestName;
-               _selectedAccountUsername_->Text = account->_bestName2;
+            if (AccountItemsViewModel::instance->_selectedItem == accountItem) {
+                _selectedAccountName_->Text = accountItem->_bestName;
+               _selectedAccountUsername_->Text = accountItem->_bestName2;
+            }
+            return;
+        }
+        if (AccountItem^ accountItem = AccountItemsViewModel::instance->findItemByRingID(Utils::toPlatformString(address))) {
+            MSG_("Account username lookup complete");
+            accountItem->_username = Utils::toPlatformString(name);
+            // If the the account is currently selected, update the account best-name
+            if (AccountItemsViewModel::instance->_selectedItem == accountItem) {
+                _selectedAccountName_->Text = accountItem->_bestName;
+                _selectedAccountUsername_->Text = accountItem->_bestName2;
             }
             return;
         }
     }
 
-    if (menuOpen == MenuOpen::ACCOUNTS_LIST) { // if true, we did the lookup for a new account
-        /* note : this code do both check for edit and creation menu. It doesn't affect the use and it's easier to
-           implement. */
+    if (menuOpen == MenuOpen::ACCOUNTS_LIST) {
+        // if true, we did the lookup for a new account
+        // note : this code do both check for edit and creation menu.
+        // It doesn't affect the use and it's easier to implement.
         auto currentNameEdition = Utils::toString(_usernameTextBoxEdition_->Text);
         if (currentNameEdition == name) {
             switch (status)
@@ -1260,7 +1280,7 @@ void RingClientUWP::Views::SmartPanel::_RegisterState__Toggled(Platform::Object^
     bool isPublic = toggleSwitch->IsOn;
 
     if (isPublic) {
-        auto accountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto accountId = AccountItemsViewModel::instance->getSelectedAccountId();
         RingD::instance->lookUpName(Utils::toString(accountId), _usernameTextBox_->Text);
         _usernameTextBox_->IsEnabled = true;
         auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
@@ -1288,7 +1308,7 @@ void RingClientUWP::Views::SmartPanel::_RegisterStateEdition__Toggled(Platform::
     bool isPublic = toggleSwitch->IsOn;
 
     if (isPublic) {
-        auto accountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto accountId = AccountItemsViewModel::instance->getSelectedAccountId();
         RingD::instance->lookUpName(Utils::toString(accountId), _usernameTextBoxEdition_->Text);
         _usernameTextBoxEdition_->IsEnabled = true;
         auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
@@ -1308,8 +1328,8 @@ void RingClientUWP::Views::SmartPanel::_RegisterStateEdition__Toggled(Platform::
 
 void RingClientUWP::Views::SmartPanel::_usernameTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
-    auto accountId = AccountListItemsViewModel::instance->getSelectedAccountId();
-    RingD::instance->lookUpName(Utils::toString(accountId), _usernameTextBox_->Text);
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    RingD::instance->lookUpName(Utils::toString(selectedAccountId), _usernameTextBox_->Text);
 
     _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -1628,23 +1648,23 @@ SmartPanel::updateContactNotificationsState(Contact^ contact)
             !(selectedSmartPanelItem == smartPanelItem && mainPage->currentFrame == FrameOpen::MESSAGE)) {
             contact->_unreadMessages++;
             /* saveContactsToFile used to save the notification */
-            auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+            auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
             auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
             contactListModel->saveContactsToFile();
         }
     }
 
-    auto selectedAccountId = Utils::toString(AccountListItemsViewModel::instance->getSelectedAccountId());
-    if (!selectedAccountId.empty()) {
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    if (!selectedAccountId->Length() == 0) {
 
-        auto selectedAccountMessages = AccountsViewModel::instance->unreadMessages(Utils::toPlatformString(selectedAccountId));
-        auto selectedAccountContactRequests = AccountsViewModel::instance->unreadContactRequests(Utils::toPlatformString(selectedAccountId));
+        auto selectedAccountMessages = 0;// AccountItemsViewModel::instance->unreadMessages(selectedAccountId);
+        auto selectedAccountContactRequests = 0;//AccountItemsViewModel::instance->unreadContactRequests(selectedAccountId);
 
         _unreadMessagesCircle_->Visibility = selectedAccountMessages ? VIS::Visible : VIS::Collapsed;
         _unreadContactRequestsCircle_->Visibility = selectedAccountContactRequests ? VIS::Visible : VIS::Collapsed;
 
-        auto totalMessages = AccountListItemsViewModel::instance->unreadMessages();
-        auto totalContactRequests = AccountListItemsViewModel::instance->unreadContactRequests();
+        auto totalMessages = 0;//AccountItemsViewModel::instance->totalUnreadMessages();
+        auto totalContactRequests = 0;//AccountItemsViewModel::instance->totalUnreadContactRequests();
 
         auto totalNonSelectedNotifications = (totalMessages + totalContactRequests) - (selectedAccountMessages + selectedAccountContactRequests);
         _unreadAccountNotificationsCircle_->Visibility = (totalNonSelectedNotifications > 0) ? VIS::Visible : VIS::Collapsed;
@@ -1655,8 +1675,6 @@ SmartPanel::updateContactNotificationsState(Contact^ contact)
 
     SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
     SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
-
-    AccountListItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyAccountItem);
 }
 
 void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload)
@@ -1673,13 +1691,13 @@ void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String
         _smartList_->ScrollIntoView(item);
     }
 
-    auto selectedAccountId = Utils::toString(AccountListItemsViewModel::instance->getSelectedAccountId());
-    if (!selectedAccountId.empty()) {
-        auto selectedAccountMessages = AccountsViewModel::instance->unreadMessages(Utils::toPlatformString(selectedAccountId));
-        auto selectedAccountContactRequests = AccountsViewModel::instance->unreadContactRequests(Utils::toPlatformString(selectedAccountId));
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    if (!selectedAccountId->Length() == 0) {
+        auto selectedAccountMessages = 0;//AccountItemsViewModel::instance->unreadMessages(selectedAccountId);
+        auto selectedAccountContactRequests = 0;//AccountItemsViewModel::instance->unreadContactRequests(selectedAccountId);
 
-        auto totalMessages = AccountListItemsViewModel::instance->unreadMessages();
-        auto totalContactRequests = AccountListItemsViewModel::instance->unreadContactRequests();
+        auto totalMessages = 0;//AccountItemsViewModel::instance->totalUnreadMessages();
+        auto totalContactRequests = 0;//AccountItemsViewModel::instance->totalUnreadContactRequests();
 
         auto totalNonSelectedNotifications = (totalMessages + totalContactRequests) - (selectedAccountMessages + selectedAccountContactRequests);
         _unreadAccountNotificationsCircle_->Visibility = (totalNonSelectedNotifications > 0) ? VIS::Visible : VIS::Collapsed;
@@ -1699,13 +1717,12 @@ SmartPanel::addToContactList(String^ uri)
         return;
     }
 
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    //auto contactListModel = AccountItemsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
 
-    auto account = AccountsViewModel::instance->findItem(selectedAccountId);
-    auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(selectedAccountId));
-
-    if (account->accountType_ == "RING") {
-        if (!Utils::hasInternet() || account->_registrationState != RegistrationState::REGISTERED) {
+    if (selectedAccountItem->_accountType == "RING") {
+        if (!Utils::hasInternet() || selectedAccountItem->_registrationState != RegistrationState::REGISTERED) {
             auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
             ringTxtBxPlaceHolderDelay(loader->GetString("_accountNotRegistered_"), 5000);
             return;
@@ -1730,7 +1747,7 @@ SmartPanel::addToContactList(String^ uri)
                     Utils::toString(item->_contact->ringID_),
                     vcard->asString());
                 item->_contact->_trustStatus = TrustStatus::TRUSTED;
-                contactListModel->saveContactsToFile();
+                //contactListModel->saveContactsToFile();
 
                 auto spi = SmartPanelItemsViewModel::instance->findItem(item->_contact);
                 SmartPanelItemsViewModel::instance->moveItemToTheTop(spi);
@@ -1748,16 +1765,16 @@ SmartPanel::addToContactList(String^ uri)
             }
         }
         if (isRingId) {
-            contactListModel->addNewContact(uri, uri, TrustStatus::UNKNOWN, false, ContactStatus::READY);
+            //contactListModel->addNewContact(uri, uri, TrustStatus::UNKNOWN, false, ContactStatus::READY);
             RingD::instance->lookUpAddress(Utils::toString(selectedAccountId), uri);
         }
         else {
-            contactListModel->addNewContact(uri, nullptr, TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
+            //contactListModel->addNewContact(uri, nullptr, TrustStatus::UNKNOWN, false, ContactStatus::WAITING_FOR_ACTIVATION);
             RingD::instance->lookUpName(Utils::toString(selectedAccountId), uri);
         }
     }
     else {
-        contactListModel->addNewContact(uri, nullptr, TrustStatus::TRUSTED, false, ContactStatus::READY);
+        //contactListModel->addNewContact(uri, nullptr, TrustStatus::TRUSTED, false, ContactStatus::READY);
     }
 
     for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
@@ -1819,16 +1836,16 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Click(Platform::Objec
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
 
-    _deviceId_->Text = account->_deviceId;
-    _deviceName_->Text = account->_deviceName;
+    _deviceId_->Text = selectedAccountItem->_deviceId;
+    _deviceName_->Text = selectedAccountItem->_deviceName;
     if (_deviceId_->Text->IsEmpty()) {
         _deviceId_->Text = loader->GetString("_accountsNoDeviceId_");
-        ERR_("device Id not found for account " + Utils::toString(account->_deviceId));
+        ERR_("device Id not found for account " + selectedAccountItem->_deviceId);
     }
 
-    RingD::instance->getKnownDevices(account->accountID_);
+    RingD::instance->getKnownDevices(selectedAccountItem->_id);
 }
 
 void
@@ -1868,7 +1885,7 @@ void RingClientUWP::Views::SmartPanel::requestPin()
     _addingDeviceGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
     _waitingForPin_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 
-    auto accountId = AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+    auto accountId = AccountItemsViewModel::instance->_selectedItem->_id;
     auto password = _passwordForPinGenerator_->Password;
     _passwordForPinGenerator_->Password = "";
 
@@ -2090,10 +2107,10 @@ void RingClientUWP::Views::SmartPanel::SmartPanelItem_Grid_DoubleTapped(Platform
 void RingClientUWP::Views::SmartPanel::_addToConference_MenuFlyoutItem__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
     auto item = static_cast<SmartPanelItem^>(static_cast<MenuFlyoutItem^>(sender)->DataContext);
-    auto selectedAccount = AccountListItemsViewModel::instance->_selectedItem->_account;
-    auto selectedAccountId = selectedAccount->accountID_;
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    auto selectedAccountId = selectedAccountItem->_id;
     std::vector<std::string> participantList;
-    String^ prefix = selectedAccount->accountType_ == "RING" ? "ring:" : "";
+    String^ prefix = selectedAccountItem->_accountType == "RING" ? "ring:" : "";
     auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
     participantList.emplace_back(Utils::toString(prefix + selectedItem->_contact->ringID_ + "," + selectedAccountId));
     participantList.emplace_back(Utils::toString(prefix + item->_contact->ringID_ + "," + selectedAccountId));
@@ -2140,7 +2157,7 @@ SmartPanel::_revokeDeviceButton__Click(Platform::Object^ sender, Windows::UI::Xa
         try {
             auto result = dialogTask.get();
             if (result == ContentDialogResult::Primary) {
-                auto accountId = Utils::toString(AccountListItemsViewModel::instance->getSelectedAccountId());
+                auto accountId = Utils::toString(AccountItemsViewModel::instance->getSelectedAccountId());
                 auto password = Utils::toString(passwordBox->Password);
                 auto deviceId = Utils::toString(deviceItem->_deviceId);
                 RingD::instance->revokeDevice(accountId, password, deviceId);
@@ -2159,14 +2176,14 @@ SmartPanel::_revokeDeviceButton__Click(Platform::Object^ sender, Windows::UI::Xa
 void RingClientUWP::Views::SmartPanel::_deviceName__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e)
 {
     if (e->Key == Windows::System::VirtualKey::Enter) {
-        auto selectedAccount = AccountListItemsViewModel::instance->_selectedItem->_account;
+        auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
         if (_deviceName_->Text == "") {
-            _deviceName_->Text = selectedAccount->_deviceName;
+            _deviceName_->Text = selectedAccountItem->_deviceName;
         }
         else {
-            MSG_("changing device name, (" + selectedAccount->_deviceName + " -> " + _deviceName_->Text + ")");
-            selectedAccount->_deviceName = _deviceName_->Text;
-            RingD::instance->updateAccount(selectedAccount->accountID_);
+            MSG_("changing device name, (" + selectedAccountItem->_deviceName + " -> " + _deviceName_->Text + ")");
+            selectedAccountItem->_deviceName = _deviceName_->Text;
+            RingD::instance->updateAccount(selectedAccountItem->_id);
         }
         _deviceName_->IsEnabled = false;
         _deviceName_->IsEnabled = true;
@@ -2176,8 +2193,8 @@ void RingClientUWP::Views::SmartPanel::_deviceName__KeyUp(Platform::Object^ send
 
 void RingClientUWP::Views::SmartPanel::_deviceName__LostFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    auto selectedAccount = AccountListItemsViewModel::instance->_selectedItem->_account;
-    _deviceName_->Text = selectedAccount->_deviceName;
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    _deviceName_->Text = selectedAccountItem->_deviceName;
 }
 
 
@@ -2200,12 +2217,11 @@ SmartPanel::_deleteAccountButton__Click(Platform::Object^ sender, Windows::UI::X
     {})));
     messageDialog->Commands->Append(ref new UICommand("Delete", ref new UICommandInvokedHandler([this](IUICommand^ command)
     {
-        auto accountItem = AccountListItemsViewModel::instance->_selectedItem;
-        auto account = accountItem->_account;
-        auto accountId = account->accountID_;
+        auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+        auto accountId = selectedAccountItem->_id;
 
         RingD::instance->deleteAccount(accountId);
-        AccountListItemsViewModel::instance->removeItem(accountItem);
+        AccountItemsViewModel::instance->removeItem(selectedAccountItem);
     })));
 
     messageDialog->DefaultCommandIndex = 1;

@@ -252,7 +252,6 @@ RingClientUWP::MainPage::DisplayProperties_DpiChanged(DisplayInformation^ sender
     OnResize(nullptr, nullptr);
     SmartPanelItemsViewModel::instance->update({ "" });
     ContactRequestItemsViewModel::instance->update({ "" });
-    AccountListItemsViewModel::instance->update({ "" });
 }
 
 void
@@ -399,7 +398,6 @@ MainPage::Application_VisibilityChanged(Object^ sender, VisibilityChangedEventAr
         for (auto item : SmartPanelItemsViewModel::instance->itemsList) {
             if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
                 isInCall = true;
-                RingD::instance->currentCallId = item->_callId;
                 break;
             }
         }

@@ -49,9 +49,6 @@
     <ClCompile Include="Conversation.cpp">
       <Filter>Models</Filter>
     </ClCompile>
-    <ClCompile Include="AccountListItemsViewModel.cpp">
-      <Filter>ViewModels</Filter>
-    </ClCompile>
     <ClCompile Include="AccountsViewModel.cpp">
       <Filter>ViewModels</Filter>
     </ClCompile>
@@ -157,9 +154,6 @@
     </ClInclude>
     <ClInclude Include="Conversation.h">
       <Filter>Models</Filter>
-    </ClInclude>
-    <ClInclude Include="AccountListItemsViewModel.h">
-      <Filter>ViewModels</Filter>
     </ClInclude>
     <ClInclude Include="AccountsViewModel.h">
       <Filter>ViewModels</Filter>

@@ -19,6 +19,7 @@
 #pragma once
 
 #include "AccountItem.h"
+#include "ContactListModel.h"
 
 using namespace Platform::Collections;
 using namespace Concurrency;
@@ -30,6 +31,17 @@ namespace RingClientUWP
 {
 namespace ViewModel
 {
+
+delegate void NewAccountSelected();
+delegate void NoAccountSelected();
+delegate void UpdateScrollView();
+delegate void AccountAdded(String^ accountId);
+delegate void ClearAccountsList();
+delegate void ContactAdded(String^ accountId, Contact^ contact);
+delegate void ContactDeleted(String^ accountId, Contact^ contact);
+delegate void ContactDataModified(String^, Contact^);
+delegate void NewUnreadMessage(Contact^);
+delegate void NewUnreadContactRequest();
 
 public ref class AccountItemsViewModel sealed
 {
@@ -48,11 +60,18 @@ internal:
 
 internal:
     /* functions */
-    String^ getSelectedAccountId();
-    void addItem(String^ id, Map<String^, String^>^ details);
-    AccountItem^ findItem(String^ accountId);
-    void removeItem(AccountItem^ item);
-    int getIndex(String^ accountId);
+    void                addItem(String^ id, Map<String^, String^>^ details);
+    AccountItem^        findItem(String^ accountId);
+    void                removeItem(AccountItem^ item);
+    int                 getIndex(String^ accountId);
+    String^             getSelectedAccountId();
+    AccountItem^        findItemByRingID(String ^ ringId);
+    void                clearAccountList();
+    ContactListModel^   getContactListModel(std::string& accountId);
+    int                 unreadMessages(String^ accountId);
+    int                 unreadContactRequests(String^ accountId);
+    int                 bannedContacts(String^ accountId);
+    int                 activeAccounts();
 
 internal:
     /* properties */
@@ -76,9 +95,24 @@ internal:
         }
     }
 
+internal:
+    /* events */
+    event NewAccountSelected^       newAccountSelected;
+    event NoAccountSelected^        noAccountSelected;
+    event UpdateScrollView^         updateScrollView;
+    event AccountAdded^             accountAdded;
+    event ClearAccountsList^        clearAccountsList;
+    event ContactAdded^             contactAdded;
+    event ContactDeleted^           contactDeleted;
+    event ContactDataModified^      contactDataModified;
+    event NewUnreadMessage^         newUnreadMessage;
+    event NewUnreadContactRequest^  newUnreadContactRequest;
+
 private:
     Vector<AccountItem^>^ itemsList_;
     AccountItem^ currentItem_;
+
+    Map<String^, ContactListModel^>^ contactListModels_;
 
 };
 }
