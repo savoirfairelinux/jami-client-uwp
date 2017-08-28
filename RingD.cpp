@@ -28,7 +28,7 @@
 #include "Video.h"
 #include "ResourceManager.h"
 
-#include <dring.h>
+#include "dring.h"
 #include "dring/call_const.h"
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
@@ -111,10 +111,23 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
             else {
                 MSG_("************NEW adding account");
                 AccountItemsViewModel::instance->addItem(Utils::toPlatformString(accountId), Utils::convertMap(accountDetails));
-            }
-            // TODO: load contacts for the account
-            if (type == ProtocolNames::RING) {
-                // TODO: load contact requests for the account
+                // TODO: load contacts for the account
+                auto contacts = DRing::getContacts(accountId);
+                for (auto& contact : contacts) {
+                    auto id = contact.at("id");
+                    MSG_("contact: (id=" + id + ")");
+                }
+                if (type == ProtocolNames::RING) {
+                    // TODO: load contact requests for the account
+                    auto contactRequests = DRing::getTrustRequests(accountId);
+                    for (auto& contactRequest : contactRequests) {
+                        auto ringId = contactRequest.at("from");
+                        auto timeReceived = contactRequest.at("received");
+                        auto payload = contactRequest.at("payload");
+                        MSG_("contactRequest: (from=" + ringId + ", t=" + timeReceived + ", p=" + payload + ")");
+                    }
+                }
+                // emit signal : accountLoaded
             }
         }
 
