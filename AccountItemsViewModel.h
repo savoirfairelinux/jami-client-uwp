@@ -19,6 +19,7 @@
 #pragma once
 
 #include "AccountItem.h"
+#include "ContactListModel.h"
 
 using namespace Platform::Collections;
 using namespace Concurrency;
@@ -30,6 +31,17 @@ namespace RingClientUWP
 {
 namespace ViewModel
 {
+
+delegate void NewAccountSelected();
+delegate void NoAccountSelected();
+delegate void UpdateScrollView();
+delegate void AccountItemAdded(String^ accountId);
+delegate void AccountItemsCleared();
+delegate void ContactAdded(String^ accountId, String^ uri);
+delegate void ContactDeleted(String^ accountId, String^ uri);
+delegate void ContactDataModified(String^ accountId, String^ uri);
+delegate void NewUnreadMessage(String^ uri);
+delegate void NewUnreadContactRequest(String^ uri);
 
 public ref class AccountItemsViewModel sealed
 {
@@ -48,23 +60,38 @@ internal:
 
 internal:
     /* functions */
-    String^ getSelectedAccountId();
-    void addItem(String^ id, Map<String^, String^>^ details);
-    AccountItem^ findItem(String^ accountId);
-    void removeItem(AccountItem^ item);
-    int getIndex(String^ accountId);
+    void                addItem(String^ id, Map<String^, String^>^ details);
+    AccountItem^        findItem(String^ accountId);
+    void                removeItem(AccountItem^ item);
+    int                 getIndex(String^ accountId);
+    String^             getSelectedAccountId();
+    AccountItem^        findItemByRingID(String ^ ringId);
+    void                clearAccountList();
+    ContactList^        getContactList(String^ accountId);
+    int                 unreadMessages(String^ accountId);
+    int                 unreadContactRequests(String^ accountId);
+    int                 bannedContacts(String^ accountId);
 
 internal:
     /* properties */
-    property Vector<AccountItem^>^ _itemsList
-    {
+    property int activeAccounts {
+        int get() {
+            int totalActiveAccounts = 0;
+            for (auto accountItem : itemsList_) {
+                if (accountItem->_enabled)
+                    totalActiveAccounts++;
+            }
+            return totalActiveAccounts;
+        }
+    }
+
+    property Vector<AccountItem^>^ _itemsList {
         Vector<AccountItem^>^ get() {
             return itemsList_;
         }
     }
 
-    property AccountItem^ _selectedItem
-    {
+    property AccountItem^ _selectedItem {
         AccountItem^ get() {
             return currentItem_;
         }
@@ -76,9 +103,24 @@ internal:
         }
     }
 
+internal:
+    /* events */
+    event NewAccountSelected^       newAccountSelected;
+    event NoAccountSelected^        noAccountSelected;
+    event UpdateScrollView^         updateScrollView;
+    event AccountItemAdded^         accountItemAdded;
+    event AccountItemsCleared^      accountItemsCleared;
+    event ContactAdded^             contactAdded;
+    event ContactDeleted^           contactDeleted;
+    event ContactDataModified^      contactDataModified;
+    event NewUnreadMessage^         newUnreadMessage;
+    event NewUnreadContactRequest^  newUnreadContactRequest;
+
 private:
     Vector<AccountItem^>^ itemsList_;
     AccountItem^ currentItem_;
+
+    Map<String^, ContactList^>^ contactLists_;
 
 };
 }

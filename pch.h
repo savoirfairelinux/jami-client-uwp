@@ -29,7 +29,6 @@
 
 // Refactor: get rid of these (and potentially usage of the pch)
 #include "AccountListItem.h"
-#include "AccountListItemsViewModel.h"
 #include "AccountsViewModel.h"
 
 #include "Contact.h"

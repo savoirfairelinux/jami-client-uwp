@@ -19,6 +19,15 @@
 
 #include "Utils.h"
 
+#define ACCMUT(x, t, p)     property String^ p { \
+                                String^ get() { \
+                                    return Utils::toPlatformString(x->t); \
+                                } \
+                                void set(String^ value) { \
+                                    x->t = Utils::toString(value); \
+                                } \
+                            } \
+
 using namespace Platform;
 
 namespace RingClientUWP
@@ -30,16 +39,13 @@ namespace Controls
 public ref class ContactItem sealed
 {
 public:
-    property String^ _id {
+    property String^ _uri {
         String^ get() {
-            return Utils::toPlatformString(contact_->id);
-        }
-        void set(String^ value) {
-            contact_->id = Utils::toString(value);
+            return Utils::toPlatformString(contact_->uri);
         }
     }
 
-    property String^ _displayName {
+    /*property String^ _displayName {
         String^ get() {
             return Utils::toPlatformString(contact_->displayName);
         }
@@ -48,12 +54,12 @@ public:
         }
     }
 
-    property String^ _username {
+    property String^ _registeredName {
         String^ get() {
-            return Utils::toPlatformString(contact_->username);
+            return Utils::toPlatformString(contact_->registeredName);
         }
         void set(String^ value) {
-            contact_->username = Utils::toString(value);
+            contact_->registeredName = Utils::toString(value);
         }
     }
 
@@ -66,14 +72,29 @@ public:
         }
     }
 
-    property String^ _ringId {
+    property String^ _isTrusted {
         String^ get() {
-            return Utils::toPlatformString(contact_->ringId);
+            return Utils::toPlatformString(contact_->isTrusted);
         }
         void set(String^ value) {
-            contact_->ringId = Utils::toString(value);
+            contact_->isTrusted = Utils::toString(value);
         }
     }
+
+    property String^ _type {
+        String^ get() {
+            return Utils::toPlatformString(contact_->type);
+        }
+        void set(String^ value) {
+            contact_->type = Utils::toString(value);
+        }
+    }*/
+
+    ACCMUT(contact_,    displayName,       _displayName)
+    ACCMUT(contact_,    registeredName,    _registeredName)
+    ACCMUT(contact_,    alias,             _alias)
+    ACCMUT(contact_,    isTrusted,         _isTrusted)
+    ACCMUT(contact_,    type,              _type)
 
 internal:
     ContactItem() {};

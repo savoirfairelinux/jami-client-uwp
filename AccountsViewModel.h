@@ -19,6 +19,7 @@
 #pragma once
 
 #include "ContactListModel.h"
+#include "Account.h"
 
 using namespace Platform::Collections;
 

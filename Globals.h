@@ -24,6 +24,12 @@ namespace RingClientUWP
 
 using namespace Platform;
 
+namespace Strings
+{
+constexpr static const char TRUE_STRING[] = "TRUE";
+constexpr static const char FALSE_STRING[] = "FALSE";
+}
+
 String^ SuccessColor = "#FF00CC6A";
 String^ ErrorColor = "#FFFF4343";
 

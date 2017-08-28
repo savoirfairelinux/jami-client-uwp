@@ -45,12 +45,12 @@ ContactItem::ContactItem(Map<String^, String^>^ details)
 void
 ContactItem::SetDetails(Map<String^, String^>^ details)
 {
-    using namespace Models::Conf::Contacts;
+    using namespace Models::Conf::Contact;
     using namespace Utils;
 
-    contact_->id             = toString(getDetailsStringValue(details, ID));
-    contact_->displayName    = toString(getDetailsStringValue(details, DISPLAYNAME));
-    contact_->username       = toString(getDetailsStringValue(details, USERNAME));
-    contact_->alias          = toString(getDetailsStringValue(details, ALIAS));
-    contact_->ringId         = toString(getDetailsStringValue(details, RINGID));
+    contact_->displayName       = toString(getDetailsStringValue(details, DISPLAYNAME));
+    contact_->registeredName    = toString(getDetailsStringValue(details, REGISTEREDNAME));
+    contact_->alias             = toString(getDetailsStringValue(details, ALIAS));
+    contact_->isTrusted         = toString(getDetailsStringValue(details, TRUSTED));
+    contact_->type              = toString(getDetailsStringValue(details, TYPE));
 }

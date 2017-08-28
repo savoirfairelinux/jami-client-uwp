@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Globals.h"
+#include "Contact.h"
 
 using namespace Platform::Collections;
 using namespace Concurrency;
@@ -69,4 +70,23 @@ private:
     void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string &address, const std::string &name);
 };
 }
+
+namespace Models
+{
+class ContactList sealed
+{
+public:
+    void                    addContact(const std::string& uri);
+    void                    removeContact(const std::string& uri);
+    const Models::Contact&  getContact(const std::string& uri);
+
+    const ContactsMap&      getAllContacts() const;
+
+private:
+    ContactsMap             contacts_;
+
+};
+
+}
+
 }

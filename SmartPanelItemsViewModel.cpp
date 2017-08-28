@@ -23,6 +23,7 @@
 
 #include "RingD.h"
 #include "RingDebug.h"
+#include "AccountItemsViewModel.h"
 
 #include "configurationmanager_interface.h"
 
@@ -230,7 +231,7 @@ String^
 SmartPanelItemsViewModel::getAssociatedAccountId(SmartPanelItem^ item)
 {
     if (item->_contact->_accountIdAssociated->IsEmpty())
-        return AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        return AccountItemsViewModel::instance->_selectedItem->_id;
     else
         return item->_contact->_accountIdAssociated;
 }
@@ -249,7 +250,7 @@ SmartPanelItemsViewModel::update(const std::vector<std::string>& properties)
 void
 SmartPanelItemsViewModel::refreshFilteredItemsList()
 {
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
 
     std::for_each(begin(itemsList_), end(itemsList_),
         [selectedAccountId, this](SmartPanelItem^ item) {
@@ -282,7 +283,7 @@ SmartPanelItemsViewModel::refreshFilteredItemsList()
 void
 SmartPanelItemsViewModel::refreshFilteredBannedItemsList()
 {
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
 
     std::for_each(begin(itemsList_), end(itemsList_),
         [selectedAccountId, this](SmartPanelItem^ item) {

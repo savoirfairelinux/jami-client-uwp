@@ -72,3 +72,70 @@ AccountItemsViewModel::getSelectedAccountId()
         return _selectedItem->_id;
     return nullptr;
 }
+
+AccountItem^
+AccountItemsViewModel::findItemByRingID(String ^ ringId)
+{
+    for each (AccountItem^ item in itemsList_)
+        if (item->_ringId == ringId)
+            return item;
+
+    return nullptr;
+}
+
+void
+AccountItemsViewModel::clearAccountList()
+{
+    itemsList_->Clear();
+    accountItemsCleared();
+}
+
+ContactListModel^
+AccountItemsViewModel::getContactListModel(std::string& accountId)
+{
+    if (contactListModels_->Size)
+        return contactListModels_->Lookup(Utils::toPlatformString(accountId));
+    return nullptr;
+}
+
+int
+AccountItemsViewModel::unreadMessages(String ^ accountId)
+{
+    int messageCount = 0;
+    auto acceptIncognitoMessages = findItem(accountId)->_dhtPublicInCalls;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (acceptIncognitoMessages || contact->_trustStatus == TrustStatus::TRUSTED)
+                messageCount += contact->_unreadMessages;
+        }
+    }
+    return messageCount;
+}
+
+int
+AccountItemsViewModel::unreadContactRequests(String ^ accountId)
+{
+    int contactRequestCount = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
+                contactRequestCount += contact->_unreadContactRequest ? 1 : 0;
+            }
+        }
+    }
+    return contactRequestCount;
+}
+
+int
+AccountItemsViewModel::bannedContacts(String^ accountId)
+{
+    int bannedContacts = 0;
+    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+        for each (auto contact in contactListModel->_contactsList) {
+            if (contact->_trustStatus == TrustStatus::BLOCKED) {
+                bannedContacts++;
+            }
+        }
+    }
+    return bannedContacts;
+}

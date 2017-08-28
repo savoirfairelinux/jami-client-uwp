@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Utils.h"
+#include "Account.h"
 
 using namespace Platform;
 using namespace Windows::UI::Xaml;
@@ -174,17 +175,37 @@ public:
         }
     }
 
-    property bool _publicDhtInCalls {
+    property bool _dhtPublicInCalls {
         bool get() {
-            return account_->publicDhtInCalls;
+            return account_->dhtPublicInCalls;
         }
         void set(bool value) {
-            account_->publicDhtInCalls = value;
-            NotifyPropertyChanged("_publicDhtInCalls");
+            account_->dhtPublicInCalls = value;
+            NotifyPropertyChanged("_dhtPublicInCalls");
         }
     }
 
     // SIP specific
+    property String^ _sipHostname {
+        String^ get() {
+            return Utils::toPlatformString(account_->hostname);
+        }
+        void set(String^ value) {
+            account_->hostname = Utils::toString(value);
+            NotifyPropertyChanged("_sipHostname");
+        }
+    }
+
+    property String^ _sipUsername {
+        String^ get() {
+            return Utils::toPlatformString(account_->username);
+        }
+        void set(String^ value) {
+            account_->username = Utils::toString(value);
+            NotifyPropertyChanged("_sipUsername");
+        }
+    }
+
     property String^ _sipPassword {
         String^ get() {
             return Utils::toPlatformString(account_->sipPassword);
@@ -256,11 +277,14 @@ internal:
     AccountItem(String^ id, Map<String^, String^>^ details);
     void SetDetails(String^ id, Map<String^, String^>^ details);
 
+
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     std::unique_ptr<Models::Account>    account_;
+
     bool                                isSelected_;
 };
 

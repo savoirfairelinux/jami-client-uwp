@@ -25,6 +25,7 @@
 #include "RingDebug.h"
 #include "UserPreferences.h"
 #include "MainPage.xaml.h"
+#include "AccountItemsViewModel.h"
 
 #include <direct.h>
 
@@ -224,7 +225,7 @@ void RingClientUWP::Views::Wizard::_usernameTextBox__KeyUp(Platform::Object^ sen
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     } else {
-        auto accountId = ViewModel::AccountListItemsViewModel::instance->getSelectedAccountId();
+        auto accountId = ViewModel::AccountItemsViewModel::instance->getSelectedAccountId();
         RingD::instance->lookUpName(Utils::toString(accountId), alias);
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
