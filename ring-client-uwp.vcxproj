@@ -178,7 +178,6 @@
     </ClInclude>
     <ClInclude Include="AccountItemsViewModel.h" />
     <ClInclude Include="AccountListItem.h" />
-    <ClInclude Include="AccountListItemsViewModel.h" />
     <ClInclude Include="AccountsViewModel.h" />
     <ClInclude Include="Base64Utils.h" />
     <ClInclude Include="Call.h" />
@@ -372,9 +371,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AccountListItem.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="AccountListItemsViewModel.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="AccountsViewModel.cpp">

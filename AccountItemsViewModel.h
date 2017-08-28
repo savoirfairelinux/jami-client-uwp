@@ -19,6 +19,7 @@
 #pragma once
 
 #include "AccountItem.h"
+#include "ContactListModel.h"
 
 using namespace Platform::Collections;
 using namespace Concurrency;
@@ -30,6 +31,17 @@ namespace RingClientUWP
 {
 namespace ViewModel
 {
+
+delegate void NewAccountSelected();
+delegate void NoAccountSelected();
+delegate void UpdateScrollView();
+delegate void AccountItemAdded(String^ accountId);
+delegate void AccountItemsCleared();
+delegate void ContactItemAdded(String^ accountId, String^ uri);
+delegate void ContactItemDeleted(String^ accountId, String^ uri);
+delegate void ContactItemModified(String^ accountId, String^ uri);
+delegate void NewUnreadMessage(String^ uri);
+delegate void NewUnreadContactRequest(String^ uri);
 
 public ref class AccountItemsViewModel sealed
 {
@@ -47,24 +59,36 @@ internal:
     }
 
 internal:
-    /* functions */
-    String^ getSelectedAccountId();
-    void addItem(String^ id, Map<String^, String^>^ details);
-    AccountItem^ findItem(String^ accountId);
-    void removeItem(AccountItem^ item);
-    int getIndex(String^ accountId);
+    /* account items */
+    void                    addItem(String^ id, Map<String^, String^>^ details);
+    AccountItem^            findItem(String^ id);
+    void                    removeItem(String^ id);
+    int                     getIndex(String^ id);
+    String^                 getSelectedAccountId();
+    AccountItem^            findItemByRingID(String ^ ringId);
+    void                    clearAccountList();
+    ContactItemList^        getContactItemList(String^ id);
 
 internal:
     /* properties */
-    property Vector<AccountItem^>^ _itemsList
-    {
+    property int activeAccounts {
+        int get() {
+            int totalActiveAccounts = 0;
+            for (auto accountItem : itemsList_) {
+                if (accountItem->_enabled)
+                    totalActiveAccounts++;
+            }
+            return totalActiveAccounts;
+        }
+    }
+
+    property Vector<AccountItem^>^ _itemsList {
         Vector<AccountItem^>^ get() {
             return itemsList_;
         }
     }
 
-    property AccountItem^ _selectedItem
-    {
+    property AccountItem^ _selectedItem {
         AccountItem^ get() {
             return currentItem_;
         }
@@ -75,6 +99,19 @@ internal:
             // emit signal : accountSelected
         }
     }
+
+internal:
+    /* events */
+    event NewAccountSelected^       newAccountSelected;
+    event NoAccountSelected^        noAccountSelected;
+    event UpdateScrollView^         updateScrollView;
+    event AccountItemAdded^         accountItemAdded;
+    event AccountItemsCleared^      accountItemsCleared;
+    event ContactItemAdded^         contactItemAdded;
+    event ContactItemDeleted^       contactItemDeleted;
+    event ContactItemModified^      contactItemModified;
+    event NewUnreadMessage^         newUnreadMessage;
+    event NewUnreadContactRequest^  newUnreadContactRequest;
 
 private:
     Vector<AccountItem^>^ itemsList_;

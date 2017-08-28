@@ -24,6 +24,38 @@ namespace RingClientUWP
 
 using namespace Platform;
 
+namespace Strings
+{
+
+namespace Contact
+{
+constexpr static const char URI[] = "Contact.uri";
+constexpr static const char DISPLAYNAME[] = "Contact.displayName";
+constexpr static const char REGISTEREDNAME[] = "Contact.registeredName";
+constexpr static const char ALIAS[] = "Contact.alias";
+constexpr static const char TRUSTED[] = "Contact.isTrusted";
+constexpr static const char TYPE[] = "Contact.type";
+
+namespace Type
+{
+constexpr static const char RING[] = "RING";
+constexpr static const char SIP[] = "SIP";
+constexpr static const char INVALID_TYPE[] = "INVALID_TYPE";
+}
+
+namespace Presence
+{
+constexpr static const char ONLINE[] = "ONLINE";
+constexpr static const char OFFLINE[] = "OFFLINE";
+constexpr static const char UNKNOWN[] = "UNKNOWN";
+}
+
+}
+
+constexpr static const char TRUE_STRING[] = "TRUE";
+constexpr static const char FALSE_STRING[] = "FALSE";
+}
+
 String^ SuccessColor = "#FF00CC6A";
 String^ ErrorColor = "#FFFF4343";
 

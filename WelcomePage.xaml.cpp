@@ -23,6 +23,7 @@
 #include "RingD.h"
 #include "RingDebug.h"
 #include "AboutPage.xaml.h"
+#include "AccountItemsViewModel.h"
 
 #include "qrencode.h"
 
@@ -56,13 +57,13 @@ WelcomePage::_welcomeAboutButton__Click(Platform::Object^ sender, Windows::UI::X
 void
 WelcomePage::generateShareData()
 {
-    auto ringId = AccountListItemsViewModel::instance->_selectedItem->_account->ringID_;
-    auto ringId2 = Utils::toString(ringId);
+    auto ringId = AccountItemsViewModel::instance->_selectedItem->_ringId;
+    auto _ringId = Utils::toString(ringId);
 
     _ringId_->Text = ringId;
     _welcomeAboutButton_->Margin = Windows::UI::Xaml::Thickness(0.0, 24.0, 0.0, 0.0);
 
-    auto qrcode = QRcode_encodeString(ringId2.c_str(),
+    auto qrcode = QRcode_encodeString(_ringId.c_str(),
         0, //Let the version be decided by libqrencode
         QR_ECLEVEL_L, // Lowest level of error correction
         QR_MODE_8, // 8-bit data mode

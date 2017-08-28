@@ -18,10 +18,14 @@
 #pragma once
 
 #include "Utils.h"
+#include "Account.h"
+#include "ContactListModel.h"
 
 using namespace Platform;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
+
+using namespace Models;
 
 namespace RingClientUWP
 {
@@ -174,17 +178,37 @@ public:
         }
     }
 
-    property bool _publicDhtInCalls {
+    property bool _dhtPublicInCalls {
         bool get() {
-            return account_->publicDhtInCalls;
+            return account_->dhtPublicInCalls;
         }
         void set(bool value) {
-            account_->publicDhtInCalls = value;
-            NotifyPropertyChanged("_publicDhtInCalls");
+            account_->dhtPublicInCalls = value;
+            NotifyPropertyChanged("_dhtPublicInCalls");
         }
     }
 
     // SIP specific
+    property String^ _sipHostname {
+        String^ get() {
+            return Utils::toPlatformString(account_->hostname);
+        }
+        void set(String^ value) {
+            account_->hostname = Utils::toString(value);
+            NotifyPropertyChanged("_sipHostname");
+        }
+    }
+
+    property String^ _sipUsername {
+        String^ get() {
+            return Utils::toPlatformString(account_->username);
+        }
+        void set(String^ value) {
+            account_->username = Utils::toString(value);
+            NotifyPropertyChanged("_sipUsername");
+        }
+    }
+
     property String^ _sipPassword {
         String^ get() {
             return Utils::toPlatformString(account_->sipPassword);
@@ -241,6 +265,13 @@ public:
         }
     }
 
+    /* contact management */
+    property ContactItemList^ _contactItemList {
+        ContactItemList^ get() {
+            return contactItemList_;
+        }
+    }
+
     // selection
     property bool _isSelected {
         bool get() {
@@ -256,11 +287,18 @@ internal:
     AccountItem(String^ id, Map<String^, String^>^ details);
     void SetDetails(String^ id, Map<String^, String^>^ details);
 
+    int unreadMessages(String^ accountId);
+    int unreadContactRequests(String^ accountId);
+    int bannedContacts(String^ accountId);
+
 protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
     std::unique_ptr<Models::Account>    account_;
+
+    ContactItemList^                    contactItemList_;
+
     bool                                isSelected_;
 };
 

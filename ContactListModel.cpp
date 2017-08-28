@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #include "pch.h"
 
 #include "ContactListModel.h"
@@ -26,6 +25,8 @@
 #include "FileUtils.h"
 
 #include "presencemanager_interface.h"
+
+#include <memory>
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
@@ -46,7 +47,7 @@ ContactListModel::ContactListModel(String^ account) : m_Owner(account)
         ref new RingClientUWP::RegisteredNameFound(this, &ContactListModel::OnregisteredNameFound);
 }
 
-Contact^ // refacto : remove "byName"
+RingClientUWP::Contact^ // refacto : remove "byName"
 ContactListModel::findContactByName(String^ name)
 {
     auto trimmedName = Utils::Trim(name);
@@ -57,7 +58,7 @@ ContactListModel::findContactByName(String^ name)
     return nullptr;
 }
 
-Contact^
+RingClientUWP::Contact^
 ContactListModel::findContactByRingId(String^ ringId)
 {
     for each (Contact^ contact in contactsList_)
@@ -67,7 +68,7 @@ ContactListModel::findContactByRingId(String^ ringId)
     return nullptr;
 }
 
-Contact^
+RingClientUWP::Contact^
 ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustStatus, bool isIncognitoContact, ContactStatus contactStatus)
 {
     auto trimmedName = Utils::Trim(name);
@@ -275,4 +276,62 @@ ContactListModel::OnregisteredNameFound(RingClientUWP::LookupStatus status,  con
             }
         }
     }
+}
+
+/////////////////////////////
+
+ContactItemList::ContactItemList(String^ accountId)
+    : accountId_(accountId)
+{
+    contactItems_ = ref new Vector<ContactItem^>();
+    openContactsFromFile();
+}
+
+ContactItem^
+ContactItemList::addItem(String^ uri, Map<String^, String^> details)
+{
+    return nullptr;
+}
+
+ContactItem^
+ContactItemList::findItem(String^ uri)
+{
+    return nullptr;
+}
+
+ContactItem^
+ContactItemList::findItemByAlias(String^ alias)
+{
+    return nullptr;
+}
+
+void
+ContactItemList::removeItem(String^ uri)
+{
+
+}
+
+// TODO: replace with db
+void
+ContactItemList::saveContactsToFile()
+{
+
+}
+
+void
+ContactItemList::openContactsFromFile()
+{
+
+}
+
+String^
+ContactItemList::Stringify()
+{
+    return nullptr;
+}
+
+void
+ContactItemList::Destringify(String^ data)
+{
+
 }

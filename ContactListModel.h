@@ -19,6 +19,7 @@
 #pragma once
 
 #include "Globals.h"
+#include "ContactItem.h"
 
 using namespace Platform::Collections;
 using namespace Concurrency;
@@ -38,11 +39,11 @@ internal:
     /* functions */
     Contact^    findContactByName(String^ name);
     Contact^    findContactByRingId(String^ ringId);
-    Contact^    addNewContact(  String^ name,
-                                String^ ringId,
-                                TrustStatus trustStatus,
-                                bool isIncognitoContact,
-                                ContactStatus contactStatus = ContactStatus::READY);
+    Contact^    addNewContact(String^ name,
+        String^ ringId,
+        TrustStatus trustStatus,
+        bool isIncognitoContact,
+        ContactStatus contactStatus = ContactStatus::READY);
     void        saveContactsToFile();
     void        openContactsFromFile();
     String^     Stringify();
@@ -69,4 +70,41 @@ private:
     void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string &address, const std::string &name);
 };
 }
+
+namespace Controls
+{
+
+public ref class ContactItemList sealed
+{
+public:
+    ContactItemList(String^ accountId);
+
+internal:
+    /* functions */
+    ContactItem^    addItem(String^ uri, Map<String^, String^> details);
+    ContactItem^    findItem(String^ uri);
+    ContactItem^    findItemByAlias(String^ alias);
+    void            removeItem(String^ uri);
+
+    // TODO: replace with db
+    void            saveContactsToFile();
+    void            openContactsFromFile();
+    String^         Stringify();
+    void            Destringify(String^ data);
+
+public:
+    /* properties */
+    property IVector<ContactItem^>^ _contactItems {
+        IVector<ContactItem^>^ get() {
+            return contactItems_;
+        }
+    }
+
+private:
+    IVector<ContactItem^>^ contactItems_;
+    String^ accountId_;
+
+};
+}
+
 }
