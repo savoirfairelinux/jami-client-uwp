@@ -18,6 +18,7 @@
 #pragma once
 
 #include "Utils.h"
+#include "Contact.h"
 
 using namespace Platform;
 
@@ -30,12 +31,9 @@ namespace Controls
 public ref class ContactItem sealed
 {
 public:
-    property String^ _id {
+    property String^ _uri {
         String^ get() {
-            return Utils::toPlatformString(contact_->id);
-        }
-        void set(String^ value) {
-            contact_->id = Utils::toString(value);
+            return Utils::toPlatformString(contact_->uri);
         }
     }
 
@@ -48,12 +46,12 @@ public:
         }
     }
 
-    property String^ _username {
+    property String^ _registeredName {
         String^ get() {
-            return Utils::toPlatformString(contact_->username);
+            return Utils::toPlatformString(contact_->registeredName);
         }
         void set(String^ value) {
-            contact_->username = Utils::toString(value);
+            contact_->registeredName = Utils::toString(value);
         }
     }
 
@@ -66,14 +64,36 @@ public:
         }
     }
 
-    property String^ _ringId {
+    property String^ _isTrusted {
         String^ get() {
-            return Utils::toPlatformString(contact_->ringId);
+            return Utils::toPlatformString(contact_->isTrusted);
         }
         void set(String^ value) {
-            contact_->ringId = Utils::toString(value);
+            contact_->isTrusted = Utils::toString(value);
         }
     }
+
+    property String^ _type {
+        String^ get() {
+            return Utils::toPlatformString(contact_->type);
+        }
+        void set(String^ value) {
+            contact_->type = Utils::toString(value);
+        }
+    }
+
+    // from db or elsewhere
+    property VCardUtils::VCard^ _vCard;
+    property unsigned _unreadMessages;
+    property unsigned _unreadContactRequest;
+    property int _presenceStatus;
+    property String^ _avatarColorString;
+    property String^ _avatarImage;
+    property String^ _accountIdAssociated;
+    property String^ _lastTime;
+    // TODO: remove these and use CR object and temporary object
+    property ContactStatus _contactStatus;
+    property TrustStatus _trustStatus;
 
 internal:
     ContactItem() {};
@@ -84,7 +104,8 @@ internal:
     void SetDetails(Map<String^, String^>^ details);
 
 private:
-    std::shared_ptr<Models::Contact> contact_;
+    std::shared_ptr<Models::Contact>    contact_;
+
 };
 
 }

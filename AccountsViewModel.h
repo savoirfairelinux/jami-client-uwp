@@ -19,6 +19,7 @@
 #pragma once
 
 #include "ContactListModel.h"
+#include "Account.h"
 
 using namespace Platform::Collections;
 
@@ -84,7 +85,7 @@ internal:
     void clearAccountList();
     Account^ findItem(String^ accountId);
     Account^ findAccountByRingID(String ^ ringId);
-    ContactListModel^ getContactListModel(std::string& accountId);
+    ContactListModel^ getContactList(std::string& accountId);
     int unreadMessages(String^ accountId);
     int unreadContactRequests(String^ accountId);
     int bannedContacts(String^ accountId);

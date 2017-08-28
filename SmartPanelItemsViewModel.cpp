@@ -23,6 +23,7 @@
 
 #include "RingD.h"
 #include "RingDebug.h"
+#include "AccountItemsViewModel.h"
 
 #include "configurationmanager_interface.h"
 
@@ -67,7 +68,7 @@ SmartPanelItemsViewModel::findItem(String^ callId)
 }
 
 SmartPanelItem^
-SmartPanelItemsViewModel::findItem(Contact^ contact)
+SmartPanelItemsViewModel::findItem(RingClientUWP::Contact^ contact)
 {
     for each (SmartPanelItem^ item in itemsList)
         if (item->_contact == contact)
@@ -98,7 +99,7 @@ SmartPanelItemsViewModel::getIndex(String^ callId)
 }
 
 unsigned int
-SmartPanelItemsViewModel::getIndex(Contact^ contact)
+SmartPanelItemsViewModel::getIndex(RingClientUWP::Contact^ contact)
 {
     unsigned int i;
     for (i = 0; i < itemsList_->Size; i++) {
@@ -109,7 +110,7 @@ SmartPanelItemsViewModel::getIndex(Contact^ contact)
 }
 
 unsigned int
-SmartPanelItemsViewModel::getFilteredIndex(Contact^ contact)
+SmartPanelItemsViewModel::getFilteredIndex(RingClientUWP::Contact^ contact)
 {
     unsigned int i;
     for (i = 0; i < itemsList_->Size; i++) {
@@ -139,7 +140,7 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartP
     if (itemsList->IndexOf(item, &spi_index)) {
         if (spi_index != 0) {
             String^ accountIdAssociated = getAssociatedAccountId(item);
-            if (auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountIdAssociated))) {
+            if (auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountIdAssociated))) {
                 auto contactList = contactListModel->_contactsList;
                 auto contactListItem = contactListModel->findContactByName(item->_contact->_name);
                 contactList->IndexOf(contactListItem, &cl_index);
@@ -185,7 +186,7 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
     {
         item->_contact->_lastTime = "Last call : " + timestampFormatter->Format(dateTime) + ".";
         String^ accountIdAssociated = getAssociatedAccountId(item);
-        if (auto contactListModel = AccountsViewModel::instance->getContactListModel(Utils::toString(accountIdAssociated)))
+        if (auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountIdAssociated)))
             contactListModel->saveContactsToFile();
         refreshFilteredItemsList();
         break;
@@ -230,7 +231,7 @@ String^
 SmartPanelItemsViewModel::getAssociatedAccountId(SmartPanelItem^ item)
 {
     if (item->_contact->_accountIdAssociated->IsEmpty())
-        return AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        return AccountItemsViewModel::instance->_selectedItem->_id;
     else
         return item->_contact->_accountIdAssociated;
 }
@@ -249,7 +250,7 @@ SmartPanelItemsViewModel::update(const std::vector<std::string>& properties)
 void
 SmartPanelItemsViewModel::refreshFilteredItemsList()
 {
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
 
     std::for_each(begin(itemsList_), end(itemsList_),
         [selectedAccountId, this](SmartPanelItem^ item) {
@@ -282,7 +283,7 @@ SmartPanelItemsViewModel::refreshFilteredItemsList()
 void
 SmartPanelItemsViewModel::refreshFilteredBannedItemsList()
 {
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
 
     std::for_each(begin(itemsList_), end(itemsList_),
         [selectedAccountId, this](SmartPanelItem^ item) {

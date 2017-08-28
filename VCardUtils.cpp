@@ -174,7 +174,7 @@ VCard::completeReception()
     if (!m_mParts[Property::FN].empty())
         m_Owner->_displayName = Utils::toPlatformString(m_mParts[Property::FN]);
     m_Owner->_vcardUID = Utils::toPlatformString(m_mParts[Property::UID]);
-    if (auto contactListModel =  AccountsViewModel::instance->getContactListModel(m_accountId))
+    if (auto contactListModel =  AccountsViewModel::instance->getContactList(m_accountId))
         contactListModel->saveContactsToFile();
     RingD::instance->raiseVCardUpdated(m_Owner);
     SmartPanelItemsViewModel::instance->update({ "_avatarImage" });
