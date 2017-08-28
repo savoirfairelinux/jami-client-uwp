@@ -234,7 +234,7 @@ struct Account
     bool                upnpEnabled;
     bool                turnEnabled;
     std::string         turnAddress;
-    bool                publicDhtInCalls;
+    bool                dhtPublicInCalls;
     // SIP specific
     std::string         sipPassword;
     //

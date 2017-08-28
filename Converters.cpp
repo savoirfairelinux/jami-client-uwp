@@ -22,6 +22,7 @@
 #include "TimeUtils.h"
 #include "ResourceManager.h"
 #include "Converters.h"
+#include "AccountItemsViewModel.h"
 
 using namespace RingClientUWP;
 using namespace Converters;
@@ -246,7 +247,7 @@ SelectedAccountToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop:
     auto callStatus = SmartPanelItemsViewModel::instance->findItem(contact)->_callStatus;
     auto isCall = (callStatus != CallStatus::NONE && callStatus != CallStatus::ENDED) ? true : false;
 
-    if (contact->_accountIdAssociated == AccountListItemsViewModel::instance->getSelectedAccountId() || isCall)
+    if (contact->_accountIdAssociated == AccountItemsViewModel::instance->getSelectedAccountId() || isCall)
         return Windows::UI::Xaml::Visibility::Visible;
 
     return  Windows::UI::Xaml::Visibility::Collapsed;

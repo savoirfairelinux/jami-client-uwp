@@ -48,11 +48,12 @@ internal:
 
 internal:
     /* functions */
-    String^ getSelectedAccountId();
     void addItem(String^ id, Map<String^, String^>^ details);
     AccountItem^ findItem(String^ accountId);
     void removeItem(AccountItem^ item);
     int getIndex(String^ accountId);
+    String^ getSelectedAccountId();
+    AccountItem^ findItemByRingID(String ^ ringId);
 
 internal:
     /* properties */

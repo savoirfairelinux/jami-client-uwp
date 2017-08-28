@@ -72,3 +72,13 @@ AccountItemsViewModel::getSelectedAccountId()
         return _selectedItem->_id;
     return nullptr;
 }
+
+AccountItem^
+AccountItemsViewModel::findItemByRingID(String ^ ringId)
+{
+    for each (AccountItem^ item in itemsList_)
+        if (item->_ringId == ringId)
+            return item;
+
+    return nullptr;
+}

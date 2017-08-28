@@ -20,6 +20,8 @@
 
 #include "ContactRequestItemsViewModel.h"
 
+#include "AccountItemsViewModel.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
 using namespace Windows::Storage;
@@ -82,7 +84,7 @@ String^
 ContactRequestItemsViewModel::getAssociatedAccountId(ContactRequestItem^ item)
 {
     if (item->_contact->_accountIdAssociated->IsEmpty())
-        return AccountListItemsViewModel::instance->_selectedItem->_account->accountID_;
+        return AccountItemsViewModel::instance->_selectedItem->_id;
     else
         return item->_contact->_accountIdAssociated;
 }
@@ -98,7 +100,7 @@ ContactRequestItemsViewModel::update(const std::vector<std::string>& properties)
 void
 ContactRequestItemsViewModel::refreshFilteredItemsList()
 {
-    auto selectedAccountId = AccountListItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
 
     std::for_each(begin(itemsList), end(itemsList),
         [selectedAccountId, this](ContactRequestItem^ item) {

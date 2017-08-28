@@ -174,17 +174,37 @@ public:
         }
     }
 
-    property bool _publicDhtInCalls {
+    property bool _dhtPublicInCalls {
         bool get() {
-            return account_->publicDhtInCalls;
+            return account_->dhtPublicInCalls;
         }
         void set(bool value) {
-            account_->publicDhtInCalls = value;
-            NotifyPropertyChanged("_publicDhtInCalls");
+            account_->dhtPublicInCalls = value;
+            NotifyPropertyChanged("_dhtPublicInCalls");
         }
     }
 
     // SIP specific
+    property String^ _sipHostname {
+        String^ get() {
+            return Utils::toPlatformString(account_->hostname);
+        }
+        void set(String^ value) {
+            account_->hostname = Utils::toString(value);
+            NotifyPropertyChanged("_sipHostname");
+        }
+    }
+
+    property String^ _sipUsername {
+        String^ get() {
+            return Utils::toPlatformString(account_->username);
+        }
+        void set(String^ value) {
+            account_->username = Utils::toString(value);
+            NotifyPropertyChanged("_sipUsername");
+        }
+    }
+
     property String^ _sipPassword {
         String^ get() {
             return Utils::toPlatformString(account_->sipPassword);
