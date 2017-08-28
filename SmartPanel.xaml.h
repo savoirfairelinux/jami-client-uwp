@@ -19,6 +19,7 @@
 #pragma once
 
 #include "RingDeviceItemsViewModel.h"
+#include "AccountItemsViewModel.h"
 
 #include "SmartPanel.g.h"
 

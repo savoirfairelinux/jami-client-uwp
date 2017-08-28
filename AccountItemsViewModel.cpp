@@ -37,29 +37,31 @@ AccountItemsViewModel::addItem(String^ id, Map<String^, String^>^ details)
 }
 
 AccountItem^
-AccountItemsViewModel::findItem(String^ accountId)
+AccountItemsViewModel::findItem(String^ id)
 {
-    for each (AccountItem^ item in itemsList_)
-        if (item->_id == accountId)
+    for each (AccountItem^ item in itemsList_) {
+        if (item->_id == id)
             return item;
+    }
 
     return nullptr;
 }
 
 void
-AccountItemsViewModel::removeItem(AccountItem ^ item)
+AccountItemsViewModel::removeItem(String ^ id)
 {
+    auto item = findItem(id);
     unsigned int index;
     itemsList_->IndexOf(item, &index);
     itemsList_->RemoveAt(index);
 }
 
 int
-AccountItemsViewModel::getIndex(String^ accountId)
+AccountItemsViewModel::getIndex(String^ id)
 {
     int i;
     for (i = 0; i < itemsList_->Size; i++) {
-        if (itemsList_->GetAt(i)->_id == accountId)
+        if (itemsList_->GetAt(i)->_id == id)
             break;
     }
     return i;
@@ -71,4 +73,53 @@ AccountItemsViewModel::getSelectedAccountId()
     if (_selectedItem)
         return _selectedItem->_id;
     return nullptr;
+}
+
+AccountItem^
+AccountItemsViewModel::findItemByRingID(String ^ ringId)
+{
+    for each (AccountItem^ item in itemsList_)
+        if (item->_ringId == ringId)
+            return item;
+
+    return nullptr;
+}
+
+void
+AccountItemsViewModel::clearAccountList()
+{
+    itemsList_->Clear();
+    accountItemsCleared();
+}
+
+ContactItemList^
+AccountItemsViewModel::getContactItemList(String^ id)
+{
+    if (auto item = findItem(id))
+        return item->_contactItemList;
+    return nullptr;
+}
+
+int
+AccountItemsViewModel::unreadMessages(String ^ accountId)
+{
+    int messageCount = 0;
+    // count messages
+    return messageCount;
+}
+
+int
+AccountItemsViewModel::unreadContactRequests(String ^ accountId)
+{
+    int contactRequestCount = 0;
+    // count contact requests
+    return contactRequestCount;
+}
+
+int
+AccountItemsViewModel::bannedContacts(String^ accountId)
+{
+    int bannedContacts = 0;
+    // count banned contacts
+    return bannedContacts;
 }

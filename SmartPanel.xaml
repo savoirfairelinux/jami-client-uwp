@@ -28,8 +28,8 @@
       mc:Ignorable="d">
 
     <Page.Resources>
-        <!--  template for AccountListItems.  -->
-        <DataTemplate x:Key="AccountListItemsTemplate" x:DataType="controls:AccountListItem">
+        <!--  *****NEW***** template for AccountItems.  -->
+        <DataTemplate x:Key="AccountItemsTemplate" x:DataType="controls:AccountItem">
             <Grid Margin="0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="60" />
@@ -42,9 +42,9 @@
                        Margin="5,0"
                        HorizontalAlignment="Center"
                        VerticalAlignment="Center"
-                       Source="{x:Bind _account.accountType_, Converter={StaticResource _AccountTypeToSourceImage_}, Mode=OneWay}" />
+                       Source="{x:Bind _accountType, Converter={StaticResource _AccountTypeToSourceImage_}, Mode=OneWay}" />
                 <!--  display share/home/about  -->
-                <Grid Visibility="{x:Bind _account.accountType_, Converter={StaticResource _RingAccountTypeToVisibility_}, Mode=OneWay}">
+                <Grid Visibility="{x:Bind _accountType, Converter={StaticResource _RingAccountTypeToVisibility_}, Mode=OneWay}">
                     <Button Grid.Column="1"
                             x:Name="_shareMenuButton_"
                             VerticalAlignment="Bottom"
@@ -86,25 +86,25 @@
                         <TextBlock Grid.Column="0"
                                    x:Name="_accountName_"
                                    Style="{StaticResource TextStyle5}"
-                                   Text="{x:Bind _account._bestName3, Mode=OneWay}" />
+                                   Text="{x:Bind _bestName3, Mode=OneWay}" />
                         <TextBlock Grid.Column="1"
                                    x:Name="_registrationState_"
                                    Margin="0,0,22,0"
                                    HorizontalAlignment="Right"
                                    FontSize="12"
                                    FontWeight="Bold"
-                                   Foreground="{x:Bind _account, Converter={StaticResource _AccountRegistrationStateToForeground_}, Mode=OneWay}"
-                                   Text="{x:Bind _account, Converter={StaticResource _AccountRegistrationStateToString_}, Mode=OneWay}" />
+                                   Foreground="{x:Bind _id, Converter={StaticResource _AccountRegistrationStateToForeground_}, Mode=OneWay}"
+                                   Text="{x:Bind _id, Converter={StaticResource _AccountRegistrationStateToString_}, Mode=OneWay}"/>
                     </Grid>
                     <Grid>
                         <TextBlock x:Name="_ringID_"
                                    Width="160"
                                    Style="{StaticResource TextStyle6}"
-                                   Text="{x:Bind _account.ringID_, Mode=OneWay}"
+                                   Text="{x:Bind _ringId, Mode=OneWay}"
                                    TextTrimming="CharacterEllipsis"
-                                   Visibility="{x:Bind _account.ringID_, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}">
+                                   Visibility="{x:Bind _ringId, Converter={StaticResource _CollapseEmptyString_}, Mode=OneWay}">
                             <ToolTipService.ToolTip>
-                                <TextBlock Text="{x:Bind _account.ringID_, Mode=OneWay}" />
+                                <TextBlock Text="{x:Bind _ringId, Mode=OneWay}" />
                             </ToolTipService.ToolTip>
                         </TextBlock>
                     </Grid>
@@ -114,13 +114,13 @@
                                 Height="14"
                                 Padding="0"
                                 Style="{StaticResource BorderStyle2}"
-                                Visibility="{x:Bind _account._allUnread, Converter={StaticResource _MoreThanZeroToVisibility_}, Mode=OneWay}">
+                                Visibility="{x:Bind _id, Converter={StaticResource _MoreThanZeroToVisibility_}, Mode=OneWay}">
                             <TextBlock VerticalAlignment="Bottom"
                                        FontSize="12"
                                        Style="{StaticResource TextStyle3}"
-                                       Text="{x:Bind _account, Converter={StaticResource _UnreadAccountNotificationsString_}, ConverterParameter=Summary, Mode=OneWay}">
+                                       Text="{x:Bind _id, Converter={StaticResource _UnreadAccountNotificationsString_}, ConverterParameter=Summary, Mode=OneWay}">
                                 <ToolTipService.ToolTip>
-                                    <TextBlock Text="{x:Bind _account, Converter={StaticResource _UnreadAccountNotificationsString_}, Mode=OneWay}" />
+                                    <TextBlock Text="{x:Bind _id, Converter={StaticResource _UnreadAccountNotificationsString_}, Mode=OneWay}" />
                                 </ToolTipService.ToolTip>
                             </TextBlock>
                             <Border.RenderTransform>
@@ -955,7 +955,7 @@
                              Width="320"
                              Background="{StaticResource RingBlueLightBrush}"
                              ItemContainerStyle="{StaticResource contactsListBoxStyle}"
-                             ItemTemplate="{StaticResource AccountListItemsTemplate}"
+                             ItemTemplate="{StaticResource AccountItemsTemplate}"
                              SelectionChanged="_accountList__SelectionChanged" />
                 </ScrollViewer>
                 <StackPanel Grid.Row="2"

@@ -32,6 +32,8 @@ using namespace Windows::UI::Notifications;
 using namespace Windows::Data::Xml::Dom;
 using namespace Windows::UI::ViewManagement;
 
+using namespace std::placeholders;
+
 namespace RingClientUWP
 {
 
@@ -55,7 +57,6 @@ delegate void RegistrationStateRegistered(const std::string& accountId);
 delegate void RegistrationStateUnregistered(const std::string& accountId);
 delegate void RegistrationStateTrying(const std::string& accountId);
 delegate void SetOverlayStatusText(String^ statusText, String^ color);
-delegate void CallsListRecieved(const std::vector<std::string>& callsList);
 delegate void AudioMuted(const std::string& callId, bool state);
 delegate void VideoMuted(const std::string& callId, bool state);
 delegate void FullScreenToggled(bool state);
@@ -70,12 +71,14 @@ delegate void VCardUpdated(Contact^ owner);
 delegate void ShareRequested();
 delegate void NameRegistered(bool status, String^ accountId);
 
-using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
-using namespace std::placeholders;
-
 public ref class RingD sealed
 {
 public:
+    using AccountDetails = std::map<std::string, std::string>;
+    using AccountDetailsBlob = std::map<std::string, AccountDetails>;
+    using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
+    using SignalHandler = std::map<std::string, SharedCallback>;
+
     /* properties */
     static property RingD^ instance {
         RingD^ get() {
@@ -155,25 +158,13 @@ public:
     property bool isCtrlPressed;
     property bool isShiftPressed;
 
-    /* functions */
-    void cancelOutGoingCall2(String^ callId); // marche
+internal:
+
+    void addContactFromDaemon(String^ accountId, Map<String^, String^>^ details);
+
+    void cancelOutGoingCall(String^ callId);
     void raiseWindowResized(float width, float height);
     void raiseShareRequested();
-
-internal: // why this property has to be internal and not public ?
-    property Vector<String^>^ _callIdsList
-    {
-        Vector<String^>^ get()
-        {
-            return callIdsList_;
-        }
-    }
-
-    std::map<String^, std::function<void(String^ username)>> unpoppedToasts;
-
-    using AccountDetails = std::map<std::string, std::string>;
-    using AccountDetailsBlob = std::map<std::string, AccountDetails>;
-    /* functions */
     std::string getLocalFolder();
     void registerCallbacks();
     void initDaemon(int flags);
@@ -222,7 +213,7 @@ internal: // why this property has to be internal and not public ?
     std::map<std::string, std::string> getVolatileAccountDetails(Account^ account);
     void lookUpName(const std::string& accountId, String^ name);
     void lookUpAddress(const std::string& accountId, String^ address);
-    std::string registeredName(Account^ account);
+    String^ getRegisteredName(String^ accountId);
     void removeContact(const std::string & accountId, const std::string& uri);
     void sendContactRequest(const std::string& accountId, const std::string& uri, const std::string& payload);
     void raiseMessageDataLoaded();
@@ -238,8 +229,7 @@ internal: // why this property has to be internal and not public ?
     void ShowIMToast(bool background, String^ from, String^ payload, String^ name = nullptr);
     void HideToast(ToastNotification^ toast);
 
-    /* TODO : move members */
-    String ^ currentCallId; // to save ongoing call id during visibility change
+    std::map<String^, std::function<void(String^ username)>> unpoppedToasts;
 
     /* events */
     event IncomingCall^ incomingCall;
@@ -259,7 +249,6 @@ internal: // why this property has to be internal and not public ?
     event RegistrationStateUnregistered^ registrationStateUnregistered;
     event RegistrationStateTrying^ registrationStateTrying;
     event SetOverlayStatusText^ setOverlayStatusText;
-    event CallsListRecieved^ callsListRecieved; // est implemente a la base pour regler le probleme du boutton d'appel qui est present lorsqu'un appel est en cours, mais il n'est pas utilise. Voir si ca peut servir a autre chose
     event AudioMuted^ audioMuted;
     event VideoMuted^ videoMuted;
     event FullScreenToggled^ fullScreenToggled;
@@ -281,7 +270,6 @@ private:
     RingD(); // singleton
 
     void InternetConnectionChanged(Platform::Object^ sender);
-    //CallStatus translateCallStatus(String^ state);
 
     /* members */
     Windows::UI::Core::CoreDispatcher^ dispatcher;
@@ -305,13 +293,13 @@ private:
     StartingStatus startingStatus_ = StartingStatus::NORMAL;
     Ringtone^ ringtone_;
 
-    ToastNotification^ toastText;
-    ToastNotification^ toastCall;
-    Windows::UI::Notifications::ToastNotifier^ toaster;
+    ToastNotification^ toastText_;
+    ToastNotification^ toastCall_;
+    ToastNotifier^ toaster_;
 
-    std::map<std::string, SharedCallback> callHandlers;
-    std::map<std::string, SharedCallback> configurationHandlers;
-    std::map<std::string, SharedCallback> presenceHandlers;
-    std::map<std::string, SharedCallback> videoHandlers;
+    SignalHandler callHandlers;
+    SignalHandler configurationHandlers;
+    SignalHandler presenceHandlers;
+    SignalHandler videoHandlers;
 };
 }

@@ -16,7 +16,6 @@
  * You should have received a copy of the GNU General Public License       *
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.   *
  **************************************************************************/
-
 #include "pch.h"
 
 #include "ContactListModel.h"
@@ -24,8 +23,11 @@
 #include "Contact.h"
 #include "RingD.h"
 #include "FileUtils.h"
+#include "AccountItemsViewModel.h"
 
 #include "presencemanager_interface.h"
+
+#include <memory>
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::Data::Json;
@@ -46,7 +48,7 @@ ContactListModel::ContactListModel(String^ account) : m_Owner(account)
         ref new RingClientUWP::RegisteredNameFound(this, &ContactListModel::OnregisteredNameFound);
 }
 
-Contact^ // refacto : remove "byName"
+RingClientUWP::Contact^ // refacto : remove "byName"
 ContactListModel::findContactByName(String^ name)
 {
     auto trimmedName = Utils::Trim(name);
@@ -57,7 +59,7 @@ ContactListModel::findContactByName(String^ name)
     return nullptr;
 }
 
-Contact^
+RingClientUWP::Contact^
 ContactListModel::findContactByRingId(String^ ringId)
 {
     for each (Contact^ contact in contactsList_)
@@ -67,7 +69,7 @@ ContactListModel::findContactByRingId(String^ ringId)
     return nullptr;
 }
 
-Contact^
+RingClientUWP::Contact^
 ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustStatus, bool isIncognitoContact, ContactStatus contactStatus)
 {
     auto trimmedName = Utils::Trim(name);
@@ -243,7 +245,7 @@ ContactListModel::Destringify(String^ data)
 }
 
 void
-ContactListModel::deleteContact(Contact ^ contact)
+ContactListModel::deleteContact(RingClientUWP::Contact ^ contact)
 {
     unsigned int index;
 
@@ -259,7 +261,7 @@ ContactListModel::deleteContact(Contact ^ contact)
 }
 
 void
-ContactListModel::modifyContact(Contact^ contact)
+ContactListModel::modifyContact(RingClientUWP::Contact^ contact)
 {
     AccountsViewModel::instance->raiseContactDataModified(m_Owner, contact);
 }
@@ -275,4 +277,57 @@ ContactListModel::OnregisteredNameFound(RingClientUWP::LookupStatus status,  con
             }
         }
     }
+}
+
+/////////////////////////////
+//
+// NEW
+//
+/////////////////////////////
+
+ContactItemList::ContactItemList(String^ accountId)
+    : accountId_(accountId)
+{
+    contactItems_ = ref new Vector<ContactItem^>();
+}
+
+ContactItem^
+ContactItemList::addItem(Map<String^, String^>^ details)
+{
+    // Order is not crucial here, as this model only manages an accounts
+    // collection of control items, each of which wrap a contact object,
+    // and is not responsable for the view at all.
+    contactItems_->Append(ref new ContactItem(details));
+    return nullptr;
+}
+
+ContactItem^
+ContactItemList::findItem(String^ uri)
+{
+    for each (ContactItem^ item in contactItems_) {
+        if (item->_uri == uri)
+            return item;
+    }
+
+    return nullptr;
+}
+
+ContactItem^
+ContactItemList::findItemByAlias(String^ alias)
+{
+    for each (ContactItem^ item in contactItems_) {
+        if (item->_alias == alias)
+            return item;
+    }
+
+    return nullptr;
+}
+
+void
+ContactItemList::removeItem(String^ uri)
+{
+    auto item = findItem(uri);
+    unsigned int index;
+    contactItems_->IndexOf(item, &index);
+    contactItems_->RemoveAt(index);
 }

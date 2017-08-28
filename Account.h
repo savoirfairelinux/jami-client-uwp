@@ -234,7 +234,7 @@ struct Account
     bool                upnpEnabled;
     bool                turnEnabled;
     std::string         turnAddress;
-    bool                publicDhtInCalls;
+    bool                dhtPublicInCalls;
     // SIP specific
     std::string         sipPassword;
     //
@@ -246,12 +246,9 @@ struct Account
     //
     RegistrationState   registrationState;
 
-    std::string         ringId;
+    std::string         registeredName;
     std::string         deviceId;
     std::string         deviceName;
-
-    // contacts
-    std::vector<std::shared_ptr<Models::Contact>> contacts;
 
 };
 

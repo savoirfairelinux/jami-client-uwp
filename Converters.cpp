@@ -22,6 +22,7 @@
 #include "TimeUtils.h"
 #include "ResourceManager.h"
 #include "Converters.h"
+#include "AccountItemsViewModel.h"
 
 using namespace RingClientUWP;
 using namespace Converters;
@@ -179,23 +180,24 @@ OneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName ta
 Object^
 UnreadAccountNotificationsString::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto account = static_cast<Account^>(value);
+    auto unreadMessages = AccountItemsViewModel::instance->unreadMessages(static_cast<String^>(value));
+    auto unreadContactRequests = AccountItemsViewModel::instance->unreadContactRequests(static_cast<String^>(value));
     String^ notificationString;
     std::string notification_string;
     std::string description;
     if (static_cast<String^>(parameter) == "Summary") {
-        notification_string = std::to_string(account->_unreadMessages + account->_unreadContactRequests);
+        notification_string = std::to_string(unreadMessages + unreadContactRequests);
     }
     else {
-        if (account->_unreadMessages) {
-            description = account->_unreadMessages == 1 ? " Message" : " Messages";
-            notification_string.append(std::to_string(account->_unreadMessages) + description);
+        if (unreadMessages) {
+            description = unreadMessages == 1 ? " Message" : " Messages";
+            notification_string.append(std::to_string(unreadMessages) + description);
         }
-        if (account->_unreadContactRequests) {
-            if (account->_unreadMessages)
+        if (unreadContactRequests) {
+            if (unreadMessages)
                 notification_string.append(", ");
-            description = account->_unreadContactRequests == 1 ? " Contact request" : " Contact requests";
-            notification_string.append(std::to_string(account->_unreadContactRequests) + description);
+            description = unreadContactRequests == 1 ? " Contact request" : " Contact requests";
+            notification_string.append(std::to_string(unreadContactRequests) + description);
         }
     }
     return Utils::toPlatformString(notification_string);
@@ -213,7 +215,10 @@ MoreThanOneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::Typ
 Object^
 MoreThanZeroToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
 {
-    if (static_cast<unsigned>(value) > 0)
+    auto unreadMessages = AccountItemsViewModel::instance->unreadMessages(static_cast<String^>(value));
+    auto unreadContactRequests = AccountItemsViewModel::instance->unreadContactRequests(static_cast<String^>(value));
+
+    if (unreadMessages + unreadContactRequests > 0)
         return Windows::UI::Xaml::Visibility::Visible;
 
     return  Windows::UI::Xaml::Visibility::Collapsed;
@@ -246,7 +251,7 @@ SelectedAccountToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop:
     auto callStatus = SmartPanelItemsViewModel::instance->findItem(contact)->_callStatus;
     auto isCall = (callStatus != CallStatus::NONE && callStatus != CallStatus::ENDED) ? true : false;
 
-    if (contact->_accountIdAssociated == AccountListItemsViewModel::instance->getSelectedAccountId() || isCall)
+    if (contact->_accountIdAssociated == AccountItemsViewModel::instance->getSelectedAccountId() || isCall)
         return Windows::UI::Xaml::Visibility::Visible;
 
     return  Windows::UI::Xaml::Visibility::Collapsed;
@@ -288,8 +293,8 @@ ContactAccountTypeToVisibility::Convert(Object ^ value, TypeName targetType, Obj
 {
     auto contact = static_cast<Contact^>(value);
     auto parameterString = static_cast<String^>(parameter);
-    auto associatedAccount = AccountsViewModel::instance->findItem(contact->_accountIdAssociated);
-    if (associatedAccount->accountType_ == parameterString)
+    auto associatedAccount = AccountItemsViewModel::instance->findItem(contact->_accountIdAssociated);
+    if (associatedAccount->_accountType == parameterString)
         return VIS::Visible;
     return VIS::Collapsed;
 }
@@ -339,18 +344,16 @@ HasAvatarToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ par
 Object^
 AccountRegistrationStateToString::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto account = static_cast<Account^>(value);
+    auto accountItem = AccountItemsViewModel::instance->findItem(static_cast<String^>(value));
 
-    if (!account->_active) {
+    if (!accountItem->_enabled) {
         return "Disabled";
     }
-    else {
-        if (account->accountType_ == "SIP") {
-            return "Ready";
-        }
-        if (account->_registrationState == RegistrationState::REGISTERED) {
-            return "Online";
-        }
+    if (accountItem->_accountType == "SIP") {
+        return "Ready";
+    }
+    if (accountItem->_registrationState == RegistrationState::REGISTERED) {
+        return "Online";
     }
     return "Offline";
 }
@@ -358,13 +361,12 @@ AccountRegistrationStateToString::Convert(Object ^ value, TypeName targetType, O
 Object^
 AccountRegistrationStateToForeground::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto account = static_cast<Account^>(value);
-    auto registrationState = account->_registrationState;
+    auto accountItem = AccountItemsViewModel::instance->findItem(static_cast<String^>(value));
 
-    if (!account->_active) {
+    if (!accountItem->_enabled) {
         return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));
     }
-    if (registrationState == RegistrationState::REGISTERED || account->accountType_ == "SIP") {
+    if (accountItem->_registrationState == RegistrationState::REGISTERED || accountItem->_accountType == "SIP") {
         return ref new SolidColorBrush(Utils::xaml::ColorFromString(SuccessColor));
     }
     return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));

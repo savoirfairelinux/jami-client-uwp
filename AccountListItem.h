@@ -25,7 +25,6 @@ using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
 
 #include "Account.h"
-//#include "RingDebug.h"
 #include "Globals.h"
 
 namespace RingClientUWP

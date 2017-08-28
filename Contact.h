@@ -311,34 +311,29 @@ private:
 namespace Models
 {
 
-namespace Conf
-{
-namespace Contacts
-{
-constexpr static const char ID[] = "Contact.id";
-constexpr static const char DISPLAYNAME[] = "Contact.displayName";
-constexpr static const char USERNAME[] = "Contact.username";
-constexpr static const char ALIAS[] = "Contact.alias";
-constexpr static const char RINGID[] = "Contact.ringId";
-}
-}
+using namespace RingClientUWP::Strings;
+using namespace RingClientUWP::Strings::Contact;
 
 struct Contact
 {
     Contact() { };
-    Contact(const std::string& id)
-        : id(id)
-        , displayName()
-        , alias()
-        , username()
-        , ringId()
+    Contact(const std::string& uri)
+        : uri(uri)
+        , displayName("")
+        , registeredName("")
+        , alias("")
+        , isTrusted(FALSE_STRING)
+        , type(Type::INVALID_TYPE)
+        , presence(Presence::UNKNOWN)
     { }
 
-    std::string         id;
+    const std::string   uri;
     std::string         displayName;
-    std::string         username;
+    std::string         registeredName;
     std::string         alias;
-    std::string         ringId;
+    std::string         isTrusted;
+    std::string         type;
+    std::string         presence;
 
 };
 

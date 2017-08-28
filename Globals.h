@@ -24,6 +24,38 @@ namespace RingClientUWP
 
 using namespace Platform;
 
+namespace Strings
+{
+
+namespace Contact
+{
+constexpr static const char URI[] = "Contact.uri";
+constexpr static const char DISPLAYNAME[] = "Contact.displayName";
+constexpr static const char REGISTEREDNAME[] = "Contact.registeredName";
+constexpr static const char ALIAS[] = "Contact.alias";
+constexpr static const char TRUSTED[] = "Contact.isTrusted";
+constexpr static const char TYPE[] = "Contact.type";
+
+namespace Type
+{
+constexpr static const char RING[] = "RING";
+constexpr static const char SIP[] = "SIP";
+constexpr static const char INVALID_TYPE[] = "INVALID_TYPE";
+}
+
+namespace Presence
+{
+constexpr static const char ONLINE[] = "ONLINE";
+constexpr static const char OFFLINE[] = "OFFLINE";
+constexpr static const char UNKNOWN[] = "UNKNOWN";
+}
+
+}
+
+constexpr static const char TRUE_STRING[] = "TRUE";
+constexpr static const char FALSE_STRING[] = "FALSE";
+}
+
 String^ SuccessColor = "#FF00CC6A";
 String^ ErrorColor = "#FFFF4343";
 
@@ -46,26 +78,6 @@ const std::vector<std::string> notifySmartPanelItem = {
     "_trustStatus" };
 const std::vector<std::string> notifyContactRequestItem = {
     "_isSelected" };
-const std::vector<std::string> notifyAccountItem = { "nothing" };
-    /*"_isSelected",
-    "_unreadMessages",
-    "_unreadContactRequests",
-    "_sipUsername",
-    "_sipHostname",
-    "_bestName",
-    "_bestName2",
-    "name_",
-    "ringID_",
-    "_registrationState",
-    "_upnpState",
-    "_autoAnswer",
-    "_dhtPublicInCalls",
-    "_turnEnabled",
-    "accountType_",
-    "accountID_",
-    "_deviceId",
-    "_deviceName",
-    "_active" };*/
 const std::vector<std::string> notifyConversation = { "" };
 }
 }

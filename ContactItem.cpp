@@ -38,19 +38,21 @@ ContactItem::ContactItem(Models::Contact& contact)
 
 ContactItem::ContactItem(Map<String^, String^>^ details)
 {
-    contact_ = std::make_shared<Models::Contact>();
+    using namespace Utils;
+    auto uri = toString(getDetailsStringValue(details, RingClientUWP::Strings::Contact::URI));
+    contact_ = std::make_shared<Models::Contact>(uri);
     SetDetails(details);
 }
 
 void
 ContactItem::SetDetails(Map<String^, String^>^ details)
 {
-    using namespace Models::Conf::Contacts;
+    using namespace RingClientUWP::Strings::Contact;
     using namespace Utils;
 
-    contact_->id             = toString(getDetailsStringValue(details, ID));
-    contact_->displayName    = toString(getDetailsStringValue(details, DISPLAYNAME));
-    contact_->username       = toString(getDetailsStringValue(details, USERNAME));
-    contact_->alias          = toString(getDetailsStringValue(details, ALIAS));
-    contact_->ringId         = toString(getDetailsStringValue(details, RINGID));
+    contact_->displayName       = toString(getDetailsStringValue(details, DISPLAYNAME));
+    contact_->registeredName    = toString(getDetailsStringValue(details, REGISTEREDNAME));
+    contact_->alias             = toString(getDetailsStringValue(details, ALIAS));
+    contact_->isTrusted         = toString(getDetailsStringValue(details, TRUSTED));
+    contact_->type              = toString(getDetailsStringValue(details, TYPE));
 }

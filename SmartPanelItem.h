@@ -152,15 +152,11 @@ public ref class SmartItem sealed
 public:
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
-    property String^ _id {
+    property String^ _uri {
         String^ get() {
             if (auto contact = As<ContactItem^>())
-                return contact->_id;
+                return contact->_uri;
             return nullptr;
-        }
-        void set(String^ value) {
-            if (auto contact = As<ContactItem^>())
-                contact->_id = value;
         }
     }
 
@@ -171,22 +167,24 @@ public:
             return nullptr;
         }
         void set(String^ value) {
-            if (auto contact = As<ContactItem^>())
+            if (auto contact = As<ContactItem^>()) {
                 contact->_displayName = value;
-            NotifyPropertyChanged("_displayName");
+                NotifyPropertyChanged("_displayName");
+            }
         }
     }
 
-    property String^ _username {
+    property String^ _registeredName {
         String^ get() {
             if (auto contact = As<ContactItem^>())
-                return contact->_username;
+                return contact->_registeredName;
             return nullptr;
         }
         void set(String^ value) {
-            if (auto contact = As<ContactItem^>())
-                contact->_username = value;
-            NotifyPropertyChanged("_username");
+            if (auto contact = As<ContactItem^>()) {
+                contact->_registeredName = value;
+                NotifyPropertyChanged("_registeredName");
+            }
         }
     }
 
@@ -197,22 +195,38 @@ public:
             return nullptr;
         }
         void set(String^ value) {
-            if (auto contact = As<ContactItem^>())
+            if (auto contact = As<ContactItem^>()) {
                 contact->_alias = value;
-            NotifyPropertyChanged("_alias");
+                NotifyPropertyChanged("_alias");
+            }
         }
     }
 
-    property String^ _ringId {
+    property String^ _isTrusted {
         String^ get() {
             if (auto contact = As<ContactItem^>())
-                return contact->_ringId;
+                return contact->_isTrusted;
             return nullptr;
         }
         void set(String^ value) {
+            if (auto contact = As<ContactItem^>()) {
+                contact->_isTrusted = value;
+                NotifyPropertyChanged("_isTrusted");
+            }
+        }
+    }
+
+    property String^ _type {
+        String^ get() {
             if (auto contact = As<ContactItem^>())
-                contact->_ringId = value;
-            NotifyPropertyChanged("_ringId");
+                return contact->_type;
+            return nullptr;
+        }
+        void set(String^ value) {
+            if (auto contact = As<ContactItem^>()) {
+                contact->_type = value;
+                NotifyPropertyChanged("_type");
+            }
         }
     }
 

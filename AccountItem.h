@@ -18,10 +18,14 @@
 #pragma once
 
 #include "Utils.h"
+#include "Account.h"
+#include "ContactListModel.h"
 
 using namespace Platform;
 using namespace Windows::UI::Xaml;
 using namespace Windows::UI::Xaml::Data;
+
+using namespace Models;
 
 namespace RingClientUWP
 {
@@ -41,6 +45,8 @@ public:
             String^ bestName;
             if (_alias)
                 bestName = _alias;
+            else
+                bestName = _bestId;
             return bestName;
         }
     }
@@ -48,8 +54,8 @@ public:
     property String^ _bestName2 {
         String^ get() {
             String^ bestName;
-            if (_accountType == "RING" && _username)
-                bestName = _username;
+            if (_accountType == "RING" && _registeredName)
+                bestName = _registeredName;
             return bestName;
         }
     }
@@ -59,15 +65,15 @@ public:
             String^ bestName;
             if (_alias)
                 bestName += _alias;
-            if (_accountType == "RING" && _username)
-                bestName += " (" + _username + ")";
+            if (_accountType == "RING" && _registeredName)
+                bestName += " (" + _registeredName + ")";
             return bestName;
         }
     }
 
     property String^ _bestId {
         String^ get() {
-            return (_username) ? _username : _ringId;
+            return (_registeredName) ? _registeredName : _ringId;
         }
     }
 
@@ -174,17 +180,37 @@ public:
         }
     }
 
-    property bool _publicDhtInCalls {
+    property bool _dhtPublicInCalls {
         bool get() {
-            return account_->publicDhtInCalls;
+            return account_->dhtPublicInCalls;
         }
         void set(bool value) {
-            account_->publicDhtInCalls = value;
-            NotifyPropertyChanged("_publicDhtInCalls");
+            account_->dhtPublicInCalls = value;
+            NotifyPropertyChanged("_dhtPublicInCalls");
         }
     }
 
     // SIP specific
+    property String^ _sipHostname {
+        String^ get() {
+            return Utils::toPlatformString(account_->hostname);
+        }
+        void set(String^ value) {
+            account_->hostname = Utils::toString(value);
+            NotifyPropertyChanged("_sipHostname");
+        }
+    }
+
+    property String^ _sipUsername {
+        String^ get() {
+            return Utils::toPlatformString(account_->username);
+        }
+        void set(String^ value) {
+            account_->username = Utils::toString(value);
+            NotifyPropertyChanged("_sipUsername");
+        }
+    }
+
     property String^ _sipPassword {
         String^ get() {
             return Utils::toPlatformString(account_->sipPassword);
@@ -201,6 +227,12 @@ public:
     //
     // Ring specific
     //
+    property String^ _ringId {
+        String^ get() {
+            return Utils::toPlatformString(account_->username);
+        }
+    }
+
     property RegistrationState _registrationState {
         RegistrationState get() {
             return account_->registrationState;
@@ -211,13 +243,13 @@ public:
         }
     }
 
-    property String^ _ringId {
+    property String^ _registeredName {
         String^ get() {
-            return Utils::toPlatformString(account_->ringId);
+            return Utils::toPlatformString(account_->registeredName);
         }
         void set(String^ value) {
-            account_->ringId = Utils::toString(value);
-            NotifyPropertyChanged("_ringId");
+            account_->registeredName = Utils::toString(value);
+            NotifyPropertyChanged("_registeredName");
         }
     }
 
@@ -241,6 +273,13 @@ public:
         }
     }
 
+    /* contact management */
+    property ContactItemList^ _contactItemList {
+        ContactItemList^ get() {
+            return contactItemList_;
+        }
+    }
+
     // selection
     property bool _isSelected {
         bool get() {
@@ -261,6 +300,9 @@ protected:
 
 private:
     std::unique_ptr<Models::Account>    account_;
+
+    ContactItemList^                    contactItemList_;
+
     bool                                isSelected_;
 };
 

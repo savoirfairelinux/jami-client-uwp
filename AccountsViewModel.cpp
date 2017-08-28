@@ -155,7 +155,7 @@ AccountsViewModel::findAccountByRingID(String ^ ringId)
 }
 
 ContactListModel^
-AccountsViewModel::getContactListModel(std::string& accountId)
+AccountsViewModel::getContactList(std::string& accountId)
 {
     if (contactListModels_->Size)
         return contactListModels_->Lookup(Utils::toPlatformString(accountId));
@@ -167,7 +167,7 @@ AccountsViewModel::unreadMessages(String ^ accountId)
 {
     int messageCount = 0;
     auto acceptIncognitoMessages = findItem(accountId)->_dhtPublicInCalls;
-    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+    if (auto contactListModel = getContactList(Utils::toString(accountId))) {
         for each (auto contact in contactListModel->_contactsList) {
             if (acceptIncognitoMessages || contact->_trustStatus == TrustStatus::TRUSTED)
                 messageCount += contact->_unreadMessages;
@@ -180,7 +180,7 @@ int
 AccountsViewModel::unreadContactRequests(String ^ accountId)
 {
     int contactRequestCount = 0;
-    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+    if (auto contactListModel = getContactList(Utils::toString(accountId))) {
         for each (auto contact in contactListModel->_contactsList) {
             if (contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
                 contactRequestCount += contact->_unreadContactRequest ? 1 : 0;
@@ -194,7 +194,7 @@ int
 AccountsViewModel::bannedContacts(String^ accountId)
 {
     int bannedContacts = 0;
-    if (auto contactListModel = getContactListModel(Utils::toString(accountId))) {
+    if (auto contactListModel = getContactList(Utils::toString(accountId))) {
         for each (auto contact in contactListModel->_contactsList) {
             if (contact->_trustStatus == TrustStatus::BLOCKED) {
                 bannedContacts++;
@@ -218,7 +218,7 @@ AccountsViewModel::activeAccounts()
 void
 AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRingId, String ^ payload)
 {
-    auto contactListModel = getContactListModel(Utils::toString(accountId));
+    auto contactListModel = getContactList(Utils::toString(accountId));
 
     auto contact = contactListModel->findContactByRingId(fromRingId);
 
@@ -261,7 +261,7 @@ AccountsViewModel::OnincomingMessage(String ^callId, String ^payload)
     auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);
     auto contact = item->_contact;
-    auto contactListModel = getContactListModel(Utils::toString(contact->_accountIdAssociated));
+    auto contactListModel = getContactList(Utils::toString(contact->_accountIdAssociated));
 
     /* the contact HAS TO BE already registered */
     if (contact) {
