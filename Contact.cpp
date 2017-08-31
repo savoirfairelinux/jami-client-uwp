@@ -33,6 +33,7 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 using namespace ViewModel;
+using namespace Utils::profile;
 
 Contact::Contact(   String^ accountId,
                     String^ name,
@@ -44,7 +45,7 @@ Contact::Contact(   String^ accountId,
                     bool isIncognitoContact,
                     String^ avatarColorString)
 {
-    vCard_ = ref new VCardUtils::VCard(this, accountId);
+    vCard_ = ref new VCard(this, accountId);
 
     name_   = name;
     ringID_ = ringID;
@@ -212,7 +213,7 @@ Contact::saveConversationToFile()
     }
 }
 
-VCardUtils::VCard^
+VCard^
 Contact::getVCard()
 {
     return vCard_;

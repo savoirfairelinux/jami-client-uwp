@@ -20,6 +20,8 @@
 
 #include "VCardUtils.h"
 
+using namespace RingClientUWP::Utils::profile;
+
 namespace RingClientUWP
 {
 
@@ -58,7 +60,7 @@ public:
     void                    load();
     String^                 Stringify();
     void                    Destringify(String^ data);
-    VCardUtils::VCard^      getVCard();
+    VCard^                  getVCard();
     void                    saveProfileToVCard();
 
     void                    raiseSelectIndex(int index);
@@ -72,7 +74,7 @@ internal:
 
 private:
     bool loaded_;
-    VCardUtils::VCard^ vCard_;
+    VCard^ vCard_;
     UserPreferences();
 };
 

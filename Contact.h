@@ -272,7 +272,7 @@ public:
 
     property bool _isIncognitoContact;
 
-    VCardUtils::VCard^ getVCard();
+    Utils::profile::VCard^ getVCard();
 
 internal:
     void        saveConversationToFile();
@@ -285,7 +285,7 @@ protected:
     void NotifyPropertyChanged(String^ propertyName);
 
 private:
-    VCardUtils::VCard^ vCard_;
+    Utils::profile::VCard^ vCard_;
     Conversation^ conversation_;
     Visibility notificationNewMessage_;
     unsigned int unreadMessages_;

@@ -42,12 +42,13 @@ using namespace Windows::UI::Xaml::Media::Imaging;
 using namespace RingClientUWP;
 using namespace Platform;
 using namespace Configuration;
+using namespace Utils::profile;
 
 UserPreferences::UserPreferences()
 {
     loaded_ = false;
     profileImageLoaded = false;
-    vCard_ = ref new VCardUtils::VCard(nullptr, nullptr);
+    vCard_ = ref new VCard(nullptr, nullptr);
     PREF_PROFILE_HASPHOTO = false;
     PREF_PROFILE_UID = stoull(Utils::genID(0LL, 9999999999999LL));
 }
@@ -127,7 +128,7 @@ UserPreferences::Destringify(String^ data)
     JsonArray^ preferencesList = jsonObject->GetNamedArray("Account.index", ref new JsonArray());
 }
 
-VCardUtils::VCard^
+VCard^
 UserPreferences::getVCard()
 {
     return vCard_;
@@ -143,14 +144,14 @@ void
 UserPreferences::saveProfileToVCard()
 {
     std::map<std::string, std::string> vcfData;
-    vcfData[VCardUtils::Property::UID] = std::to_string(PREF_PROFILE_UID);
+    vcfData[Property::UID] = std::to_string(PREF_PROFILE_UID);
     std::string imageFile(RingD::instance->getLocalFolder() + "\\.profile\\profile_image.png");
     std::basic_ifstream<uint8_t> stream(imageFile, std::ios::in | std::ios::binary);
     auto eos = std::istreambuf_iterator<uint8_t>();
     auto buffer = std::vector<uint8_t>(std::istreambuf_iterator<uint8_t>(stream), eos);
     auto accountItem = ViewModel::AccountItemsViewModel::instance->_selectedItem;
-    vcfData[VCardUtils::Property::FN] = accountItem ? Utils::toString(accountItem->_alias) : "Unknown";
-    vcfData[VCardUtils::Property::PHOTO] = Utils::Base64::encode( buffer );
+    vcfData[Property::FN] = accountItem ? Utils::toString(accountItem->_alias) : "Unknown";
+    vcfData[Property::PHOTO] = Utils::Base64::encode( buffer );
     vCard_->setData(vcfData);
     vCard_->saveToFile();
 }

@@ -221,7 +221,7 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
                             RingD::instance->lookUpAddress(accountId, Utils::toPlatformString(ringId));
 
                             auto vcard = contact->getVCard();
-                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payload);
+                            auto parsedPayload = profile::parseContactRequestPayload(payload);
                             std::string vcpart;
                             try {
                                 vcpart.assign(parsedPayload.at("VCARD"));
@@ -865,9 +865,9 @@ RingD::handleIncomingMessage(   const std::string& callId,
     auto item = SmartPanelItemsViewModel::instance->findItemByRingID(from2);
     Contact^ contact;
 
-    static const unsigned int profileSize = VCardUtils::PROFILE_VCF.size();
+    static const unsigned int profileSize = profile::PROFILE_VCF.size();
     for (auto i : payloads) {
-        if (i.first.compare(0, profileSize, VCardUtils::PROFILE_VCF) == 0) {
+        if (i.first.compare(0, profileSize, profile::PROFILE_VCF) == 0) {
             if (item) {
                 contact = item->_contact;
                 contact->getVCard()->receiveChunk(i.first, i.second);
@@ -1266,7 +1266,7 @@ RingD::registerCallbacks()
                         if (contact->_trustStatus == TrustStatus::CONTACT_REQUEST_SENT) {
                             // get the vcard first
                             auto vcard = contact->getVCard();
-                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                            auto parsedPayload = profile::parseContactRequestPayload(payloadString);
                             vcard->setData(parsedPayload.at("VCARD"));
                             vcard->completeReception();
 
@@ -1288,7 +1288,7 @@ RingD::registerCallbacks()
                     RingD::instance->lookUpAddress(account_id, Utils::toPlatformString(from));
 
                     auto vcard = contact->getVCard();
-                    auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                    auto parsedPayload = profile::parseContactRequestPayload(payloadString);
                     vcard->setData(parsedPayload.at("VCARD"));
                     vcard->completeReception();
 

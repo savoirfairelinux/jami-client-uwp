@@ -31,7 +31,8 @@
 
 using namespace RingClientUWP;
 using namespace ViewModel;
-using namespace VCardUtils;
+using namespace Utils;
+using namespace Utils::profile;
 
 using namespace Windows::UI::Core;
 
@@ -46,7 +47,7 @@ getBetweenTokens(   const std::string& str,
 }
 
 std::map<std::string, std::string>
-VCardUtils::parseContactRequestPayload(const std::string& payload)
+Utils::profile::parseContactRequestPayload(const std::string& payload)
 {
     std::map<std::string, std::string> map;
 
@@ -137,11 +138,6 @@ VCard::parseFromString()
 
     m_mParts[Property::FN] = getVCardValue(m_data, "FN:");
     MSG_(m_mParts[Property::FN]);
-
-    while (std::getline(_data, _line)) {
-        if (_line.find("PHOTO;") != std::string::npos)
-            break;
-    }
 
     while (std::getline(_data, _line)) {
         if (_line.find("PHOTO;") != std::string::npos)

@@ -29,30 +29,32 @@ namespace RingClientUWP
 
 ref class Contact;
 
-namespace VCardUtils
+namespace Utils
+{
+namespace profile
 {
 
 const std::string PROFILE_VCF = "x-ring/ring.profile.vcard";
 
 struct Symbols {
-    constexpr static const char* BEGIN_TOKEN            =   "BEGIN:VCARD";
-    constexpr static const char* END_TOKEN              =   "END:VCARD";
-    constexpr static const char* END_LINE_TOKEN         =   "\n";
-    constexpr static const char* ID_TOKEN               =   "id=";
-    constexpr static const char* PART_TOKEN             =   "part=";
-    constexpr static const char* OF_TOKEN               =   "of=";
-    constexpr static const char* SEPERATOR1             =   ";";
-    constexpr static const char* SEPERATOR2             =   ":";
-    constexpr static const char* PHOTO_ENC              =   "ENDCODING=BASE64";
-    constexpr static const char* PHOTO_TYPE             =   "TYPE=PNG";
+    constexpr static const char* BEGIN_TOKEN = "BEGIN:VCARD";
+    constexpr static const char* END_TOKEN = "END:VCARD";
+    constexpr static const char* END_LINE_TOKEN = "\n";
+    constexpr static const char* ID_TOKEN = "id=";
+    constexpr static const char* PART_TOKEN = "part=";
+    constexpr static const char* OF_TOKEN = "of=";
+    constexpr static const char* SEPERATOR1 = ";";
+    constexpr static const char* SEPERATOR2 = ":";
+    constexpr static const char* PHOTO_ENC = "ENDCODING=BASE64";
+    constexpr static const char* PHOTO_TYPE = "TYPE=PNG";
 };
 
 struct Property {
-    constexpr static const char* UID                    =   "UID";
-    constexpr static const char* VERSION                =   "VERSION";
-    constexpr static const char* FN                     =   "FN";
-    constexpr static const char* PHOTO                  =   "PHOTO";
-    constexpr static const char* X_RINGACCOUNT          =   "X-RINGACCOUNTID";
+    constexpr static const char* UID = "UID";
+    constexpr static const char* VERSION = "VERSION";
+    constexpr static const char* FN = "FN";
+    constexpr static const char* PHOTO = "PHOTO";
+    constexpr static const char* X_RINGACCOUNT = "X-RINGACCOUNTID";
 };
 
 public ref class VCard sealed
@@ -85,5 +87,6 @@ private:
 
 std::map<std::string, std::string> parseContactRequestPayload(const std::string& payload);
 
+}
 }
 }

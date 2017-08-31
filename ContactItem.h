@@ -83,7 +83,7 @@ public:
     }
 
     // from db or elsewhere
-    property VCardUtils::VCard^ _vCard;
+    property Utils::profile::VCard^ _vCard;
     property unsigned _unreadMessages;
     property unsigned _unreadContactRequest;
     property int _presenceStatus;
