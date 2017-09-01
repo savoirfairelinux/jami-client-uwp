@@ -27,6 +27,18 @@ using namespace Platform;
 namespace Strings
 {
 
+namespace Account
+{
+
+namespace Type
+{
+constexpr static const char RING[] = "RING";
+constexpr static const char SIP[] = "SIP";
+constexpr static const char INVALID_TYPE[] = "INVALID_TYPE";
+}
+
+}
+
 namespace Contact
 {
 constexpr static const char URI[] = "Contact.uri";

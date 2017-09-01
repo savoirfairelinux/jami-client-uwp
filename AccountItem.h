@@ -96,6 +96,7 @@ public:
         void set(String^ value) {
             account_->username = Utils::toString(value);
             NotifyPropertyChanged("_username");
+            NotifyPropertyChanged("_ringId");
         }
     }
 
@@ -116,6 +117,8 @@ public:
         void set(String^ value) {
             account_->alias = Utils::toString(value);
             NotifyPropertyChanged("_alias");
+            NotifyPropertyChanged("_bestName");
+            NotifyPropertyChanged("_bestName3");
         }
     }
 
@@ -125,7 +128,6 @@ public:
         }
         void set(String^ value) {
             account_->accountType = Utils::toString(value);
-            NotifyPropertyChanged("_accountType");
         }
     }
 
@@ -240,6 +242,7 @@ public:
         void set(RegistrationState value) {
             account_->registrationState = value;
             NotifyPropertyChanged("_registrationState");
+            NotifyPropertyChanged("_id");
         }
     }
 
@@ -250,6 +253,8 @@ public:
         void set(String^ value) {
             account_->registeredName = Utils::toString(value);
             NotifyPropertyChanged("_registeredName");
+            NotifyPropertyChanged("_bestName2");
+            NotifyPropertyChanged("_bestName3");
         }
     }
 

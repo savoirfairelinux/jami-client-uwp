@@ -221,8 +221,8 @@ internal:
     void revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId);
     void showLoadingOverlay(String^ text, String^ color);
     void hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds = 2000);
-    void OnaccountAdded(const std::string& accountId);
-    void OnaccountUpdated();
+    void onAccountAdded(const std::string& accountId);
+    void onAccountUpdated();
     void OnaccountDeleted();
 
     void ShowCallToast(bool background, String^ callId, String^ name = nullptr);

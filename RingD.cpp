@@ -564,11 +564,11 @@ RingD::updateAccount(String^ accountId)
         accountDetails[DRing::Account::ConfProperties::AUTOANSWER] = (accountItem->_autoAnswerEnabled) ? ring::TRUE_STR : ring::FALSE_STR;
 
         bool userNameAdded = false;
-        auto newUsername = accountItem->_username;
+        auto newUsername = accountItem->_registeredName;
         if (accountDetails[DRing::Account::ConfProperties::TYPE] == "RING") {
-            if (accountItem->_username != "") {
+            if (accountItem->_registeredName != "") {
                 auto oldUsername = getRegisteredName(accountItem->_id);
-                userNameAdded = newUsername == oldUsername != 0;
+                userNameAdded = !(newUsername == oldUsername);
             }
             accountDetails[DRing::Account::ConfProperties::RING_DEVICE_NAME] = Utils::toString(accountItem->_deviceName);
             accountDetails[DRing::Account::ConfProperties::UPNP_ENABLED] = (accountItem->_upnpEnabled) ? ring::TRUE_STR : ring::FALSE_STR;
@@ -586,7 +586,7 @@ RingD::updateAccount(String^ accountId)
         bool credentialsChanged = (credentials != credentialsOld);
 
         if (!detailsChanged && !credentialsChanged) {
-            OnaccountUpdated();
+            onAccountUpdated();
             return;
         }
 
@@ -602,7 +602,7 @@ RingD::updateAccount(String^ accountId)
 
         DRing::setAccountDetails(_accountId, accountDetails);
         if (userNameAdded) {
-            registerName(accountItem->_id, "", accountItem->_username);
+            registerName(accountItem->_id, "", accountItem->_registeredName);
         }
 
         Configuration::UserPreferences::instance->save();
@@ -623,6 +623,10 @@ RingD::deleteAccount(String ^ accountId)
         auto _accountId = Utils::toString(accountId);
 
         DRing::removeAccount(_accountId);
+
+        Utils::Threading::runOnUIThread([this, accountId]() {
+            AccountItemsViewModel::instance->removeItem(accountId);
+        });
     });
 }
 
@@ -1084,66 +1088,36 @@ RingD::registerCallbacks()
                     int detailsCode, const std::string& detailsStr)
         {
             MSG_("<RegistrationStateChanged>: ID = " + account_id + " state = " + state);
-            if (state == DRing::Account::States::REGISTERED) {
-                auto allAccountDetails = getAllAccountDetails();
-                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
+            auto allAccountDetails = getAllAccountDetails();
+            Utils::Threading::runOnUIThread([this, state, account_id, allAccountDetails = std::move(allAccountDetails)]() {
+                parseAccountDetails(allAccountDetails);
+                if (state == DRing::Account::States::REGISTERED) {
                     if (auto accountItem = AccountItemsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         accountItem->_registrationState = RegistrationState::REGISTERED;
-                    parseAccountDetails(allAccountDetails);
-                    subscribeBuddies();
-                    if (isAddingAccount)
-                        OnaccountAdded(account_id);
-                    else if (isUpdatingAccount)
-                        OnaccountUpdated();
-                });
-            }
-            else if (state == DRing::Account::States::UNREGISTERED) {
-                auto allAccountDetails = getAllAccountDetails();
-                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
+                    registrationStateRegistered(account_id);
+                }
+                else if (state == DRing::Account::States::UNREGISTERED) {
                     if (auto accountItem = AccountItemsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         accountItem->_registrationState = RegistrationState::UNREGISTERED;
-                    parseAccountDetails(allAccountDetails);
                     registrationStateUnregistered(account_id);
-                    if (isAddingAccount)
-                        OnaccountAdded(account_id);
-                    else if (isUpdatingAccount)
-                        OnaccountUpdated();
-                });
-            }
-            else if (state == DRing::Account::States::TRYING) {
-                auto allAccountDetails = getAllAccountDetails();
-                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
+                }
+                else if (state == DRing::Account::States::TRYING) {
                     if (auto accountItem = AccountItemsViewModel::instance->findItem(Utils::toPlatformString(account_id)))
                         accountItem->_registrationState = RegistrationState::TRYING;
-                    parseAccountDetails(allAccountDetails);
-                    subscribeBuddies();
-                    Configuration::UserPreferences::instance->load();
                     registrationStateTrying(account_id);
-                    if (isAddingAccount)
-                        OnaccountAdded(account_id);
-                    else if (isUpdatingAccount)
-                        OnaccountUpdated();
-                });
-            }
-            else if (state == DRing::Account::States::ERROR_GENERIC
-                || state == DRing::Account::States::ERROR_AUTH
-                || state == DRing::Account::States::ERROR_NETWORK
-                || state == DRing::Account::States::ERROR_HOST
-                || state == DRing::Account::States::ERROR_CONF_STUN
-                || state == DRing::Account::States::ERROR_EXIST_STUN
-                || state == DRing::Account::States::ERROR_SERVICE_UNAVAILABLE
-                || state == DRing::Account::States::ERROR_NOT_ACCEPTABLE
-                || state == DRing::Account::States::ERROR_NEED_MIGRATION
-                || state == DRing::Account::States::REQUEST_TIMEOUT) {
-                auto allAccountDetails = getAllAccountDetails();
-                Utils::Threading::runOnUIThread([this, account_id, allAccountDetails]() {
-                    parseAccountDetails(allAccountDetails);
+                }
+                else {
                     registrationStateErrorGeneric(account_id);
-                    if (isAddingAccount)
-                        OnaccountAdded(account_id);
-                    else if (isUpdatingAccount)
-                        OnaccountUpdated();
-                });
+                }
+                if (isAddingAccount) {
+                    onAccountAdded(account_id);
+                }
+                else if (isUpdatingAccount) {
+                    onAccountUpdated();
+                }
+            });
+            if (state == DRing::Account::States::REGISTERED) {
+                subscribeBuddies();
             }
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::AccountsChanged>([this]()
@@ -1154,7 +1128,7 @@ RingD::registerCallbacks()
             }
             else {
                 auto allAccountDetails = getAllAccountDetails();
-                Utils::Threading::runOnUIThread([this, allAccountDetails]() {
+                Utils::Threading::runOnUIThread([this, allAccountDetails = std::move(allAccountDetails)]() {
                     parseAccountDetails(allAccountDetails);
                 });
             }
@@ -1169,8 +1143,15 @@ RingD::registerCallbacks()
             });
             if (!res)
                 return;
+
+            // old
             auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(account_id));
             account->_username = Utils::toPlatformString(name);
+
+            // new
+            auto accountItem = AccountItemsViewModel::instance->findItem(Utils::toPlatformString(account_id));
+            accountItem->_registeredName = Utils::toPlatformString(name);
+
         }),
         DRing::exportable_callback<DRing::ConfigurationSignal::GetAppDataPath>([this](
                     const std::string& name, std::vector<std::string>* paths)
@@ -1485,7 +1466,7 @@ RingD::registerCallbacks()
 }
 
 void
-RingD::OnaccountAdded(const std::string& accountId)
+RingD::onAccountAdded(const std::string& accountId)
 {
     if (shouldRegister) {
         shouldRegister = false;
@@ -1493,13 +1474,12 @@ RingD::OnaccountAdded(const std::string& accountId)
     }
     isAddingAccount = false;
     hideLoadingOverlay("Account created successfully", SuccessColor, 2000);
-    Configuration::UserPreferences::instance->raiseSelectIndex(0);
     Configuration::UserPreferences::instance->save();
     Configuration::UserPreferences::instance->saveProfileToVCard();
 }
 
 void
-RingD::OnaccountUpdated()
+RingD::onAccountUpdated()
 {
     isUpdatingAccount = false;
     hideLoadingOverlay("Account updated successfully", SuccessColor, 500);
@@ -1597,19 +1577,6 @@ RingD::startDaemon()
             return;
         }
         else {
-            switch (_startingStatus) {
-            case StartingStatus::REGISTERING_ON_THIS_PC:
-            case StartingStatus::REGISTERING_THIS_DEVICE:
-            {
-                break;
-            }
-            case StartingStatus::NORMAL:
-            default:
-            {
-                break;
-            }
-            }
-
             /* at this point the config.yml is safe. */
             std::string tokenFile = localFolder_ + "\\creation.token";
             if (fileExists(tokenFile)) {
@@ -1619,6 +1586,12 @@ RingD::startDaemon()
             if (!isInWizard) {
                 hideLoadingOverlay("Ring started successfully", SuccessColor, 1000);
             }
+
+            auto allAccountDetails = getAllAccountDetails();
+            Utils::Threading::runOnUIThread([this, allAccountDetails = std::move(allAccountDetails)]() {
+                parseAccountDetails(allAccountDetails);
+                Configuration::UserPreferences::instance->load();
+            });
 
             while (daemonRunning) {
                 DRing::pollEvents();
