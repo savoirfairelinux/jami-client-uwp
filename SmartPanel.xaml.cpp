@@ -93,9 +93,8 @@ SmartPanel::SmartPanel()
     _incomingContactRequestList_->ItemsSource = ContactRequestItemsViewModel::instance->itemsListFiltered;
 
     /* connect delegates */
-    Configuration::UserPreferences::instance->selectIndex += ref new SelectIndex([&](int index) {
+    RingD::instance->selectIndex += ref new SelectIndex([&](int index) {
         if (_accountsList_) {
-            //auto accountsListSize = dynamic_cast<Vector<AccountListItem^>^>(_accountsList_->ItemsSource)->Size;
             auto accountsListSize = dynamic_cast<Vector<AccountItem^>^>(_accountsList_->ItemsSource)->Size;
             if (accountsListSize > index) {
                 _accountsList_->SelectedIndex = index;
@@ -185,7 +184,7 @@ SmartPanel::SmartPanel()
     RingD::instance->registrationStateTrying += ref new RingClientUWP::RegistrationStateTrying(this, &SmartPanel::OnregistrationStateChanged);
 
     RingD::instance->exportOnRingEnded += ref new RingClientUWP::ExportOnRingEnded(this, &RingClientUWP::Views::SmartPanel::OnexportOnRingEnded);
-    RingD::instance->accountUpdated += ref new RingClientUWP::AccountUpdated(this, &RingClientUWP::Views::SmartPanel::OnaccountUpdated);
+    RingD::instance->accountUpdated += ref new RingClientUWP::AccountUpdated(this, &RingClientUWP::Views::SmartPanel::onAccountUpdated);
     RingD::instance->registeredNameFound += ref new RingClientUWP::RegisteredNameFound(this, &RingClientUWP::Views::SmartPanel::OnregisteredNameFound);
 
     RingD::instance->finishCaptureDeviceEnumeration += ref new RingClientUWP::FinishCaptureDeviceEnumeration([this]() {
@@ -342,9 +341,8 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
     _accountCreationMenuScrollViewer_->ScrollToVerticalOffset(0);
 
     _createAccountYes_->IsEnabled = false;
-
     _accountTypeComboBox_->SelectedIndex = 0;
-    _RegisterStateEdition_->IsOn = true;
+    _RegisterState_->IsOn = true;
     _accountAliasTextBox_->Text = "";
     _usernameTextBox_->Text = "";
 
@@ -460,8 +458,6 @@ SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI
     updatePageContent();
     updateNotificationsState();
 
-    Configuration::UserPreferences::instance->PREF_ACCOUNT_INDEX = _accountsList_->SelectedIndex;
-    Configuration::UserPreferences::instance->PREF_ACCOUNT_ID = accountItem->_id;
     Configuration::UserPreferences::instance->save();
 }
 
@@ -763,8 +759,6 @@ void RingClientUWP::Views::SmartPanel::showLinkThisDeviceStep1()
     _addAccountNo_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 }
 
-
-
 void RingClientUWP::Views::SmartPanel::_addDevice__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     _devicesMenuGrid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
@@ -840,12 +834,14 @@ void RingClientUWP::Views::SmartPanel::_closePin__Click(Platform::Object^ sender
 
 void RingClientUWP::Views::SmartPanel::_editAccountMenuButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    _scrollViewerEditionMenu_->UpdateLayout();
-    _scrollViewerEditionMenu_->ScrollToVerticalOffset(0);
-
     auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
     if (selectedAccountItem == nullptr)
         return;
+
+    _scrollViewerEditionMenu_->UpdateLayout();
+    _scrollViewerEditionMenu_->ScrollToVerticalOffset(0);
+
+    updatePageContent();
 
     _accountAliasTextBoxEdition_->Text = selectedAccountItem->_alias;
     _accountEditionGrid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
@@ -915,7 +911,7 @@ RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platform::Ob
 
     if (selectedAccountItem->_accountType == "RING") {
         if (_RegisterStateEdition_->IsOn)
-            selectedAccountItem->_username = _usernameTextBoxEdition_->Text;
+            selectedAccountItem->_registeredName = _usernameTextBoxEdition_->Text;
         selectedAccountItem->_upnpEnabled = _upnpState_->IsOn;
         selectedAccountItem->_dhtPublicInCalls = _dhtPublicInCallsToggle_->IsOn;
         selectedAccountItem->_turnEnabled = _turnEnabledToggle_->IsOn;
@@ -945,7 +941,7 @@ void RingClientUWP::Views::SmartPanel::_cancelAccountModification__Click(Platfor
 }
 
 
-void RingClientUWP::Views::SmartPanel::OnaccountUpdated(RingClientUWP::Account ^account)
+void RingClientUWP::Views::SmartPanel::onAccountUpdated(RingClientUWP::Account ^account)
 {
     updatePageContent();
     updateNotificationsState();
@@ -1111,6 +1107,10 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
     }
     else { // if false, we are looking for a registered user (contact)
         auto contactListModel = AccountsViewModel::instance->getContactList(std::string(accountId));
+
+        if (!contactListModel)
+            return;
+
         auto contact = contactListModel->findContactByName(Utils::toPlatformString(name));
 
         // Try looking up a contact added by address
@@ -2211,7 +2211,6 @@ SmartPanel::_deleteAccountButton__Click(Platform::Object^ sender, Windows::UI::X
         auto accountId = selectedAccountItem->_id;
 
         RingD::instance->deleteAccount(accountId);
-        AccountItemsViewModel::instance->removeItem(accountId);
     })));
 
     messageDialog->DefaultCommandIndex = 1;

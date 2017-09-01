@@ -40,6 +40,7 @@ namespace RingClientUWP
 public enum class StartingStatus { NORMAL, REGISTERING_ON_THIS_PC, REGISTERING_THIS_DEVICE };
 
 /* delegates */
+delegate void SelectIndex(int index);
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, CallStatus state, int code);
 delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
@@ -221,10 +222,11 @@ internal:
     void revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId);
     void showLoadingOverlay(String^ text, String^ color);
     void hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds = 2000);
-    void OnaccountAdded(const std::string& accountId);
-    void OnaccountUpdated();
+    void onAccountAdded(const std::string& accountId);
+    void onAccountUpdated();
     void OnaccountDeleted();
-
+    void selectAccount(int index);
+    void selectAccount(String^ accountId);
     void ShowCallToast(bool background, String^ callId, String^ name = nullptr);
     void ShowIMToast(bool background, String^ from, String^ payload, String^ name = nullptr);
     void HideToast(ToastNotification^ toast);
@@ -232,6 +234,7 @@ internal:
     std::map<String^, std::function<void(String^ username)>> unpoppedToasts;
 
     /* events */
+    event SelectIndex^ selectIndex;
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
     event IncomingAccountMessage^ incomingAccountMessage;

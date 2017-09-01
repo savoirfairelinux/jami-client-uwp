@@ -56,7 +56,7 @@
                         </ToolTipService.ToolTip>
                     </Button>
                     <Grid.RenderTransform>
-                        <TranslateTransform X="244" Y="2" />
+                        <TranslateTransform X="244" Y="1" />
                     </Grid.RenderTransform>
                 </Grid>
                 <!--  edit acccount  -->

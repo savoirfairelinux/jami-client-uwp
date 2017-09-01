@@ -25,7 +25,6 @@ using namespace RingClientUWP::Utils::profile;
 namespace RingClientUWP
 {
 
-delegate void SelectIndex(int index);
 delegate void LoadProfileImage();
 
 namespace Configuration
@@ -47,7 +46,6 @@ public:
     }
 
     /* properties */
-    property int            PREF_ACCOUNT_INDEX;
     property String^        PREF_ACCOUNT_ID;
     property uint64_t       PREF_PROFILE_UID;
     property bool           PREF_PROFILE_HASPHOTO;
@@ -63,13 +61,10 @@ public:
     VCard^                  getVCard();
     void                    saveProfileToVCard();
 
-    void                    raiseSelectIndex(int index);
-
 internal:
     void                    sendVCard(std::string callID);
 
     /* events */
-    event SelectIndex^      selectIndex;
     event LoadProfileImage^ loadProfileImage;
 
 private:

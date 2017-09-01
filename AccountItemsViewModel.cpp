@@ -19,8 +19,15 @@
 
 #include "AccountItemsViewModel.h"
 
+#include "RingD.h"
+#include "RingDebug.h"
+#include "UserPreferences.h"
+
+#include "account_const.h"
+
 using namespace Windows::ApplicationModel::Core;
 using namespace Windows::UI::Core;
+using namespace Windows::Foundation::Collections;
 
 using namespace RingClientUWP;
 using namespace ViewModel;
@@ -34,6 +41,11 @@ void
 AccountItemsViewModel::addItem(String^ id, Map<String^, String^>^ details)
 {
     itemsList_->InsertAt(0, ref new AccountItem(id, details));
+    auto accountType = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::TYPE);
+    if (accountType == Utils::toPlatformString(DRing::Account::ProtocolNames::RING)) {
+        auto ringID = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::USERNAME);
+        RingD::instance->lookUpAddress(Utils::toString(id), ringID);
+    }
 }
 
 AccountItem^

@@ -40,6 +40,7 @@ using namespace Windows::Media::MediaProperties;
 using namespace Windows::UI::Xaml::Media::Imaging;
 
 using namespace RingClientUWP;
+using namespace ViewModel;
 using namespace Platform;
 using namespace Configuration;
 using namespace Utils::profile;
@@ -56,6 +57,10 @@ UserPreferences::UserPreferences()
 void
 UserPreferences::save()
 {
+    if (auto selectedAccountItem = ::AccountItemsViewModel::instance->_selectedItem) {
+        Configuration::UserPreferences::instance->PREF_ACCOUNT_ID = selectedAccountItem->_id;
+    }
+
     StorageFolder^ localfolder = ApplicationData::Current->LocalFolder;
     String^ preferencesFile = localfolder->Path + "\\" + "preferences.json";
 
@@ -81,16 +86,16 @@ UserPreferences::load()
             ref new DispatchedHandler([=]() {
             if (fileContents != nullptr) {
                 Destringify(fileContents);
-                auto index = PREF_ACCOUNT_INDEX;
+                auto index = 0;
                 if (PREF_ACCOUNT_ID != nullptr) {
                     index = ViewModel::AccountItemsViewModel::instance->getIndex(PREF_ACCOUNT_ID);
                 }
-                selectIndex(index);
+                RingD::instance->selectAccount(index);
                 if (PREF_PROFILE_HASPHOTO && !profileImageLoaded)
                     loadProfileImage();
             }
             else {
-                selectIndex(0);
+                RingD::instance->selectAccount(0);
             }
             loaded_ = true;
         }));
@@ -102,7 +107,6 @@ UserPreferences::Stringify()
 {
     JsonObject^ preferencesObject = ref new JsonObject();
 
-    preferencesObject->SetNamedValue("PREF_ACCOUNT_INDEX", JsonValue::CreateNumberValue(        PREF_ACCOUNT_INDEX   ));
     preferencesObject->SetNamedValue("PREF_ACCOUNT_ID", JsonValue::CreateStringValue(           PREF_ACCOUNT_ID));
     preferencesObject->SetNamedValue("PREF_PROFILE_HASPHOTO", JsonValue::CreateBooleanValue(    PREF_PROFILE_HASPHOTO));
     preferencesObject->SetNamedValue("PREF_PROFILE_UID",    JsonValue::CreateNumberValue(static_cast<double>(PREF_PROFILE_UID)));
@@ -116,12 +120,9 @@ UserPreferences::Destringify(String^ data)
     JsonObject^ jsonObject = JsonObject::Parse(data);
 
     PREF_ACCOUNT_ID = "";
-    PREF_ACCOUNT_INDEX = 0;
 
     if (jsonObject->HasKey("PREF_ACCOUNT_ID"))
         PREF_ACCOUNT_ID = jsonObject->GetNamedString("PREF_ACCOUNT_ID");
-    if (jsonObject->HasKey("PREF_ACCOUNT_INDEX"))
-        PREF_ACCOUNT_INDEX = static_cast<int>(jsonObject->GetNamedNumber("PREF_ACCOUNT_INDEX"));
     PREF_PROFILE_HASPHOTO = jsonObject->GetNamedBoolean("PREF_PROFILE_HASPHOTO");
     PREF_PROFILE_UID = static_cast<uint64_t>(jsonObject->GetNamedNumber( "PREF_PROFILE_UID"));
 
@@ -132,12 +133,6 @@ VCard^
 UserPreferences::getVCard()
 {
     return vCard_;
-}
-
-void
-UserPreferences::raiseSelectIndex(int index)
-{
-    selectIndex(index);
 }
 
 void

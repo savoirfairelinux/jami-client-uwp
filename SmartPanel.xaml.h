@@ -106,7 +106,7 @@ private:
     void _editAccountMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _acceptAccountModification__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _cancelAccountModification__Click(Platform::Object^ sender, RoutedEventArgs^ e);
-    void OnaccountUpdated(RingClientUWP::Account ^account);
+    void onAccountUpdated(RingClientUWP::Account ^account);
     void _passwordBoxAccountCreationCheck__PasswordChanged(Platform::Object^ sender, RoutedEventArgs^ e);
     void _accountTypeComboBox__SelectionChanged(Platform::Object^ sender, SelectionChangedEventArgs^ e);
     void _accountAliasTextBox__TextChanged(Platform::Object^ sender, TextChangedEventArgs^ e);
