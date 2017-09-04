@@ -427,7 +427,7 @@
     <value>Ignore this user&apos;s contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
-    <value>Link this device to an existing account</value>
+    <value>Enllaça aquest dispositiu a un compte ja existent</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
     <value>Cancel PIN generation</value>
@@ -556,6 +556,6 @@
     <value>Remove contact</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>Benvingut a</value>
   </data>
 </root>
