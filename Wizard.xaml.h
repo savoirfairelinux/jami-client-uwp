@@ -45,7 +45,7 @@ private:
     void _RegisterState__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _fullnameTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void collapseMenus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void OnregisteredNameFound(LookupStatus status,  const std::string& accountId, const std::string& address, const std::string& name);
+    void OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
     void _password__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _passwordCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void checkState();

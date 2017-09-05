@@ -136,7 +136,7 @@ VideoPage::VideoPage()
     });
 
     RingD::instance->incomingAccountMessage +=
-        ref new IncomingAccountMessage([&](String^ accountId, String^ from, String^ payload)
+        ref new IncomingAccountMessage([&](String^ accountId, String^ from, Map<String^, String^>^ payload)
     {
         scrollDown();
     });
@@ -199,10 +199,10 @@ VideoPage::VideoPage()
 
     RingD::instance->messageDataLoaded += ref new MessageDataLoaded([&]() { scrollDown(); });
 
-    RingD::instance->updateSmartInfo += ref new RingClientUWP::UpdateSmartInfo(this, &RingClientUWP::Views::VideoPage::OnsmartInfoUpdated);
+    RingD::instance->smartInfo += ref new RingClientUWP::SmartInfo(this, &RingClientUWP::Views::VideoPage::OnsmartInfoUpdated);
 
-    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::VideoPage::OnincomingMessage);
-    RingD::instance->incomingVideoMuted += ref new RingClientUWP::IncomingVideoMuted(this, &RingClientUWP::Views::VideoPage::OnincomingVideoMuted);
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &VideoPage::OnincomingMessage);
+    RingD::instance->incomingVideoMuted += ref new RingClientUWP::IncomingVideoMuted(this, &VideoPage::OnincomingVideoMuted);
     VideoManager::instance->captureManager()->startPreviewing += ref new RingClientUWP::StartPreviewing(this, &RingClientUWP::Views::VideoPage::OnstartPreviewing);
     VideoManager::instance->captureManager()->stopPreviewing += ref new RingClientUWP::StopPreviewing(this, &RingClientUWP::Views::VideoPage::OnstopPreviewing);
     RingD::instance->audioMuted += ref new RingClientUWP::AudioMuted(this, &RingClientUWP::Views::VideoPage::OnaudioMuted);
@@ -236,10 +236,8 @@ VideoPage::VideoPage()
 }
 
 void
-VideoPage::OnsmartInfoUpdated(const std::map<std::string, std::string>& info)
+VideoPage::OnsmartInfoUpdated(Map<String^, String^>^ smartInfo)
 {
-    auto smartInfo = Utils::convertMap(info);
-
     if (auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem)
         _si_CallId_->Text = "CallID: " + selectedItem->_callId;
 
@@ -558,7 +556,8 @@ VideoPage::WriteFrameAsSoftwareBitmapAsync(String^ id, uint8_t* buf, int width, 
 }
 
 
-void RingClientUWP::Views::VideoPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
+void
+VideoPage::OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload)
 {
     openChatPanel();
     scrollDown();
@@ -612,14 +611,16 @@ void RingClientUWP::Views::VideoPage::_btnMicrophone__Click(Platform::Object^ se
 }
 
 
-void RingClientUWP::Views::VideoPage::OnaudioMuted(const std::string &callId, bool state)
+void
+VideoPage::OnaudioMuted(String^ callId, bool state)
 {
     _txbkMicrophoneMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
                                         : Windows::UI::Xaml::Visibility::Collapsed;
 }
 
 
-void RingClientUWP::Views::VideoPage::OnvideoMuted(const std::string &callId, bool state)
+void
+VideoPage::OnvideoMuted(String^ callId, bool state)
 {
     _txbkVideoMuted_->Visibility = (state) ? Windows::UI::Xaml::Visibility::Visible
                                    : Windows::UI::Xaml::Visibility::Collapsed;
