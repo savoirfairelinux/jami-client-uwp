@@ -147,8 +147,6 @@ void RingClientUWP::Views::Wizard::_addAccountYes__Click(Platform::Object^ sende
         return;
     }
 
-    RingD::instance->_startingStatus = StartingStatus::REGISTERING_THIS_DEVICE;
-
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::Normal, ref new Windows::UI::Core::DispatchedHandler([this]() {
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
         RingD::instance->registerThisDevice(_PINTextBox_->Text, _ArchivePassword_->Password);
@@ -286,13 +284,14 @@ void RingClientUWP::Views::Wizard::collapseMenus(Platform::Object^ sender, Windo
     _showCreateAccountMenuBtn_->Visibility = Windows::UI::Xaml::Visibility::Visible;
 }
 
-void RingClientUWP::Views::Wizard::OnregisteredNameFound(LookupStatus status,  const std::string& accountId, const std::string& address, const std::string& name)
+void
+Wizard::OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name)
 {
     switch (status)
     {
     case LookupStatus::SUCCESS:
     case LookupStatus::INVALID_NAME:
-    case LookupStatus::ERRORR:
+    case LookupStatus::ERROR_GENERIC:
         _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
         isUsernameValid = false;

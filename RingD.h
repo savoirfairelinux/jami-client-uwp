@@ -37,56 +37,78 @@ using namespace std::placeholders;
 namespace RingClientUWP
 {
 
-public enum class StartingStatus { NORMAL, REGISTERING_ON_THIS_PC, REGISTERING_THIS_DEVICE };
-
-/* delegates */
-delegate void SelectIndex(int index);
+/* DRing delegates */
+/* nb: <PeerHold> forwards to <StateChange> */
 delegate void IncomingCall(String^ accountId, String^ callId, String^ from);
 delegate void StateChange(String^ callId, CallStatus state, int code);
-delegate void IncomingAccountMessage(String^ accountId, String^ from, String^ payload);
+delegate void SmartInfo(Map<String^, String^>^ smartInfo);
+delegate void AudioMuted(String^ callId, bool state);
+delegate void VideoMuted(String^ callId, bool state);
+delegate void IncomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload);
+delegate void IncomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payload);
+delegate void AccountMessageStatusChanged(String^ accountId, uint64_t messageId, String^ to, int state);
+delegate void RegistrationStateChanged(String^ accountId, String^ state, int detailsCode, String^ detailsStr);
+delegate void AccountsChanged();
+delegate void NameRegistrationEnded(String^ accountId, int state, String^ name);
+delegate void KnownDevicesChanged(String^ accountId, Map<String^, String^>^ devices);
+delegate void ExportOnRingEnded(String^ accountId, int status, String^ pin);
+delegate void RegisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
+delegate void VolatileDetailsChanged(String^ accountId, Map<String^, String^>^ details);
+delegate void IncomingTrustRequest(String^ accountId, String^ from, String^ payload, time_t received);
+delegate void ContactAdded(String^ accountId, String^ uri, bool confirmed);
+delegate void DeviceRevocationEnded(String^ accountId, String^ device, DeviceRevocationResult status);
+delegate void NewBuddyNotification(String^ accountId, String^ uri, int status, String^ lineStatus);
+delegate void DecodingStarted(String^ callId, String^ shmPath, int width, int height, bool isMixer);
+delegate void DecodingStopped(String^ callId, String^ shmPath, bool isMixer);
+delegate void ParametersChanged(String^ device);
+delegate void StartCapture(String^ device);
+delegate void StopCapture();
+
+/* Client delegates */
+delegate void SelectAccountItemIndex(int index);
 delegate void CallPlaced(String^ callId);
-delegate void IncomingMessage(String^ callId, String^ payload);
 delegate void DevicesListRefreshed(Map<String^, String^>^ deviceMap);
-delegate void ExportOnRingEnded(String^ accountId, String^ pin);
 delegate void SummonWizard();
 delegate void AccountUpdated(Account^ account);
 delegate void IncomingVideoMuted(String^ callId, bool state);
-delegate void RegisteredNameFound(LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name);
 delegate void FinishCaptureDeviceEnumeration();
 delegate void RegistrationStateErrorGeneric(const std::string& accountId);
 delegate void RegistrationStateRegistered(const std::string& accountId);
 delegate void RegistrationStateUnregistered(const std::string& accountId);
 delegate void RegistrationStateTrying(const std::string& accountId);
 delegate void SetOverlayStatusText(String^ statusText, String^ color);
-delegate void AudioMuted(const std::string& callId, bool state);
-delegate void VideoMuted(const std::string& callId, bool state);
+
 delegate void FullScreenToggled(bool state);
 delegate void WindowResized(float width, float height);
 delegate void NetworkChanged();
 delegate void MessageDataLoaded();
-delegate void UpdateSmartInfo(const std::map<std::string, std::string>& info);
+
 delegate void MessageStatusUpdated(String^ messageId, int status);
-delegate void VolatileDetailsChanged(const std::string& accountId, const std::map<std::string, std::string>& details);
-delegate void NewBuddyNotification(const std::string& accountId, const std::string& uri, int status);
+
+
 delegate void VCardUpdated(Contact^ owner);
 delegate void ShareRequested();
 delegate void NameRegistered(bool status, String^ accountId);
 
 public ref class RingD sealed
 {
-public:
-    using AccountDetails = std::map<std::string, std::string>;
-    using AccountDetailsBlob = std::map<std::string, AccountDetails>;
-    using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
-    using SignalHandler = std::map<std::string, SharedCallback>;
+/* singleton */
+private:
+    RingD();
 
-    /* properties */
+internal:
     static property RingD^ instance {
         RingD^ get() {
             static RingD^ instance_ = ref new RingD();
             return instance_;
         }
     }
+
+public:
+    using AccountDetails = std::map<std::string, std::string>;
+    using AccountDetailsBlob = std::map<std::string, AccountDetails>;
+    using SharedCallback = std::shared_ptr<DRing::CallbackWrapperBase>;
+    using SignalHandlerMap = std::map<std::string, SharedCallback>;
 
     property bool daemonInitialized {
         bool get() {
@@ -154,26 +176,20 @@ public:
         }
     }
 
-    property StartingStatus _startingStatus;
-
     property bool isCtrlPressed;
     property bool isShiftPressed;
 
 internal:
+    void init();
+    void startDaemon();
 
     void addContactFromDaemon(String^ accountId, Map<String^, String^>^ details);
-
     void cancelOutGoingCall(String^ callId);
     void raiseWindowResized(float width, float height);
     void raiseShareRequested();
     std::string getLocalFolder();
-    void registerCallbacks();
-    void initDaemon(int flags);
-    void startDaemon();
-    void init();
-    void deinit();
     AccountDetailsBlob getAllAccountDetails();
-    void parseAccountDetails(const AccountDetailsBlob& allAccountDetails);
+    void parseAccountDetails(String^ accountId, const AccountDetails& allAccountDetails);
     void subscribeBuddies();
     void sendAccountTextMessage(String^ message);
     void sendSIPTextMessage(String^ message);
@@ -186,19 +202,17 @@ internal:
     void pauseCall(const std::string& callId);
     void unPauseCall(const std::string& callId);
     CallStatus translateCallStatus(String^ state);
+    LookupStatus translateLookupStatus(int status);
+    DeviceRevocationResult translateDeviceRevocationResult(int status);
     String^ getUserName();
     void startSmartInfo(int refresh);
     void stopSmartInfo();
-    void handleIncomingMessage( const std::string& callId,
-                                const std::string& accountId,
-                                const std::string& from,
-                                const std::map<std::string, std::string>& payloads);
+    void handleIncomingMessage(String^ from, Map<String^, String^>^ payloads);
 
     void toggleFullScreen();
     void setWindowedMode();
     void setFullScreenMode();
     void connectivityChanged();
-    void onStateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
     void hangUpCall2(String^ callId);
     void pauseCall(String ^ callId);
     void unPauseCall(String ^ callId);
@@ -222,7 +236,7 @@ internal:
     void revokeDevice(const std::string& accountId, const std::string& password, const std::string& deviceId);
     void showLoadingOverlay(String^ text, String^ color);
     void hideLoadingOverlay(String^ text, String^ color, int delayInMilliseconds = 2000);
-    void onAccountAdded(const std::string& accountId);
+    void onAccountAdded(String^ accountId);
     void onAccountUpdated();
     void OnaccountDeleted();
     void selectAccount(int index);
@@ -233,19 +247,63 @@ internal:
 
     std::map<String^, std::function<void(String^ username)>> unpoppedToasts;
 
-    /* events */
-    event SelectIndex^ selectIndex;
+    /*
+    * DRing signaling
+    */
+
+    /* events (signals) */
     event IncomingCall^ incomingCall;
     event StateChange^ stateChange;
     event IncomingAccountMessage^ incomingAccountMessage;
     event IncomingMessage^ incomingMessage;
+    event AccountMessageStatusChanged^ accountMessageStatusChanged;
+    event RegistrationStateChanged^ registrationStateChanged;
+    event AccountsChanged^ accountsChanged;
+    event NameRegistrationEnded^ nameRegistrationEnded;
+    event KnownDevicesChanged^ knownDevicesChanged;
+    event ExportOnRingEnded^ exportOnRingEnded;
+    event RegisteredNameFound^ registeredNameFound;
+    event VolatileDetailsChanged^ volatileDetailsChanged;
+    event IncomingTrustRequest^ incomingTrustRequest;
+    event ContactAdded^ contactAdded;
+    event DeviceRevocationEnded^ deviceRevocationEnded;
+    event DecodingStarted^ decodingStarted;
+    event DecodingStopped^ decodingStopped;
+    event ParametersChanged^ parametersChanged;
+    event StartCapture^ startCapture;
+    event StopCapture^ stopCapture;
+
+    /* delegates (slots) */
+    void onIncomingCall(String^ accountId, String^ callId, String^ from);
+    void onStateChange(String ^callId, CallStatus state, int code);
+    void onIncomingMessage(String^ callId, String^ from, Map<String^, String^>^ payloads);
+    void onIncomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payloads);
+    void onAccountMessageStatusChanged(String^ accountId, uint64_t messageId, String^ to, int state);
+    void onRegistrationStateChanged(String^ accountId, String^ state, int detailsCode, String^ detailsStr);
+    void onAccountsChanged();
+    void onNameRegistrationEnded(String^ accountId, int state, String^ name);
+    void onKnownDevicesChanged(String^ accountId, Map<String^, String^>^ devices);
+    void onExportOnRingEnded(String^ accountId, int status, String^ pin);
+    void onIncomingTrustRequest(String^ accountId, String^ from, String^ payload, time_t received);
+    void onContactAdded(String^ accountId, String^ uri, bool confirmed);
+    void onDeviceRevocationEnded(String^ accountId, String^ device, DeviceRevocationResult status);
+    void onDecodingStarted(String^ callId, String^ shmPath, int width, int height, bool isMixer);
+    void onDecodingStopped(String^ callId, String^ shmPath, bool isMixer);
+    void onParametersChanged(String^ device);
+    void onStartCapture(String^ device);
+    void onStopCapture();
+
+    /*
+    * Client signaling
+    */
+
+    /* events (signals) */
+    event SelectAccountItemIndex^ selectAccountItemIndex;
     event CallPlaced^ callPlaced;
     event DevicesListRefreshed^ devicesListRefreshed;
-    event ExportOnRingEnded^ exportOnRingEnded;
     event SummonWizard^ summonWizard;
     event AccountUpdated^ accountUpdated;
     event IncomingVideoMuted^ incomingVideoMuted;
-    event RegisteredNameFound^ registeredNameFound;
     event FinishCaptureDeviceEnumeration^ finishCaptureDeviceEnumeration;
     event RegistrationStateErrorGeneric^ registrationStateErrorGeneric;
     event RegistrationStateRegistered^ registrationStateRegistered;
@@ -258,21 +316,24 @@ internal:
     event WindowResized^ windowResized;
     event NetworkChanged^ networkChanged;
     event MessageDataLoaded^ messageDataLoaded;
-    event UpdateSmartInfo^ updateSmartInfo;
+    event SmartInfo^ smartInfo;
     event MessageStatusUpdated^ messageStatusUpdated;
-    event VolatileDetailsChanged^ volatileDetailsChanged;
     event NewBuddyNotification^ newBuddyNotification;
     event VCardUpdated^ vCardUpdated;
     event ShareRequested^ shareRequested;
     event NameRegistered^ nameRegistered;
 
 private:
-    Vector<String^>^ callIdsList_;
+    void InternetConnectionChanged(Object^ sender);
 
-    /* functions */
-    RingD(); // singleton
-
-    void InternetConnectionChanged(Platform::Object^ sender);
+    void initDaemon(int flags);
+    void registerCallbacks();
+    void registerCallHandlers();
+    void registerConfigurationHandlers();
+    void registerPresenceHandlers();
+    void registerVideoHandlers();
+    void connectDelegates();
+    void deinit();
 
     /* members */
     Windows::UI::Core::CoreDispatcher^ dispatcher;
@@ -293,16 +354,15 @@ private:
 
     std::string localFolder_;
     Utils::Threading::task_queue tasks_;
-    StartingStatus startingStatus_ = StartingStatus::NORMAL;
     Ringtone^ ringtone_;
 
     ToastNotification^ toastText_;
     ToastNotification^ toastCall_;
     ToastNotifier^ toaster_;
 
-    SignalHandler callHandlers;
-    SignalHandler configurationHandlers;
-    SignalHandler presenceHandlers;
-    SignalHandler videoHandlers;
+    SignalHandlerMap callHandlers;
+    SignalHandlerMap configurationHandlers;
+    SignalHandlerMap presenceHandlers;
+    SignalHandlerMap videoHandlers;
 };
 }

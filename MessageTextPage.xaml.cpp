@@ -56,11 +56,12 @@ MessageTextPage::MessageTextPage()
     InitializeComponent();
 
     /* connect to delegates */
-    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId, String^ fromRingId, String^ payload)
+    RingD::instance->incomingAccountMessage
+        += ref new IncomingAccountMessage([&](String^ accountId, String^ from, Map<String^, String^>^ payload)
     {
         scrollDown();
     });
-    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::MessageTextPage::OnincomingMessage);
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &MessageTextPage::OnincomingMessage);
 
     RingD::instance->messageDataLoaded += ref new MessageDataLoaded([&]() { scrollDown(); });
 
@@ -242,7 +243,8 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     }
 }
 
-void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
+void
+MessageTextPage::OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload)
 {
     scrollDown();
 }
