@@ -267,12 +267,12 @@ ContactListModel::modifyContact(RingClientUWP::Contact^ contact)
 }
 
 void
-ContactListModel::OnregisteredNameFound(RingClientUWP::LookupStatus status,  const std::string& accountId, const std::string &address, const std::string &name)
+ContactListModel::OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name)
 {
     if (status == LookupStatus::SUCCESS) {
         for each (Contact^ contact in contactsList_) {
-            if (contact->ringID_ == Utils::toPlatformString(address)) {
-                contact->_name = Utils::toPlatformString(name);
+            if (contact->ringID_ == address) {
+                contact->_name = name;
                 saveContactsToFile();
             }
         }

@@ -110,7 +110,6 @@ MainPage::MainPage()
         RingD::instance->isCtrlPressed = (ctrlState & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down;
         auto shiftState = CoreWindow::GetForCurrentThread()->GetKeyState(VirtualKey::LeftShift);
         RingD::instance->isShiftPressed = (shiftState & CoreVirtualKeyStates::Down) == CoreVirtualKeyStates::Down;
-        //MSG_("KEYDOWN -- isCtrlDown: " + isCtrlPressed.ToString() + " isShiftDown: " + isShiftPressed.ToString());
     });
 
     Window::Current->CoreWindow->KeyUp += ref new TypedEventHandler<CoreWindow^, KeyEventArgs^>(
@@ -204,7 +203,7 @@ RingClientUWP::MainPage::OnNavigatedTo(NavigationEventArgs ^ e)
 }
 
 void
-RingClientUWP::MainPage::showLoadingOverlay(bool load, bool modal)
+MainPage::showLoadingOverlay(bool load, bool modal)
 {
     if (!isLoading && load) {
         isLoading = true;
@@ -322,8 +321,14 @@ MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus stat
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
+    if (!item) {
+        WNG_("item not found");
+        return;
+    }
+
     switch (state) {
     /* send the user to the peer's message text page */
+    case CallStatus::NONE:
     case CallStatus::ENDED:
     {
         auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
@@ -433,31 +438,14 @@ void RingClientUWP::MainPage::OnregistrationStateErrorGeneric(const std::string&
 
 void RingClientUWP::MainPage::OnregistrationStateUnregistered(const std::string& accountId)
 {
-    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &MainPage::OnvolatileDetailsChanged);
 }
 
 void RingClientUWP::MainPage::OnregistrationStateRegistered(const std::string& accountId)
 {
-    /* do not connect those delegates before initial registration on dht is fine.
-       Otherwise your going to mess with the wizard */
-    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &RingClientUWP::MainPage::OnnameRegistred);
-    RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &MainPage::OnvolatileDetailsChanged);
 }
 
 void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
 {
-}
-
-void
-MainPage::OnnameRegistred(bool status, String ^accountId)
-{
-    showLoadingOverlay(false, false);
-}
-
-
-void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string>& details)
-{
-    showLoadingOverlay(false, false);
 }
 
 void RingClientUWP::MainPage::OnFullScreenToggled(bool state)

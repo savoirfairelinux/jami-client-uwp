@@ -131,6 +131,7 @@
                             CornerRadius="4">
                         <ContentPresenter>
                             <RichTextBlock x:Name="_msgContent_"
+                                           Loaded="_msgContent__Loaded"
                                            uc:TextBlockExtension.FormattedText="{x:Bind Payload}"
                                            Foreground="#ff303030"
                                            IsTextSelectionEnabled="True"
@@ -489,7 +490,6 @@
                          Background="{ThemeResource RingMessagePageBrush}"
                          IsSpellCheckEnabled="False"
                          IsTabStop="True"
-                         KeyDown="_messageTextBox__KeyDown"
                          ScrollViewer.VerticalScrollBarVisibility="Auto"
                          Style="{StaticResource MessageSendBox}"
                          TextChanged="_messageTextBox__TextChanged"
