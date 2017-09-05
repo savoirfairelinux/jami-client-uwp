@@ -51,7 +51,8 @@
         </Storyboard>
 
         <DataTemplate x:Key="ConversationMessageTemplate" x:DataType="local:ConversationMessage">
-            <Grid Margin="12,0,20,0" HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}">
+            <Grid Margin="12,0,20,0"
+                  HorizontalAlignment="{x:Bind FromContact, Converter={StaticResource _bubbleHorizontalAlignement_}}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="{x:Bind MessageIndex, Converter={StaticResource _MessageChainBreakToHeight_}, Mode=OneWay}" />
@@ -65,14 +66,13 @@
                         <ColumnDefinition Width="8*" />
                     </Grid.ColumnDefinitions>
                     <!--  avatar  -->
-                    <Grid Grid.Column="0"
-                          Visibility="{x:Bind MessageIndex, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
+                    <Grid Grid.Column="0" Visibility="{x:Bind MessageIndex, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
                         <Ellipse Width="36"
                                  Height="36"
-                                 Canvas.ZIndex="1"
                                  Margin="0,2,0,0"
                                  HorizontalAlignment="Center"
                                  VerticalAlignment="Top"
+                                 Canvas.ZIndex="1"
                                  Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}">
                             <Ellipse.Fill>
                                 <ImageBrush x:Name="_contactAvatar_" ImageSource="{x:Bind MessageAvatar, Mode=OneWay}" />
@@ -80,10 +80,10 @@
                         </Ellipse>
                         <Grid Width="36"
                               Height="36"
-                              Canvas.ZIndex="0"
                               Margin="0,2,0,0"
                               HorizontalAlignment="Center"
                               VerticalAlignment="Top"
+                              Canvas.ZIndex="0"
                               Visibility="{x:Bind MessageIndex, Converter={StaticResource _MessageChainBreakToVisibility_}, ConverterParameter=First}">
                             <Grid Visibility="{x:Bind FromContact, Converter={StaticResource _boolToVisibility_}}">
                                 <Ellipse x:Name="_defaultAvatar_" Fill="{x:Bind MessageAvatarColorBrush, Mode=OneWay}" />
@@ -118,6 +118,7 @@
                             CornerRadius="10">
                         <ContentPresenter>
                             <RichTextBlock x:Name="_msgContent_"
+                                           Loaded="_msgContent__Loaded"
                                            uc:TextBlockExtension.FormattedText="{x:Bind Payload}"
                                            Foreground="#ff303030"
                                            IsTextSelectionEnabled="True"
@@ -397,8 +398,7 @@
                         Orientation="Horizontal">
                 <!--  avatar  -->
                 <Grid>
-                    <Grid Grid.Column="0"
-                          x:Name="_contactBarAvatarGrid_">
+                    <Grid Grid.Column="0" x:Name="_contactBarAvatarGrid_">
                         <Ellipse Width="36"
                                  Height="36"
                                  Margin="0,2,0,0"
@@ -435,7 +435,7 @@
                                Text="[TEXT MISSING]" />
                     <TextBlock x:Name="_callTime_"
                                Margin="20,0"
-                               Foreground="WhiteSmoke"/>
+                               Foreground="WhiteSmoke" />
                 </StackPanel>
             </StackPanel>
 
@@ -660,8 +660,7 @@
                         PointerExited="btnAny_exited"
                         Tapped="_btnHQ__Tapped"
                         Visibility="Collapsed">
-                    <TextBlock FontSize="12"
-                               Text="HQ" />
+                    <TextBlock FontSize="12" Text="HQ" />
                 </Button>
             </StackPanel>
         </Grid>
@@ -724,13 +723,13 @@
                                  HorizontalAlignment="Stretch"
                                  VerticalAlignment="Center"
                                  AcceptsReturn="True"
-                                 Background="White"
+                                 Background="{ThemeResource RingMessagePageBrush}"
                                  IsSpellCheckEnabled="False"
                                  IsTabStop="True"
                                  ScrollViewer.VerticalScrollBarVisibility="Auto"
                                  Style="{StaticResource MessageSendBox}"
                                  TextChanged="_messageTextBox__TextChanged"
-                                 TextWrapping="Wrap"  />
+                                 TextWrapping="Wrap" />
                     </Grid>
                 </StackPanel>
             </Grid>

@@ -105,6 +105,9 @@
     <ClCompile Include="VCardUtils.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
+    <ClCompile Include="RingDSignal.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />

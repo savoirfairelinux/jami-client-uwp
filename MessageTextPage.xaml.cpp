@@ -56,11 +56,12 @@ MessageTextPage::MessageTextPage()
     InitializeComponent();
 
     /* connect to delegates */
-    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage([&](String^ accountId, String^ fromRingId, String^ payload)
+    RingD::instance->incomingAccountMessage
+        += ref new IncomingAccountMessage([&](String^ accountId, String^ from, Map<String^, String^>^ payload)
     {
         scrollDown();
     });
-    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &RingClientUWP::Views::MessageTextPage::OnincomingMessage);
+    RingD::instance->incomingMessage += ref new RingClientUWP::IncomingMessage(this, &MessageTextPage::OnincomingMessage);
 
     RingD::instance->messageDataLoaded += ref new MessageDataLoaded([&]() { scrollDown(); });
 
@@ -210,7 +211,7 @@ MessageTextPage::updatePageContent(SmartPanelItem^ item)
 void RingClientUWP::Views::MessageTextPage::scrollDown()
 {
     _scrollView_->UpdateLayout();
-    _scrollView_->ScrollToVerticalOffset(_scrollView_->ScrollableHeight);
+    _scrollView_->ChangeView(0.0, _scrollView_->ExtentHeight, 1.0f);
 }
 
 void
@@ -242,7 +243,8 @@ RingClientUWP::Views::MessageTextPage::sendMessage()
     }
 }
 
-void RingClientUWP::Views::MessageTextPage::OnincomingMessage(Platform::String ^callId, Platform::String ^payload)
+void
+MessageTextPage::OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload)
 {
     scrollDown();
 }
@@ -345,11 +347,6 @@ MessageTextPage::_messageTextBox__TextChanged(Object^ sender, TextChangedEventAr
 }
 
 void
-MessageTextPage::_messageTextBox__KeyDown(Object^ sender, KeyRoutedEventArgs^ e)
-{
-}
-
-void
 MessageTextPage::_sendContactRequestBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
@@ -360,4 +357,10 @@ MessageTextPage::_sendContactRequestBtn__Click(Platform::Object^ sender, Windows
             RingD::instance->sendContactRequest(accountId, uri, vcard->asString());
         }
     }
+}
+
+void
+MessageTextPage::_msgContent__Loaded(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    scrollDown();
 }

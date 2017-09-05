@@ -57,6 +57,7 @@ AccountItem::SetDetails(String^ id, Map<String^, String^>^ details)
     _turnAddress        = Utils::getDetailsStringValue( details, ConfProperties::TURN::SERVER);
     _dhtPublicInCalls   = Utils::getDetailsBoolValue(   details, ConfProperties::DHT::PUBLIC_IN_CALLS);
     _sipPassword        = Utils::getDetailsStringValue( details, ConfProperties::PASSWORD);
+    _deviceId           = Utils::getDetailsStringValue( details, ConfProperties::RING_DEVICE_ID);
     _deviceName         = Utils::getDetailsStringValue( details, ConfProperties::RING_DEVICE_NAME);
 
     auto username = Utils::toString(_username);
