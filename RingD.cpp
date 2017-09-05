@@ -54,6 +54,20 @@ using namespace RingClientUWP;
 using namespace RingClientUWP::Utils;
 using namespace RingClientUWP::ViewModel;
 
+RingD::RingD()
+{
+    startingStatus_ = StartingStatus::NORMAL;
+    toaster_ = ToastNotificationManager::CreateToastNotifier();
+    ringtone_ = ref new Ringtone("default.wav");
+    NetworkInformation::NetworkStatusChanged += ref new NetworkStatusChangedEventHandler(this, &RingD::InternetConnectionChanged);
+    this->stateChange += ref new StateChange(this, &RingD::onStateChange);
+    localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
+
+    // connect events to delegates
+    incomingCall += ref new IncomingCall(this, &RingD::onIncomingCall);
+    stateChange += ref new StateChange(this, &RingD::onStateChange);
+}
+
 void
 RingD::InternetConnectionChanged(Platform::Object^ sender)
 {
@@ -900,54 +914,20 @@ RingD::registerCallbacks()
 {
     dispatcher = CoreApplication::MainView->CoreWindow->Dispatcher;
 
+    using namespace Utils;
+    using namespace DRing;
+
     callHandlers = {
-        DRing::exportable_callback<DRing::CallSignal::IncomingCall>([this](
-                    const std::string& accountId,
-                    const std::string& callId,
-                    const std::string& from)
-        {
-            MSG_("<IncomingCall>");
-            MSG_("accountId = " + accountId);
-            MSG_("callId = " + callId);
-            MSG_("from = " + from);
-
-            auto _accountId = toPlatformString(accountId);
-            auto _callId = toPlatformString(callId);
-            auto _from = toPlatformString(from);
-
-            /* fix some issue in the daemon --> <...@...> */
-            _from = Utils::TrimRingId(_from);
-
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-            {
-                auto accountItem = AccountItemsViewModel::instance->findItem(_accountId);
-                if (auto contactListModel = AccountsViewModel::instance->getContactList(std::string(accountId))) {
-                    Contact^ contact;
-                    if (accountItem->_accountType == "RING")
-                        contact = contactListModel->findContactByRingId(_from);
-                    else if (accountItem->_accountType == "SIP")
-                        contact = contactListModel->findContactByName(_from);
-                    if (contact) {
-                        auto item = SmartPanelItemsViewModel::instance->findItem(contact);
-                        if (item)
-                            item->_callId = _callId;
-                    }
-                }
-
-                if (accountItem->_autoAnswerEnabled) {
-                    incomingCall(_accountId, _callId, _from);
-                    acceptIncommingCall(_callId);
-                    stateChange(_callId, CallStatus::AUTO_ANSWERING, 0);
-                }
-                else {
-                    incomingCall(_accountId, _callId, _from);
-                    stateChange(_callId, CallStatus::INCOMING_RINGING, 0);
-                }
-            }));
+        exportable_callback<CallSignal::IncomingCall>(
+            [this](const std::string& accountId, const std::string& callId, const std::string& from) {
+            MSG_("SIGNAL<IncomingCall> " + ("(accountId = " + accountId + ", callId = " + callId + ", from = " + from + ")"));
+            Threading::runOnUIThread([this, accountId, callId, from]() {
+                incomingCall(toPlatformString(accountId), toPlatformString(callId), toPlatformString(from));
+            });
         }),
         DRing::exportable_callback<DRing::CallSignal::SmartInfo>([this](
-            const std::map<std::string, std::string>& info)
+                    const std::map<std::string,
+                    std::string>& info)
         {
             Utils::Threading::runOnUIThread([this, info]() {updateSmartInfo(info); });
         }),
@@ -1003,30 +983,16 @@ RingD::registerCallbacks()
                     const std::string& state,
                     int code)
         {
-            MSG_("<StateChange>");
-            MSG_("callId = " + callId);
-            MSG_("state = " + state);
-            MSG_("code = " + std::to_string(code));
-
-            auto item = SmartPanelItemsViewModel::instance->findItem(Utils::toPlatformString(callId));
-            if (item == nullptr)
-                return;
-
-            auto callId2 = toPlatformString(callId);
-            auto state2 = toPlatformString(state);
-
-            auto state3 = translateCallStatus(state2);
-
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-                CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-            {
-                stateChange(callId2, state3, code);
-            }));
+            MSG_("SIGNAL<StateChange> " + ("(callId = " + callId + ", state = " + state + ", code = " + std::to_string(code) + ")"));
+            Threading::runOnUIThread([this, callId, state, code]() {
+                stateChange(toPlatformString(callId), translateCallStatus(toPlatformString(state)), code);
+            });
         }),
-        DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([&](
+        DRing::exportable_callback<DRing::CallSignal::IncomingMessage>([this](
                     const std::string& callId,
                     const std::string& from,
-                    const std::map<std::string, std::string>& payloads)
+                    const std::map<std::string,
+                    std::string>& payloads)
         {
             MSG_("<IncomingMessage>");
             MSG_("callId = " + callId);
@@ -1034,7 +1000,7 @@ RingD::registerCallbacks()
 
             handleIncomingMessage(callId, "", from, payloads);
         }),
-        DRing::exportable_callback<DRing::DebugSignal::MessageSend>([&](const std::string& msg)
+        DRing::exportable_callback<DRing::DebugSignal::MessageSend>([this](const std::string& msg)
         {
             if (debugModeOn_) {
                 DMSG_(msg);
@@ -1617,56 +1583,6 @@ RingD::startDaemon()
             }
         }
     },Platform::CallbackContext::Any), WorkItemPriority::High);
-}
-
-RingD::RingD()
-{
-    startingStatus_ = StartingStatus::NORMAL;
-    toaster_ = ToastNotificationManager::CreateToastNotifier();
-    ringtone_ = ref new Ringtone("default.wav");
-    NetworkInformation::NetworkStatusChanged += ref new NetworkStatusChangedEventHandler(this, &RingD::InternetConnectionChanged);
-    this->stateChange += ref new StateChange(this, &RingD::onStateChange);
-    localFolder_ = Utils::toString(ApplicationData::Current->LocalFolder->Path);
-}
-
-void
-RingD::onStateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
-{
-    CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(
-        CoreDispatcherPriority::High, ref new DispatchedHandler([=]()
-    {
-        if (state == CallStatus::OUTGOING_RINGING ||
-            state == CallStatus::IN_PROGRESS) {
-            try {
-                Configuration::UserPreferences::instance->sendVCard(Utils::toString(callId));
-            }
-            catch (Exception^ e) {
-                EXC_(e);
-            }
-        }
-
-        if (state == CallStatus::INCOMING_RINGING) {
-            ringtone_->Start();
-        }
-
-        if (state == CallStatus::IN_PROGRESS) {
-            ringtone_->Stop();
-            if (callToastPopped_) {
-                HideToast(toastCall_);
-                callToastPopped_ = false;
-            }
-        }
-
-        if (state == CallStatus::ENDED ||
-            (state == CallStatus::NONE && code == 106)) {
-            if (callToastPopped_) {
-                HideToast(toastCall_);
-                callToastPopped_ = false;
-            }
-            DRing::hangUp(Utils::toString(callId));
-            ringtone_->Stop();
-        }
-    }));
 }
 
 std::string

@@ -322,6 +322,11 @@ MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus stat
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
+    if (!item) {
+        WNG_("item not found");
+        return;
+    }
+
     switch (state) {
     /* send the user to the peer's message text page */
     case CallStatus::ENDED:

@@ -266,6 +266,9 @@ internal:
     event ShareRequested^ shareRequested;
     event NameRegistered^ nameRegistered;
 
+    /* slots */
+    void onIncomingCall(String^ accountId, String^ callId, String^ from);
+
 private:
     Vector<String^>^ callIdsList_;
 
