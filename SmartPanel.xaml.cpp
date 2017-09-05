@@ -130,6 +130,8 @@ SmartPanel::SmartPanel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
         String^ accountId, String^ callId, String^ from)
     {
+        from = Utils::TrimRingId(from);
+
         auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountId));
         auto contact = contactListModel->findContactByRingId(from);
 
@@ -145,12 +147,17 @@ SmartPanel::SmartPanel()
 
         RingD::instance->lookUpAddress(Utils::toString(accountId), from);
 
-        // buffer a toast
+        // buffer a toast if not autoanswering
+        auto selectedAccountItem = AccountItemsViewModel::instance->findItem(accountId);
+        if (selectedAccountItem->_autoAnswerEnabled)
+            return;
+
         RingD::instance->unpoppedToasts.insert(std::make_pair(contact->ringID_,
             [callId](String^ username) {
             RingD::instance->ShowCallToast(RingD::instance->isInBackground, callId, username);
         }));
 
+        // update view
         if (auto item = SmartPanelItemsViewModel::instance->findItem(contact)) {
             item->_callId = callId;
             SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
@@ -245,7 +252,8 @@ SmartPanel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus st
     {
         updateCallAnimationState(item, false);
         SmartPanelItemsViewModel::instance->_selectedItem = item;
-        _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
+        auto index = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
+        _smartList_->SelectedIndex = index;
         _settingsMenuButton_->Visibility = VIS::Collapsed;
         summonVideoPage();
         break;

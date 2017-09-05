@@ -162,7 +162,8 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::moveItemToTheTop(SmartP
     }
 }
 
-void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code)
+void
+SmartPanelItemsViewModel::OnstateChange(String ^callId, CallStatus state, int code)
 {
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);
 
@@ -220,7 +221,7 @@ void RingClientUWP::ViewModel::SmartPanelItemsViewModel::OnstateChange(Platform:
         break;
     case CallStatus::AUTO_ANSWERING:
         item->_contact->_lastTime = "in progress.";
-        refreshFilteredItemsList();
+        RingD::instance->acceptIncommingCall(callId);
         break;
     default:
         break;
