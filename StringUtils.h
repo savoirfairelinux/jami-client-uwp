@@ -67,6 +67,12 @@ makeWString(const std::string& str)
 
 } /*namespace detail*/
 
+inline bool
+isEmpty(Platform::String ^str)
+{
+    return str->Length() == 0;
+}
+
 inline std::string
 toString(Platform::String ^str)
 {

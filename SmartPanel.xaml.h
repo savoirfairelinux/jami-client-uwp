@@ -101,7 +101,7 @@ private:
     void OndevicesListRefreshed(Map<String^, String^>^ deviceMap);
     void _pinGeneratorYes__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _pinGeneratorNo__Click(Platform::Object^ sender, RoutedEventArgs^ e);
-    void OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin);
+    void OnexportOnRingEnded(Platform::String ^accountId, int status, Platform::String ^pin);
     void _closePin__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _editAccountMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _acceptAccountModification__Click(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -118,7 +118,7 @@ private:
     void SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _registerOnBlockchainEdition__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _usernameTextBoxEdition__KeyUp(Platform::Object^ sender, KeyRoutedEventArgs^ e);
-    void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name);
+    void OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
     void _RegisterState__Toggled(Platform::Object^ sender, RoutedEventArgs^ e);
     void _usernameTextBox__KeyUp(Platform::Object^ sender, KeyRoutedEventArgs^ e);
     void _RegisterStateEdition__Toggled(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -134,14 +134,14 @@ private:
     void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OncontactDataModified(Platform::String ^account, Contact^ contact);
-    void OnnewBuddyNotification(const std::string& accountId, const std::string& address, int status);
+    void OnnewBuddyNotification(String^ accountId, String^ uri, int status, String^ lineStatus);
     void updateContactNotificationsState(Contact^ contact);
     void updateNotificationsState();
     void selectMenu(MenuOpen menu);
     void _addAccountInputValidation__KeyUp(Platform::Object^ sender, RoutedEventArgs^ e);
     void OnregistrationStateChanged(const std::string& accountId);
     void updateCallAnimationState(SmartPanelItem^ item, bool state);
-    void OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload);
+    void OnincomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payload);
     void _ringTxtBx__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _contactsListMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _accountsMenuButton__Click(Platform::Object^ sender, RoutedEventArgs^ e);
