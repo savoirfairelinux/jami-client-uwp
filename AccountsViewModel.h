@@ -32,7 +32,7 @@ delegate void NoAccountSelected();
 delegate void UpdateScrollView();
 delegate void AccountAdded(Account^ account);
 delegate void ClearAccountsList();
-delegate void ContactAdded(String^, Contact^);
+delegate void ContactItemAdded(String^, Contact^);
 delegate void ContactDeleted(String^, Contact^);
 delegate void ContactDataModified(String^, Contact^);
 delegate void NewUnreadMessage(Contact^);
@@ -97,7 +97,7 @@ internal:
     event UpdateScrollView^ updateScrollView;
     event AccountAdded^ accountAdded;
     event ClearAccountsList^ clearAccountsList;
-    event ContactAdded^ contactAdded;
+    event ContactItemAdded^ contactItemAdded;
     event ContactDeleted^ contactDeleted;
     event ContactDataModified^ contactDataModified;
     event NewUnreadMessage^ newUnreadMessage;
@@ -106,8 +106,8 @@ internal:
 private:
     AccountsViewModel();
 
-    void OnincomingAccountMessage(String^ accountId, String^ fromRingId, String^ payload);
-    void OnincomingMessage(String ^callId, String ^payload);
+    void OnincomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payload);
+    void OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload);
 
     Vector<Account^>^ accountsList_;
     Map<String^, ContactListModel^>^ contactListModels_;

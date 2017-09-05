@@ -23,6 +23,7 @@
 
 #define UWP_DBG_CLIENT      1
 #define UWP_DBG_IO          0
+#define UWP_DBG_SIGNALS     0
 #define UWP_DBG_DAEMON      1
 
 using namespace Windows::Storage;
@@ -95,6 +96,7 @@ WriteException(Exception^ ex)
 #endif
 
 #if UWP_DBG_CLIENT
+
 #define MSG_(str)   RingDebug::instance->print(str, RingDebug::Type::MSG, __FILE__, __LINE__)
 #define WNG_(str)   RingDebug::instance->print(str, RingDebug::Type::WNG, __FILE__, __LINE__)
 #define ERR_(str)   RingDebug::instance->print(str, RingDebug::Type::ERR, __FILE__, __LINE__)
@@ -105,6 +107,13 @@ WriteException(Exception^ ex)
 #else
 #define IOMSG_(str)
 #endif
+
+#if UWP_DBG_SIGNALS
+#define MSG_SIG_(str) MSG_(str)
+#else
+#define MSG_SIG_(str)
+#endif
+
 #else
 #define MSG_(str)
 #define WNG_(str)
