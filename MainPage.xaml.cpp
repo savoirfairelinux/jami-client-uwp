@@ -322,6 +322,11 @@ MainPage::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus stat
 {
     auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
+    if (!item) {
+        WNG_("item not found");
+        return;
+    }
+
     switch (state) {
     /* send the user to the peer's message text page */
     case CallStatus::ENDED:
@@ -455,7 +460,8 @@ MainPage::OnnameRegistred(bool status, String ^accountId)
 }
 
 
-void RingClientUWP::MainPage::OnvolatileDetailsChanged(const std::string &accountId, const std::map<std::string, std::string>& details)
+void
+MainPage::OnvolatileDetailsChanged(String^ accountId, Map<String^, String^>^ details)
 {
     showLoadingOverlay(false, false);
 }

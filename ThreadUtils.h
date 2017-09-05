@@ -35,28 +35,27 @@ namespace Utils
 namespace Threading
 {
 
-void
+IAsyncAction^
 runOnWorkerThread(std::function<void()> const& f,
     WorkItemPriority priority = WorkItemPriority::Normal)
 {
-    ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
-    {
-        f();
-    }, Platform::CallbackContext::Any), priority);
+    return ThreadPool::RunAsync(ref new WorkItemHandler(
+        [=](IAsyncAction^ spAction) {
+            f();
+        }, Platform::CallbackContext::Any), priority);
 }
 
-void
+ThreadPoolTimer^
 runOnWorkerThreadDelayed(int delayInMilliSeconds, std::function<void()> const& f,
     WorkItemPriority priority = WorkItemPriority::Normal)
 {
     // duration is measured in 100-nanosecond units
     TimeSpan delay;
     delay.Duration = 10000 * delayInMilliSeconds;
-    ThreadPoolTimer^ delayTimer = ThreadPoolTimer::CreateTimer(
-        ref new TimerElapsedHandler([=](ThreadPoolTimer^ source)
-    {
-        f();
-    }), delay);
+    return ThreadPoolTimer::CreateTimer(ref new TimerElapsedHandler(
+        [=](ThreadPoolTimer^ source) {
+            f();
+        }), delay);
 }
 
 void

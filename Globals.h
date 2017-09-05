@@ -136,7 +136,7 @@ public enum class LookupStatus {
     SUCCESS,
     INVALID_NAME,
     NOT_FOUND,
-    ERRORR // one cannot simply use ERROR
+    ERROR_GENERIC // one cannot simply use ERROR
 };
 
 public enum class ContactStatus {

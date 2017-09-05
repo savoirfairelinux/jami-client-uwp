@@ -67,7 +67,7 @@ private:
     Contact^ oldItem_;
     String^ m_Owner;
 
-    void OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string &address, const std::string &name);
+    void OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
 };
 }
 
