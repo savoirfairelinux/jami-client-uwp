@@ -135,13 +135,13 @@ private:
     void _btnVideo__Click(Object^ sender, RoutedEventArgs^ e);
     void _btnMicrophone__Click(Object^ sender, RoutedEventArgs^ e);
     void IncomingVideoImage_DoubleTapped(Object^ sender, DoubleTappedRoutedEventArgs^ e);
-    void OnincomingMessage(String ^callId, String ^payload);
+    void OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload);
     void OnincomingVideoMuted(String ^callId, bool state);
-    void OnsmartInfoUpdated(const std::map<std::string, std::string>& info);
+    void OnsmartInfoUpdated(Map<String^, String^>^ smartInfo);
     void OnstartPreviewing();
     void OnstopPreviewing();
-    void OnaudioMuted(const std::string &callId, bool state);
-    void OnvideoMuted(const std::string &callId, bool state);
+    void OnaudioMuted(String^ callId, bool state);
+    void OnvideoMuted(String^ callId, bool state);
     void openChatPanel();
     void closeChatPanel();
     void resizeChatPanel();

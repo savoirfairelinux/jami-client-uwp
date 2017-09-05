@@ -33,16 +33,14 @@ AccountsViewModel::AccountsViewModel()
     accountsList_ = ref new Vector<Account^>();
     contactListModels_ = ref new Map<String^, ContactListModel^>();
 
-    RingD::instance->incomingAccountMessage +=
-        ref new RingClientUWP::IncomingAccountMessage(this, &AccountsViewModel::OnincomingAccountMessage);
-    RingD::instance->incomingMessage +=
-        ref new RingClientUWP::IncomingMessage(this, &AccountsViewModel::OnincomingMessage);
+    RingD::instance->incomingAccountMessage += ref new IncomingAccountMessage(this, &AccountsViewModel::OnincomingAccountMessage);
+    RingD::instance->incomingMessage += ref new IncomingMessage(this, &AccountsViewModel::OnincomingMessage);
 }
 
 void
 AccountsViewModel::raiseContactAdded(String^ accountId, Contact ^ contact)
 {
-    contactAdded(accountId, contact);
+    contactItemAdded(accountId, contact);
 }
 
 void
@@ -216,11 +214,23 @@ AccountsViewModel::activeAccounts()
 }
 
 void
-AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRingId, String ^ payload)
+AccountsViewModel::OnincomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payload)
 {
+    from = Utils::TrimRingId2(from);
+
     auto contactListModel = getContactList(Utils::toString(accountId));
 
-    auto contact = contactListModel->findContactByRingId(fromRingId);
+    auto contact = contactListModel->findContactByRingId(from);
+
+    /*
+    * the contact HAS TO BE already registered and the message must have the
+    * "text/plain" MIME type
+    */
+    if (!(contact && payload->HasKey("text/plain"))) {
+        return;
+    }
+
+    auto _payload = payload->Lookup("text/plain");
 
     bool itemSelected = false;
     if (auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem)
@@ -228,24 +238,24 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
     auto isInBackground = RingD::instance->isInBackground;
 
     if (contact == nullptr) {
-        contact = contactListModel->addNewContact(fromRingId, fromRingId, TrustStatus::UNKNOWN, true);
-        RingD::instance->lookUpAddress(Utils::toString(accountId), fromRingId);
+        contact = contactListModel->addNewContact(from, from, TrustStatus::UNKNOWN, true);
+        RingD::instance->lookUpAddress(Utils::toString(accountId), from);
         if (!itemSelected || isInBackground || RingD::instance->isInvisible) {
             RingD::instance->unpoppedToasts.insert(std::make_pair(contact->ringID_,
-                [isInBackground, fromRingId, payload](String^ username) {
-                RingD::instance->ShowIMToast(isInBackground, fromRingId, payload, username);
+                [isInBackground, from, _payload](String^ username) {
+                RingD::instance->ShowIMToast(isInBackground, from, _payload, username);
             }));
         }
     }
     else {
         contact->_isIncognitoContact = true;
         if (!itemSelected || isInBackground || RingD::instance->isInvisible) {
-            RingD::instance->ShowIMToast(isInBackground, fromRingId, payload);
+            RingD::instance->ShowIMToast(isInBackground, from, _payload);
         }
     }
 
     auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
-    contact->_conversation->addMessage(MSG_FROM_CONTACT, payload, std::time(nullptr), false, messageId);
+    contact->_conversation->addMessage(MSG_FROM_CONTACT, _payload, std::time(nullptr), false, messageId);
 
     /* save contacts conversation to disk */
     contact->saveConversationToFile();
@@ -256,19 +266,27 @@ AccountsViewModel::OnincomingAccountMessage(String ^ accountId, String ^ fromRin
 }
 
 void
-AccountsViewModel::OnincomingMessage(String ^callId, String ^payload)
+AccountsViewModel::OnincomingMessage(String^ callId, String^ from, Map<String^, String^>^ payload)
 {
     auto itemlist = SmartPanelItemsViewModel::instance->itemsList;
     auto item = SmartPanelItemsViewModel::instance->findItem(callId);
     auto contact = item->_contact;
     auto contactListModel = getContactList(Utils::toString(contact->_accountIdAssociated));
 
-    /* the contact HAS TO BE already registered */
+    /*
+    * the contact HAS TO BE already registered and the message must have the
+    * "text/plain" MIME type
+    */
+    if (!(contact && payload->HasKey("text/plain"))) {
+        return;
+    }
+
     if (contact) {
         auto item = SmartPanelItemsViewModel::instance->_selectedItem;
 
         auto messageId = Utils::toPlatformString(Utils::genID(0LL, 9999999999999999999LL));
-        contact->_conversation->addMessage(MSG_FROM_CONTACT, payload, std::time(nullptr), false, messageId);
+        auto _payload = payload->Lookup("text/plain");
+        contact->_conversation->addMessage(MSG_FROM_CONTACT, _payload, std::time(nullptr), false, messageId);
 
         /* save contacts conversation to disk */
         contact->saveConversationToFile();

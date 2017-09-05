@@ -93,7 +93,7 @@ SmartPanel::SmartPanel()
     _incomingContactRequestList_->ItemsSource = ContactRequestItemsViewModel::instance->itemsListFiltered;
 
     /* connect delegates */
-    RingD::instance->selectIndex += ref new SelectIndex([&](int index) {
+    RingD::instance->selectAccountItemIndex += ref new SelectAccountItemIndex([&](int index) {
         if (_accountsList_) {
             auto accountsListSize = dynamic_cast<Vector<AccountItem^>^>(_accountsList_->ItemsSource)->Size;
             if (accountsListSize > index) {
@@ -103,6 +103,7 @@ SmartPanel::SmartPanel()
                 _accountsList_->SelectedIndex = 0;
             }
             updateNotificationsState();
+            updatePageContent();
         }
     });
 
@@ -130,6 +131,8 @@ SmartPanel::SmartPanel()
     RingD::instance->incomingCall += ref new RingClientUWP::IncomingCall([&](
         String^ accountId, String^ callId, String^ from)
     {
+        from = Utils::TrimRingId(from);
+
         auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountId));
         auto contact = contactListModel->findContactByRingId(from);
 
@@ -145,12 +148,17 @@ SmartPanel::SmartPanel()
 
         RingD::instance->lookUpAddress(Utils::toString(accountId), from);
 
-        // buffer a toast
+        // buffer a toast if not autoanswering
+        auto selectedAccountItem = AccountItemsViewModel::instance->findItem(accountId);
+        if (selectedAccountItem->_autoAnswerEnabled)
+            return;
+
         RingD::instance->unpoppedToasts.insert(std::make_pair(contact->ringID_,
             [callId](String^ username) {
             RingD::instance->ShowCallToast(RingD::instance->isInBackground, callId, username);
         }));
 
+        // update view
         if (auto item = SmartPanelItemsViewModel::instance->findItem(contact)) {
             item->_callId = callId;
             SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
@@ -163,7 +171,7 @@ SmartPanel::SmartPanel()
     AccountsViewModel::instance->newUnreadContactRequest += ref new NewUnreadContactRequest(this, &SmartPanel::updateNotificationsState);
     RingD::instance->stateChange += ref new StateChange(this, &SmartPanel::OnstateChange);
     RingD::instance->devicesListRefreshed += ref new RingClientUWP::DevicesListRefreshed(this, &RingClientUWP::Views::SmartPanel::OndevicesListRefreshed);
-    AccountsViewModel::instance->contactAdded += ref new ContactAdded([&](String^ accountId, Contact^ contact) {
+    AccountsViewModel::instance->contactItemAdded += ref new ContactItemAdded([&](String^ accountId, Contact^ contact) {
         auto smartPanelItem = ref new SmartPanelItem();
         smartPanelItem->_contact = contact;
         SmartPanelItemsViewModel::instance->itemsList->InsertAt(0, smartPanelItem);
@@ -245,7 +253,8 @@ SmartPanel::OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus st
     {
         updateCallAnimationState(item, false);
         SmartPanelItemsViewModel::instance->_selectedItem = item;
-        _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
+        auto index = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
+        _smartList_->SelectedIndex = index;
         _settingsMenuButton_->Visibility = VIS::Collapsed;
         summonVideoPage();
         break;
@@ -440,6 +449,10 @@ void
 SmartPanel::_accountList__SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e)
 {
     auto listbox = safe_cast<ListBox^>(sender);
+
+    if (listbox->Items->Size == 0)
+        return;
+
     // disable deselection from listbox
     undoListBoxDeselection(listbox, e);
     auto accountItem = safe_cast<AccountItem^>(listbox->SelectedItem);
@@ -814,7 +827,8 @@ void RingClientUWP::Views::SmartPanel::_pinGeneratorNo__Click(Platform::Object^ 
 }
 
 
-void RingClientUWP::Views::SmartPanel::OnexportOnRingEnded(Platform::String ^accountId, Platform::String ^pin)
+void
+SmartPanel::OnexportOnRingEnded(Platform::String ^accountId, int status, Platform::String ^pin)
 {
     _waitingAndResult_->Text = pin;
     _closePin_->Visibility = Windows::UI::Xaml::Visibility::Visible;
@@ -1045,14 +1059,14 @@ SmartPanel::_usernameTextBoxEdition__KeyUp(Platform::Object^ sender, Windows::UI
 }
 
 void
-SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std::string& accountId, const std::string& address, const std::string& name)
+SmartPanel::OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name)
 {
     // In the case where the lookup was for a local account's username, we need just
     // update the account's username property and return.
     if (status == LookupStatus::SUCCESS) {
-        if (auto accountItem = AccountItemsViewModel::instance->findItemByRingID(Utils::toPlatformString(address))) {
+        if (auto accountItem = AccountItemsViewModel::instance->findItemByRingID(address)) {
             MSG_("Account username lookup complete");
-            accountItem->_registeredName = Utils::toPlatformString(name);
+            accountItem->_registeredName = name;
             // If the the account is currently selected, update the account best-name
             if (AccountItemsViewModel::instance->_selectedItem == accountItem) {
                 _selectedAccountName_->Text = accountItem->_bestName;
@@ -1066,13 +1080,13 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
         // if true, we did the lookup for a new account
         // note : this code do both check for edit and creation menu.
         // It doesn't affect the use and it's easier to implement.
-        auto currentNameEdition = Utils::toString(_usernameTextBoxEdition_->Text);
+        auto currentNameEdition = _usernameTextBoxEdition_->Text;
         if (currentNameEdition == name) {
             switch (status)
             {
             case LookupStatus::SUCCESS:
             case LookupStatus::INVALID_NAME:
-            case LookupStatus::ERRORR:
+            case LookupStatus::ERROR_GENERIC:
                 _usernameValidEdition_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
                 _usernameInvalidEdition_->Visibility = Windows::UI::Xaml::Visibility::Visible;
                 break;
@@ -1085,13 +1099,13 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
             return;
         }
 
-        auto currentNameCreation = Utils::toString(_usernameTextBox_->Text);
+        auto currentNameCreation = _usernameTextBox_->Text;
         if (currentNameCreation == name) {
             switch (status)
             {
             case LookupStatus::SUCCESS:
             case LookupStatus::INVALID_NAME:
-            case LookupStatus::ERRORR:
+            case LookupStatus::ERROR_GENERIC:
                 _usernameValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
                 _usernameInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
                 break;
@@ -1106,16 +1120,16 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
 
     }
     else { // if false, we are looking for a registered user (contact)
-        auto contactListModel = AccountsViewModel::instance->getContactList(std::string(accountId));
+        auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountId));
 
         if (!contactListModel)
             return;
 
-        auto contact = contactListModel->findContactByName(Utils::toPlatformString(name));
+        auto contact = contactListModel->findContactByName(name);
 
         // Try looking up a contact added by address
         if (contact == nullptr)
-            contact = contactListModel->findContactByName(Utils::toPlatformString(address));
+            contact = contactListModel->findContactByName(address);
 
         if (contact == nullptr)
             return;
@@ -1125,7 +1139,7 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
         {
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
-                contact->ringID_ = Utils::toPlatformString(address);
+                contact->ringID_ = address;
                 contact->_avatarColorString = Utils::xaml::getRandomColorStringFromString(contact->ringID_);
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                 ringTxtBxPlaceHolderDelay(loader->GetString("_contactsUserAdded_"), 5000);
@@ -1133,14 +1147,14 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
                 // send contact request
                 if (contact->_trustStatus == TrustStatus::UNKNOWN) {
                     auto vcard = Configuration::UserPreferences::instance->getVCard();
-                    RingD::instance->sendContactRequest(accountId, address, vcard->asString());
-                    contact->_name = Utils::toPlatformString(name);
+                    RingD::instance->sendContactRequest(Utils::toString(accountId), Utils::toString(address), vcard->asString());
+                    contact->_name = name;
                     contact->_trustStatus = TrustStatus::CONTACT_REQUEST_SENT;
                     SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
                     SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
                 }
                 else if (contact->_trustStatus == TrustStatus::INCOMING_CONTACT_REQUEST) {
-                    contact->_name = Utils::toPlatformString(name);
+                    contact->_name = name;
                     ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
                 }
                 contactListModel->saveContactsToFile();
@@ -1149,7 +1163,7 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
                 /* in that case we delete a possible temporary item */
                 for each (Contact^ contact in contactListModel->_contactsList) {
                     if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION
-                            && contact->_name == Utils::toPlatformString(name)) {
+                            && contact->_name == name) {
                         auto item = SmartPanelItemsViewModel::instance->findItem(contact);
                         contactListModel->deleteContact(contact);
                         SmartPanelItemsViewModel::instance->removeItem(item);
@@ -1157,8 +1171,8 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
                 }
             }
             if (!contact->subscribed_) {
-                MSG_("account: " + accountId + " subscribing to buddy presence for ringID: " + Utils::toString(contact->ringID_));
-                RingD::instance->subscribeBuddy(accountId, Utils::toString(contact->ringID_), true);
+                MSG_("account: " + accountId + " subscribing to buddy presence for ringID: " + contact->ringID_);
+                RingD::instance->subscribeBuddy(Utils::toString(accountId), Utils::toString(contact->ringID_), true);
                 contact->subscribed_ = true;
             }
         }
@@ -1167,9 +1181,9 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
         {
             MSG_("INVALID_NAME LOOKUP RESULT");
             std::regex sha1_regex("[0-9a-f]{40}");
-            if (std::regex_match(name, sha1_regex)) {
+            if (std::regex_match(Utils::toString(name), sha1_regex)) {
                 /* first we check if some contact is registred with this ring id */
-                auto contactAlreadyRecorded = contactListModel->findContactByRingId(Utils::toPlatformString(name));
+                auto contactAlreadyRecorded = contactListModel->findContactByRingId(name);
                 if (contactAlreadyRecorded) {
                     /* delete the contact added recently */
                     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
@@ -1189,19 +1203,19 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
                 else {
                     auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                     ringTxtBxPlaceHolderDelay(loader->GetString("_contactsRingIdAdded_"), 5000);
-                    contact->ringID_ = Utils::toPlatformString(name);
+                    contact->ringID_ = name;
                     contact->_contactStatus = ContactStatus::READY;
 
                     if (contact && !contact->subscribed_) {
-                        MSG_("account: " + accountId + " subscribing to buddy presence for ringID: " + Utils::toString(contact->ringID_));
-                        RingD::instance->subscribeBuddy(accountId, Utils::toString(contact->ringID_), true);
+                        MSG_("account: " + accountId + " subscribing to buddy presence for ringID: " + contact->ringID_);
+                        RingD::instance->subscribeBuddy(Utils::toString(accountId), Utils::toString(contact->ringID_), true);
                         contact->subscribed_ = true;
                     }
 
                     // send contact request
                     if (contact->_trustStatus == TrustStatus::UNKNOWN) {
                         auto vcard = Configuration::UserPreferences::instance->getVCard();
-                        RingD::instance->sendContactRequest(accountId, address, vcard->asString());
+                        RingD::instance->sendContactRequest(Utils::toString(accountId), Utils::toString(address), vcard->asString());
                         contact->_trustStatus = TrustStatus::CONTACT_REQUEST_SENT;
                         SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
                         SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
@@ -1221,8 +1235,8 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
         case LookupStatus::NOT_FOUND:
         {
             std::regex sha1_regex("[0-9a-f]{40}");
-            if (std::regex_match(address, sha1_regex)) {
-                RingD::instance->lookUpName(accountId, Utils::toPlatformString(address));
+            if (std::regex_match(Utils::toString(address), sha1_regex)) {
+                RingD::instance->lookUpName(Utils::toString(accountId), address);
             }
             else {
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
@@ -1234,10 +1248,10 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
             }
             break;
         }
-        case LookupStatus::ERRORR:
+        case LookupStatus::ERROR_GENERIC:
             std::regex sha1_regex("[0-9a-f]{40}");
-            if (std::regex_match(address, sha1_regex)) {
-                RingD::instance->lookUpName(accountId, Utils::toPlatformString(address));
+            if (std::regex_match(Utils::toString(address), sha1_regex)) {
+                RingD::instance->lookUpName(Utils::toString(accountId), address);
             }
             else {
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
@@ -1250,10 +1264,10 @@ SmartPanel::OnregisteredNameFound(RingClientUWP::LookupStatus status, const std:
             break;
         }
 
-        auto unpoppedToast = RingD::instance->unpoppedToasts.find(Utils::toPlatformString(address));
+        auto unpoppedToast = RingD::instance->unpoppedToasts.find(address);
         if (unpoppedToast != RingD::instance->unpoppedToasts.end()) {
-            unpoppedToast->second(Utils::toPlatformString(name));
-            RingD::instance->unpoppedToasts.erase(Utils::toPlatformString(address));
+            unpoppedToast->second(name);
+            RingD::instance->unpoppedToasts.erase(address);
         }
     }
 }
@@ -1667,8 +1681,11 @@ SmartPanel::updateContactNotificationsState(RingClientUWP::Contact^ contact)
     SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
 }
 
-void RingClientUWP::Views::SmartPanel::OnincomingAccountMessage(Platform::String ^accountId, Platform::String ^from, Platform::String ^payload)
+void
+SmartPanel::OnincomingAccountMessage(String^ accountId, String^ from, Map<String^, String^>^ payload)
 {
+    from = Utils::TrimRingId2(from);
+
     auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(accountId));
     auto contact = contactListModel->findContactByRingId(from);
     auto item = SmartPanelItemsViewModel::instance->findItem(contact);
@@ -1993,12 +2010,12 @@ SmartPanel::_blockContactBtn__Click(Platform::Object^ sender, Windows::UI::Xaml:
 }
 
 void
-SmartPanel::OnnewBuddyNotification(const std::string& accountId, const std::string& address, int status)
+SmartPanel::OnnewBuddyNotification(String^ accountId, String^ uri, int status, String^ lineStatus)
 {
     for (auto account : AccountsViewModel::instance->accountsList) {
         auto contactListModel = AccountsViewModel::instance->getContactList(Utils::toString(account->accountID_));
         for (auto contact : contactListModel->_contactsList)
-            if (contact->ringID_ == Utils::toPlatformString(address))
+            if (contact->ringID_ == uri)
                 contact->_presenceStatus = status;
     }
 }
