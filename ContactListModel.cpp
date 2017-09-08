@@ -78,12 +78,12 @@ ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustS
         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
             if (acc->accountType_ == "RING") {
                 if (ringId)
-                    avatarColorString = Utils::xaml::getRandomColorStringFromString(ringId);
+                    avatarColorString = Utils::xaml::getAvatarColorStringFromString(ringId);
                 else
-                    avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                    avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
             }
             else if (name != "") {
-                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
             }
         }
         Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus, trustStatus, isIncognitoContact, avatarColorString);
@@ -200,10 +200,10 @@ ContactListModel::Destringify(String^ data)
                     else {
                         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
                             if (acc->accountType_ == "RING") {
-                                avatarColorString = Utils::xaml::getRandomColorStringFromString(ringid);
+                                avatarColorString = Utils::xaml::getAvatarColorStringFromString(ringid);
                             }
                             else if (name != "") {
-                                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                                avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
                             }
                             else {
                                 avatarColorString = Utils::xaml::getRandomColorString();
@@ -284,50 +284,3 @@ ContactListModel::OnregisteredNameFound(String^ accountId, LookupStatus status, 
 // NEW
 //
 /////////////////////////////
-
-ContactItemList::ContactItemList(String^ accountId)
-    : accountId_(accountId)
-{
-    contactItems_ = ref new Vector<ContactItem^>();
-}
-
-ContactItem^
-ContactItemList::addItem(Map<String^, String^>^ details)
-{
-    // Order is not crucial here, as this model only manages an accounts
-    // collection of control items, each of which wrap a contact object,
-    // and is not responsable for the view at all.
-    contactItems_->Append(ref new ContactItem(details));
-    return nullptr;
-}
-
-ContactItem^
-ContactItemList::findItem(String^ uri)
-{
-    for each (ContactItem^ item in contactItems_) {
-        if (item->_uri == uri)
-            return item;
-    }
-
-    return nullptr;
-}
-
-ContactItem^
-ContactItemList::findItemByAlias(String^ alias)
-{
-    for each (ContactItem^ item in contactItems_) {
-        if (item->_alias == alias)
-            return item;
-    }
-
-    return nullptr;
-}
-
-void
-ContactItemList::removeItem(String^ uri)
-{
-    auto item = findItem(uri);
-    unsigned int index;
-    contactItems_->IndexOf(item, &index);
-    contactItems_->RemoveAt(index);
-}

@@ -56,3 +56,53 @@ ContactItem::SetDetails(Map<String^, String^>^ details)
     contact_->isTrusted         = toString(getDetailsStringValue(details, TRUSTED));
     contact_->type              = toString(getDetailsStringValue(details, TYPE));
 }
+
+
+
+ContactItemList::ContactItemList(String^ accountId)
+    : accountId_(accountId)
+{
+    contactItems_ = ref new Vector<ContactItem^>();
+}
+
+ContactItem^
+ContactItemList::addItem(Map<String^, String^>^ details)
+{
+    // Order is not crucial here, as this model only manages an accounts
+    // collection of control items, each of which wrap a contact object,
+    // and is not responsable for the view at all.
+    auto newItem = ref new ContactItem(details);
+    contactItems_->Append(newItem);
+    return newItem;
+}
+
+ContactItem^
+ContactItemList::findItem(String^ uri)
+{
+    for each (ContactItem^ item in contactItems_) {
+        if (item->_uri == uri)
+            return item;
+    }
+
+    return nullptr;
+}
+
+ContactItem^
+ContactItemList::findItemByAlias(String^ alias)
+{
+    for each (ContactItem^ item in contactItems_) {
+        if (item->_alias == alias)
+            return item;
+    }
+
+    return nullptr;
+}
+
+void
+ContactItemList::removeItem(String^ uri)
+{
+    auto item = findItem(uri);
+    unsigned int index;
+    contactItems_->IndexOf(item, &index);
+    contactItems_->RemoveAt(index);
+}

@@ -20,6 +20,7 @@
 
 #include "RingDeviceItemsViewModel.h"
 #include "AccountItemsViewModel.h"
+#include "ConversationItemsViewModel.h"
 
 #include "SmartPanel.g.h"
 

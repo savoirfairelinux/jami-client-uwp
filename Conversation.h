@@ -116,5 +116,52 @@ private:
 };
 #define MSG_FROM_CONTACT true
 #define MSG_FROM_ME false
-}
 
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+namespace Models
+{
+namespace Conversation
+{
+namespace Message
+{
+
+enum class Type {
+    TEXT,
+    CALL,
+    INVITE,
+    INVALID_TYPE
+};
+
+enum class Status {
+    SENDING,
+    FAILED,
+    SUCCEEDED,
+    INVALID_STATUS
+};
+
+struct Info {
+    const std::string           iud;
+    std::string                 body;
+    std::string                 from;
+    std::time_t                 timestamp;
+    bool                        isOutgoing;
+    Type                        type;
+    Status                      status;
+};
+} /*namespace Message*/
+
+struct Info {
+    const std::string           iud;
+    std::vector<Message::Info>  messages;
+    std::time_t                 timestamp;
+    std::string                 accountId;
+    unsigned                    index;
+};
+
+} /*namespace Message*/
+} /*namespace Conversation*/
+} /*namespace Models*/

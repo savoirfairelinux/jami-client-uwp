@@ -69,36 +69,6 @@ private:
 
     void OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
 };
+
 }
-
-namespace Controls
-{
-
-public ref class ContactItemList sealed
-{
-public:
-    ContactItemList(String^ accountId);
-
-internal:
-    /* functions */
-    ContactItem^    addItem(Map<String^, String^>^ details);
-    ContactItem^    findItem(String^ uri);
-    ContactItem^    findItemByAlias(String^ alias);
-    void            removeItem(String^ uri);
-
-public:
-    /* properties */
-    property IVector<ContactItem^>^ _contactItems {
-        IVector<ContactItem^>^ get() {
-            return contactItems_;
-        }
-    }
-
-private:
-    IVector<ContactItem^>^ contactItems_;
-    String^ accountId_;
-
-};
-}
-
 }

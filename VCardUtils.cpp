@@ -134,10 +134,10 @@ VCard::parseFromString()
     m_mParts[Property::UID] = getVCardValue(m_data, "UID:");
     if (m_mParts[Property::UID].empty())
         m_mParts[Property::UID] = Utils::genID(0LL, 9999999999999LL);
-    MSG_(m_mParts[Property::UID]);
+    MSG_("UID: " + m_mParts[Property::UID]);
 
     m_mParts[Property::FN] = getVCardValue(m_data, "FN:");
-    MSG_(m_mParts[Property::FN]);
+    MSG_("FN: " + m_mParts[Property::FN]);
 
     while (std::getline(_data, _line)) {
         if (_line.find("PHOTO;") != std::string::npos)

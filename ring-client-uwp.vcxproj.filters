@@ -108,6 +108,12 @@
     <ClCompile Include="RingDSignal.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="ConversationItemsViewModel.cpp">
+      <Filter>ViewModels</Filter>
+    </ClCompile>
+    <ClCompile Include="ConversationItem.cpp">
+      <Filter>Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LoadingPage.xaml.h" />
@@ -246,6 +252,12 @@
     </ClInclude>
     <ClInclude Include="Utils.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="ConversationItemsViewModel.h">
+      <Filter>ViewModels</Filter>
+    </ClInclude>
+    <ClInclude Include="ConversationItem.h">
+      <Filter>Controls</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

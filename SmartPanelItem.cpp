@@ -79,17 +79,3 @@ SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
 {
     NotifyPropertyChanged(propertyName);
 }
-
-//////////////////////////////
-//
-// NEW
-//
-//////////////////////////////
-
-void
-SmartItem::NotifyPropertyChanged(String^ propertyName)
-{
-    Utils::Threading::runOnUIThread([this, propertyName]() {
-        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
-    });
-}

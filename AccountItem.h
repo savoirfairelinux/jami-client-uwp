@@ -307,6 +307,7 @@ private:
     std::unique_ptr<Models::Account>    account_;
 
     ContactItemList^                    contactItemList_;
+    std::vector<std::string>            conversationUids_;
 
     bool                                isSelected_;
 };
