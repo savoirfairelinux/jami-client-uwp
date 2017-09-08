@@ -184,6 +184,7 @@ internal:
     void startDaemon();
 
     void addContactFromDaemon(String^ accountId, Map<String^, String^>^ details);
+    void addContactRequestFromDaemon(String^ accountId, Map<String^, String^>^ details);
     void cancelOutGoingCall(String^ callId);
     void raiseWindowResized(float width, float height);
     void raiseShareRequested();
@@ -198,7 +199,7 @@ internal:
     void createSIPAccount(String^ alias, String^ sipPassword, String^ sipHostname, String^ sipusername);
     void refuseIncommingCall(String^ call);
     void acceptIncommingCall(String^ call);
-    void placeCall(Contact^ contact);
+    void placeCall(String^ contact);
     void pauseCall(const std::string& callId);
     void unPauseCall(const std::string& callId);
     CallStatus translateCallStatus(String^ state);

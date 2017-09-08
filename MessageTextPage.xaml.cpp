@@ -281,27 +281,27 @@ void RingClientUWP::Views::MessageTextPage::_clearConversationBtn__Click(Platfor
 
 void RingClientUWP::Views::MessageTextPage::_audioCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    /*auto button = dynamic_cast<Button^>(e->OriginalSource);
     if (button) {
         if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
             auto contact = item->_contact;
             if (contact)
                 RingD::instance->placeCall(contact);
         }
-    }
+    }*/
 }
 
 
 void RingClientUWP::Views::MessageTextPage::_videoCallBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
-    auto button = dynamic_cast<Button^>(e->OriginalSource);
+    /*auto button = dynamic_cast<Button^>(e->OriginalSource);
     if (button) {
         if (auto item = SmartPanelItemsViewModel::instance->_selectedItem) {
             auto contact = item->_contact;
             if (contact)
                 RingD::instance->placeCall(contact);
         }
-    }
+    }*/
 }
 
 void

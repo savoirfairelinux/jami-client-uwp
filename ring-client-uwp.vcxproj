@@ -189,6 +189,8 @@
     <ClInclude Include="contrib\sqlite-win32\sqlite3.h" />
     <ClInclude Include="contrib\sqlite-win32\sqlite3ext.h" />
     <ClInclude Include="Conversation.h" />
+    <ClInclude Include="ConversationItem.h" />
+    <ClInclude Include="ConversationItemsViewModel.h" />
     <ClInclude Include="Converters.h" />
     <ClInclude Include="FileUtils.h" />
     <ClInclude Include="HttpUtils.h" />
@@ -406,6 +408,8 @@
     <ClCompile Include="Conversation.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="ConversationItem.cpp" />
+    <ClCompile Include="ConversationItemsViewModel.cpp" />
     <ClCompile Include="Converters.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
     </ClCompile>

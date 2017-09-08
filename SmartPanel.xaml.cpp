@@ -29,6 +29,8 @@
 #include "Wizard.xaml.h"
 #include "WelcomePage.xaml.h"
 #include "Video.h"
+#include "AccountItemsViewModel.h"
+#include "ConversationItemsViewModel.h"
 
 #include "lodepng.h"
 
@@ -84,7 +86,7 @@ SmartPanel::SmartPanel()
     _devicesIdList_->ItemsSource = RingDeviceItemsViewModel::instance->itemsList;
 
     /* populate the contact list */
-    _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsListFiltered;
+    _smartList_->ItemsSource = ConversationItemsViewModel::instance->_itemsListFiltered;
 
     /* populate banned contact list */
     _bannedContactList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsListBannedFiltered;
@@ -180,12 +182,20 @@ SmartPanel::SmartPanel()
         }
     });
 
-    RingD::instance->vCardUpdated += ref new VCardUpdated([&](Contact^ contact)
-    {
-        Utils::Threading::runOnUIThread([this, contact]() {
-            SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage", "_contact" });
+    AccountItemsViewModel::instance->contactItemAdded += ref new ViewModel::ContactItemAdded(
+        [this](String^ accountId, String^ uri) {
+            auto contactItemList = AccountItemsViewModel::instance->getContactItemList(accountId);
+            auto contactItem = contactItemList->findItem(uri);
+            ConversationItemsViewModel::instance->addItem(contactItem);
         });
-    });
+
+    RingD::instance->vCardUpdated += ref new VCardUpdated(
+        [this](Contact^ contact) {
+            Utils::Threading::runOnUIThread(
+                [this, contact]() {
+                    SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage", "_contact" });
+                });
+        });
 
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &SmartPanel::OnregistrationStateChanged);
     RingD::instance->registrationStateUnregistered += ref new RingClientUWP::RegistrationStateUnregistered(this, &SmartPanel::OnregistrationStateChanged);
@@ -331,6 +341,9 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
 
     SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+
+    ConversationItemsViewModel::instance->refreshFilteredItemsList();
+
     SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
 }
 
@@ -532,41 +545,34 @@ SmartPanel::_callBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedE
         /* force to hide the button, avoid attempting to call several times... */
         button->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-        auto item = dynamic_cast<SmartPanelItem^>(button->DataContext);
+        auto item = dynamic_cast<ConversationItem^>(button->DataContext);
         if (item)
             placeCall(item);
     }
 }
 
 void
-SmartPanel::placeCall(SmartPanelItem^ item)
+SmartPanel::placeCall(ConversationItem^ item)
 {
-    auto contact = item->_contact;
-    if (contact) {
-        // select item
-        //SmartPanelItemsViewModel::instance->_selectedItem = item;
-        unsigned index = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
-        //_smartList_->SelectedIndex = index;
+    for (auto it : ConversationItemsViewModel::instance->_itemsList)
+        if (it->_callStatus == CallStatus::IN_PROGRESS)
+            RingD::instance->pauseCall(Utils::toString(it->_callId));
 
-        for (auto it : SmartPanelItemsViewModel::instance->itemsList)
-            if (it->_callStatus == CallStatus::IN_PROGRESS)
-                RingD::instance->pauseCall(Utils::toString(it->_callId));
+    if (item->_callStatus == CallStatus::ENDED || item->_callStatus == CallStatus::NONE) {
+        _settingsMenuButton_->Visibility = VIS::Collapsed;
+        item->_callStatus = CallStatus::OUTGOING_REQUESTED;
+        RingD::instance->placeCall(item->_uri);
+        auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
+        auto lookingForString = loader->GetString("_callsLookingFor_");
+        item->_lastTime = lookingForString + item->_bestName2 + ".";
+    }
 
-        if (item->_callStatus == CallStatus::ENDED || item->_callStatus == CallStatus::NONE) {
-            _settingsMenuButton_->Visibility = VIS::Collapsed;
-            item->_callStatus = CallStatus::OUTGOING_REQUESTED;
-            RingD::instance->placeCall(contact);
-            auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
-            auto lookingForString = loader->GetString("_callsLookingFor_");
-            item->_contact->_lastTime = lookingForString + item->_contact->_name + ".";
-        }
-
-        /* move the item of the top of the list */
-        if (_smartList_->Items->IndexOf(item, &index)) {
-            SmartPanelItemsViewModel::instance->moveItemToTheTop(item);
-            _smartList_->UpdateLayout();
-            _smartList_->ScrollIntoView(item);
-        }
+    /* move the item of the top of the list */
+    unsigned index;
+    if (_smartList_->Items->IndexOf(item, &index)) {
+        ConversationItemsViewModel::instance->moveItemToTheTop(item);
+        _smartList_->UpdateLayout();
+        _smartList_->ScrollIntoView(item);
     }
 }
 
@@ -584,10 +590,23 @@ void RingClientUWP::Views::SmartPanel::_cancelCallBtn__Click(Platform::Object^ s
 }
 
 void
-SmartPanel::SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+SmartPanel::ConversationItem_Grid_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
+{
+    auto grid = static_cast<Grid^>(sender);
+    auto item = static_cast<ConversationItem^>(grid->DataContext);
+    auto contactUri = item->_uri;
+    //placeCall(contactUri);
+    unsigned int index;
+    _smartList_->Items->IndexOf(e->OriginalSource, &index);
+    _smartList_->SelectedIndex = index;
+    ConversationItemsViewModel::instance->_selectedItem = item;
+}
+
+void
+SmartPanel::ConversationItem_Grid_PointerEntered(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
-    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+    auto item = dynamic_cast<ConversationItem^>(grid->DataContext);
 
     for (auto it : SmartPanelItemsViewModel::instance->itemsList) {
         it->_isHovered = false;
@@ -597,27 +616,46 @@ SmartPanel::SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, Windows
 }
 
 void
-SmartPanel::SmartPanelItem_Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+SmartPanel::ConversationItem_Grid_PointerExited(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
-    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+    auto item = dynamic_cast<ConversationItem^>(grid->DataContext);
 
     // to avoid visual bug, do it on the whole list
-    for each (auto it in SmartPanelItemsViewModel::instance->itemsList) {
+    for each (auto it in ConversationItemsViewModel::instance->_itemsList) {
         it->_isHovered = false;
     }
 }
 
 void
-SmartPanel::SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
+SmartPanel::ConversationItem_Grid_PointerMoved(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e)
 {
     auto grid = dynamic_cast<Grid^>(sender);
-    auto item = dynamic_cast<SmartPanelItem^>(grid->DataContext);
+    auto item = dynamic_cast<ConversationItem^>(grid->DataContext);
 
-    for (auto it : SmartPanelItemsViewModel::instance->itemsList)
+    for (auto it : ConversationItemsViewModel::instance->_itemsList)
         it->_isHovered = false;
 
     item->_isHovered = true;
+}
+
+void
+SmartPanel::ConversationItem_Grid_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e)
+{
+    auto grid = static_cast<Grid^>(sender);
+    auto item = static_cast<ConversationItem^>(grid->DataContext);
+    if (_smartList_->SelectedIndex == -1) {
+        // if no item is already selected, select the one right tapped
+        unsigned int index;
+        _smartList_->Items->IndexOf(e->OriginalSource, &index);
+        _smartList_->SelectedIndex = index;
+        item->_isSelected = true;
+    }
+    auto flyoutOwner = static_cast<FrameworkElement^>(sender);
+    auto menuFlyout = static_cast<MenuFlyout^>(FlyoutBase::GetAttachedFlyout(flyoutOwner));
+    auto videoCallButton = menuFlyout->Items->GetAt(0);
+    videoCallButton->Visibility = item->_isCallable ? VIS::Visible : VIS::Collapsed;
+    FlyoutBase::ShowAttachedFlyout(flyoutOwner);
 }
 
 void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
@@ -1142,7 +1180,7 @@ SmartPanel::OnregisteredNameFound(String^ accountId, LookupStatus status, String
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = address;
-                contact->_avatarColorString = Utils::xaml::getRandomColorStringFromString(contact->ringID_);
+                contact->_avatarColorString = Utils::xaml::getAvatarColorStringFromString(contact->ringID_);
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                 ringTxtBxPlaceHolderDelay(loader->GetString("_contactsUserAdded_"), 5000);
 
@@ -2078,39 +2116,10 @@ void RingClientUWP::Views::SmartPanel::_addBannedContactBtn__Click(Platform::Obj
     }
 }
 
-
-void
-SmartPanel::SmartPanelItem_Grid_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e)
-{
-    auto grid = static_cast<Grid^>(sender);
-    auto item = static_cast<SmartPanelItem^>(grid->DataContext);
-    if (_smartList_->SelectedIndex == -1) {
-        // if no item is already selected, select the one right tapped
-        _smartList_->SelectedIndex = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
-        item->_isSelected = true;
-    }
-    auto flyoutOwner = static_cast<FrameworkElement^>(sender);
-    auto menuFlyout = static_cast<MenuFlyout^>(FlyoutBase::GetAttachedFlyout(flyoutOwner));
-    auto videoCallButton = menuFlyout->Items->GetAt(0);
-    videoCallButton->Visibility = item->_isCallable ? VIS::Visible : VIS::Collapsed;
-    FlyoutBase::ShowAttachedFlyout(flyoutOwner);
-}
-
-
 void RingClientUWP::Views::SmartPanel::_videocall_MenuFlyoutItem_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
 {
-    auto item = static_cast<SmartPanelItem^>(static_cast<MenuFlyoutItem^>(sender)->DataContext);
+    auto item = static_cast<ConversationItem^>(static_cast<MenuFlyoutItem^>(sender)->DataContext);
     placeCall(item);
-}
-
-void RingClientUWP::Views::SmartPanel::SmartPanelItem_Grid_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e)
-{
-    auto grid = static_cast<Grid^>(sender);
-    auto item = static_cast<SmartPanelItem^>(grid->DataContext);
-    placeCall(item);
-    auto index = SmartPanelItemsViewModel::instance->getFilteredIndex(item->_contact);
-    _smartList_->SelectedIndex = index;
-    SmartPanelItemsViewModel::instance->_selectedItem = item;
 }
 
 void RingClientUWP::Views::SmartPanel::_addToConference_MenuFlyoutItem__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
@@ -2134,7 +2143,6 @@ void RingClientUWP::Views::SmartPanel::_copyRingID_MenuFlyoutItem__Tapped(Platfo
     dataPackage->SetText(item->_contact->ringID_);
     Clipboard::SetContent(dataPackage);
 }
-
 
 void
 SmartPanel::_revokeDeviceButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)

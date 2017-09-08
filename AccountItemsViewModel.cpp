@@ -37,25 +37,27 @@ AccountItemsViewModel::AccountItemsViewModel()
     itemsList_ = ref new Vector<AccountItem^>();
 }
 
-void
+AccountItem^
 AccountItemsViewModel::addItem(String^ id, Map<String^, String^>^ details)
 {
-    itemsList_->InsertAt(0, ref new AccountItem(id, details));
+    auto newItem = ref new AccountItem(id, details);
+    itemsList_->InsertAt(0, newItem);
     auto accountType = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::TYPE);
+    auto uri = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::USERNAME);
     if (accountType == Utils::toPlatformString(DRing::Account::ProtocolNames::RING)) {
-        auto ringID = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::USERNAME);
-        RingD::instance->lookUpAddress(Utils::toString(id), ringID);
+        RingD::instance->lookUpAddress(Utils::toString(id), uri);
     }
+    return newItem;
 }
 
 AccountItem^
 AccountItemsViewModel::findItem(String^ id)
 {
     for each (AccountItem^ item in itemsList_) {
-        if (item->_id == id)
+        if (item->_id == id) {
             return item;
+        }
     }
-
     return nullptr;
 }
 
@@ -73,8 +75,9 @@ AccountItemsViewModel::getIndex(String^ id)
 {
     int i;
     for (i = 0; i < itemsList_->Size; i++) {
-        if (itemsList_->GetAt(i)->_id == id)
+        if (itemsList_->GetAt(i)->_id == id) {
             break;
+        }
     }
     return i;
 }
@@ -82,33 +85,29 @@ AccountItemsViewModel::getIndex(String^ id)
 String^
 AccountItemsViewModel::getSelectedAccountId()
 {
-    if (_selectedItem)
+    if (_selectedItem) {
         return _selectedItem->_id;
+    }
     return nullptr;
 }
 
 AccountItem^
 AccountItemsViewModel::findItemByRingID(String ^ ringId)
 {
-    for each (AccountItem^ item in itemsList_)
-        if (item->_ringId == ringId)
+    for each (AccountItem^ item in itemsList_) {
+        if (item->_ringId == ringId) {
             return item;
-
+        }
+    }
     return nullptr;
-}
-
-void
-AccountItemsViewModel::clearAccountList()
-{
-    itemsList_->Clear();
-    accountItemsCleared();
 }
 
 ContactItemList^
 AccountItemsViewModel::getContactItemList(String^ id)
 {
-    if (auto item = findItem(id))
+    if (auto item = findItem(id)) {
         return item->_contactItemList;
+    }
     return nullptr;
 }
 
@@ -134,4 +133,24 @@ AccountItemsViewModel::bannedContacts(String^ accountId)
     int bannedContacts = 0;
     // count banned contacts
     return bannedContacts;
+}
+
+ContactItem^
+AccountItemsViewModel::addContactItem(String^ id, Map<String^, String^>^ details)
+{
+    auto contactItemList = getContactItemList(id);
+    auto uri = Utils::getDetailsStringValue(details, RingClientUWP::Strings::Contact::URI);
+    auto newContactItem =  contactItemList->addItem(details);
+    if (newContactItem) {
+        contactItemAdded(id, uri);
+    }
+    return newContactItem;
+}
+
+void
+AccountItemsViewModel::removeContactItem(String^ id, String^ uri)
+{
+    auto contactItemList = getContactItemList(id);
+    contactItemList->removeItem(uri);
+    contactItemRemoved(id, uri);
 }

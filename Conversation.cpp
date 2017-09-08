@@ -19,7 +19,7 @@
 #include "pch.h"
 
 #include "Conversation.h"
-#include "MessageTextPage.xaml.h"
+//#include "MessageTextPage.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
@@ -27,23 +27,50 @@ using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
 
+NewConversationMessage::NewConversationMessage(String^ uid)
+{
+    message_ = std::make_unique<Models::Conversation::Message::Info>(Utils::toString(uid));
+}
+
+void
+NewConversationMessage::NotifyPropertyChanged(String^ propertyName)
+{
+    CoreApplicationView^ view = CoreApplication::MainView;
+    view->CoreWindow->Dispatcher->RunAsync(
+        CoreDispatcherPriority::High,
+        ref new DispatchedHandler([this, propertyName]()
+    {
+        PropertyChanged(this, ref new PropertyChangedEventArgs(propertyName));
+    }));
+}
+
+String^
+NewConversationMessage::getMessageAvatar()
+{
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarImage;
+    return L" ";
+}
+
+SolidColorBrush^
+NewConversationMessage::getMessageAvatarColorBrush()
+{
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarColorBrush;
+    return ref new SolidColorBrush(Utils::xaml::ColorFromString(L"#ff808080"));
+}
+
+String^
+NewConversationMessage::getMessageAvatarInitial()
+{
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return Utils::getUpperInitial(ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_bestName2);
+    return L"?";
+}
+
 Conversation::Conversation()
 {
     messagesList_ = ref new  Vector<ConversationMessage^>();
-
-    /*
-    messageListBox_ = ref new ListBox();
-    messageListBox_->Name = "_messagesList_";
-    messageListBox_->Margin = Windows::UI::Xaml::Thickness(0.0, 0.0, 0.0, 0.0);
-    messageListBox_->Padding = Windows::UI::Xaml::Thickness(0.0, 0.0, 0.0, 0.0);
-    auto backgroundBrush = dynamic_cast<Brush^>(Application::Current->Resources->Lookup("RingMessagePageBrush"));
-    messageListBox_->Background = backgroundBrush;
-    auto itemContainerStyle = dynamic_cast<Style^>(Application::Current->Resources->Lookup("messageBubbleStyle"));
-    messageListBox_->ItemContainerStyle = itemContainerStyle;
-    auto itemTemplate = dynamic_cast<Style^>(Application::Current->Resources->Lookup("ConversationMessageTemplate"));
-    messageListBox_->ItemTemplate = itemTemplate;
-    messageListBox_->ItemsSource = messagesList_;
-    */
 }
 
 ConversationMessage^
