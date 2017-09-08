@@ -120,5 +120,92 @@ private:
 
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+ref class SmartItemsViewModel sealed
+{
+    /* singleton */
+private:
+    SmartItemsViewModel();
+internal:
+    static property SmartItemsViewModel^ instance {
+        SmartItemsViewModel^ get() {
+            static SmartItemsViewModel^ instance_ = ref new SmartItemsViewModel();
+            return instance_;
+        }
+    }
+
+    SmartItem^  addItem(Object^ item);
+
+    SmartItem^  findItemByCallId(String^ callId);
+    SmartItem^  findItemByRingId(String^ ringId);
+
+    unsigned    getIndex(SmartItem^ item);
+    unsigned    getIndexByCallId(String^ callId);
+    unsigned    getIndexByRingId(String^ ringId);
+
+    void        removeItem(SmartItem^ item);
+    void        moveItemToTheTop(SmartItem^ item);
+
+    bool        isInCall();
+    String^     getAssociatedAccountId(SmartItem^ item);
+    void        refreshFilteredItemsList();
+    void        refreshFilteredBannedItemsList();
+
+    property IObservableVector<SmartItem^>^ _itemsList {
+        IObservableVector<SmartItem^>^ get() {
+            return itemsList_;
+        }
+    }
+
+    property IObservableVector<SmartItem^>^ _itemsListFiltered {
+        IObservableVector<SmartItem^>^ get() {
+            return itemsListFiltered_;
+        }
+        void set(IObservableVector<SmartItem^>^ value) {
+            itemsListFiltered_ = dynamic_cast<Vector<SmartItem^>^>(value);
+        }
+    }
+
+    property IObservableVector<SmartItem^>^ _itemsListBannedFiltered {
+        IObservableVector<SmartItem^>^ get() {
+            return itemsListBannedFiltered_;
+        }
+        void set(IObservableVector<SmartItem^>^ value) {
+            itemsListBannedFiltered_ = dynamic_cast<Vector<SmartItem^>^>(value);
+        }
+    }
+
+    property SmartItem^ _selectedItem {
+        SmartItem^ get() {
+            return currentItem_;
+        }
+        void set(SmartItem^ value) {
+            oldItem_ = currentItem_;
+            currentItem_ = value;
+
+            if (oldItem_ != nullptr)
+                oldItem_->_isSelected = false;
+
+            if (currentItem_ != nullptr) {
+                currentItem_->_isSelected = true;
+            }
+        }
+    }
+
+private:
+    Vector<SmartItem^>^ itemsList_;
+    Vector<SmartItem^>^ itemsListFiltered_;
+    Vector<SmartItem^>^ itemsListBannedFiltered_;
+
+    SmartItem^          currentItem_;
+    SmartItem^          oldItem_;
+
+};
 }
 }

@@ -230,6 +230,32 @@ public:
         }
     }
 
+    property String^ _bestName {
+        String^ get() {
+            String^ bestName;
+            if (_displayName)
+                bestName += _displayName + " - ";
+            if (_registeredName)
+                bestName += _registeredName;
+            else if (_uri)
+                bestName += _uri;
+            return bestName;
+        }
+    }
+
+    property String^ _bestName2 {
+        String^ get() {
+            String^ bestName;
+            if (_displayName)
+                bestName = _displayName;
+            else if (_registeredName)
+                bestName = _registeredName;
+            else if (_uri)
+                bestName = _uri;
+            return bestName;
+        }
+    }
+
     //////////////////////////////
     //
     // Common properties
@@ -259,6 +285,78 @@ public:
         }
     }
 
+    property CallStatus _callStatus {
+        CallStatus get() { return callStatus_; }
+        void set(CallStatus value) {
+            callStatus_ = value;
+            NotifyPropertyChanged("_callStatus");
+        }
+    }
+
+    property int _presenceStatus {
+        int get() { return presenceStatus_; }
+        void set(int value) {
+            presenceStatus_ = value;
+            NotifyPropertyChanged("_presenceStatus");
+        }
+    }
+
+    property uint32 _unreadMessages {
+        uint32 get() { return unreadMessages_; }
+        void set(uint32 value) {
+            unreadMessages_ = value;
+            NotifyPropertyChanged("_unreadMessages");
+        }
+    }
+
+    property uint32 _unreadContactRequests {
+        uint32 get() { return unreadContactRequests_; }
+        void set(uint32 value) {
+            unreadContactRequests_ = value;
+            NotifyPropertyChanged("_unreadContactRequests");
+        }
+    }
+
+    property String^ _avatarImage {
+        String^ get() { return avatarImage_; }
+        void set(String^ value) {
+            avatarImage_ = value;
+            NotifyPropertyChanged("_avatarImage");
+        }
+    }
+
+    property ContactStatus _contactStatus {
+        ContactStatus get() { return contactStatus_; }
+        void set(ContactStatus value) {
+            contactStatus_ = value;
+            NotifyPropertyChanged("_contactStatus");
+        }
+    }
+
+    property String^ _lastTime {
+        String^ get() { return lastTime_; }
+        void set(String^ value) {
+            lastTime_ = value;
+            NotifyPropertyChanged("_lastTime");
+        }
+    }
+
+    property String^ _callId {
+        String^ get() { return callId_; }
+        void set(String^ value) {
+            callId_ = value;
+            NotifyPropertyChanged("_callId");
+        }
+    }
+
+    property bool _isCallable {
+        bool get() {
+            return ((callStatus_ == CallStatus::ENDED ||
+                callStatus_ == CallStatus::NONE)
+                && isHovered_) ? true : false;
+        }
+    }
+
     Platform::Type^
         getItemType() {
         return itemBase_->GetType();
@@ -285,6 +383,14 @@ private:
     Visibility          isVisible_;
     bool                isSelected_;
     bool                isHovered_;
+    CallStatus          callStatus_;
+    int                 presenceStatus_;
+    uint32              unreadMessages_;
+    uint32              unreadContactRequests_;
+    String^             avatarImage_;
+    ContactStatus       contactStatus_;
+    String^             lastTime_;
+    String^             callId_;
 };
 
 }

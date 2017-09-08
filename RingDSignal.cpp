@@ -445,47 +445,46 @@ RingD::onRegistrationStateChanged(String^ accountId, String^ state, int detailsC
     using namespace RingClientUWP::Utils;
 
     /* TODO: don't block the ui thread to get account details */
-    auto accountDetails = std::make_shared<AccountDetails>();
     Threading::runOnWorkerThread(
-        [this, state, accountId, accountDetails]() {
-            *accountDetails = std::move(DRing::getAccountDetails(toString(accountId)));
-        })->Completed = ref new AsyncActionCompletedHandler(
-            [this, state, accountId, accountDetails](IAsyncAction^ asyncInfo, AsyncStatus asyncStatus) {
-                Threading::runOnUIThread(
-                    [this, state, accountId, accountDetails]() {
-                        auto _state = toString(state);
-                        if (_state == DRing::Account::States::INITIALIZING || isDeletingAccount) {
-                            return;
+        [this, state, accountId]() {
+            AccountDetails accountDetails = DRing::getAccountDetails(toString(accountId));
+            Threading::runOnUIThread(
+                [this, state, accountId, accountDetails = std::move(accountDetails)]() {
+                    auto _state = toString(state);
+                    if (_state == DRing::Account::States::INITIALIZING || isDeletingAccount) {
+                        return;
+                    }
+                    parseAccountDetails(accountId, accountDetails);
+                    if (_state == DRing::Account::States::REGISTERED) {
+                        if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId))
+                            accountItem->_registrationState = RegistrationState::REGISTERED;
+                        registrationStateRegistered(toString(accountId));
+                    }
+                    else if (_state == DRing::Account::States::UNREGISTERED) {
+                        if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId)) {
+                            accountItem->_registrationState = RegistrationState::UNREGISTERED;
+                            MSG_("************ENABLED: " + accountItem->_enabled.ToString());
                         }
-                        parseAccountDetails(accountId, *accountDetails);
+                        registrationStateUnregistered(toString(accountId));
+                    }
+                    else if (_state == DRing::Account::States::TRYING) {
+                        if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId))
+                            accountItem->_registrationState = RegistrationState::TRYING;
+                        registrationStateTrying(toString(accountId));
+                    }
+                    else {
+                        registrationStateErrorGeneric(toString(accountId));
+                    }
+                    if (isUpdatingAccount) {
+                        onAccountUpdated();
+                    }
+                    Threading::runOnWorkerThread([this, _state]() {
                         if (_state == DRing::Account::States::REGISTERED) {
-                            if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId))
-                                accountItem->_registrationState = RegistrationState::REGISTERED;
-                            registrationStateRegistered(toString(accountId));
+                            subscribeBuddies();
                         }
-                        else if (_state == DRing::Account::States::UNREGISTERED) {
-                            if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId))
-                                accountItem->_registrationState = RegistrationState::UNREGISTERED;
-                            registrationStateUnregistered(toString(accountId));
-                        }
-                        else if (_state == DRing::Account::States::TRYING) {
-                            if (auto accountItem = AccountItemsViewModel::instance->findItem(accountId))
-                                accountItem->_registrationState = RegistrationState::TRYING;
-                            registrationStateTrying(toString(accountId));
-                        }
-                        else {
-                            registrationStateErrorGeneric(toString(accountId));
-                        }
-                        if (isUpdatingAccount) {
-                            onAccountUpdated();
-                        }
-                        Threading::runOnWorkerThread([this, _state]() {
-                            if (_state == DRing::Account::States::REGISTERED) {
-                                subscribeBuddies();
-                            }
-                        });
-                    });
+                });
             });
+        });
 }
 
 void
@@ -499,8 +498,8 @@ RingD::onAccountsChanged()
         Utils::Threading::runOnUIThread([this, allAccountDetails = std::move(allAccountDetails)]() {
             std::for_each(std::cbegin(allAccountDetails), std::cend(allAccountDetails),
                 [=](std::pair<std::string, AccountDetails> acc) {
-                parseAccountDetails(Utils::toPlatformString(acc.first), acc.second);
-            });
+                    parseAccountDetails(Utils::toPlatformString(acc.first), acc.second);
+                });
         });
     }
 }
