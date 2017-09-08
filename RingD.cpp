@@ -114,36 +114,89 @@ RingD::subscribeBuddies()
 void
 RingD::addContactFromDaemon(String^ accountId, Map<String^, String^>^ details)
 {
-    auto account = AccountItemsViewModel::instance->findItem(accountId);
-
-    if (!account)
-        return;
-
     using namespace RingClientUWP::Strings::Contact;
     using namespace Utils;
 
     auto ringId = details->Lookup("id");
+    auto confirmed = details->Lookup("confirmed");
 
-    Map<String^, String^>^ _details;
+    auto _details = ref new Map<String^, String^>();
 
     _details->Insert(toPlatformString(URI), ringId);
-    _details->Insert(toPlatformString(TRUSTED), details->Lookup("confirmed"));
+    _details->Insert(toPlatformString(TRUSTED), confirmed);
     _details->Insert(toPlatformString(TYPE), toPlatformString(DRing::Account::ProtocolNames::RING));
 
-    _details->Insert(toPlatformString(REGISTEREDNAME), ""); // from lookup later
+    // from lookup later
+    _details->Insert(toPlatformString(REGISTEREDNAME), "");
 
-    // get displayName vcard
+    // get displayName from vcard
     String^ displayName = "";
-    _details->Insert(toPlatformString(DISPLAYNAME), displayName); // from vcard
+    _details->Insert(toPlatformString(DISPLAYNAME), displayName);
 
     // get alias from db if possible
     String^ alias = "";
-    _details->Insert(toPlatformString(ALIAS), alias); // from db
+    _details->Insert(toPlatformString(ALIAS), alias);
 
-    auto contactItem = account->_contactItemList->addItem(_details);
+    auto contactItem = AccountItemsViewModel::instance->addContactItem(accountId, _details);
+
+    if (!contactItem) {
+        MSG_("Error when adding contact for accountId: " + accountId + " (contactItem not created)");
+        return;
+    }
 
     // lookup registeredName
     RingD::instance->lookUpAddress(Utils::toString(accountId), ringId);
+
+    MSG_("************NEW added contact from daemon: (id=" + ringId + ")");
+    // TODO: emit client signal : contactItemAdded
+
+}
+
+void
+RingD::addContactRequestFromDaemon(String^ accountId, Map<String^, String^>^ details)
+{
+    auto account = AccountItemsViewModel::instance->findItem(accountId);
+
+    if (!account) {
+        MSG_("Error when adding contact request for accountId: " + accountId + " (can't find accountItem)");
+        return;
+    }
+
+    using namespace RingClientUWP::Strings::Contact;
+    using namespace Utils;
+
+    auto ringId = details->Lookup("from");
+    auto timeReceived = details->Lookup("received");
+    auto payload = details->Lookup("payload");
+
+    auto _details = ref new Map<String^, String^>();
+
+    _details->Insert(toPlatformString(URI), ringId);
+    //_details->Insert(toPlatformString(TIMERECEIVED), timeReceived);
+    //_details->Insert(toPlatformString(PAYLOAD), payload);
+    _details->Insert(toPlatformString(TYPE), toPlatformString(DRing::Account::ProtocolNames::RING));
+
+    // from lookup later
+    _details->Insert(toPlatformString(REGISTEREDNAME), "");
+
+    // get displayName from vcard
+    String^ displayName = "";
+    _details->Insert(toPlatformString(DISPLAYNAME), displayName);
+
+    /* not yet implemented
+    auto contactRequestItem = account->_contactRequestItemList->addItem(_details);
+
+    if (!contactRequestItem) {
+        MSG_("Error when adding contact request for accountId: " + accountId + " (contactRequestItem not created)");
+        return;
+    }
+
+    // lookup registeredName
+    RingD::instance->lookUpAddress(Utils::toString(accountId), ringId);
+    */
+
+    MSG_("************NEW added contact request from daemon: (id=" + ringId + ")");
+    // TODO: emit client signal : contactRequestItemAdded
 
 }
 
@@ -160,34 +213,26 @@ RingD::parseAccountDetails(String^ accountId, const AccountDetails& accountDetai
 
     {
         if (account_new) {
-            MSG_("************NEW setting account details");
             account_new->SetDetails(accountId, Utils::convertMap(accountDetails));
-            // emit signal : accountUpdated
+            // TODO: emit client signal : accountItemUpdated (purposefully outside of SetDetails)
         }
         else {
-            MSG_("************NEW adding account");
-            AccountItemsViewModel::instance->addItem(accountId, Utils::convertMap(accountDetails));
+            auto newItem = AccountItemsViewModel::instance->addItem(accountId, Utils::convertMap(accountDetails));
             if (isAddingAccount) {
                 onAccountAdded(accountId);
             }
-            // TODO: load contacts for the account
             auto contacts = DRing::getContacts(Utils::toString(accountId));
-            for (auto& contact : contacts) {
-                auto id = contact.at("id");
-                // add contact here
-                MSG_("************NEW contact: (id=" + id + ")");
+            for (auto& contactDetails : contacts) {
+                addContactFromDaemon(accountId, Utils::convertMap(contactDetails));
             }
             if (type == ProtocolNames::RING) {
-                // TODO: load contact requests for the account
                 auto contactRequests = DRing::getTrustRequests(Utils::toString(accountId));
-                for (auto& contactRequest : contactRequests) {
-                    auto ringId = contactRequest.at("from");
-                    auto timeReceived = contactRequest.at("received");
-                    auto payload = contactRequest.at("payload");
-                    MSG_("************NEW contactRequest: (from=" + ringId + ", t=" + timeReceived + ", p=" + payload + ")");
+                for (auto& contactRequestDetails : contactRequests) {
+                    addContactRequestFromDaemon(accountId, Utils::convertMap(contactRequestDetails));
                 }
             }
-            // emit signal : accountLoaded
+            // TODO: load group conversations
+            // TODO: emit client signal : accountItemAdded
         }
     }
 
@@ -623,6 +668,7 @@ RingD::updateAccount(String^ accountId)
         }
 
         DRing::setAccountDetails(_accountId, accountDetails);
+
         if (userNameAdded) {
             registerName(accountItem->_id, "", accountItem->_registeredName);
         }
@@ -993,68 +1039,72 @@ RingD::startDaemon()
         return;
     }
 
-    IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
-    {
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
-            if (!isInWizard) {
-                setOverlayStatusText("Loading from config...", "#ff000000");
-            }
-        }));
+    Utils::Threading::runOnWorkerThread(
+        [this]() {
+            Utils::Threading::runOnUIThread(
+                [this]() {
+                    if (!isInWizard) {
+                        setOverlayStatusText("Loading from config...", "#ff000000");
+                    }
+                });
 
-        daemonRunning_ = DRing::start();
+            daemonRunning_ = DRing::start();
 
-        auto vcm = Video::VideoManager::instance->captureManager();
-        if (vcm->deviceList->Size > 0) {
-            std::string deviceName = DRing::getDefaultDevice();
-            std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
-            int rate = stoi(settings["rate"]);
-            std::string size = settings["size"];
-            std::string::size_type pos = size.find('x');
-            int width = std::stoi(size.substr(0, pos));
-            int height = std::stoi(size.substr(pos + 1, size.length()));
-            for (auto dev : vcm->deviceList) {
-                if (!Utils::toString(dev->name()).compare(deviceName))
-                    vcm->activeDevice = dev;
-            }
-            vcm->activeDevice->SetDeviceProperties("", width, height, rate);
-            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
-                finishCaptureDeviceEnumeration();
-            }));
-        }
-
-        if (!daemonRunning_) {
-            ERR_("\ndaemon didn't start.\n");
-            return;
-        }
-        else {
-            /* at this point the config.yml is safe. */
-            std::string tokenFile = localFolder_ + "\\creation.token";
-            if (fileExists(tokenFile)) {
-                fileDelete(tokenFile);
-            }
-
-            if (!isInWizard) {
-                hideLoadingOverlay("Ring started successfully", SuccessColor, 1000);
-            }
-
-            auto allAccountDetails = getAllAccountDetails();
-            Utils::Threading::runOnUIThread([this, allAccountDetails = std::move(allAccountDetails)]() {
-                std::for_each(std::cbegin(allAccountDetails), std::cend(allAccountDetails),
-                    [=](std::pair<std::string, AccountDetails> acc) {
-                        parseAccountDetails(Utils::toPlatformString(acc.first), acc.second);
+            auto vcm = Video::VideoManager::instance->captureManager();
+            if (vcm->deviceList->Size > 0) {
+                std::string deviceName = DRing::getDefaultDevice();
+                std::map<std::string, std::string> settings = DRing::getSettings(deviceName);
+                int rate = stoi(settings["rate"]);
+                std::string size = settings["size"];
+                std::string::size_type pos = size.find('x');
+                int width = std::stoi(size.substr(0, pos));
+                int height = std::stoi(size.substr(pos + 1, size.length()));
+                for (auto dev : vcm->deviceList) {
+                    if (!Utils::toString(dev->name()).compare(deviceName))
+                        vcm->activeDevice = dev;
+                }
+                vcm->activeDevice->SetDeviceProperties("", width, height, rate);
+                Utils::Threading::runOnUIThread(
+                    [this]() {
+                        finishCaptureDeviceEnumeration();
                     });
-                Configuration::UserPreferences::instance->load();
-            });
-
-            while (daemonRunning) {
-                DRing::pollEvents();
-                tasks_.dequeue_tasks();
-                Sleep(5);
             }
-        }
-    },Platform::CallbackContext::Any), WorkItemPriority::High);
+
+            if (!daemonRunning_) {
+                ERR_("\ndaemon didn't start.\n");
+                return;
+            }
+            else {
+                /* at this point the config.yml is safe. */
+                std::string tokenFile = localFolder_ + "\\creation.token";
+                if (fileExists(tokenFile)) {
+                    fileDelete(tokenFile);
+                }
+
+                if (!isInWizard) {
+                    hideLoadingOverlay("Ring started successfully", SuccessColor, 1000);
+                }
+
+                // Database can be loaded here
+
+                // Initial loading of accounts from the daemon
+                auto allAccountDetails = getAllAccountDetails();
+                Utils::Threading::runOnUIThread(
+                    [this, allAccountDetails = std::move(allAccountDetails)]() {
+                        std::for_each(std::cbegin(allAccountDetails), std::cend(allAccountDetails),
+                            [=](std::pair<std::string, AccountDetails> acc) {
+                            parseAccountDetails(Utils::toPlatformString(acc.first), acc.second);
+                        });
+                        Configuration::UserPreferences::instance->load();
+                    });
+
+                while (daemonRunning) {
+                    DRing::pollEvents();
+                    tasks_.dequeue_tasks();
+                    Sleep(5);
+                }
+            }
+        }, WorkItemPriority::High);
 }
 
 std::string

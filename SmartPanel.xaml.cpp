@@ -29,6 +29,8 @@
 #include "Wizard.xaml.h"
 #include "WelcomePage.xaml.h"
 #include "Video.h"
+#include "AccountItemsViewModel.h"
+#include "ConversationItemsViewModel.h"
 
 #include "lodepng.h"
 
@@ -84,7 +86,7 @@ SmartPanel::SmartPanel()
     _devicesIdList_->ItemsSource = RingDeviceItemsViewModel::instance->itemsList;
 
     /* populate the contact list */
-    _smartList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsListFiltered;
+    _smartList_->ItemsSource = ConversationItemsViewModel::instance->_itemsListFiltered;
 
     /* populate banned contact list */
     _bannedContactList_->ItemsSource = SmartPanelItemsViewModel::instance->itemsListBannedFiltered;
@@ -180,12 +182,20 @@ SmartPanel::SmartPanel()
         }
     });
 
-    RingD::instance->vCardUpdated += ref new VCardUpdated([&](Contact^ contact)
-    {
-        Utils::Threading::runOnUIThread([this, contact]() {
-            SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage", "_contact" });
+    AccountItemsViewModel::instance->contactItemAdded += ref new ViewModel::ContactItemAdded(
+        [this](String^ accountId, String^ uri) {
+            auto contactItemList = AccountItemsViewModel::instance->getContactItemList(accountId);
+            auto contactItem = contactItemList->findItem(uri);
+            ConversationItemsViewModel::instance->addItem(contactItem);
         });
-    });
+
+    RingD::instance->vCardUpdated += ref new VCardUpdated(
+        [this](Contact^ contact) {
+            Utils::Threading::runOnUIThread(
+                [this, contact]() {
+                    SmartPanelItemsViewModel::instance->update({ "_bestName2", "_avatarImage", "_contact" });
+                });
+        });
 
     RingD::instance->registrationStateRegistered += ref new RingClientUWP::RegistrationStateRegistered(this, &SmartPanel::OnregistrationStateChanged);
     RingD::instance->registrationStateUnregistered += ref new RingClientUWP::RegistrationStateUnregistered(this, &SmartPanel::OnregistrationStateChanged);
@@ -331,6 +341,9 @@ RingClientUWP::Views::SmartPanel::updatePageContent()
     ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
 
     SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+
+    ConversationItemsViewModel::instance->refreshFilteredItemsList();
+
     SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
 }
 
@@ -1142,7 +1155,7 @@ SmartPanel::OnregisteredNameFound(String^ accountId, LookupStatus status, String
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = address;
-                contact->_avatarColorString = Utils::xaml::getRandomColorStringFromString(contact->ringID_);
+                contact->_avatarColorString = Utils::xaml::getAvatarColorStringFromString(contact->ringID_);
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                 ringTxtBxPlaceHolderDelay(loader->GetString("_contactsUserAdded_"), 5000);
 

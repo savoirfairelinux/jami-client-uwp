@@ -36,9 +36,8 @@ delegate void NewAccountSelected();
 delegate void NoAccountSelected();
 delegate void UpdateScrollView();
 delegate void AccountItemAdded(String^ accountId);
-delegate void AccountItemsCleared();
 delegate void ContactItemAdded(String^ accountId, String^ uri);
-delegate void ContactItemDeleted(String^ accountId, String^ uri);
+delegate void ContactItemRemoved(String^ accountId, String^ uri);
 delegate void ContactItemModified(String^ accountId, String^ uri);
 delegate void NewUnreadMessage(String^ uri);
 delegate void NewUnreadContactRequest(String^ uri);
@@ -60,17 +59,20 @@ internal:
 
 internal:
     /* account items */
-    void                    addItem(String^ id, Map<String^, String^>^ details);
+    AccountItem^            addItem(String^ id, Map<String^, String^>^ details);
     AccountItem^            findItem(String^ id);
     void                    removeItem(String^ id);
     int                     getIndex(String^ id);
     String^                 getSelectedAccountId();
     AccountItem^            findItemByRingID(String ^ ringId);
-    void                    clearAccountList();
     ContactItemList^        getContactItemList(String^ id);
     int                     unreadMessages(String^ accountId);
     int                     unreadContactRequests(String^ accountId);
     int                     bannedContacts(String^ accountId);
+
+    /* contacts */
+    ContactItem^            addContactItem(String^ id, Map<String^, String^>^ details);
+    void                    removeContactItem(String^ id, String^ uri);
 
 internal:
     /* properties */
@@ -109,9 +111,8 @@ internal:
     event NoAccountSelected^        noAccountSelected;
     event UpdateScrollView^         updateScrollView;
     event AccountItemAdded^         accountItemAdded;
-    event AccountItemsCleared^      accountItemsCleared;
     event ContactItemAdded^         contactItemAdded;
-    event ContactItemDeleted^       contactItemDeleted;
+    event ContactItemRemoved^       contactItemRemoved;
     event ContactItemModified^      contactItemModified;
     event NewUnreadMessage^         newUnreadMessage;
     event NewUnreadContactRequest^  newUnreadContactRequest;
