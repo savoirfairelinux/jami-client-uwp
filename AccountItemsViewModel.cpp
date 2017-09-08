@@ -37,15 +37,17 @@ AccountItemsViewModel::AccountItemsViewModel()
     itemsList_ = ref new Vector<AccountItem^>();
 }
 
-void
+AccountItem^
 AccountItemsViewModel::addItem(String^ id, Map<String^, String^>^ details)
 {
-    itemsList_->InsertAt(0, ref new AccountItem(id, details));
+    auto newItem = ref new AccountItem(id, details);
+    itemsList_->InsertAt(0, newItem);
     auto accountType = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::TYPE);
     if (accountType == Utils::toPlatformString(DRing::Account::ProtocolNames::RING)) {
         auto ringID = Utils::getDetailsStringValue(details, DRing::Account::ConfProperties::USERNAME);
         RingD::instance->lookUpAddress(Utils::toString(id), ringID);
     }
+    return newItem;
 }
 
 AccountItem^
