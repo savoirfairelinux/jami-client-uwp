@@ -78,12 +78,12 @@ ContactListModel::addNewContact(String^ name, String^ ringId, TrustStatus trustS
         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
             if (acc->accountType_ == "RING") {
                 if (ringId)
-                    avatarColorString = Utils::xaml::getRandomColorStringFromString(ringId);
+                    avatarColorString = Utils::xaml::getAvatarColorStringFromString(ringId);
                 else
-                    avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                    avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
             }
             else if (name != "") {
-                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
             }
         }
         Contact^ contact = ref new Contact(m_Owner, trimmedName, ringId, nullptr, 0, contactStatus, trustStatus, isIncognitoContact, avatarColorString);
@@ -200,10 +200,10 @@ ContactListModel::Destringify(String^ data)
                     else {
                         if (auto acc = AccountsViewModel::instance->findItem(m_Owner)) {
                             if (acc->accountType_ == "RING") {
-                                avatarColorString = Utils::xaml::getRandomColorStringFromString(ringid);
+                                avatarColorString = Utils::xaml::getAvatarColorStringFromString(ringid);
                             }
                             else if (name != "") {
-                                avatarColorString = Utils::xaml::getRandomColorStringFromString(name);
+                                avatarColorString = Utils::xaml::getAvatarColorStringFromString(name);
                             }
                             else {
                                 avatarColorString = Utils::xaml::getRandomColorString();
@@ -297,8 +297,9 @@ ContactItemList::addItem(Map<String^, String^>^ details)
     // Order is not crucial here, as this model only manages an accounts
     // collection of control items, each of which wrap a contact object,
     // and is not responsable for the view at all.
-    contactItems_->Append(ref new ContactItem(details));
-    return nullptr;
+    auto newItem = ref new ContactItem(details);
+    contactItems_->Append(newItem);
+    return newItem;
 }
 
 ContactItem^

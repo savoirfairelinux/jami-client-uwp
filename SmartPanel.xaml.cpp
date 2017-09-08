@@ -1142,7 +1142,7 @@ SmartPanel::OnregisteredNameFound(String^ accountId, LookupStatus status, String
             if (contact->_contactStatus == ContactStatus::WAITING_FOR_ACTIVATION) {
                 contact->_contactStatus = ContactStatus::READY;
                 contact->ringID_ = address;
-                contact->_avatarColorString = Utils::xaml::getRandomColorStringFromString(contact->ringID_);
+                contact->_avatarColorString = Utils::xaml::getAvatarColorStringFromString(contact->ringID_);
                 auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
                 ringTxtBxPlaceHolderDelay(loader->GetString("_contactsUserAdded_"), 5000);
 

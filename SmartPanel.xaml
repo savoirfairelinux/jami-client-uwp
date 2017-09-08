@@ -182,6 +182,294 @@
             </Grid>
         </DataTemplate>
 
+        <!-- ********NEW template for smartitems.  -->
+        <DataTemplate x:Key="SmartItemTemplate" x:DataType="controls:SmartItem">
+            <Grid Visibility="{x:Bind _isVisible, Mode=OneWay}">
+                <FlyoutBase.AttachedFlyout>
+                    <MenuFlyout x:Name="_SI_MenuFlyout_"
+                                LightDismissOverlayMode="Off"
+                                Placement="Bottom">
+                        <MenuFlyoutItem x:Name="_videoCall_MenuFlyoutItem_"
+                                        x:Uid="_call_"
+                                        Tapped="_videocall_MenuFlyoutItem_Tapped" />
+                        <MenuFlyoutItem x:Name="_addToConference_MenuFlyoutItem_"
+                                        x:Uid="_add_to_conference_"
+                                        Tapped="_addToConference_MenuFlyoutItem__Tapped"
+                                        Visibility="{x:Bind _type, Converter={StaticResource _ContactConferenceableToVisibility_}, Mode=OneWay}" />
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem x:Name="_copyRingID_MenuFlyoutItem_"
+                                        x:Uid="_copy_ring_id_"
+                                        Tapped="_copyRingID_MenuFlyoutItem__Tapped"
+                                        Visibility="{x:Bind _type, Converter={StaticResource _ContactAccountTypeToVisibility_}, ConverterParameter=RING, Mode=OneWay}" />
+                        <MenuFlyoutItem x:Name="_removeContact_MenuFlyoutItem_"
+                                        x:Uid="_remove_contact_"
+                                        Tapped="_removeContact_MenuFlyoutItem__Tapped" />
+                    </MenuFlyout>
+                </FlyoutBase.AttachedFlyout>
+                <!--  the first rectangle helps to detect mouse overing  -->
+                <Rectangle Fill="Transparent" />
+                <!--  contact.  -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="320" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="60" />
+                    </Grid.RowDefinitions>
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="60" />
+                            <ColumnDefinition Width="*" MinWidth="200" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0"
+                                    x:Name="_avatarArea_">
+                            <StackPanel>
+                                <Grid x:Name="_contactAvatarGrid_">
+                                    <Ellipse x:Name="_contactAvatarEllipse_"
+                                             Width="50"
+                                             Height="50"
+                                             Margin="5"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Canvas.ZIndex="3"
+                                             Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallEllipse_}, ConverterParameter=Inverted, Mode=OneWay}">
+                                        <Ellipse.Fill>
+                                            <ImageBrush x:Name="_contactAvatar_" ImageSource="{x:Bind _avatarImage, Mode=OneWay}" />
+                                        </Ellipse.Fill>
+                                    </Ellipse>
+                                    <Ellipse x:Name="_contactAvatarEllipse2_"
+                                             Width="50"
+                                             Height="50"
+                                             Margin="5"
+                                             HorizontalAlignment="Center"
+                                             VerticalAlignment="Center"
+                                             Canvas.ZIndex="2"
+                                             Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallEllipse_}, Mode=OneWay}">
+                                        <Ellipse.Fill>
+                                            <ImageBrush x:Name="_contactAvatar2_" ImageSource="{x:Bind _avatarImage, Mode=OneWay}" />
+                                        </Ellipse.Fill>
+                                        <Ellipse.Triggers>
+                                            <EventTrigger>
+                                                <BeginStoryboard>
+                                                    <Storyboard x:Name="_incomingCallStoryboard_">
+                                                        <DoubleAnimation AutoReverse="True"
+                                                                         RepeatBehavior="Forever"
+                                                                         Storyboard.TargetName="_contactAvatarEllipse2_"
+                                                                         Storyboard.TargetProperty="Opacity"
+                                                                         From="1"
+                                                                         To="0.25"
+                                                                         Duration="0:0:1" />
+                                                    </Storyboard>
+                                                </BeginStoryboard>
+                                            </EventTrigger>
+                                        </Ellipse.Triggers>
+                                    </Ellipse>
+                                    <Grid Visibility="Collapsed">
+                                        <Grid x:Name="_defaultAvatarGrid_"
+                                              Width="50"
+                                              Height="50"
+                                              Canvas.ZIndex="1"
+                                              Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallEllipse_}, ConverterParameter=Inverted, Mode=OneWay}">
+                                            <Ellipse x:Name="_defaultAvatar_"
+                                                     Fill="AliceBlue" />
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontFamily="Arial"
+                                                       FontSize="30"
+                                                       Foreground="White"
+                                                       Text="{x:Bind _bestName2, Converter={StaticResource _NameToInitialConverter_}, Mode=OneWay}"
+                                                       TextAlignment="Center" />
+                                        </Grid>
+                                        <Grid x:Name="_defaultAvatarGrid2_"
+                                              Width="50"
+                                              Height="50"
+                                              Canvas.ZIndex="0"
+                                              Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusForIncomingCallEllipse_}, Mode=OneWay}">
+                                            <Ellipse x:Name="_defaultAvatar2_"
+                                                     Fill="AliceBlue" />
+                                            <TextBlock HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontFamily="Arial"
+                                                       FontSize="30"
+                                                       Foreground="White"
+                                                       Text="{x:Bind _bestName2, Converter={StaticResource _NameToInitialConverter_}, Mode=OneWay}"
+                                                       TextAlignment="Center" />
+                                            <Grid.Triggers>
+                                                <EventTrigger>
+                                                    <BeginStoryboard>
+                                                        <Storyboard x:Name="_incomingCallStoryboard2_">
+                                                            <DoubleAnimation AutoReverse="True"
+                                                                             RepeatBehavior="Forever"
+                                                                             Storyboard.TargetName="_defaultAvatarGrid2_"
+                                                                             Storyboard.TargetProperty="Opacity"
+                                                                             From="1"
+                                                                             To="0.25"
+                                                                             Duration="0:0:1" />
+                                                        </Storyboard>
+                                                    </BeginStoryboard>
+                                                </EventTrigger>
+                                            </Grid.Triggers>
+                                        </Grid>
+                                    </Grid>
+                                </Grid>
+                                <Grid x:Name="_contactPresenceGrid_">
+                                    <Ellipse x:Name="_presenceNotificationCircle_"
+                                             Width="14"
+                                             Height="14"
+                                             Fill="{x:Bind _presenceStatus, Converter={StaticResource _PresenceStatus_}, Mode=OneWay}"
+                                             IsHitTestVisible="False"
+                                             Stroke="{x:Bind _presenceStatus, Converter={StaticResource _PresenceStatus_}, ConverterParameter=Border, Mode=OneWay}"
+                                             StrokeThickness="1.5"
+                                             Visibility="Visible">
+                                        <Ellipse.RenderTransform>
+                                            <TranslateTransform X="16" Y="-21" />
+                                        </Ellipse.RenderTransform>
+                                    </Ellipse>
+                                </Grid>
+                            </StackPanel>
+                            <Border x:Name="_visualNotificationNewMessage_"
+                                    Width="24"
+                                    Height="20"
+                                    Padding="2"
+                                    Style="{StaticResource BorderStyle2}"
+                                    Visibility="{x:Bind _unreadMessages, Converter={StaticResource _NewMessageBubbleNotification_}, Mode=OneWay}">
+                                <TextBlock VerticalAlignment="Bottom"
+                                           FontSize="14"
+                                           Style="{StaticResource TextStyle3}"
+                                           Text="{x:Bind _unreadMessages, Converter={StaticResource _NewMessageNotificationToNumber_}, Mode=OneWay}" />
+                                <Border.RenderTransform>
+                                    <TranslateTransform X="-17" Y="-58" />
+                                </Border.RenderTransform>
+                            </Border>
+                        </StackPanel>
+
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="60" />
+                                <RowDefinition Height="30" />
+                            </Grid.RowDefinitions>
+                            <StackPanel Grid.Row="0"
+                                        Padding="0,4,0,0">
+                                <!--  name of the contact.  -->
+                                <Grid x:Name="_contactNameArea_">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="180" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0"
+                                               x:Name="_contactName_"
+                                               MaxWidth="180"
+                                               Text="{x:Bind _bestName, Mode=OneWay}"
+                                               TextTrimming="CharacterEllipsis">
+                                        <ToolTipService.ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{x:Bind _bestName, Mode=OneWay}" />
+                                            </StackPanel>
+                                        </ToolTipService.ToolTip>
+                                    </TextBlock>
+                                    <StackPanel Grid.Column="1"
+                                                Orientation="Horizontal">
+                                        <ProgressBar Width="80"
+                                                     Padding="4,0,4,0"
+                                                     HorizontalAlignment="Right"
+                                                     Foreground="#333333"
+                                                     IsIndeterminate="True"
+                                                     Visibility="{x:Bind _callStatus, Converter={StaticResource _CallStatusToSpinnerVisibility_}, Mode=OneWay}" />
+                                        <ProgressBar Width="80"
+                                                     Padding="4,0,4,0"
+                                                     HorizontalAlignment="Right"
+                                                     Canvas.ZIndex="3"
+                                                     Foreground="#333333"
+                                                     IsIndeterminate="True"
+                                                     Visibility="{x:Bind _contactStatus, Converter={StaticResource _ContactStatusNotification_}, Mode=OneWay}" />
+                                    </StackPanel>
+                                </Grid>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="_contactLastTime_"
+                                               MaxWidth="180"
+                                               FontSize="10"
+                                               FontStyle="Italic"
+                                               Foreground="#FF333333"
+                                               Text="{x:Bind _lastTime, Mode=OneWay}"
+                                               TextTrimming="CharacterEllipsis" />
+                                </StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="200" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <!--  call action buttons.  -->
+                                    <Grid Grid.Column="1"
+                                          x:Name="_callActionButtonGrid_"
+                                          Margin="5,5,7,5"
+                                          HorizontalAlignment="Right">
+                                        <Grid.RenderTransform>
+                                            <TranslateTransform X="0" Y="-19" />
+                                        </Grid.RenderTransform>
+                                        <Button Grid.Row="0"
+                                                x:Name="_callBtn_"
+                                                HorizontalAlignment="Left"
+                                                VerticalAlignment="Bottom"
+                                                Content="&#xE116;"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                GotFocus="_callBtn__Click"
+                                                Style="{StaticResource FlatRoundListItemButton}"
+                                                Visibility="{x:Bind _isCallable, Converter={StaticResource _boolToVisibility_}, Mode=OneWay}">
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock x:Uid="_tt_video_call_" />
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                        <StackPanel Grid.Row="0"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    Orientation="Horizontal"
+                                                    Visibility="Visible">
+                                            <Button x:Name="_acceptIncomingCallBtn_"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Bottom"
+                                                    Content="&#xE10B;"
+                                                    FontFamily="Segoe MDL2 Assets"
+                                                    GotFocus="_acceptIncomingCallBtn__Click"
+                                                    Style="{StaticResource FlatRoundListItemButton}"
+                                                    Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}">
+                                                <ToolTipService.ToolTip>
+                                                    <TextBlock x:Uid="_tt_accept_call_" />
+                                                </ToolTipService.ToolTip>
+                                            </Button>
+                                            <Button x:Name="_rejectIncomingCallBtn_"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Bottom"
+                                                    Content="&#xE10A;"
+                                                    FontFamily="Segoe MDL2 Assets"
+                                                    GotFocus="_rejectIncomingCallBtn__Click"
+                                                    Style="{StaticResource FlatRoundListItemButton}"
+                                                    Visibility="{x:Bind _callStatus, Converter={StaticResource _IncomingVisibility_}, Mode=OneWay}">
+                                                <ToolTipService.ToolTip>
+                                                    <TextBlock x:Uid="_tt_reject_call_" />
+                                                </ToolTipService.ToolTip>
+                                            </Button>
+                                        </StackPanel>
+                                        <Button x:Name="_cancelCallBtn_"
+                                                HorizontalAlignment="Right"
+                                                VerticalAlignment="Bottom"
+                                                Content="&#xE10A;"
+                                                FontFamily="Segoe MDL2 Assets"
+                                                GotFocus="_cancelCallBtn__Click"
+                                                Style="{StaticResource FlatRoundListItemButton}"
+                                                Visibility="{x:Bind _callStatus, Converter={StaticResource _OutGoingVisibility_}, Mode=OneWay}">
+                                            <ToolTipService.ToolTip>
+                                                <TextBlock x:Uid="_tt_cancel_call_" />
+                                            </ToolTipService.ToolTip>
+                                        </Button>
+                                    </Grid>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Grid>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
         <!--  template for smartpanelitems.  -->
         <DataTemplate x:Key="SmartPanelItemsTemplate" x:DataType="controls:SmartPanelItem">
             <Grid DoubleTapped="SmartPanelItem_Grid_DoubleTapped"
