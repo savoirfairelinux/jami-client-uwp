@@ -70,7 +70,7 @@ makeWString(const std::string& str)
 inline bool
 isEmpty(Platform::String ^str)
 {
-    return str->Length() == 0;
+    return str->Length() == 0 || str == L" ";
 }
 
 inline std::string

@@ -19,17 +19,28 @@
 
 #include "pch.h"
 
+#include "Converters.h"
+
 #include "TimeUtils.h"
 #include "ResourceManager.h"
-#include "Converters.h"
 #include "AccountItemsViewModel.h"
+#include "NetUtils.h"
+#include "XamlUtils.h"
 
 using namespace RingClientUWP;
 using namespace Converters;
 using namespace ViewModel;
 
 Object^
-BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+FillFromString::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
+{
+    auto str = static_cast<String^>(value);
+    auto color = Utils::xaml::ColorFromString(Utils::xaml::getAvatarColorStringFromString(str));
+    return ref new SolidColorBrush(color);
+}
+
+Object^
+BubbleBackground::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto c1 = Utils::xaml::ColorFromString("#ffebefef");
     auto c2 = Utils::xaml::ColorFromString("#ffcfebf5");
@@ -37,13 +48,13 @@ BubbleBackground::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName t
 }
 
 Object^
-BubbleHorizontalAlignement::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+BubbleHorizontalAlignement::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     return ((bool)value) ? Windows::UI::Xaml::HorizontalAlignment::Left : Windows::UI::Xaml::HorizontalAlignment::Right;
 }
 
 Object^
-IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+IncomingVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto state = static_cast<CallStatus>(value);
 
@@ -54,7 +65,7 @@ IncomingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName
 }
 
 Object^
-OutGoingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+OutGoingVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto state = static_cast<CallStatus>(value);
 
@@ -67,7 +78,7 @@ OutGoingVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName
 }
 
 Object^
-HasAnActiveCall::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+HasAnActiveCall::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto state = static_cast<CallStatus>(value);
 
@@ -78,7 +89,7 @@ HasAnActiveCall::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName ta
 }
 
 Object^
-NewMessageBubbleNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+NewMessageBubbleNotification::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto unreadMessages = static_cast<uint32>(value);
 
@@ -89,7 +100,7 @@ NewMessageBubbleNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop
 }
 
 Object^
-NewMessageNotificationToNumber::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+NewMessageNotificationToNumber::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto unreadMessages = static_cast<uint32>(value);
 
@@ -100,7 +111,7 @@ NewMessageNotificationToNumber::Convert(Object ^ value, Windows::UI::Xaml::Inter
 }
 
 Object^
-AccountTypeToSourceImage::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+AccountTypeToSourceImage::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto accountType = dynamic_cast<String^>(value);
     Uri^ uri = (accountType == "RING")
@@ -111,7 +122,7 @@ AccountTypeToSourceImage::Convert(Object ^ value, Windows::UI::Xaml::Interop::Ty
 }
 
 Object^
-RingAccountTypeToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+RingAccountTypeToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if (dynamic_cast<String^>(value) == "RING")
         return VIS::Visible;
@@ -119,7 +130,7 @@ RingAccountTypeToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop:
 }
 
 Object^
-AccountSelectedToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+AccountSelectedToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if ((bool)value == true)
         return Windows::UI::Xaml::Visibility::Visible;
@@ -128,7 +139,7 @@ AccountSelectedToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop:
 }
 
 Object^
-CollapseEmptyString::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+CollapseEmptyString::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto stringValue = dynamic_cast<String^>(value);
 
@@ -138,7 +149,7 @@ CollapseEmptyString::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeNam
 }
 
 Object^
-ContactStatusNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+ContactStatusNotification::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto contactStatus = static_cast<ContactStatus>(value);
 
@@ -149,7 +160,7 @@ ContactStatusNotification::Convert(Object ^ value, Windows::UI::Xaml::Interop::T
 }
 
 Object^
-boolToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+boolToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto direction = static_cast<String^>(parameter);
     Visibility if_true = (direction == "Inverted") ? Visibility::Collapsed : Visibility::Visible;
@@ -160,7 +171,7 @@ boolToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName t
 }
 
 Object^
-uintToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+uintToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if (static_cast<unsigned>(value))
         return Windows::UI::Xaml::Visibility::Visible;
@@ -169,7 +180,7 @@ uintToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName t
 }
 
 Object^
-OneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+OneToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if (static_cast<unsigned>(value) == 1)
         return Windows::UI::Xaml::Visibility::Visible;
@@ -178,7 +189,7 @@ OneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName ta
 }
 
 Object^
-UnreadAccountNotificationsString::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+UnreadAccountNotificationsString::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto unreadMessages = AccountItemsViewModel::instance->unreadMessages(static_cast<String^>(value));
     auto unreadContactRequests = AccountItemsViewModel::instance->unreadContactRequests(static_cast<String^>(value));
@@ -204,7 +215,7 @@ UnreadAccountNotificationsString::Convert(Object ^ value, Windows::UI::Xaml::Int
 }
 
 Object^
-MoreThanOneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+MoreThanOneToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if (static_cast<unsigned>(value) > 1)
         return Windows::UI::Xaml::Visibility::Visible;
@@ -213,7 +224,7 @@ MoreThanOneToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::Typ
 }
 
 Object^
-MoreThanZeroToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+MoreThanZeroToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto unreadMessages = AccountItemsViewModel::instance->unreadMessages(static_cast<String^>(value));
     auto unreadContactRequests = AccountItemsViewModel::instance->unreadContactRequests(static_cast<String^>(value));
@@ -225,7 +236,7 @@ MoreThanZeroToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::Ty
 }
 
 Object^
-PartialTrustToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+PartialTrustToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto direction = static_cast<String^>(parameter);
     Visibility if_true = (direction == "Inverted") ? Visibility::Collapsed : Visibility::Visible;
@@ -236,7 +247,7 @@ PartialTrustToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::Ty
 }
 
 Object^
-TrustedToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+TrustedToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     if (static_cast<Contact^>(value)->_isTrusted)
         return Windows::UI::Xaml::Visibility::Visible;
@@ -245,7 +256,7 @@ TrustedToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeNam
 }
 
 Object^
-SelectedAccountToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+SelectedAccountToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto contact = static_cast<Contact^>(value);
     auto callStatus = SmartPanelItemsViewModel::instance->findItem(contact)->_callStatus;
@@ -258,7 +269,7 @@ SelectedAccountToVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop:
 }
 
 Object^
-CallStatusToSpinnerVisibility::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+CallStatusToSpinnerVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto callStatus = static_cast<CallStatus>(value);
 
@@ -272,7 +283,7 @@ CallStatusToSpinnerVisibility::Convert(Object ^ value, Windows::UI::Xaml::Intero
 }
 
 Object^
-CallStatusForIncomingCallEllipse::Convert(Object ^ value, Windows::UI::Xaml::Interop::TypeName targetType, Object ^ parameter, String ^ language)
+CallStatusForIncomingCallEllipse::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
     auto direction = static_cast<String^>(parameter);
     Visibility if_true = (direction == "Inverted") ? Visibility::Collapsed : Visibility::Visible;
@@ -291,27 +302,14 @@ CallStatusForIncomingCallEllipse::Convert(Object ^ value, Windows::UI::Xaml::Int
 Object^
 ContactAccountTypeToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto contact = static_cast<Contact^>(value);
-    auto parameterString = static_cast<String^>(parameter);
-    auto associatedAccount = AccountItemsViewModel::instance->findItem(contact->_accountIdAssociated);
-    if (associatedAccount->_accountType == parameterString)
-        return VIS::Visible;
+    // Hide the option until functional
     return VIS::Collapsed;
 }
 
 Object^
 ContactConferenceableToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
-    // Hide the option until more or less fully functional
-    return VIS::Collapsed;
-
-    auto contact = static_cast<Contact^>(value);
-    if (SmartPanelItemsViewModel::instance->isInCall()) {
-        auto selectedItem = SmartPanelItemsViewModel::instance->_selectedItem;
-        if (contact != selectedItem->_contact) {
-            return VIS::Visible;
-        }
-    }
+    // Hide the option until functional
     return VIS::Collapsed;
 }
 
@@ -334,11 +332,12 @@ NameToInitialConverter::Convert(Object ^ value, TypeName targetType, Object ^ pa
 Object^
 HasAvatarToVisibility::Convert(Object ^ value, TypeName targetType, Object ^ parameter, String ^ language)
 {
-    auto contact = static_cast<Contact^>(value);
+    auto avatarImage = static_cast<String^>(value);
     auto parameterString = static_cast<String^>(parameter);
+
     auto positiveResult = parameterString != "Inverted" ? VIS::Visible : VIS::Collapsed;
     auto negtiveResult = parameterString != "Inverted" ? VIS::Collapsed : VIS::Visible;
-    return contact->_avatarImage != L" " ? positiveResult : negtiveResult;
+    return Utils::isEmpty(avatarImage) ? negtiveResult : positiveResult;
 }
 
 Object^
@@ -346,11 +345,11 @@ AccountRegistrationStateToString::Convert(Object ^ value, TypeName targetType, O
 {
     auto accountItem = AccountItemsViewModel::instance->findItem(static_cast<String^>(value));
 
+    if (accountItem->_accountType == "SIP") {
+        return Utils::hasInternet() ? "Ready" : "Offline";
+    }
     if (!accountItem->_enabled) {
         return "Disabled";
-    }
-    if (accountItem->_accountType == "SIP") {
-        return "Ready";
     }
     if (accountItem->_registrationState == RegistrationState::REGISTERED) {
         return "Online";
@@ -366,7 +365,8 @@ AccountRegistrationStateToForeground::Convert(Object ^ value, TypeName targetTyp
     if (!accountItem->_enabled) {
         return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));
     }
-    if (accountItem->_registrationState == RegistrationState::REGISTERED || accountItem->_accountType == "SIP") {
+    if (accountItem->_registrationState == RegistrationState::REGISTERED
+        || (accountItem->_accountType == "SIP" && Utils::hasInternet())) {
         return ref new SolidColorBrush(Utils::xaml::ColorFromString(SuccessColor));
     }
     return ref new SolidColorBrush(Utils::xaml::ColorFromString(ErrorColor));

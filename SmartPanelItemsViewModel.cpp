@@ -303,3 +303,199 @@ SmartPanelItemsViewModel::refreshFilteredBannedItemsList()
         }
     });
 }
+
+//////////////////////////////
+//
+// NEW
+//
+//////////////////////////////
+
+SmartItemsViewModel::SmartItemsViewModel()
+{
+    itemsList_ = ref new Vector<SmartItem^>();
+    itemsListFiltered_ = ref new Vector<SmartItem^>();
+    itemsListBannedFiltered_ = ref new Vector<SmartItem^>();
+}
+
+SmartItem^
+SmartItemsViewModel::addItem(Object^ item)
+{
+    SmartItem^ newSmartItem = nullptr;
+    if (auto newContactItem = dynamic_cast<ContactItem^>(item)) {
+        newSmartItem = ref new SmartItem(newContactItem);
+    }
+    if (newSmartItem) {
+        newSmartItem->_avatarImage = ref new String(L" ");
+        itemsList_->InsertAt(0, newSmartItem);
+    }
+    return newSmartItem;
+}
+
+SmartItem^
+SmartItemsViewModel::findItemByCallId(String ^ callId)
+{
+    for each (SmartItem^ item in itemsList_) {
+        if (item->_callId == callId)
+            return item;
+    }
+    return nullptr;
+}
+
+SmartItem^
+SmartItemsViewModel::findItemByRingId(String ^ ringId)
+{
+    for each (SmartItem^ item in itemsList_) {
+        if (item->_uri == ringId)
+            return item;
+    }
+    return nullptr;
+}
+
+unsigned
+SmartItemsViewModel::getIndex(SmartItem^ item)
+{
+    int i;
+    for (i = 0; i < itemsList_->Size; i++) {
+        if (itemsList_->GetAt(i) == item)
+            break;
+    }
+    return i;
+}
+
+unsigned
+SmartItemsViewModel::getIndexByCallId(String^ callId)
+{
+    int i;
+    for (i = 0; i < itemsList_->Size; i++) {
+        if (itemsList_->GetAt(i)->_callId == callId)
+            break;
+    }
+    return i;
+}
+
+unsigned
+SmartItemsViewModel::getIndexByRingId(String ^ ringId)
+{
+    int i;
+    for (i = 0; i < itemsList_->Size; i++) {
+        if (itemsList_->GetAt(i)->_uri == ringId)
+            break;
+    }
+    return i;
+}
+
+void
+SmartItemsViewModel::removeItem(SmartItem^ item)
+{
+    unsigned int index;
+    itemsList_->IndexOf(item, &index);
+    itemsList_->RemoveAt(index);
+}
+
+void
+SmartItemsViewModel::moveItemToTheTop(SmartItem^ item)
+{
+    unsigned int spi_index, cl_index;
+
+    if (itemsList_->IndexOf(item, &spi_index)) {
+        if (spi_index != 0) {
+            auto selectedAccountId = getAssociatedAccountId(item);
+            if (auto contactItemListModel = AccountItemsViewModel::instance->getContactItemList(selectedAccountId)) {
+                auto contactList = contactItemListModel->_contactItems;
+                auto contactListItem = contactItemListModel->findItemByAlias(item->_alias);
+                contactList->IndexOf(contactListItem, &cl_index);
+                contactList->RemoveAt(cl_index);
+                contactList->Append(contactListItem);
+
+                itemsList_->RemoveAt(spi_index);
+                itemsList_->InsertAt(0, item);
+            }
+        }
+        if (itemsListFiltered_->IndexOf(item, &spi_index)) {
+            if (spi_index != 0) {
+                itemsListFiltered_->RemoveAt(spi_index);
+                itemsListFiltered_->InsertAt(0, item);
+                item->_isHovered = false;
+            }
+        }
+    }
+}
+
+/*
+* Returns true if a call is in progress (across accounts/contacts)
+*/
+bool
+SmartItemsViewModel::isInCall()
+{
+    // Check if any items have callIds and are "IN_PROGRESS"
+    for (auto item : itemsList_) {
+        if (item->_callId && item->_callStatus == CallStatus::IN_PROGRESS) {
+            return true;
+        }
+    }
+    return false;
+}
+
+String^
+SmartItemsViewModel::getAssociatedAccountId(SmartItem^ item)
+{
+    return AccountItemsViewModel::instance->getSelectedAccountId();
+}
+
+void
+SmartItemsViewModel::refreshFilteredItemsList()
+{
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountItem = AccountItemsViewModel::instance->_selectedItem;
+    auto selectedAccountContactItemList = AccountItemsViewModel::instance->getContactItemList(selectedAccountId);
+
+    std::for_each(begin(itemsList_), end(itemsList_),
+        [this, selectedAccountId, selectedAccountItem, selectedAccountContactItemList](SmartItem^ item) {
+            auto isAccountContact = (selectedAccountContactItemList->findItem(item->_uri) != nullptr);
+
+            static unsigned spi_index;
+            auto isInList = _itemsListFiltered->IndexOf(item, &spi_index);
+            auto isCall = (item->_callStatus != CallStatus::NONE &&
+                item->_callStatus != CallStatus::ENDED) ? true : false;
+            // 1. Filters out non-account contacts that are NOT incoming calls
+            // 2. ***TODO: remove***: Filters out account contacts that don't trust us yet
+            if ((isAccountContact || isCall) &&
+                (item->_isTrusted ||
+                (selectedAccountItem->_dhtPublicInCalls))) {
+                if (!isInList) {
+                    if (isCall)
+                        itemsListFiltered_->InsertAt(0, item);
+                    else
+                        itemsListFiltered_->Append(item);
+                }
+            }
+            else if (isInList) {
+                itemsListFiltered_->RemoveAt(spi_index);
+            }
+        });
+
+    refreshFilteredBannedItemsList();
+}
+
+void
+SmartItemsViewModel::refreshFilteredBannedItemsList()
+{
+    auto selectedAccountId = AccountItemsViewModel::instance->getSelectedAccountId();
+    auto selectedAccountContactItemList = AccountItemsViewModel::instance->getContactItemList(selectedAccountId);
+
+    std::for_each(begin(itemsList_), end(itemsList_),
+        [this, selectedAccountId, selectedAccountContactItemList](SmartItem^ item) {
+            auto isAccountContact = (selectedAccountContactItemList->findItem(item->_uri) != nullptr);
+            static unsigned spi_index;
+            auto isInList = _itemsListBannedFiltered->IndexOf(item, &spi_index);
+            // Filters out non-account contacts that are NOT banned
+            if (isAccountContact && item->_isBanned) {
+                if (!isInList) {
+                    _itemsListBannedFiltered->InsertAt(0, item);
+                }
+            }
+            else if (isInList) {
+                _itemsListBannedFiltered->RemoveAt(spi_index);
+            }
+        });
+}
