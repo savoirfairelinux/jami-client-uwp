@@ -20,6 +20,7 @@
 
 #include "RingDeviceItemsViewModel.h"
 #include "AccountItemsViewModel.h"
+#include "ConversationItemsViewModel.h"
 
 #include "SmartPanel.g.h"
 
@@ -81,8 +82,8 @@ private:
     void _acceptIncomingCallBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _callBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _cancelCallBtn__Click(Platform::Object^ sender, RoutedEventArgs^ e);
-    void SmartPanelItem_Grid_PointerEntered(Platform::Object^ sender, PointerRoutedEventArgs^ e);
-    void SmartPanelItem_Grid_PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void ConversationItem_Grid_PointerEntered(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void ConversationItem_Grid_PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _videoDeviceComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
     void _videoResolutionComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
     void _videoRateComboBox__SelectionChanged(Platform::Object^ sender, RoutedEventArgs^);
@@ -96,7 +97,7 @@ private:
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
     void addToContactList(String^ name);
     void undoListBoxDeselection(ListBox^ listBox, SelectionChangedEventArgs^ e);
-    void placeCall(SmartPanelItem^ item);
+    void placeCall(ConversationItem^ item);
     void _addDevice__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void OndevicesListRefreshed(Map<String^, String^>^ deviceMap);
     void _pinGeneratorYes__Click(Platform::Object^ sender, RoutedEventArgs^ e);
@@ -115,7 +116,7 @@ private:
     void _selectedAccountAvatarContainer__PointerReleased(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _selectedAccountAvatarContainer__PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _smartList__PointerExited(Platform::Object^ sender, PointerRoutedEventArgs^ e);
-    void SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, PointerRoutedEventArgs^ e);
+    void ConversationItem_Grid_PointerMoved(Platform::Object^ sender, PointerRoutedEventArgs^ e);
     void _registerOnBlockchainEdition__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void _usernameTextBoxEdition__KeyUp(Platform::Object^ sender, KeyRoutedEventArgs^ e);
     void OnregisteredNameFound(String^ accountId, LookupStatus status, String^ address, String^ name);
@@ -162,11 +163,11 @@ private:
     void _smartList__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _showBannedList__PointerPressed(Platform::Object^ sender, Windows::UI::Xaml::Input::PointerRoutedEventArgs^ e);
     void _addBannedContactBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
-    void SmartPanelItem_Grid_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e);
+    void ConversationItem_Grid_RightTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::RightTappedRoutedEventArgs^ e);
     void _videocall_MenuFlyoutItem_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
     void _addToConference_MenuFlyoutItem__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
     void _copyRingID_MenuFlyoutItem__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
-    void SmartPanelItem_Grid_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e);
+    void ConversationItem_Grid_DoubleTapped(Platform::Object^ sender, Windows::UI::Xaml::Input::DoubleTappedRoutedEventArgs^ e);
     void _revokeDeviceButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _deviceName__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _deviceName__LostFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);

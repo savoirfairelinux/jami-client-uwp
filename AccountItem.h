@@ -36,10 +36,13 @@ namespace Controls
 public ref class AccountItem sealed
     : public INotifyPropertyChanged
 {
-
 public:
     virtual event PropertyChangedEventHandler^ PropertyChanged;
 
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
+
+public:
     property String^ _bestName {
         String^ get() {
             String^ bestName;
@@ -300,13 +303,11 @@ internal:
     AccountItem(String^ id, Map<String^, String^>^ details);
     void SetDetails(String^ id, Map<String^, String^>^ details);
 
-protected:
-    void NotifyPropertyChanged(String^ propertyName);
-
 private:
     std::unique_ptr<Models::Account>    account_;
 
     ContactItemList^                    contactItemList_;
+    std::vector<std::string>            conversationUids_;
 
     bool                                isSelected_;
 };

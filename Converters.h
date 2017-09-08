@@ -37,6 +37,13 @@ namespace RingClientUWP
 namespace Converters
 {
 
+public ref class FillFromString sealed : IValueConverter {
+public:
+    virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);
+    virtual Object^ ConvertBack(Object^ value, TypeName  targetType, Object^ parameter, String^ language) NOTIMPLEMENTED
+        FillFromString() {};
+};
+
 public ref class BubbleBackground sealed : IValueConverter {
 public:
     virtual Object^ Convert(Object^ value, TypeName targetType, Object^ parameter, String^ language);

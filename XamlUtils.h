@@ -134,7 +134,7 @@ getRandomColorString()
 }
 
 String^
-getRandomColorStringFromString(String^ str)
+getAvatarColorStringFromString(String^ str)
 {
     auto index = hashToRange(toString(computeMD5(str)), 0, colorStrings->Size - 1);
     return colorStrings->GetAt(index);

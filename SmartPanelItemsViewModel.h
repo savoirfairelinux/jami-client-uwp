@@ -120,5 +120,6 @@ private:
 
     void OnstateChange(Platform::String ^callId, RingClientUWP::CallStatus state, int code);
 };
+
 }
 }
