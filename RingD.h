@@ -184,6 +184,7 @@ internal:
     void startDaemon();
 
     void addContactFromDaemon(String^ accountId, Map<String^, String^>^ details);
+    void addContactRequestFromDaemon(String^ accountId, Map<String^, String^>^ details);
     void cancelOutGoingCall(String^ callId);
     void raiseWindowResized(float width, float height);
     void raiseShareRequested();

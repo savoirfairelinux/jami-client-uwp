@@ -60,7 +60,7 @@ internal:
 
 internal:
     /* account items */
-    void                    addItem(String^ id, Map<String^, String^>^ details);
+    AccountItem^            addItem(String^ id, Map<String^, String^>^ details);
     AccountItem^            findItem(String^ id);
     void                    removeItem(String^ id);
     int                     getIndex(String^ id);

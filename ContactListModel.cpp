@@ -297,8 +297,9 @@ ContactItemList::addItem(Map<String^, String^>^ details)
     // Order is not crucial here, as this model only manages an accounts
     // collection of control items, each of which wrap a contact object,
     // and is not responsable for the view at all.
-    contactItems_->Append(ref new ContactItem(details));
-    return nullptr;
+    auto newItem = ref new ContactItem(details);
+    contactItems_->Append(newItem);
+    return newItem;
 }
 
 ContactItem^
