@@ -52,7 +52,9 @@ getDebugHeader(std::string file, int line)
         << '.' << std::right << std::setw(3) << std::setfill('0') << millis << std::left
         << '|' << std::right << std::setw(5) << std::setfill(' ') << tid << std::left;
     out.fill(prev_fill);
-    out << "|" << std::setw(32) << (file + ':' + Utils::toString((line.ToString())));
+    out << "|" << std::setw(26) << file
+        << ':'
+        << std::setw(5) << std::setfill(' ') << line;
     out << "] ";
 
     return out.str();

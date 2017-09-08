@@ -40,12 +40,12 @@ delegate void debugMessageToScreen(Platform::String^ message);
 /* this is how to implement a singleton class*/
 public ref class RingDebug sealed
 {
-public:
     /* singleton */
-    static property RingDebug^ instance
-    {
-        RingDebug^ get()
-        {
+private:
+    RingDebug();
+public:
+    static property RingDebug^ instance {
+        RingDebug^ get() {
             static RingDebug^ instance_ = ref new RingDebug();
             return instance_;
         }
@@ -56,10 +56,8 @@ public:
     /* functions */
 internal:
     enum class Type { DMN, MSG, WNG, ERR };
-    void print(const std::string& message, const Type& type,
-               std::string file, int line);
-    void print(String^ message, const Type& type,
-               std::string file, int line);
+    void print(const std::string& message, const Type& type, std::string file, int line);
+    void print(String^ message, const Type& type, std::string file, int line);
     void print(Exception^ e, std::string file, int line);
 
     void printToLogFile(std::string msg);
@@ -69,7 +67,7 @@ internal:
 
 private:
     std::mutex debugMutex_;
-    RingDebug(); // singleton
+
 };
 
 void
