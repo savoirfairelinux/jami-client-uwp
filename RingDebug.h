@@ -1,6 +1,7 @@
 /***************************************************************************
 * Copyright (C) 2016 by Savoir-faire Linux                                *
 * Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -23,7 +24,7 @@
 
 #define UWP_DBG_CLIENT      1
 #define UWP_DBG_IO          0
-#define UWP_DBG_SIGNALS     0
+#define UWP_DBG_SIGNALS     1
 #define UWP_DBG_DAEMON      1
 
 using namespace Windows::Storage;
@@ -31,35 +32,28 @@ using namespace Windows::Storage;
 namespace RingClientUWP
 {
 
-/* forward declaration */
 ref class RingDebug;
 
-/* delegate */
+/* delegates */
 delegate void debugMessageToScreen(Platform::String^ message);
 
-/* this is how to implement a singleton class*/
 public ref class RingDebug sealed
 {
-public:
     /* singleton */
-    static property RingDebug^ instance
-    {
-        RingDebug^ get()
-        {
+private:
+    RingDebug();
+public:
+    static property RingDebug^ instance {
+        RingDebug^ get() {
             static RingDebug^ instance_ = ref new RingDebug();
             return instance_;
         }
     }
 
-    /* properties */
-
-    /* functions */
 internal:
     enum class Type { DMN, MSG, WNG, ERR };
-    void print(const std::string& message, const Type& type,
-               std::string file, int line);
-    void print(String^ message, const Type& type,
-               std::string file, int line);
+    void print(const std::string& message, const Type& type, std::string file, int line);
+    void print(String^ message, const Type& type, std::string file, int line);
     void print(Exception^ e, std::string file, int line);
 
     void printToLogFile(std::string msg);
@@ -69,7 +63,7 @@ internal:
 
 private:
     std::mutex debugMutex_;
-    RingDebug(); // singleton
+
 };
 
 void
