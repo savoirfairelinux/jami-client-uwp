@@ -111,7 +111,6 @@ internal:
 private:
     /* members */
     IObservableVector<ConversationMessage^>^ messagesList_;
-    ListBox^ messageListBox_;
 
 };
 #define MSG_FROM_CONTACT true

@@ -32,12 +32,16 @@ namespace Controls
 
 public ref class RingDeviceItem sealed : public INotifyPropertyChanged
 {
+public:
+    virtual event PropertyChangedEventHandler^ PropertyChanged;
+
+protected:
+    void NotifyPropertyChanged(String^ propertyName);
 
 public:
     RingDeviceItem(String^ deviceId, String^ deviceName);
 
     void raiseNotifyPropertyChanged(String^ propertyName);
-    virtual event PropertyChangedEventHandler^ PropertyChanged;
 
     property String^ _deviceName {
         String^ get() {
@@ -68,9 +72,6 @@ public:
             NotifyPropertyChanged("_isSelected");
         }
     }
-
-protected:
-    void NotifyPropertyChanged(String^ propertyName);
 
 private:
     std::unique_ptr<RingDevice>     device_;

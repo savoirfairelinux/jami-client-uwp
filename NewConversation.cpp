@@ -1,7 +1,6 @@
 /**************************************************************************
-* Copyright (C) 2016 by Savoir-faire Linux                                *
-* Author: Jäger Nicolas <nicolas.jager@savoirfairelinux.com>              *
-* Author: Traczyk Andreas <traczyk.andreas@savoirfairelinux.com>          *
+* Copyright (C) 2017 by Savoir-faire Linux                                *
+* Author: Traczyk Andreas <andreas.traczyk@savoirfairelinux.com>          *
 *                                                                         *
 * This program is free software; you can redistribute it and/or modify    *
 * it under the terms of the GNU General Public License as published by    *
@@ -18,44 +17,22 @@
 **************************************************************************/
 #include "pch.h"
 
-#include "SmartPanelItem.h"
-
-#include "RingD.h"
+#include "NewConversation.h"
+#include "MessageTextPage.xaml.h"
 
 using namespace Windows::ApplicationModel::Core;
 using namespace Platform;
-using namespace Windows::Data::Json;
 using namespace Windows::UI::Core;
 
 using namespace RingClientUWP;
-using namespace RingClientUWP::Controls;
 
-SmartPanelItem::SmartPanelItem()
+NewConversationMessage::NewConversationMessage(String^ uid)
 {
-    _callId = "";
-    videoMuted_ = false;
-    isSelected_ = false;
-    isHovered_ = false;
-    _callStatus = CallStatus::NONE;
-
-    RingD::instance->callPlaced += ref new RingClientUWP::CallPlaced(this, &SmartPanelItem::OncallPlaced);
+    message_ = std::make_unique<Models::Conversation::Message::Info>(Utils::toString(uid));
 }
 
 void
-SmartPanelItem::muteVideo(bool state)
-{
-    videoMuted_ = state;
-    RingD::instance->muteVideo(_callId, state);
-}
-
-void
-SmartPanelItem::startCallTimer()
-{
-    call_.callStartTime = std::chrono::steady_clock::now();;
-}
-
-void
-SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
+NewConversationMessage::NotifyPropertyChanged(String^ propertyName)
 {
     CoreApplicationView^ view = CoreApplication::MainView;
     view->CoreWindow->Dispatcher->RunAsync(
@@ -66,16 +43,26 @@ SmartPanelItem::NotifyPropertyChanged(String^ propertyName)
     }));
 }
 
-void
-SmartPanelItem::OncallPlaced(Platform::String ^callId)
+String^
+NewConversationMessage::getMessageAvatar()
 {
-    if (_callId == callId) {
-        _callStatus = CallStatus::SEARCHING;
-    }
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarImage;
+    return L" ";
 }
 
-void
-SmartPanelItem::raiseNotifyPropertyChanged(String^ propertyName)
+SolidColorBrush^
+NewConversationMessage::getMessageAvatarColorBrush()
 {
-    NotifyPropertyChanged(propertyName);
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_avatarColorBrush;
+    return ref new SolidColorBrush(Utils::xaml::ColorFromString(L"#ff808080"));
+}
+
+String^
+NewConversationMessage::getMessageAvatarInitial()
+{
+    if (ViewModel::SmartPanelItemsViewModel::instance->_selectedItem)
+        return Utils::getUpperInitial(ViewModel::SmartPanelItemsViewModel::instance->_selectedItem->_contact->_bestName2);
+    return L"?";
 }

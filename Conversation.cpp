@@ -30,20 +30,6 @@ using namespace RingClientUWP;
 Conversation::Conversation()
 {
     messagesList_ = ref new  Vector<ConversationMessage^>();
-
-    /*
-    messageListBox_ = ref new ListBox();
-    messageListBox_->Name = "_messagesList_";
-    messageListBox_->Margin = Windows::UI::Xaml::Thickness(0.0, 0.0, 0.0, 0.0);
-    messageListBox_->Padding = Windows::UI::Xaml::Thickness(0.0, 0.0, 0.0, 0.0);
-    auto backgroundBrush = dynamic_cast<Brush^>(Application::Current->Resources->Lookup("RingMessagePageBrush"));
-    messageListBox_->Background = backgroundBrush;
-    auto itemContainerStyle = dynamic_cast<Style^>(Application::Current->Resources->Lookup("messageBubbleStyle"));
-    messageListBox_->ItemContainerStyle = itemContainerStyle;
-    auto itemTemplate = dynamic_cast<Style^>(Application::Current->Resources->Lookup("ConversationMessageTemplate"));
-    messageListBox_->ItemTemplate = itemTemplate;
-    messageListBox_->ItemsSource = messagesList_;
-    */
 }
 
 ConversationMessage^
