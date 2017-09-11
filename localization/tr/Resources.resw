@@ -160,7 +160,7 @@
     <value>Aygıt Ekle</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>PIN&apos;i gir</value>
+    <value>PIN'i gir</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>Bu cihazı Ring hesabınıza eklemek için Ring üzerinden bir PIN oluşturmalısınız.</value>
@@ -202,7 +202,7 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Ring&apos;de hesap dışa aktarılıyor...</value>
+    <value>Ring'de hesap dışa aktarılıyor...</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
     <value>arıyor</value>
@@ -433,7 +433,7 @@
     <value>PIN oluşturmayı iptal et</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Hesap PIN&apos;i oluştur</value>
+    <value>Hesap PIN'i oluştur</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
     <value>Gelen çağrıyı reddet</value>
@@ -451,7 +451,7 @@
     <value>Ayarlar</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>QR kodu ve RingID&apos;sini göster</value>
+    <value>QR kodu ve RingID'sini göster</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
     <value>Görüntülü arama başlat</value>
@@ -505,7 +505,7 @@
     <value>Ara</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>RingID&apos;yi kopyala</value>
+    <value>RingID'yi kopyala</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
     <value>Ad</value>

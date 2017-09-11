@@ -139,7 +139,7 @@
     <value>https://www.gnu.org/licenses/gpl-3.0.fr.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value>pour plus d&apos;infos.</value>
+    <value>pour plus d'infos.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
     <value>Ring est un logiciel de communication sécurisé et distribué.</value>
@@ -151,7 +151,7 @@
     <value>Liberté, Égalité, Fraternité! - Version 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Entrez l&apos;alias</value>
+    <value>Entrez l'alias</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
     <value>Éditer le compte</value>
@@ -184,7 +184,7 @@
     <value>Générateur de NIP</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>Enregistrer un nom d&apos;utilisateur public</value>
+    <value>Enregistrer un nom d'utilisateur public</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
     <value>Partager</value>
@@ -250,19 +250,19 @@
     <value>Vidéo</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Entrez le nom d&apos;hôte</value>
+    <value>Entrez le nom d'hôte</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
     <value>Entrez le mot de passe</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Entrez le nom d&apos;utilisateur</value>
+    <value>Entrez le nom d'utilisateur</value>
   </data>
   <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Entrez votre nom d&apos;utilisateur</value>
+    <value>Entrez votre nom d'utilisateur</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>en attente de la liste d&apos;appareils</value>
+    <value>en attente de la liste d'appareils</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
     <value>À Propos</value>
@@ -280,22 +280,22 @@
     <value>Votre compte va être supprimé de cet ordinateur</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
-    <value>Les gens peuvent vous trouver avec votre nom d&apos;utilisateur</value>
+    <value>Les gens peuvent vous trouver avec votre nom d'utilisateur</value>
   </data>
   <data name="_whatWillHappen_0_" xml:space="preserve">
     <value>Vous êtes déjà enregistré</value>
   </data>
   <data name="_whatWillHappen_1_" xml:space="preserve">
-    <value>Vous n&apos;êtes pas encore enregistré</value>
+    <value>Vous n'êtes pas encore enregistré</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>Il sera nécessaire d&apos;envoyer votre ringId.</value>
+    <value>Il sera nécessaire d'envoyer votre ringId.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
     <value>Identifiants incorrects ou PIN expiré.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
-    <value>Pas de numéro d&apos;appareil trouvé !</value>
+    <value>Pas de numéro d'appareil trouvé !</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
     <value>vus avez déjà un contact possédant cet id Ring</value>
@@ -307,13 +307,13 @@
     <value>Id Ring ajouté</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>nom d&apos;utilisateur trouvé et ajouté</value>
+    <value>nom d'utilisateur trouvé et ajouté</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>Nom d&apos;utilisateur invalide</value>
+    <value>Nom d'utilisateur invalide</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>nom d&apos;utilisateur non trouvé</value>
+    <value>nom d'utilisateur non trouvé</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
     <value>Ajouter un compte existant</value>
@@ -385,19 +385,19 @@
     <value>Démarrer un appel audio</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Empêcher cet utilisateur d&apos;entrer en contact</value>
+    <value>Empêcher cet utilisateur d'entrer en contact</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(l&apos;utilisateur peut être débloqué depuis le panneau Paramètres Compte)</value>
+    <value>(l'utilisateur peut être débloqué depuis le panneau Paramètres Compte)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
     <value>Annuler les modifications au compte</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Annuler l&apos;appel sortant</value>
+    <value>Annuler l'appel sortant</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Changer l&apos;orientation de la fenêtre de message</value>
+    <value>Changer l'orientation de la fenêtre de message</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
     <value>Effacer cette conversation</value>
@@ -424,7 +424,7 @@
     <value>Accueil/À propos</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignorer l&apos;invitation de ce contact</value>
+    <value>Ignorer l'invitation de ce contact</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Lier cet appareil à un compte existant</value>
@@ -535,7 +535,7 @@
     <value>Créé par :</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Ajout de l&apos;appareil…</value>
+    <value>Ajout de l'appareil…</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
     <value>Création du compte...</value>
@@ -547,7 +547,7 @@
     <value>Génération du NIP</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Révocation de l&apos;appareil :</value>
+    <value>Révocation de l'appareil :</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
     <value>Mise à jour du compte...</value>

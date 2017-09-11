@@ -268,7 +268,7 @@
     <value>O aplikaci</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Postoj k soukromí</value>
@@ -424,7 +424,7 @@
     <value>Home/About</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Propojit zařízení s již existujícím účtem</value>

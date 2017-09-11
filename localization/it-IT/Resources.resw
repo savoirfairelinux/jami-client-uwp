@@ -154,7 +154,7 @@
     <value>Inserisci un alias</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
-    <value>Modifica l&apos;account</value>
+    <value>Modifica l'account</value>
   </data>
   <data name="_accountsAddDevice_.Text" xml:space="preserve">
     <value>Aggiungi dispositivo</value>
@@ -163,7 +163,7 @@
     <value>Inserisci il PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>Per collegare questo dispositivo ad un account Ring, devi prima generare un PIN su un dispositivo con quell&apos;account.</value>
+    <value>Per collegare questo dispositivo ad un account Ring, devi prima generare un PIN su un dispositivo con quell'account.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Risposta automatica</value>
@@ -190,7 +190,7 @@
     <value>Condividi</value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
-    <value>parametri dell&apos;account SIP</value>
+    <value>parametri dell'account SIP</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
     <value>Accounts</value>
@@ -202,7 +202,7 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Esportando l&apos;account su Ring...</value>
+    <value>Esportando l'account su Ring...</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
     <value>in cerca di</value>
@@ -250,7 +250,7 @@
     <value>Video</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Inserire il nome dell&apos;host</value>
+    <value>Inserire il nome dell'host</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
     <value>Inserire password</value>
@@ -268,7 +268,7 @@
     <value>Info</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users&apos; privacy and freedoms.</value>
+    <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privacy Policy</value>
@@ -325,7 +325,7 @@
     <value>Inserisci il tuo nome completo</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
-    <value>Password dell&apos;account Ring</value>
+    <value>Password dell'account Ring</value>
   </data>
   <data name="_wizardStep1_.Content" xml:space="preserve">
     <value>Passo 1</value>
@@ -424,7 +424,7 @@
     <value>Home/About</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Collega questo dispositivo ad un account esistente</value>

@@ -289,7 +289,7 @@
     <value>Все още нямате регистрация.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>You&apos;ll have to send your ringId.</value>
+    <value>You'll have to send your ringId.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
     <value>Credentials error or PIN expired.</value>
@@ -424,7 +424,7 @@
     <value>Home/About</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user&apos;s contact request</value>
+    <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Свържи това устройство със съществуващ акаунт</value>
