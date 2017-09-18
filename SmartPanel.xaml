@@ -1355,6 +1355,10 @@
                                            Text="&#xE8D7;" />
                                 <TextBlock Text="Password" />
                             </StackPanel>
+                            <ToggleSwitch x:Name="_usePasswordState_"
+                                          Margin="10,0,0,10"
+                                          IsOn="True"
+                                          Toggled="_usePasswordState__Toggled" />
                             <Grid Margin="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />

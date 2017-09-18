@@ -41,6 +41,7 @@ public:
 
     property Account^ _account;
 
+    property bool _hasArchivePassword;
     property bool _editionMode;
     property bool _disconnected;
 

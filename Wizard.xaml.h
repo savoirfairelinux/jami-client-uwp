@@ -35,6 +35,13 @@ protected:
     virtual void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
 private:
+    bool usePassword;
+    bool isPasswordValid;
+    bool isPasswordsMatching;
+    bool isPublic = true;
+    bool isUsernameValid; // available
+    bool isFullNameValid;
+
     void _createAccountYes__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _showCreateAccountMenuBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _showAddAccountMenuBtn__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -48,18 +55,12 @@ private:
     void _password__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _passwordCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void checkState();
-
-    /*members*/
-    bool isPasswordValid;
-    bool isPasswordsMatching;
-    bool isPublic = true;
-    bool isUsernameValid; // available
-    bool isFullNameValid;
     void OnregistrationStateErrorGeneric(const std::string &accountId);
     void _PINTextBox__GotFocus(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _ArchivePassword__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _PINTextBox__KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
     void _createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+    void _usePasswordState__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 
 }

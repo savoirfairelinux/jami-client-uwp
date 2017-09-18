@@ -31,12 +31,12 @@
                 <Rectangle Height="50" />
                 <TextBlock x:Uid="_welcome_"
                            HorizontalAlignment="Center"
-                           Style="{StaticResource HeaderTextBlockStyle}"
-                           FontWeight="Normal"
                            FontSize="60"
-                           Foreground="#FF535E5E">
+                           FontWeight="Normal"
+                           Foreground="#FF535E5E"
+                           Style="{StaticResource HeaderTextBlockStyle}">
                     <TextBlock.RenderTransform>
-                        <TranslateTransform X="0" Y="10"/>
+                        <TranslateTransform X="0" Y="10" />
                     </TextBlock.RenderTransform>
                 </TextBlock>
                 <Image x:Name="_welcomeImage_"
@@ -52,10 +52,10 @@
                             Visibility="Visible">
                     <TextBlock x:Name="_showCreateAccountMenuTitle_"
                                x:Uid="_wizardCreateAccountTitle_"
+                               Padding="4"
                                HorizontalAlignment="Center"
                                FontSize="30"
                                Foreground="White"
-                               Padding="4"
                                Style="{StaticResource SubheaderTextBlockStyle}"
                                Visibility="Collapsed" />
                     <Button x:Name="_showCreateAccountMenuBtn_"
@@ -82,8 +82,8 @@
                                         Padding="10,0"
                                         Visibility="Visible">
                                 <Button x:Name="_avatarWebcamCaptureBtn_"
-                                        Width="90"
-                                        Height="90"
+                                        Width="100"
+                                        Height="100"
                                         Margin="0,10,0,0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
@@ -168,6 +168,10 @@
                                                FontWeight="SemiLight"
                                                Style="{StaticResource TitleTextBlockStyle}" />
                                 </StackPanel>
+                                <ToggleSwitch x:Name="_usePasswordState_"
+                                              Margin="10,0,0,10"
+                                              IsOn="True"
+                                              Toggled="_usePasswordState__Toggled" />
                                 <Grid Margin="0,10">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
@@ -256,10 +260,10 @@
                     <StackPanel x:Name="addExistingAccountStep2">
                         <TextBlock x:Name="_showAddAccountMenuTitle_"
                                    x:Uid="_wizardAddExistingAccountTitle_"
+                                   Padding="4"
                                    HorizontalAlignment="Center"
                                    FontSize="30"
                                    Foreground="White"
-                                   Padding="4"
                                    Style="{StaticResource SubheaderTextBlockStyle}"
                                    Visibility="Collapsed" />
                         <Button x:Name="_showAddAccountMenuBtn_"

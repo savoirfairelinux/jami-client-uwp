@@ -334,7 +334,7 @@ void RingClientUWP::Views::SmartPanel::_addAccountBtn__Click(Platform::Object^ s
     _accountCreationMenuScrollViewer_->ScrollToVerticalOffset(0);
 
     _createAccountYes_->IsEnabled = false;
-
+    _usePasswordState_->IsOn = true;
     _accountTypeComboBox_->SelectedIndex = 0;
     _RegisterStateEdition_->IsOn = true;
     _accountAliasTextBox_->Text = "";
@@ -349,7 +349,7 @@ void RingClientUWP::Views::SmartPanel::_createAccountYes__Click(Platform::Object
     case 0: /* RING account */
     {
         RingD::instance->createRINGAccount(_accountAliasTextBox_->Text
-                                           , _ringPasswordBoxAccountCreation_->Password
+                                           , _usePasswordState_->IsOn ? _ringPasswordBoxAccountCreation_->Password : ""
                                            , true
                                            , (_RegisterState_->IsOn) ? _usernameTextBox_->Text : "");
 
@@ -605,6 +605,8 @@ SmartPanel::SmartPanelItem_Grid_PointerMoved(Platform::Object^ sender, Windows::
 
 void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
 {
+    bool usePassword = _usePasswordState_->IsOn;
+
     bool isRingAccountType = (_accountTypeComboBox_->SelectedIndex == 0) ? true : false;
 
     bool isAccountAlias = (_accountAliasTextBox_->Text->IsEmpty()) ? false : true;
@@ -617,7 +619,7 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
         _accountAliasInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     }
 
-    if (isRingAccountType) {
+    if (isRingAccountType && _ringPasswordBoxAccountCreation_) {
         bool isPublic = _RegisterState_->IsOn;
 
         bool isUsernameValid = (_usernameValid_->Visibility == Windows::UI::Xaml::Visibility::Visible
@@ -630,22 +632,37 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
                                     && isPasswordValid)
                                    ? true : false;
 
-        if (isPasswordValid) {
-            _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-            _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-        }
-        else {
-            _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
-        }
+        auto passwordValidation = ((isRingPasswordCheck && isPasswordValid) || !usePassword);
 
-        if (isRingPasswordCheck) {
-            _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+        if (!usePassword) {
+            _ringPasswordBoxAccountCreation_->IsEnabled = false;
+            _ringPasswordBoxAccountCreationCheck_->IsEnabled = false;
+            _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
             _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
         }
         else {
-            _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
-            _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            _ringPasswordBoxAccountCreation_->IsEnabled = true;
+            _ringPasswordBoxAccountCreationCheck_->IsEnabled = true;
+
+            if (isPasswordValid) {
+                _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            }
+            else {
+                _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            }
+
+            if (isRingPasswordCheck) {
+                _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+                _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+            }
+            else {
+                _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+                _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Visible;
+            }
         }
 
         if (isUsernameValid) {
@@ -657,16 +674,17 @@ void RingClientUWP::Views::SmartPanel::checkStateAddAccountMenu()
         }
 
         if (isPublic)
-            if (isUsernameValid && isAccountAlias && isRingPasswordCheck && isPasswordValid)
+            if (isUsernameValid && isAccountAlias && passwordValidation)
                 _createAccountYes_->IsEnabled = true;
             else
                 _createAccountYes_->IsEnabled = false;
-        else if (isAccountAlias && isRingPasswordCheck && isPasswordValid)
+        else if (isAccountAlias && passwordValidation)
             _createAccountYes_->IsEnabled = true;
         else
             _createAccountYes_->IsEnabled = false;
 
-    } else {
+    }
+    else if (_createAccountYes_) {
         if (isAccountAlias)
             _createAccountYes_->IsEnabled = true;
         else
@@ -1269,6 +1287,12 @@ void RingClientUWP::Views::SmartPanel::_RegisterState__Toggled(Platform::Object^
     checkStateAddAccountMenu();
 }
 
+void
+SmartPanel::_usePasswordState__Toggled(Object^ sender, RoutedEventArgs^ e)
+{
+    checkStateAddAccountMenu();
+}
+
 void RingClientUWP::Views::SmartPanel::_RegisterStateEdition__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     auto toggleSwitch = dynamic_cast<ToggleSwitch^>(sender);
@@ -1802,7 +1826,14 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Click(Platform::Objec
 {
     selectMenu(MenuOpen::DEVICE);
 
-    _pinGeneratorYes_->IsEnabled = false;
+    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
+
+    bool enablePasswordForPinGen = true;
+    if (RingD::instance->archive_has_password->HasKey(account->accountID_))
+        enablePasswordForPinGen = RingD::instance->archive_has_password->Lookup(account->accountID_);
+
+    _pinGeneratorYes_->IsEnabled = !enablePasswordForPinGen;
+    _passwordForPinGenerator_->IsEnabled = enablePasswordForPinGen;
     _passwordForPinGenerator_->Password = "";
     // refacto : do something better...
     auto loader = ref new Windows::ApplicationModel::Resources::ResourceLoader();
@@ -1811,7 +1842,6 @@ void RingClientUWP::Views::SmartPanel::_devicesMenuButton__Click(Platform::Objec
     _waitingDevicesList_->Visibility = Windows::UI::Xaml::Visibility::Visible;
     _devicesIdList_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 
-    auto account = AccountListItemsViewModel::instance->_selectedItem->_account;
 
     _deviceId_->Text = account->_deviceId;
     _deviceName_->Text = account->_deviceName;
