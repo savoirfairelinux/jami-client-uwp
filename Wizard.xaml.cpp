@@ -75,6 +75,7 @@ Wizard::_createAccountYes__Click(Object^ sender, RoutedEventArgs^ e)
     this->Dispatcher->RunAsync(Windows::UI::Core::CoreDispatcherPriority::High, ref new Windows::UI::Core::DispatchedHandler([this] () {
         RingD::instance->isInWizard = false;
         this->Frame->Navigate(Windows::UI::Xaml::Interop::TypeName(RingClientUWP::MainPage::typeid));
+        _password_->Password = usePassword ? _password_->Password : "";
         RingD::instance->createRINGAccount(_fullnameTextBox_->Text
                                            , _password_->Password
                                            , true // upnp by default set to true
@@ -120,8 +121,8 @@ Wizard::_avatarWebcamCaptureBtn__Click(Platform::Object^ sender, Windows::UI::Xa
             if (auto bitmapImage = image.get()) {
                 auto brush = ref new ImageBrush();
                 auto circle = ref new Ellipse();
-                circle->Height = 100;
-                circle->Width = 100;
+                circle->Height = 80;
+                circle->Width = 80;
                 brush->ImageSource = bitmapImage;
                 circle->Fill = brush;
                 _avatarWebcamCaptureBtn_->Content = circle;
@@ -182,7 +183,8 @@ void RingClientUWP::Views::Wizard::_password__PasswordChanged(Platform::Object^ 
     checkState();
 }
 
-void RingClientUWP::Views::Wizard::_passwordCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+void
+Wizard::_passwordCheck__PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
     isPasswordsMatching = (_password_->Password
                            == _passwordCheck_->Password
@@ -203,8 +205,13 @@ void RingClientUWP::Views::Wizard::_passwordCheck__PasswordChanged(Platform::Obj
 
 void RingClientUWP::Views::Wizard::checkState()
 {
-    if ((isPublic && isPasswordValid && isPasswordsMatching && isUsernameValid && isFullNameValid)
-            ||(!isPublic && isPasswordValid && isPasswordsMatching && isFullNameValid))
+    if (!_password_)
+        return;
+
+    auto passwordValidation = ((isPasswordsMatching && isPasswordValid) || !usePassword);
+
+    if ((isPublic && passwordValidation && isUsernameValid && isFullNameValid)
+            || (!isPublic && passwordValidation && isFullNameValid))
         _createAccountYes_->IsEnabled = true;
     else
         _createAccountYes_->IsEnabled = false;
@@ -332,4 +339,30 @@ void
 Wizard::_createAccountNo__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
 
+}
+
+void
+Wizard::_usePasswordState__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+    if (!_password_)
+        return;
+
+    usePassword = _usePasswordState_->IsOn;
+
+    if (!usePassword) {
+        _password_->IsEnabled = false;
+        _passwordCheck_->IsEnabled = false;
+        _passwordValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _passwordInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _passwordCheckValid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+        _passwordCheckInvalid_->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
+    }
+    else {
+        _password_->IsEnabled = true;
+        _passwordCheck_->IsEnabled = true;
+        _password__PasswordChanged(nullptr, nullptr);
+        _passwordCheck__PasswordChanged(nullptr, nullptr);
+    }
+
+    checkState();
 }

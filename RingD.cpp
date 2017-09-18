@@ -115,6 +115,10 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
             auto deviceId = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_ID)->second;
             auto deviceName = accountDetails.find(DRing::Account::ConfProperties::RING_DEVICE_NAME)->second;
 
+            auto hasArchivePassword = (accountDetails.find(DRing::Account::ConfProperties::ARCHIVE_HAS_PASSWORD)->second == ring::TRUE_STR)
+                ? true
+                : false;
+
             auto account = AccountsViewModel::instance->findItem(Utils::toPlatformString(accountId));
 
             if (account) {
@@ -192,6 +196,7 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
                         dhtPublicInCalls,
                         turnEnabled,
                         turnAddress);
+                    archive_has_password->Insert(Utils::toPlatformString(accountId), hasArchivePassword);
                 }
             }
         }
@@ -1567,6 +1572,8 @@ RingD::startDaemon()
 
 RingD::RingD()
 {
+    archive_has_password = ref new Map<String^, bool>();
+
     toaster = ToastNotificationManager::CreateToastNotifier();
 
     NetworkInformation::NetworkStatusChanged += ref new NetworkStatusChangedEventHandler(this, &RingD::InternetConnectionChanged);

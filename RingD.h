@@ -269,6 +269,8 @@ internal: // why this property has to be internal and not public ?
     event ShareRequested^ shareRequested;
     event NameRegistered^ nameRegistered;
 
+    Map<String^, bool>^ archive_has_password;
+
 private:
     Vector<String^>^ callIdsList_;
 

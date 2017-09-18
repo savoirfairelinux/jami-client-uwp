@@ -170,6 +170,7 @@ private:
     void _turnEnabledToggle__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _deleteAccountButton__Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
     void _removeContact_MenuFlyoutItem__Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e);
+    void _usePasswordState__Toggled(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 };
 }
 }
