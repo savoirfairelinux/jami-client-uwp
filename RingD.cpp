@@ -234,7 +234,9 @@ RingD::parseAccountDetails(const AccountDetailsBlob& allAccountDetails)
 void
 RingD::connectivityChanged()
 {
-    DRing::connectivityChanged();
+    if (daemonRunning_) {
+        DRing::connectivityChanged();
+    }
 }
 
 void
@@ -1206,11 +1208,14 @@ RingD::registerCallbacks()
                     // Otherwise, if it is not already been trusted, we can ignore it completely.
                     if (contact) {
                         if (contact->_trustStatus == TrustStatus::CONTACT_REQUEST_SENT) {
-                            // get the vcard first
-                            auto vcard = contact->getVCard();
-                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
-                            vcard->setData(parsedPayload.at("VCARD"));
-                            vcard->completeReception();
+
+                            if (!payloadString.empty()) {
+                                auto vcard = contact->getVCard();
+                                auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                                vcard->setData(parsedPayload.at("VCARD"));
+                                vcard->completeReception();
+                                contact->_displayName = Utils::toPlatformString(vcard->getPart("FN"));
+                            }
 
                             DRing::acceptTrustRequest(account_id, from);
                             MSG_("Auto accepted IncomingTrustRequest");
@@ -1224,33 +1229,38 @@ RingD::registerCallbacks()
                     else {
                         // No contact found, so add a new contact with the INCOMNG_CONTACT_REQUEST trust status flag
                         contact = contactListModel->addNewContact("", fromP, TrustStatus::INCOMING_CONTACT_REQUEST, false);
+
+                        // The visible ring id will potentially be replaced by a username after a lookup
+                        RingD::instance->lookUpAddress(account_id, Utils::toPlatformString(from));
+
+                        if (!contact)
+                            return;
+
+                        auto vcard = contact->getVCard();
+                        if (!payloadString.empty()) {
+                            auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
+                            vcard->setData(parsedPayload.at("VCARD"));
+                            vcard->completeReception();
+                            contact->_displayName = Utils::toPlatformString(vcard->getPart("FN"));
+                        }
+
+                        // The name is the ring id for now
+                        contact->_name = Utils::toPlatformString(from);
+
+                        contactListModel->saveContactsToFile();
+                        AccountsViewModel::instance->raiseUnreadContactRequest();
+
+                        SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
+                        SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
+
+                        // Add a corresponding contact request control item to the list.
+                        auto newContactRequest = ref new ContactRequestItem();
+                        newContactRequest->_contact = contact;
+                        ContactRequestItemsViewModel::instance->itemsList->InsertAt(0, newContactRequest);
+
+                        ContactRequestItemsViewModel::instance->refreshFilteredItemsList();
+                        ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
                     }
-
-                    // The visible ring id will potentially be replaced by a username after a lookup
-                    RingD::instance->lookUpAddress(account_id, Utils::toPlatformString(from));
-
-                    auto vcard = contact->getVCard();
-                    auto parsedPayload = VCardUtils::parseContactRequestPayload(payloadString);
-                    vcard->setData(parsedPayload.at("VCARD"));
-                    vcard->completeReception();
-
-                    // The name is the ring id for now
-                    contact->_name = Utils::toPlatformString(from);
-                    contact->_displayName = Utils::toPlatformString(vcard->getPart("FN"));
-
-                    contactListModel->saveContactsToFile();
-                    AccountsViewModel::instance->raiseUnreadContactRequest();
-
-                    SmartPanelItemsViewModel::instance->refreshFilteredItemsList();
-                    SmartPanelItemsViewModel::instance->update(ViewModel::NotifyStrings::notifySmartPanelItem);
-
-                    // Add a corresponding contact request control item to the list.
-                    auto newContactRequest = ref new ContactRequestItem();
-                    newContactRequest->_contact = contact;
-                    ContactRequestItemsViewModel::instance->itemsList->InsertAt(0, newContactRequest);
-
-                    ContactRequestItemsViewModel::instance->refreshFilteredItemsList();
-                    ContactRequestItemsViewModel::instance->update(ViewModel::NotifyStrings::notifyContactRequestItem);
                 }
             }));
         }),
@@ -1504,12 +1514,12 @@ RingD::startDaemon()
 
     IAsyncAction^ action = ThreadPool::RunAsync(ref new WorkItemHandler([=](IAsyncAction^ spAction)
     {
-        CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
-            ref new DispatchedHandler([=]() {
-            if (!isInWizard) {
-                setOverlayStatusText("Loading from config...", "#ff000000");
-            }
-        }));
+        if (!isInWizard) {
+            CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync(CoreDispatcherPriority::Normal,
+                ref new DispatchedHandler([=]() {
+                    setOverlayStatusText("Loading from config...", "#ff000000");
+                }));
+        }
 
         daemonRunning_ = DRing::start();
 
