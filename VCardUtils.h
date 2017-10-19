@@ -43,7 +43,7 @@ struct Symbols {
     constexpr static const char* OF_TOKEN               =   "of=";
     constexpr static const char* SEPERATOR1             =   ";";
     constexpr static const char* SEPERATOR2             =   ":";
-    constexpr static const char* PHOTO_ENC              =   "ENDCODING=BASE64";
+    constexpr static const char* PHOTO_ENC              =   "ENCODING=BASE64";
     constexpr static const char* PHOTO_TYPE             =   "TYPE=PNG";
 };
 
