@@ -136,11 +136,6 @@ VCard::parseFromString()
             break;
     }
 
-    while (std::getline(_data, _line)) {
-        if (_line.find("PHOTO;") != std::string::npos)
-            break;
-    }
-
     size_t pos = _line.find("PNG:");
     if (pos == std::string::npos) {
         pos = _line.find("JPEG:");
