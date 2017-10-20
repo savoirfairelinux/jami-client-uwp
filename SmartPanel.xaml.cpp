@@ -937,9 +937,6 @@ void RingClientUWP::Views::SmartPanel::_acceptAccountModification__Click(Platfor
     selectMenu(MenuOpen::ACCOUNTS_LIST);
 
     updatePageContent();
-
-    if (_usernameValidEdition_->Visibility == Windows::UI::Xaml::Visibility::Visible && _usernameTextBoxEdition_->Text->Length() > 2)
-        RingD::instance->registerName(account->accountID_, "", _usernameTextBoxEdition_->Text);
 }
 
 

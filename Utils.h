@@ -615,23 +615,29 @@ public:
     task_queue(task_queue const& other) {}
 
     void add_task(std::function<void()> const& task) {
-        std::lock_guard<std::mutex> lk(taskMutex_);
-        tasks_.push(task);
+        runOnWorkerThread([this, task]() {
+            std::lock_guard<std::mutex> lk(taskMutex_);
+            tasks_.push(task);
+        });
     }
 
     void dequeue_tasks() {
-        std::lock_guard<std::mutex> lk(taskMutex_);
-        while (!tasks_.empty()) {
-            auto f = tasks_.front();
-            f();
-            tasks_.pop();
-        }
+        runOnWorkerThread([this]() {
+            std::lock_guard<std::mutex> lk(taskMutex_);
+            while (!tasks_.empty()) {
+                auto f = tasks_.front();
+                f();
+                tasks_.pop();
+            }
+        });
     }
 
     void clear() {
-        std::lock_guard<std::mutex> lk(taskMutex_);
-        std::queue<std::function<void()>> empty;
-        std::swap(tasks_, empty);
+        runOnWorkerThread([this]() {
+            std::lock_guard<std::mutex> lk(taskMutex_);
+            std::queue<std::function<void()>> empty;
+            std::swap(tasks_, empty);
+        });
     }
 
 private:
