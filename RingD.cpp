@@ -653,9 +653,7 @@ RingD::registerName(String^ accountId, String^ password, String^ username)
         auto _password = Utils::toString(password);
         auto _username = Utils::toString(username);
 
-        bool result;
-
-        result = DRing::registerName(_accountId, _password, _username);
+        DRing::registerName(_accountId, _password, _username);
     });
 }
 
@@ -1109,6 +1107,7 @@ RingD::registerCallbacks()
             bool res = state == 0;
             Utils::runOnUIThread([this, res, account_id]() {
                 nameRegistered(res, Utils::toPlatformString(account_id));
+                mainPage->showLoadingOverlay(false, false);
             });
             if (!res)
                 return;
