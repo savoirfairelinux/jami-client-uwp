@@ -336,14 +336,17 @@ TrimCmd(Platform::String^ s)
 String^
 getUpperInitial(String^ str)
 {
-    if (str != nullptr || str != "") {
-        std::wstring s(str->Data());
-        auto it = str->Begin();
-        wchar_t ch[] = L" ";
-        ch[0] = towupper(it[0]);
-        return ref new String(ch);
+    if (str == nullptr || str == "") {
+        return "?";
     }
-    return "?";
+    auto it = str->Begin();
+    wchar_t ch[] = L" ";
+    int index = 0;
+    ch[0] = towupper(*it++);
+    while (it != str->End() && ch[0] == ' ') {
+        ch[0] = towupper(*it++);
+    }
+    return ref new String(ch);
 }
 
 Platform::String^
