@@ -187,7 +187,7 @@
     <value>Register public username</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
-    <value>Share</value>
+    <value>Partage</value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
     <value>SIP account parameters</value>
@@ -427,7 +427,7 @@
     <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
-    <value>Link this device to an existing account</value>
+    <value>Synchroniser cet appareil avec un compte existant</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
     <value>Cancel PIN generation</value>
@@ -529,7 +529,7 @@
     <value>never called</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
-    <value>Artwork by:</value>
+    <value>Artwork de: </value>
   </data>
   <data name="_c_created_by_.Text" xml:space="preserve">
     <value>Créé par:</value>
