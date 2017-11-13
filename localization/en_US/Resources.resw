@@ -118,13 +118,13 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="_aboutBasicButton_.Content" xml:space="preserve">
-    <value>Mbi</value>
+    <value>About</value>
   </data>
   <data name="_aboutCloseButton_.Content" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
-    <value>Kredite</value>
+    <value>Credits</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
     <value>This program comes with absolutely no warranty</value>
@@ -133,7 +133,7 @@
     <value>See the </value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
-    <value>GNU General Public License, versioni 3 ose më i vonshëm</value>
+    <value>GNU General Public License, version 3 or later</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
     <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
@@ -160,7 +160,7 @@
     <value>Add Device</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Jepni PIN-in</value>
+    <value>Enter PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
@@ -169,13 +169,13 @@
     <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Pajisje</value>
+    <value>Devices</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
     <value>Learn more</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Jepni fjalëkalimin tuaj</value>
+    <value>Enter your password</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
     <value>Accept calls and messages from incognito contacts</value>
@@ -193,7 +193,7 @@
     <value>SIP account parameters</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
-    <value>Llogari</value>
+    <value>Accounts</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
     <value>Account type</value>
@@ -217,7 +217,7 @@
     <value>Contact Requests</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
-    <value>Kontakte</value>
+    <value>Contacts</value>
   </data>
   <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
     <value>Learn more</value>
@@ -226,19 +226,19 @@
     <value>Beginning of Time</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>Regjistrohuni</value>
+    <value>Register</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
     <value>Repeat password</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>Jepni fjalëkalimin</value>
+    <value>Enter password</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
-    <value>Rregullime</value>
+    <value>Settings</value>
   </data>
   <data name="_settingsVideoDevice_.Text" xml:space="preserve">
-    <value>Pajisje</value>
+    <value>Device</value>
   </data>
   <data name="_settingsVideoRate_.Text" xml:space="preserve">
     <value>Rate</value>
@@ -247,13 +247,13 @@
     <value>Resolution</value>
   </data>
   <data name="_settingsVideo_.Text" xml:space="preserve">
-    <value>Video</value>
+    <value>视频</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
     <value>Enter hostname</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Jepni fjalëkalimin</value>
+    <value>Enter password</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter username</value>
@@ -265,7 +265,7 @@
     <value>waiting for devices list...</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
-    <value>Mbi</value>
+    <value>About</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
     <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
@@ -322,7 +322,7 @@
     <value>Create New Account</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
-    <value>Jepni emrin tuaj të plotë</value>
+    <value>Enter your full name</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
     <value>Ring account password</value>
@@ -361,10 +361,10 @@
     <value>Add this user to your contacts</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
-    <value>Anuloje</value>
+    <value>Cancel</value>
   </data>
   <data name="_tt_account_list_menu_.Text" xml:space="preserve">
-    <value>Llogari</value>
+    <value>Accounts</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
     <value>Create a new account</value>
@@ -403,16 +403,16 @@
     <value>Erase this conversation</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
-    <value>Kontakte</value>
+    <value>Contacts</value>
   </data>
   <data name="_tt_create_account_yes_.Text" xml:space="preserve">
-    <value>Krijoni llogari</value>
+    <value>Create account</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Pajisje</value>
+    <value>Devices</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>Done</value>
@@ -445,10 +445,10 @@
     <value>Revoke the device from this account</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
-    <value>Dërgoje mesazhin</value>
+    <value>Send message</value>
   </data>
   <data name="_tt_settings_menu_.Text" xml:space="preserve">
-    <value>Rregullime</value>
+    <value>Settings</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
     <value>Display QR code and RingID</value>
@@ -460,7 +460,7 @@
     <value>Enable TURN server</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
-    <value>Shtoje te kontaktet</value>
+    <value>Add to contacts</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
     <value>Audio codec: </value>
@@ -529,10 +529,10 @@
     <value>never called</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
-    <value>Përkujdesja grafike:</value>
+    <value>Artwork by:</value>
   </data>
   <data name="_c_created_by_.Text" xml:space="preserve">
-    <value>Krijuar nga:</value>
+    <value>Created by:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
     <value>Attempting to add this device...</value>

@@ -544,7 +544,7 @@
     <value>Account wordt verwijderd...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Pincode wordt aangemaakt</value>
+    <value>Pincode wordt gegenereerd</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
     <value>Apparaat met volgende ID wordt ingetrokken:</value>
