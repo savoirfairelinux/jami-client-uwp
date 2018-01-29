@@ -184,7 +184,7 @@
     <value>Pincodegenerator</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>Registreer een publieke gebruikersnaam</value>
+    <value>Registreer een openbare gebruikersnaam</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
     <value>Delen</value>
@@ -274,7 +274,7 @@
     <value>Privacybeleid</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Je account zal worden verwijderd van deze computer. Op andere apparaten heeft dit geen invloed. Je publieke registratie kan nooit worden verwijderd.</value>
+    <value>Je account zal worden verwijderd van deze computer. Op andere apparaten heeft dit geen invloed. Je openbare registratie kan nooit worden verwijderd.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
     <value>Je account wordt verwijderd van deze computer.</value>
@@ -382,7 +382,7 @@
     <value>Voeg een nieuw apparaat toe aan deze account</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start een audiogesprek</value>
+    <value>Start een audio-oproep</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Blokkeer deze gebruiker zodat deze geen contact meer met je kan opnemen</value>
@@ -454,7 +454,7 @@
     <value>QR-code en Ring-ID weergeven</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start een videogesprek</value>
+    <value>Start een video-oproep</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>TURN-server inschakelen</value>
