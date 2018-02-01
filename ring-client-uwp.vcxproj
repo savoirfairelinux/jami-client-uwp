@@ -146,6 +146,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
       <CompileAsManaged>false</CompileAsManaged>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\build\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\build\bin\x64;$(SolutionDir)..\ring-daemon\contrib\build\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)x64\Release-Lib;$(SolutionDir)contrib\qrencode-win32\vc8\qrcodelib\x64\Release-Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -296,12 +297,6 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\libeay32.dll">
-      <DeploymentContent>true</DeploymentContent>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="packages.config" />
