@@ -118,31 +118,31 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="_aboutBasicButton_.Content" xml:space="preserve">
-    <value>درباره</value>
+    <value>About</value>
   </data>
   <data name="_aboutCloseButton_.Content" xml:space="preserve">
-    <value>بستن</value>
+    <value>Close</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
-    <value>دست‌اندرکاران</value>
+    <value>Credits</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
-    <value>این برنامه بدون هیچ ضمانتی عرضه شده.</value>
+    <value>This program comes with absolutely no warranty</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
-    <value>دیدن</value>
+    <value>See the </value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
-    <value>جوازنامه عمومی گنو نسخه ۳ و ۳ به بعد</value>
+    <value>GNU General Public License, version 3 or later</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
     <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value>جزئیات</value>
+    <value> for details.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring نرم‌افزار امن و توزیع شده ارتباطی است.</value>
+    <value>Ring is a secured and distributed communication software.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
     <value>The Microsoft Windows Runtime client for Ring.</value>
@@ -154,49 +154,49 @@
     <value>Enter alias</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
-    <value>ویرایش حساب‌کاربری</value>
+    <value>Edit Account</value>
   </data>
   <data name="_accountsAddDevice_.Text" xml:space="preserve">
-    <value>اضافه‌کردن دستگاه</value>
+    <value>Add Device</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>پین را وارد کنید</value>
+    <value>Enter PIN</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
-    <value>پاسخ خودکار</value>
+    <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>افزاره‌ها</value>
+    <value>Devices</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
-    <value>اطلاعات بیشتر</value>
+    <value>Learn more</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>گذرواژه‌تان را وارد کنید</value>
+    <value>Enter your password</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>قبول پیام و تماس از طرف مخاطب ناشناس</value>
+    <value>Accept calls and messages from incognito contacts</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
-    <value>رمز ساز</value>
+    <value>PIN generator</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>ثبت نام‌کاربری عمومی</value>
+    <value>Register public username</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
-    <value>هم‌رسانی</value>
+    <value>Share</value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
-    <value>مشخصات حساب SIP</value>
+    <value>SIP account parameters</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
-    <value>حساب‌ها</value>
+    <value>Accounts</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
-    <value>نوع حساب</value>
+    <value>Account type</value>
   </data>
   <data name="_accountsUPnP_.Text" xml:space="preserve">
     <value>UPnP</value>
@@ -211,49 +211,49 @@
     <value>has added you as a contact</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>درخواست تماس ارسال شد</value>
+    <value>Contact request sent</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>Contact Requests</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
-    <value>مخاطبان</value>
+    <value>Contacts</value>
   </data>
   <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
-    <value>اطلاعات بیشتر</value>
+    <value>Learn more</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
     <value>Beginning of Time</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>ثبت‌نام</value>
+    <value>Register</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
     <value>Repeat password</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>گذرواژه را وارد کنید</value>
+    <value>Enter password</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
-    <value>تنظیمات</value>
+    <value>Settings</value>
   </data>
   <data name="_settingsVideoDevice_.Text" xml:space="preserve">
-    <value>دستگاه</value>
+    <value>Device</value>
   </data>
   <data name="_settingsVideoRate_.Text" xml:space="preserve">
-    <value>رتبه</value>
+    <value>Rate</value>
   </data>
   <data name="_settingsVideoResolution_.Text" xml:space="preserve">
     <value>Resolution</value>
   </data>
   <data name="_settingsVideo_.Text" xml:space="preserve">
-    <value>ویدیو</value>
+    <value>Video</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
     <value>Enter hostname</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>گذرواژه را وارد کنید</value>
+    <value>Enter password</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter username</value>
@@ -265,7 +265,7 @@
     <value>waiting for devices list...</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
-    <value>درباره</value>
+    <value>About</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
     <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
@@ -322,7 +322,7 @@
     <value>Create New Account</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
-    <value>نام کامل خود را وارد کنید</value>
+    <value>Enter your full name</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
     <value>Ring account password</value>
@@ -334,7 +334,7 @@
     <value>Step 2</value>
   </data>
   <data name="_accountsAlias_.Text" xml:space="preserve">
-    <value>نام مستعار</value>
+    <value>Alias</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
     <value>Create Account</value>
@@ -361,10 +361,10 @@
     <value>Add this user to your contacts</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
-    <value>لغو</value>
+    <value>Cancel</value>
   </data>
   <data name="_tt_account_list_menu_.Text" xml:space="preserve">
-    <value>حساب‌ها</value>
+    <value>Accounts</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
     <value>Create a new account</value>
@@ -373,7 +373,7 @@
     <value>Next step</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
-    <value>افزودن حساب</value>
+    <value>Add account</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
     <value>Unblock and add this user to your contacts</value>
@@ -403,16 +403,16 @@
     <value>Erase this conversation</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
-    <value>مخاطبان</value>
+    <value>Contacts</value>
   </data>
   <data name="_tt_create_account_yes_.Text" xml:space="preserve">
-    <value>ایجاد حساب</value>
+    <value>Create account</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>افزاره‌ها</value>
+    <value>Devices</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>Done</value>
@@ -445,10 +445,10 @@
     <value>Revoke the device from this account</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
-    <value>ارسال پیام</value>
+    <value>Zie ozi</value>
   </data>
   <data name="_tt_settings_menu_.Text" xml:space="preserve">
-    <value>تنظیمات</value>
+    <value>Settings</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
     <value>Display QR code and RingID</value>
@@ -460,7 +460,7 @@
     <value>Enable TURN server</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
-    <value>افزودن به مخاطبان</value>
+    <value>Add to contacts</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
     <value>Audio codec: </value>
@@ -475,7 +475,7 @@
     <value>Video codec: </value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
-    <value>اضافه‌کردن دستگاه</value>
+    <value>Add Device</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
     <value>Search for new or existing contacts</value>
@@ -496,13 +496,13 @@
     <value>Type a message</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
-    <value>بستن</value>
+    <value>Close</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
     <value>Add to conference</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
-    <value>برقراری تماس</value>
+    <value>Call</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
     <value>Copy RingID</value>
@@ -529,10 +529,10 @@
     <value>never called</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
-    <value>اثر هنری توسط:</value>
+    <value>Artwork by:</value>
   </data>
   <data name="_c_created_by_.Text" xml:space="preserve">
-    <value>ساخته‌شده توسط:</value>
+    <value>Created by:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
     <value>Attempting to add this device...</value>
