@@ -142,10 +142,11 @@
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\build\include;..\ring-daemon\contrib\build\include\pjlib;..\ring-daemon\contrib\build\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;OPENDHT_PROXY_CLIENT=1;OPENDHT_PROXY_SERVER=1;OPENDHT_PUSH_NOTIFICATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
       <CompileAsManaged>false</CompileAsManaged>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\ring-daemon\contrib\build\boost\stage\lib;$(SolutionDir)..\ring-daemon\contrib\build\bin\x64;$(SolutionDir)..\ring-daemon\contrib\build\lib\x64;$(SolutionDir)..\ring-daemon\MSVC\x64\ReleaseLib\bin;$(SolutionDir)x64\Release-Lib;$(SolutionDir)contrib\qrencode-win32\vc8\qrcodelib\x64\Release-Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -299,10 +300,10 @@
       <DeploymentContent>true</DeploymentContent>
     </None>
     <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\libeay32.dll">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
-      <DeploymentContent>true</DeploymentContent>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</DeploymentContent>
     </None>
     <None Include="packages.config" />
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
