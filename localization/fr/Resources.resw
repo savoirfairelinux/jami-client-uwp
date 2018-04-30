@@ -139,13 +139,13 @@
     <value>https://www.gnu.org/licenses/gpl-3.0.fr.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value>pour plus d'informations.</value>
+    <value>informations.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
     <value>Ring est un logiciel de communication sécurisé et distribué.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
-    <value>The Microsoft Windows Runtime client for Ring.</value>
+    <value>Ring pour Microsoft Windows</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
     <value>Liberté, Égalité, Fraternité! - Version 1.0</value>
@@ -163,7 +163,7 @@
     <value>Entrez votre NIP</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>Pour relier cet appareil à un compte Ring, il est nécessaire de générer un NIP depuis une appareil qui héberge ledit compte.</value>
+    <value>Pour associer cet appareil à un compte Ring, il est nécessaire de générer un NIP à partir de l'appareil possédant ce compte.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Décrocher automatiquement</value>
@@ -289,7 +289,7 @@
     <value>Vous n'êtes pas encore enregistré</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>Il sera nécessaire d'envoyer votre ringId.</value>
+    <value>Il sera nécessaire d'envoyer votre RingID.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
     <value>Identifiants incorrects ou NIP expiré.</value>
@@ -298,13 +298,13 @@
     <value>Pas de numéro d'appareil trouvé !</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>vus avez déjà un contact possédant cet id Ring</value>
+    <value>vous avez déjà un contact possédant ce RingID</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>Erreur réseau!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>Id Ring ajouté</value>
+    <value>RingID ajouté</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
     <value>nom d'utilisateur trouvé et ajouté</value>
