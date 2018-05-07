@@ -457,7 +457,7 @@
     <value>Начать видео вызов</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>Включить TURN</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>Добавить в контакты</value>
