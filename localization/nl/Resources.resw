@@ -184,7 +184,7 @@
     <value>Pincodegenerator</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>Registreer een publieke gebruikersnaam</value>
+    <value>Registreer een openbare gebruikersnaam</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
     <value>Delen</value>
@@ -202,7 +202,7 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Account wordt geëxporteerd naar de Ring...</value>
+    <value>Account wordt geëxporteerd naar de Ring…</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
     <value>zoekende naar</value>
@@ -211,7 +211,7 @@
     <value>heeft je toegevoegd als contactpersoon</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Contactverzoek verzonden</value>
+    <value>Contactverzoek verstuurd</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
     <value>Contactverzoeken</value>
@@ -262,7 +262,7 @@
     <value>Voer je gebruikersnaam in</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>wachten op apparatenlijst...</value>
+    <value>wachten op apparatenlijst…</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
     <value>Over</value>
@@ -274,7 +274,7 @@
     <value>Privacybeleid</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Je account zal worden verwijderd van deze computer. Op andere apparaten heeft dit geen invloed. Je publieke registratie kan nooit worden verwijderd.</value>
+    <value>Je account zal worden verwijderd van deze computer. Op andere apparaten heeft dit geen invloed. Je openbare registratie kan nooit worden verwijderd.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
     <value>Je account wordt verwijderd van deze computer.</value>
@@ -382,7 +382,7 @@
     <value>Voeg een nieuw apparaat toe aan deze account</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start een audiogesprek</value>
+    <value>Start een audio-oproep</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Blokkeer deze gebruiker zodat deze geen contact meer met je kan opnemen</value>
@@ -454,7 +454,7 @@
     <value>QR-code en Ring-ID weergeven</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start een videogesprek</value>
+    <value>Start een video-oproep</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>TURN-server inschakelen</value>
@@ -535,13 +535,13 @@
     <value>Geschreven door:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Dit apparaat wordt toegevoegd...</value>
+    <value>Dit apparaat wordt toegevoegd…</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Account wordt aangemaakt...</value>
+    <value>Account wordt aangemaakt…</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Account wordt verwijderd...</value>
+    <value>Account wordt verwijderd…</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
     <value>Pincode wordt gegenereerd</value>
@@ -550,7 +550,7 @@
     <value>Apparaat met volgende ID wordt ingetrokken:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Account wordt bijgewerkt...</value>
+    <value>Account wordt bijgewerkt…</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
     <value>Contact verwijderen</value>
