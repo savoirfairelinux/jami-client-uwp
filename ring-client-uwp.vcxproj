@@ -102,7 +102,7 @@
     <AppxSymbolPackageEnabled>False</AppxSymbolPackageEnabled>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>A60EB824B6591CA560948145FAC6F93D83E777AD</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>2B24A01F851C1D6A3C2AD2125EB2AB18455FAA8E</PackageCertificateThumbprint>
     <AppxPackageDir>$(USERPROFILE)\ring_packaging\</AppxPackageDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
