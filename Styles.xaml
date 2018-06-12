@@ -25,6 +25,16 @@
         <ResourceDictionary Source="ms-appx:///SplitViews.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
+    <ResourceDictionary.ThemeDictionaries>
+        <ResourceDictionary x:Key="Default">
+            <AcrylicBrush x:Key="SmartPanelAcrylicBrush"
+            BackgroundSource="HostBackdrop"
+            TintColor="#ffe4f1f9"
+            TintOpacity="0.4"
+            FallbackColor="#ffe4f1f9"/>
+        </ResourceDictionary>
+    </ResourceDictionary.ThemeDictionaries>
+
     <!--  colors  -->
     <Color x:Key="RingBlueLightColor">#ffe4f1f9</Color>
     <SolidColorBrush x:Key="RingBlueLightBrush" Color="{StaticResource RingBlueLightColor}" />

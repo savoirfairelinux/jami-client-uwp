@@ -302,36 +302,33 @@
   <ItemGroup>
     <None Include="Package.StoreAssociation.xml" />
     <None Include="Package.StoreAssociation.xml" />
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avcodec-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avdevice-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avfilter-6.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avformat-57.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\avutil-55.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swresample-2.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\swscale-4.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
-    <None Include="..\ring-daemon\contrib\build\FFmpegInterop\ffmpeg\Build\Windows10\x64\bin\postproc-54.dll">
-      <Filter>Assets\Dlls</Filter>
-    </None>
     <None Include="ring-client-uwp_TemporaryKey.pfx" />
     <None Include="packages.config" />
-    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\libeay32.dll">
+    <None Include="..\daemon\contrib\build\restbed\dependency\openssl\out32dll\libeay32.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
-    <None Include="..\ring-daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
+    <None Include="..\daemon\contrib\build\restbed\dependency\openssl\out32dll\ssleay32.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\avcodec-58.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\avdevice-58.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\avfilter-7.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\avformat-58.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\avutil-56.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\swresample-3.dll">
+      <Filter>Assets\Dlls</Filter>
+    </None>
+    <None Include="..\daemon\contrib\build\ffmpeg\Build\Windows10\x64\bin\swscale-5.dll">
       <Filter>Assets\Dlls</Filter>
     </None>
   </ItemGroup>
