@@ -75,6 +75,8 @@ App::OnLaunched(LaunchActivatedEventArgs^ e)
 
         Window::Current->Activate();
 
+        CoreApplication::GetCurrentView()->TitleBar->ExtendViewIntoTitleBar = false;
+
         auto color = Windows::UI::ColorHelper::FromArgb(255, 59, 193, 211);
 
         ApplicationView::GetForCurrentView()->TitleBar->ButtonBackgroundColor = color;

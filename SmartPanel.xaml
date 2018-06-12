@@ -192,7 +192,6 @@
                   Visibility="{x:Bind _isVisible, Mode=OneWay}">
                 <FlyoutBase.AttachedFlyout>
                     <MenuFlyout x:Name="_SPI_MenuFlyout_"
-                                LightDismissOverlayMode="Off"
                                 Placement="Bottom">
                         <MenuFlyoutItem x:Name="_videoCall_MenuFlyoutItem_"
                                         x:Uid="_call_"
@@ -1775,7 +1774,8 @@
             <!--  contacts + calls => smartpanelitems.  -->
             <Grid Grid.Row="0"
                   x:Name="_smartGrid_"
-                  Background="{StaticResource RingBlueLightBrush}">
+                  Background="{ThemeResource SmartPanelAcrylicBrush}">
+                
                 <Grid.RowDefinitions>
                     <RowDefinition x:Name="_contactsTitleRow_" Height="54" />
                     <RowDefinition x:Name="_rowRingTxtBx_" Height="48" />
