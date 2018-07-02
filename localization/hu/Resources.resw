@@ -160,7 +160,7 @@
     <value>Add Device</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Enter PIN</value>
+    <value>PIN-kód megadása</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
