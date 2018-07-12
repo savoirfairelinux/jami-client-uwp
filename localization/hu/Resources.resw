@@ -160,7 +160,7 @@
     <value>Add Device</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Enter PIN</value>
+    <value>PIN-kód megadása</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
@@ -232,7 +232,7 @@
     <value>Repeat password</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>A jelszó megadása</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
     <value>Beállítások</value>
@@ -253,7 +253,7 @@
     <value>Enter hostname</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter password</value>
+    <value>A jelszó megadása</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter username</value>
