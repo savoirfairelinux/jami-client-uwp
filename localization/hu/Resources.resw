@@ -490,7 +490,7 @@
     <value>TURN server address</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Fiók törlése</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
     <value>Type a message</value>

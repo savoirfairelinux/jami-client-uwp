@@ -142,7 +142,7 @@
     <value>для получения более подробной информации.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring — это безопасная и распределенная программа для общения.</value>
+    <value>Ring – приложение с распределённой архитектурой для безопасного общения.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
     <value>Клиент RIng для Microsoft Windows</value>
@@ -166,7 +166,7 @@
     <value>Чтобы привязать это устройство к аккаунту Ring, необходимо сгенерировать PIN на устройстве, на котором уже размещен аккаунт.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
-    <value>Автоответ</value>
+    <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
     <value>Устройства</value>
@@ -226,7 +226,7 @@
     <value>Начало времени</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>Регистрация</value>
+    <value>Register</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
     <value>Повторите пароль</value>
@@ -241,7 +241,7 @@
     <value>Устройство</value>
   </data>
   <data name="_settingsVideoRate_.Text" xml:space="preserve">
-    <value>Тариф</value>
+    <value>Rate</value>
   </data>
   <data name="_settingsVideoResolution_.Text" xml:space="preserve">
     <value>Разрешение</value>
