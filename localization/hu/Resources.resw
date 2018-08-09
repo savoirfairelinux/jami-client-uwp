@@ -148,7 +148,7 @@
     <value>The Microsoft Windows Runtime client for Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>Liberté, Égalité, Fraternité! -  Version 1.0</value>
+    <value>In varietate concordia -  Version 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter alias</value>
@@ -490,7 +490,7 @@
     <value>TURN server address</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Fiók törlése</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
     <value>Type a message</value>
