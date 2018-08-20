@@ -148,7 +148,7 @@
     <value>Клиент RIng для Microsoft Windows</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>In varietate concordia -  Version 1.0</value>
+    <value>Единство в многообразии - Версия 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Введите псевдоним</value>
@@ -166,7 +166,7 @@
     <value>Чтобы привязать это устройство к аккаунту Ring, необходимо сгенерировать PIN на устройстве, на котором уже размещен аккаунт.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
-    <value>Auto answer</value>
+    <value>Автоответ</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
     <value>Устройства</value>
@@ -226,7 +226,7 @@
     <value>Начало времени</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>Register</value>
+    <value>Зарегистрировать</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
     <value>Повторите пароль</value>
@@ -421,7 +421,7 @@
     <value>Открыть панель настройки аккаунта</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Домашняя страница/О программе</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
     <value>Игнорировать запрос этого пользователя на добавление в контакты</value>
@@ -526,7 +526,7 @@
     <value>Создать новый аккаунт</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>никогда не вызывался</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>Дизайн:</value>
