@@ -151,7 +151,7 @@
     <value>In varietate concordia -  Version 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter alias</value>
+    <value>اسم مستعار وارد کنید</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
     <value>ویرایش حساب‌کاربری</value>
@@ -205,10 +205,10 @@
     <value>Exporting account on the Ring...</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
-    <value>looking for </value>
+    <value>جستجو برای</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>شما را به عنوان مخاطب افزوده است</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>درخواست تماس ارسال شد</value>
@@ -229,7 +229,7 @@
     <value>ثبت‌نام</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>گذرواژه را تکرار کنید</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
     <value>گذرواژه را وارد کنید</value>
@@ -256,19 +256,19 @@
     <value>گذرواژه را وارد کنید</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter username</value>
+    <value>نام کاربری را وارد کنید</value>
   </data>
   <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter your username</value>
+    <value>نام کاربری خود را وارد کنید</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>waiting for devices list...</value>
+    <value>انتظار برای لیست دستگاه ها...</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
     <value>درباره</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
+    <value>رینگ یک پلتفورم ارتباط همگانی و رایگان می باشد که از آزادی و حریم خصوصی کاربرانش محافظت میکند.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Privacy Policy</value>
@@ -280,7 +280,7 @@
     <value>Your account will be deleted from this computer.</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
-    <value>People can find you with your username</value>
+    <value>بقیه میتوانند شما را با استفاده از نام کاربریتان پیدا کنند</value>
   </data>
   <data name="_whatWillHappen_0_" xml:space="preserve">
     <value>You are already registered.</value>
@@ -301,52 +301,52 @@
     <value>you already have a contact with this ring id</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
-    <value>network error!</value>
+    <value>خطا شبکه!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>آیدی رینگ افزوده شد</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>نام کاربری پیدا شد و افزوده شد</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>نام کاربری ناموجود</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>نام کاربری پیدا نشد</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>افزودن حساب کاربری موجود</value>
   </data>
   <data name="_wizardCreateAccount_.Content" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>ایجاد یک حساب جدید</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
     <value>نام کامل خود را وارد کنید</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
-    <value>Ring account password</value>
+    <value>گذرواژه حساب رینگ</value>
   </data>
   <data name="_wizardStep1_.Content" xml:space="preserve">
-    <value>Step 1</value>
+    <value>قدم 1</value>
   </data>
   <data name="_wizardStep2_.Content" xml:space="preserve">
-    <value>Step 2</value>
+    <value>قدم 2</value>
   </data>
   <data name="_accountsAlias_.Text" xml:space="preserve">
     <value>نام مستعار</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Create Account</value>
+    <value>ایجاد حساب</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>حساب فعال شد</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
     <value>Hide banned contacts</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>نمایش مخاطبین مسدود شده</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
     <value>No connection available</value>
@@ -358,7 +358,7 @@
     <value>Accept the incoming call</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>افزودن این کاربر به مخاطبان خود</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>لغو</value>
@@ -367,10 +367,10 @@
     <value>حساب‌ها</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Create a new account</value>
+    <value>ایجاد یک حساب جدید</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>قدم بعدی</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
     <value>افزودن حساب</value>
@@ -379,10 +379,10 @@
     <value>Unblock and add this user to your contacts</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>افزودن یک دستگاه جدید به این حساب</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>شروع یک تماس صوتی</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
     <value>Block this user from making any further contact</value>
@@ -391,16 +391,16 @@
     <value>(the user can be unblocked from the Account Settings panel)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>لغو اصلاحات حساب</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>لغو تماس خروجی</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
     <value>Change message panel orientation</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>پاک کردن این مکالمه</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>مخاطبان</value>
@@ -421,7 +421,7 @@
     <value>Open the Account Settings panel</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>خانه/درباره</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
     <value>Ignore this user's contact request</value>
@@ -439,7 +439,7 @@
     <value>Reject the incoming call</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>حذف این مخاطب</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
     <value>Revoke the device from this account</value>
@@ -454,7 +454,7 @@
     <value>Display QR code and RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>شروع یک تماس ویدیویی</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
     <value>Enable TURN server</value>
@@ -484,16 +484,16 @@
     <value>Search for new or existing contacts</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>این دستگاه</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>TURN server address</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>حذف حساب</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>نوشتن یک پیام</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
     <value>بستن</value>
@@ -517,13 +517,13 @@
     <value>Other linked devices</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>حذف مخاطب</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>افزودن حساب کاربری موجود</value>
   </data>
   <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>ایجاد یک حساب جدید</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
     <value>never called</value>
@@ -550,10 +550,10 @@
     <value>Revoking device with ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>به روز رسانی حساب...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>حذف مخاطب</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
     <value>Welcome to</value>
