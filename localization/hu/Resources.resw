@@ -121,82 +121,82 @@
     <value>Névjegy</value>
   </data>
   <data name="_aboutCloseButton_.Content" xml:space="preserve">
-    <value>Close</value>
+    <value>Bezárás</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
     <value>Készítők</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
-    <value>This program comes with absolutely no warranty</value>
+    <value>Ehhez a programhoz semmilyen garancia nem jár</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
-    <value>See the </value>
+    <value>Lásd a</value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
-    <value>GNU General Public License, version 3 or later</value>
+    <value>GNU Általános Nyilvános Licenc, 3-as vagy újabb verzió</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
-    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
+    <value>http://gnu.hu/gplv3.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value> for details.</value>
+    <value>a részletekért.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring is a secured and distributed communication software.</value>
+    <value>A Ring egy biztonságos és elosztott kommunikációs szoftver. </value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
-    <value>The Microsoft Windows Runtime client for Ring.</value>
+    <value>A Microsoft Windows Runtime kliens a Ring számára.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>In varietate concordia -  Version 1.0</value>
+    <value>Egység a sokféleségben - 1.0 verzió</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter alias</value>
+    <value>Álnév megadása</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
-    <value>Edit Account</value>
+    <value>Fiók szerkesztése</value>
   </data>
   <data name="_accountsAddDevice_.Text" xml:space="preserve">
-    <value>Add Device</value>
+    <value>Eszköz hozzáadása</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
     <value>PIN-kód megadása</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
+    <value>Az eszköz összekapcsolásához a Ring-fiókkal, először PIN-kódot kell létrehoznia a Ringből a fiókot kiszolgáló eszközön.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
-    <value>Auto answer</value>
+    <value>Automatikus válasz</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
     <value>Eszközök</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
-    <value>Learn more</value>
+    <value>Tudjon meg többet</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Enter your password</value>
+    <value>Írja be a jelszót</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>Accept calls and messages from incognito contacts</value>
+    <value>Fogadja el a rejtett partnerektől származó hívásokat és üzeneteket</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
-    <value>PIN generator</value>
+    <value>PIN-kód generátor</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
     <value>Regisztráljon nyilvános felhasználónevet</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
-    <value>Share</value>
+    <value>Megosztás </value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
-    <value>SIP account parameters</value>
+    <value>SIP-fiók paraméterei</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
     <value>Fiókok</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
-    <value>Account type</value>
+    <value>Fiók típus</value>
   </data>
   <data name="_accountsUPnP_.Text" xml:space="preserve">
     <value>UPnP</value>
@@ -205,34 +205,34 @@
     <value>Fiók exportálása a Ringen…</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
-    <value>looking for </value>
+    <value>keresni</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>has added you as a contact</value>
+    <value>hozzáadott mint partner</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
     <value>Partnerkérelem elküldve</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>Kapcsolatfelvételi kérelmek</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
     <value>Partnerek</value>
   </data>
   <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
-    <value>Learn more</value>
+    <value>Tudjon meg többet</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
-    <value>Beginning of Time</value>
+    <value>Az idő kezdete</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
     <value>Regisztráció</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
-    <value>Repeat password</value>
+    <value>Jelszó újra</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>A jelszó megadása</value>
+    <value>Jelszó megadása</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
     <value>Beállítások</value>
@@ -250,115 +250,115 @@
     <value>Videó</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter hostname</value>
+    <value>Kiszolgálónév megadása</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
     <value>A jelszó megadása</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter username</value>
+    <value>Felhasználónév megadása</value>
   </data>
   <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter your username</value>
+    <value>Felhasználónevének megadása</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>waiting for devices list...</value>
+    <value>várakozás az eszközök listájára…</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
     <value>Névjegy</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring is a free and universal communication platform which preserves the users' privacy and freedoms.</value>
+    <value>A Ring egy szabad szoftver az univerzális kommunikációhoz, mely tiszteletben tartja a felhasználók szabadságát és magán szféráját. </value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
-    <value>Privacy Policy</value>
+    <value>Adatvédelmi irányelvek</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted.</value>
+    <value>Az Ön fiókja törlésre kerül erről a számítógépről. Más eszközöket nem érinti. A nyilvános regisztrálást soha nem lehet törölni.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
-    <value>Your account will be deleted from this computer.</value>
+    <value>Fiókja törlésre kerül erről a számítógépről.</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
-    <value>People can find you with your username</value>
+    <value>Az emberek megtalálhatják Önt a felhasználónevével</value>
   </data>
   <data name="_whatWillHappen_0_" xml:space="preserve">
-    <value>You are already registered.</value>
+    <value>Már regisztrált.</value>
   </data>
   <data name="_whatWillHappen_1_" xml:space="preserve">
-    <value>You are not yet registered.</value>
+    <value>Még nem regisztrált.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>You'll have to send your ringId.</value>
+    <value>El kell küldenie a Ring azonosítóját.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
-    <value>Credentials error or PIN expired.</value>
+    <value>Hitelesítő adat hiba vagy lejárt PIN-kód.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
-    <value>No device id found!</value>
+    <value>Nem található eszközazonosító!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>you already have a contact with this ring id</value>
+    <value>már van kapcsolata ezzel a Ring azonosítóval</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
-    <value>network error!</value>
+    <value>hálózati hiba!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id added</value>
+    <value>ring azonosító hozzáadva</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>username found and added</value>
+    <value>megtalált és hozzáadott felhasználónév</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>username invalid</value>
+    <value>felhasználónév érvénytelen.</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>username not found</value>
+    <value>felhasználónév nem található</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Meglévő fiók hozzáadása</value>
   </data>
   <data name="_wizardCreateAccount_.Content" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>Új fiók létrehozása</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
     <value>Add meg a teljes neved</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
-    <value>Ring account password</value>
+    <value>RING fiók jelszava</value>
   </data>
   <data name="_wizardStep1_.Content" xml:space="preserve">
-    <value>Step 1</value>
+    <value>1. lépés</value>
   </data>
   <data name="_wizardStep2_.Content" xml:space="preserve">
-    <value>Step 2</value>
+    <value>2. lépés</value>
   </data>
   <data name="_accountsAlias_.Text" xml:space="preserve">
     <value>Álnév</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Create Account</value>
+    <value>Fiók létrehozása</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Account enabled</value>
+    <value>Fiók engedélyezve</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>Letiltott partnerek elrejtése</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Show banned contacts</value>
+    <value>Letiltott partnerek megjelenítése</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Nincs elérhető kapcsolat</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>Fiók módosításainak elfogadása</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>Bejövő hívás fogadása</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Add this user to your contacts</value>
+    <value>Adja hozzá ezt a felhasználót a partnereihez</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
     <value>Mé_gse</value>
@@ -367,40 +367,40 @@
     <value>Fiókok</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Create a new account</value>
+    <value>Új fiók létrehozása</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Next step</value>
+    <value>Következő lépés</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
-    <value>Add account</value>
+    <value>Fiók hozzáadása</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>Tiltás feloldása és ennek a felhasználónak a hozzáadása a partnereihez</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Add a new device to this account</value>
+    <value>Új eszköz hozzáadása ehhez a fiókhoz</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Start an audio call</value>
+    <value>Hanghívás indítása</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>Felhasználó letiltása bármilyen további kapcsolathoz</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(the user can be unblocked from the Account Settings panel)</value>
+    <value>(a felhasználó feloldható a Fiókbeállítások panelből)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancel account modifications</value>
+    <value>Fiók módosításainak törlése</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancel the outgoing call</value>
+    <value>Kimenő hívás visszavonása</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Change message panel orientation</value>
+    <value>Üzenet panel tájolásának módosítása</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Erase this conversation</value>
+    <value>Beszélgetés törlése</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
     <value>Névjegyzék</value>
@@ -409,7 +409,7 @@
     <value>Fiók létrehozása</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>Kapcsolatfelvételi kérelmek</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
     <value>Eszközök</value>
@@ -418,31 +418,31 @@
     <value>Kész</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>Nyissa meg a Fiókbeállítások panelt</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Kezdőlap/Névjegy</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignore this user's contact request</value>
+    <value>Figyelmen kívül hagyja ennek a felhasználónak a  kapcsolatfelvételi kérését</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
     <value>Ezt az eszköz csatlakoztassa egy másik eszközön létrehozott RING-fiókhoz</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>PIN-kód generátor törlése</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>Fiók PIN-kód létrehozása</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>Bejövő hívás elutasítása</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remove this contact</value>
+    <value>Partner eltávolítása</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revoke the device from this account</value>
+    <value>Eszköz visszavonása ebből a fiókból</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>Üzenet küldése</value>
@@ -451,82 +451,82 @@
     <value>Beállítások</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>QR-kód és Ring azonosító megjelenítése</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Start a video call</value>
+    <value>Videóhívás indítása</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Enable TURN server</value>
+    <value>TURN kiszolgáló engedélyezése</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
     <value>Hozzáadás a partnerekhez</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>Hangkodek:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Framerate: </value>
+    <value>Képarány:</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>Felbontás:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>Videókodek:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
-    <value>Add Device</value>
+    <value>Eszköz hozzáadása</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Keressen új vagy meglévő kapcsolatot</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>Keressen új vagy meglévő kapcsolatot</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>This device</value>
+    <value>Ez az eszköz</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>TURN server address</value>
+    <value>TURN kiszolgáló cím</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
     <value>Fiók törlése</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Type a message</value>
+    <value>Üzenet írása</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
-    <value>Close</value>
+    <value>Bezárás</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>Hozzáadás a konferenciához</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>Hívás</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>Ring azonosító másolása</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Név</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>A hálózat nem elérhető</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Egyéb kapcsolódó eszközök</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Partner eltávolítása</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
-    <value>Add Existing Account</value>
+    <value>Meglévő fiók hozzáadása</value>
   </data>
   <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
-    <value>Create New Account</value>
+    <value>Új fiók létrehozása</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>never called</value>
+    <value>soha nem hívott</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
     <value>Művészi elemek készítője:</value>
@@ -535,25 +535,25 @@
     <value>Szerző:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Attempting to add this device...</value>
+    <value>Megkísérli hozzáadni ezt az eszközt… </value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>Fiók létrehozása…</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>Fiók törlése…</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>PIN-kód létrehozása</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Eszköz visszavonása azonosítóval:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Updating account...</value>
+    <value>Fiók frissítése…</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remove contact</value>
+    <value>Partner eltávolítása</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
     <value>Üdvözli a </value>
