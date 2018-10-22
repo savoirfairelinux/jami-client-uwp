@@ -118,444 +118,444 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="_aboutBasicButton_.Content" xml:space="preserve">
-    <value>Sobre</value>
+    <value>Om</value>
   </data>
   <data name="_aboutCloseButton_.Content" xml:space="preserve">
-    <value>Fechar</value>
+    <value>Luk</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
-    <value>Créditos</value>
+    <value>Krediteringer</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
-    <value>Este programa vem com absolutamente sem nenhuma garantia</value>
+    <value>Dette program leveres uden nogen form for garanti</value>
   </data>
   <data name="_aboutGPL_0_.Text" xml:space="preserve">
-    <value>Veja a</value>
+    <value>Se</value>
   </data>
   <data name="_aboutGPL_1_.Content" xml:space="preserve">
-    <value>Licença GNU General Public, versão 3 ou superior</value>
+    <value>GNU General Public License, version 3 eller nyere</value>
   </data>
   <data name="_aboutGPL_1_.NavigateUri" xml:space="preserve">
-    <value>https://www.gnu.org/licenses/gpl-3.0.pt-br.html</value>
+    <value>https://www.gnu.org/licenses/gpl-3.0.en.html</value>
   </data>
   <data name="_aboutGPL_2_.Text" xml:space="preserve">
-    <value>para detalhes.</value>
+    <value>detaljer.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring é um software de comunicação seguro e distribuído.</value>
+    <value>Ring er et sikret og distribueret kommunikationsprogram.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
-    <value>Cliente Ring para Microsoft Windows Runtime.</value>
+    <value>Microsoft Windows Runtime klienten til Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>In varietate concordia -  Versão 1.0</value>
+    <value>In varietate concordia -  Version 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre com o apelido</value>
+    <value>Indtast alias</value>
   </data>
   <data name="_accountEditionTitle_.Text" xml:space="preserve">
-    <value>Editar Conta</value>
+    <value>Rediger konto</value>
   </data>
   <data name="_accountsAddDevice_.Text" xml:space="preserve">
-    <value>Adicionar Dispositivo</value>
+    <value>Tilføj enhed</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Entre o PIN</value>
+    <value>Indtast PIN-kode</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>Para vincular este dispositivo a sua conta Ring, primeiramente você terá que gerar um PIN a partir do Ring em um dispositivo hospedando a conta.</value>
+    <value>For at kunne tilknytte denne enhed til en Ring konto, skal du først generere en PIN fra Ring på en enhed som allerede er tilknyttet denne konto.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
-    <value>Auto atender</value>
+    <value>Besvar automatisk</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Dispositivos</value>
+    <value>Enheder</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
-    <value>Aprenda mais</value>
+    <value>Find ud af mere</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Entre sua senha</value>
+    <value>Indtast din adgangskode</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
-    <value>Aceitar chamadas e mensagens de contatos anônimos</value>
+    <value>Accepter opkald og beskeder fra kontakter der er inkognito</value>
   </data>
   <data name="_accountsPINGenerator_.Text" xml:space="preserve">
-    <value>Gerador de PIN</value>
+    <value>PIN generator</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>Registrar nome de usuário público</value>
+    <value>Registrer offentligt brugernavn</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
-    <value>Compartilhar</value>
+    <value>Del</value>
   </data>
   <data name="_accountsSIPParameters_.Text" xml:space="preserve">
-    <value>Parâmetros de configuração da conta SIP</value>
+    <value>SIP konto parametre</value>
   </data>
   <data name="_accountsTitle_.Text" xml:space="preserve">
-    <value>Contas</value>
+    <value>Konti</value>
   </data>
   <data name="_accountsType_.Text" xml:space="preserve">
-    <value>Tipo de conta</value>
+    <value>Kontotype</value>
   </data>
   <data name="_accountsUPnP_.Text" xml:space="preserve">
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Exportando conta no Ring...</value>
+    <value>Eksporterer kontoen til Ring...</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
-    <value>procurando por</value>
+    <value>leder efter</value>
   </data>
   <data name="_contactRequestPending_.Text" xml:space="preserve">
-    <value>adicionou você como um contato</value>
+    <value>har tilføjet dig som kontakt</value>
   </data>
   <data name="_contactRequestSent_.Text" xml:space="preserve">
-    <value>Solicitação de contato enviada</value>
+    <value>Kontaktforespørgsel afsendt</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
-    <value>Solicitações de Contatos</value>
+    <value>Kontaktanmodninger</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
-    <value>Contatos</value>
+    <value>Kontakter</value>
   </data>
   <data name="_learnMoreDeleteAccountEditionUid_.Content" xml:space="preserve">
-    <value>Aprenda mais</value>
+    <value>Find ud af mere</value>
   </data>
   <data name="_msgBeginningOfTime_.Text" xml:space="preserve">
-    <value>Início do Tempo</value>
+    <value>Tidernes morgen</value>
   </data>
   <data name="_registerOnBlockchainEditionUid_.Content" xml:space="preserve">
-    <value>Registrar</value>
+    <value>Registrér</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationCheckUid_.PlaceholderText" xml:space="preserve">
-    <value>Repita sua senha</value>
+    <value>Gentag adgangskode</value>
   </data>
   <data name="_ringPasswordBoxAccountCreationUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre a senha</value>
+    <value>Indtast adgangskode</value>
   </data>
   <data name="_settingsTitle_.Text" xml:space="preserve">
-    <value>Configurações</value>
+    <value>Indstillinger</value>
   </data>
   <data name="_settingsVideoDevice_.Text" xml:space="preserve">
-    <value>Dispositivo</value>
+    <value>Enhed</value>
   </data>
   <data name="_settingsVideoRate_.Text" xml:space="preserve">
-    <value>Taxa</value>
+    <value>Takst</value>
   </data>
   <data name="_settingsVideoResolution_.Text" xml:space="preserve">
-    <value>Resolução</value>
+    <value>Opløsning</value>
   </data>
   <data name="_settingsVideo_.Text" xml:space="preserve">
-    <value>Vídeo</value>
+    <value>Video</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre com o nome do servidor</value>
+    <value>Indtast hostnavn</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre a senha</value>
+    <value>Indtast adgangskode</value>
   </data>
   <data name="_sipUsernameEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre o nome de usuário</value>
+    <value>Indtast brugernavn</value>
   </data>
   <data name="_usernameTextBoxEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Entre seu nome de usuário</value>
+    <value>Indtast dit brugernavn</value>
   </data>
   <data name="_waitingDevicesListUid_.Text" xml:space="preserve">
-    <value>aguardando por lista de dispositivos...</value>
+    <value>venter på enhedsliste...</value>
   </data>
   <data name="_welcomeAboutButton_.Content" xml:space="preserve">
-    <value>Sobre</value>
+    <value>Om</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>Ring é uma plataforma de comunicação livre e universal que preserva a privacidade e liberdade dos usuários.</value>
+    <value>Ring er en fri og universel kommunikationsplatform som respekterer sine brugeres privatliv og friheder.</value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
-    <value>Política de Privacidade</value>
+    <value>Privatlivspolitik</value>
   </data>
   <data name="_whatWillHappendeleteRingAccountEditionUid_.Text" xml:space="preserve">
-    <value>Sua conta será removida deste computador. Outros dispositivos não serão afetados. Seu registro público nunca poderá ser removido.</value>
+    <value>Din konto vil blive slettet fra denne computer. Dette har ingen effekt på andre enheder. Din offentlige registrering kan aldrig blive slettet.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
-    <value>Sua conta será removida deste computador.</value>
+    <value>Din konto vil blive slettet fra denne computer.</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
-    <value>As pessoas podem te encontrar pelo seu nome de usuário</value>
+    <value>Andre personer kan finde dig gennem dit brugernavn</value>
   </data>
   <data name="_whatWillHappen_0_" xml:space="preserve">
-    <value>Você já está registrado.</value>
+    <value>Du er allerede registreret.</value>
   </data>
   <data name="_whatWillHappen_1_" xml:space="preserve">
-    <value>Você ainda não está registrado.</value>
+    <value>Du er endnu ikke registreret.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>Você terá que enviar seu ringId.</value>
+    <value>Du bliver nødt til at sende dit RingID.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
-    <value>Erro de credenciais ou PIN expirado.</value>
+    <value>Fejl med legitimationsoplysninger eller udløbet PIN.</value>
   </data>
   <data name="_accountsNoDeviceId_" xml:space="preserve">
-    <value>Nenhum ID de dispositivo encontrado!</value>
+    <value>Intet endheds-id fundet!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>você já possui um contato com este ring id</value>
+    <value>du har allerede en kontakt med dette RingID</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
-    <value>erro de conectividade!</value>
+    <value>netværksfejl!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring id adicionado</value>
+    <value>RingID tilføjet</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
-    <value>usuário encontrado e adicionado</value>
+    <value>brugernavn fundet og tilføjer</value>
   </data>
   <data name="_contactsUsernameInvalid_" xml:space="preserve">
-    <value>usuário inválido</value>
+    <value>brugernavn ugyldigt</value>
   </data>
   <data name="_contactsUsernameNotFound_" xml:space="preserve">
-    <value>usuário não encontrado</value>
+    <value>brugernavn ikke fundet</value>
   </data>
   <data name="_wizardAddExistingAccount_.Content" xml:space="preserve">
-    <value>Adicionar Conta Existente</value>
+    <value>Tilføj eksisterende konto</value>
   </data>
   <data name="_wizardCreateAccount_.Content" xml:space="preserve">
-    <value>Criar Nova Conta</value>
+    <value>Opret ny konto</value>
   </data>
   <data name="_wizardFullName_.PlaceholderText" xml:space="preserve">
-    <value>Insira seu nome completo</value>
+    <value>Indtast dit fulde navn</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
-    <value>Senha da conta Ring</value>
+    <value>Ring-konto adgangskode</value>
   </data>
   <data name="_wizardStep1_.Content" xml:space="preserve">
-    <value>Passo 1</value>
+    <value>Skridt 1</value>
   </data>
   <data name="_wizardStep2_.Content" xml:space="preserve">
-    <value>Passo 2</value>
+    <value>Skridt 2</value>
   </data>
   <data name="_accountsAlias_.Text" xml:space="preserve">
-    <value>Apelido</value>
+    <value>Alias</value>
   </data>
   <data name="_accountsCreation_.Text" xml:space="preserve">
-    <value>Criar Conta</value>
+    <value>Opret konto</value>
   </data>
   <data name="_accountsEnabled_.Text" xml:space="preserve">
-    <value>Conta habilitada</value>
+    <value>Konto aktiveret</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Esconder contatos banidos</value>
+    <value>Skjul blokerede kontakter</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
-    <value>Mostrar contatos banidos</value>
+    <value>Vis blokerede kontakter</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>Conexão não disponível</value>
+    <value>Ingen forbindelse tilgængelig</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Modificações de conta aceitas</value>
+    <value>Godkend konto-ændringer</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Aceitar a chamada</value>
+    <value>Godkend indgående opkald</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
-    <value>Adicionar este usuário aos seus contatos</value>
+    <value>Tilføj denne bruger til dine kontakter</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
-    <value>Cancelar</value>
+    <value>Annuller</value>
   </data>
   <data name="_tt_account_list_menu_.Text" xml:space="preserve">
-    <value>Contas</value>
+    <value>Konti</value>
   </data>
   <data name="_tt_add_account_.Text" xml:space="preserve">
-    <value>Criar nova conta</value>
+    <value>Opret en ny konto</value>
   </data>
   <data name="_tt_add_account_next_.Text" xml:space="preserve">
-    <value>Próximo passo</value>
+    <value>Næste skridt</value>
   </data>
   <data name="_tt_add_account_yes_.Text" xml:space="preserve">
-    <value>Adicionar conta</value>
+    <value>Tilføj konto</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Desbloquear e adicionar este usuário aos meus contatos</value>
+    <value>Ubloker og tilføj denne bruger til dine kontakter</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
-    <value>Adicionar um novo dispositivo a esta conta</value>
+    <value>Tilføj en nye enhed til denne konto</value>
   </data>
   <data name="_tt_audio_call_.Text" xml:space="preserve">
-    <value>Iniciar uma chamada de áudio</value>
+    <value>Start et opkald</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Bloquear este usuário de contacta-lo novamente</value>
+    <value>Bloker denne bruger for yderligere kontakt</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(o usuário pode ser desbloqueado a partir do painel Configurações da Conta)</value>
+    <value>(brugeren kan ublokeres fra Kontoindstillinger)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
-    <value>Cancelar modificações da conta</value>
+    <value>Annuller konto-ændringer</value>
   </data>
   <data name="_tt_cancel_call_.Text" xml:space="preserve">
-    <value>Cancelar esta chamada</value>
+    <value>Annuller udgående opkald</value>
   </data>
   <data name="_tt_change_orientation_.Text" xml:space="preserve">
-    <value>Mudar orientação do painel de mensagem</value>
+    <value>Ændr orienteringen på besked-panelet</value>
   </data>
   <data name="_tt_clear_conversation_.Text" xml:space="preserve">
-    <value>Apagar esta conversa</value>
+    <value>Slet denne samtale</value>
   </data>
   <data name="_tt_contact_list_menu_.Text" xml:space="preserve">
-    <value>Contatos</value>
+    <value>Kontakter</value>
   </data>
   <data name="_tt_create_account_yes_.Text" xml:space="preserve">
-    <value>Criar conta</value>
+    <value>Opret konto</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
-    <value>Solicitações de Contatos</value>
+    <value>Kontaktanmodninger</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Dispositivos</value>
+    <value>Enheder</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
-    <value>Feito</value>
+    <value>Færdig</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Abrir o painel de configuração de conta</value>
+    <value>Åbn kontoindstillinger</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Início/Sobre</value>
+    <value>Hjem/Om</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
-    <value>Ignorar os pedidos de contato deste usuário</value>
+    <value>Ignorer denne brugers kontakt-forespørgsel</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
-    <value>Associar este dispositivo à uma conta existente</value>
+    <value>Tilnyt denne enhed til en eksisterende konto</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancelar criação do PIN</value>
+    <value>Annuller PIN-generering</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Gerar PIN da conta</value>
+    <value>Generer PIN til kontoen</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Rejeitar chamada</value>
+    <value>Afvis indgående opkald</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
-    <value>Remover este contato</value>
+    <value>Fjern denne kontakt</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>Revogar o dispositivo desta conta</value>
+    <value>Fjern adgang til denne konto fra denne enhed</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
-    <value>Enviar mensagem</value>
+    <value>Send besked</value>
   </data>
   <data name="_tt_settings_menu_.Text" xml:space="preserve">
-    <value>Configurações</value>
+    <value>Indstillinger</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Exibir código QR e ID Ring</value>
+    <value>Vis QR-kode og RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
-    <value>Iniciar uma chamada de vídeo</value>
+    <value>Start et video-opkald</value>
   </data>
   <data name="_accountsTurnEnabled_.Text" xml:space="preserve">
-    <value>Ativar servidor TURN</value>
+    <value>Aktiver TURN-server</value>
   </data>
   <data name="_tt_send_contactrequest_.Text" xml:space="preserve">
-    <value>Adicionar aos contatos</value>
+    <value>Tilføj til kontakt</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Codec de áudio:</value>
+    <value>Lyd-codec:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
-    <value>Taxa de quadros:</value>
+    <value>Billedhastighed:</value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resolução:</value>
+    <value>Opløsning:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Codec de vídeo:</value>
+    <value>Video-codec:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
-    <value>Adicionar Dispositivo</value>
+    <value>Tilføj enhed</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Buscar contatos novos ou existentes</value>
+    <value>Søg efter nye eller eksisterende kontakter</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Buscar contatos novos ou existentes</value>
+    <value>Søg efter nye eller eksisterende kontakter</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
-    <value>Este dispositivo</value>
+    <value>Denne enhed</value>
   </data>
   <data name="_turnEditionTextBoxUid_.PlaceholderText" xml:space="preserve">
-    <value>Endereço de servidor TURN</value>
+    <value>TURN-server adresse</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Deletar conta</value>
+    <value>Slet konto</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
-    <value>Digite uma mensagem</value>
+    <value>Skriv en besked</value>
   </data>
   <data name="_tt_pin_gen_close_.Text" xml:space="preserve">
-    <value>Fechar</value>
+    <value>Luk</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Adicionar a conferência</value>
+    <value>Tilføj til konference</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
-    <value>Chamar</value>
+    <value>Ring op</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copiar ID Ring</value>
+    <value>Kopiér RingID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Nome</value>
+    <value>Navn</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Rede indisponível</value>
+    <value>Netværk ikke tilgængeligt</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Outro dispositivo conectado</value>
+    <value>Andre tilknyttede enheder</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
-    <value>Remover contato</value>
+    <value>Fjern kontakt</value>
   </data>
   <data name="_wizardAddExistingAccountTitle_.Text" xml:space="preserve">
-    <value>Adicionar Conta Existente</value>
+    <value>Tilføj eksisterende konto</value>
   </data>
   <data name="_wizardCreateAccountTitle_.Text" xml:space="preserve">
-    <value>Criar Nova Conta</value>
+    <value>Opret ny konto</value>
   </data>
   <data name="m_never_called_" xml:space="preserve">
-    <value>Nunca discado</value>
+    <value>ingen opkald</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
-    <value>Arte por:</value>
+    <value>Grafik af:</value>
   </data>
   <data name="_c_created_by_.Text" xml:space="preserve">
-    <value>Criado por:</value>
+    <value>Skabt af:</value>
   </data>
   <data name="_m_add_device_" xml:space="preserve">
-    <value>Tentando adicionar este dispositivo...</value>
+    <value>Forsøger at tilføje denne enhed...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Criando conta...</value>
+    <value>Opretter konto...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deletando conta...</value>
+    <value>Sletter konto...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Gerando PIN</value>
+    <value>Genererer PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revogando dispositivo com o ID:</value>
+    <value>Tilbagekalder enhed med ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
-    <value>Atualizando conta...</value>
+    <value>Opdaterer konto...</value>
   </data>
   <data name="_remove_contact_.Text" xml:space="preserve">
-    <value>Remover contato</value>
+    <value>Fjern kontakt</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Bem-vindo à</value>
+    <value>Velkommen til </value>
   </data>
 </root>
