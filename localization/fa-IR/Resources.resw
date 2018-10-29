@@ -214,7 +214,7 @@
     <value>درخواست تماس ارسال شد</value>
   </data>
   <data name="_contactRequestsTitle_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>درخواست های مخاطبان</value>
   </data>
   <data name="_contactsTitle_.Text" xml:space="preserve">
     <value>مخاطبان</value>
@@ -244,13 +244,13 @@
     <value>رتبه</value>
   </data>
   <data name="_settingsVideoResolution_.Text" xml:space="preserve">
-    <value>Resolution</value>
+    <value>کیفیت</value>
   </data>
   <data name="_settingsVideo_.Text" xml:space="preserve">
     <value>ویدیو</value>
   </data>
   <data name="_sipHostnameEditionUid_.PlaceholderText" xml:space="preserve">
-    <value>Enter hostname</value>
+    <value>نام میزبان را وارد کنید</value>
   </data>
   <data name="_sipPasswordEditionUid_.PlaceholderText" xml:space="preserve">
     <value>گذرواژه را وارد کنید</value>
@@ -277,7 +277,7 @@
     <value>Your account will be deleted from this computer. Other devices are not affected. Your public registration can never be deleted.</value>
   </data>
   <data name="_whatWillHappendeleteSipAccountEditionUid_.Text" xml:space="preserve">
-    <value>Your account will be deleted from this computer.</value>
+    <value>حساب شما از روی این کامپیوتر پاک خواهد شد.</value>
   </data>
   <data name="_whatWillHappenEditionUid_.Text" xml:space="preserve">
     <value>بقیه میتوانند شما را با استفاده از نام کاربریتان پیدا کنند</value>
@@ -343,7 +343,7 @@
     <value>حساب فعال شد</value>
   </data>
   <data name="_accountsHideBannedList_" xml:space="preserve">
-    <value>Hide banned contacts</value>
+    <value>مخفی سازی مخاطبان مسدود شده</value>
   </data>
   <data name="_accountsShowBannedList_" xml:space="preserve">
     <value>نمایش مخاطبین مسدود شده</value>
@@ -352,10 +352,10 @@
     <value>No connection available</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
-    <value>Accept account modifications</value>
+    <value>پذیرش اصلاحات حساب کاربری</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>پذیرش تماس دریافتی</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
     <value>افزودن این کاربر به مخاطبان خود</value>
@@ -376,7 +376,7 @@
     <value>افزودن حساب</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Unblock and add this user to your contacts</value>
+    <value>خارج کردن از حالت مسدود و افزودن این کاربر به مخاطبان</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
     <value>افزودن یک دستگاه جدید به این حساب</value>
@@ -385,7 +385,7 @@
     <value>شروع یک تماس صوتی</value>
   </data>
   <data name="_tt_block_cr_.Text" xml:space="preserve">
-    <value>Block this user from making any further contact</value>
+    <value>مسدود کردن این کاربر از برقراری هرگونه ارتباط بیشتر</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
     <value>(the user can be unblocked from the Account Settings panel)</value>
@@ -409,16 +409,16 @@
     <value>ایجاد حساب</value>
   </data>
   <data name="_tt_cr_list_menu_.Text" xml:space="preserve">
-    <value>Contact Requests</value>
+    <value>درخواست های مخاطبان</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
     <value>افزاره‌ها</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
-    <value>Done</value>
+    <value>پایان</value>
   </data>
   <data name="_tt_edit_account_.Text" xml:space="preserve">
-    <value>Open the Account Settings panel</value>
+    <value>باز کردن پنل تنظیمات حساب کاربری</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
     <value>خانه/درباره</value>
@@ -427,16 +427,16 @@
     <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
-    <value>Link this device to an existing account</value>
+    <value>پیوند این دستگاه به یک حساب کاربری موجود</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
-    <value>Cancel PIN generation</value>
+    <value>لغو تولید PIN</value>
   </data>
   <data name="_tt_pin_gen_yes_.Text" xml:space="preserve">
-    <value>Generate account PIN</value>
+    <value>تولید PIN حساب کاربری</value>
   </data>
   <data name="_tt_reject_call_.Text" xml:space="preserve">
-    <value>Reject the incoming call</value>
+    <value>رد تماس دریافتی</value>
   </data>
   <data name="_tt_remove_contact_.Text" xml:space="preserve">
     <value>حذف این مخاطب</value>
@@ -451,7 +451,7 @@
     <value>تنظیمات</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>Display QR code and RingID</value>
+    <value>نمایش کد QR و RingID</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
     <value>شروع یک تماس ویدیویی</value>
@@ -463,25 +463,25 @@
     <value>افزودن به مخاطبان</value>
   </data>
   <data name="_si_audioCodec_.Text" xml:space="preserve">
-    <value>Audio codec: </value>
+    <value>رمزینه های صوتی:</value>
   </data>
   <data name="_si_fps_.Text" xml:space="preserve">
     <value>Framerate: </value>
   </data>
   <data name="_si_resolution_.Text" xml:space="preserve">
-    <value>Resoulution: </value>
+    <value>کیفیت:</value>
   </data>
   <data name="_si_videoCodec_.Text" xml:space="preserve">
-    <value>Video codec: </value>
+    <value>رمزینه های تصویری:</value>
   </data>
   <data name="_addDeviceMenuTitle_.Text" xml:space="preserve">
     <value>اضافه‌کردن دستگاه</value>
   </data>
   <data name="_ringTxtBxPlaceholderText_" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>جستجو برای مخاطبان موجود یا جدید</value>
   </data>
   <data name="_ringTxtBx_.PlaceholderText" xml:space="preserve">
-    <value>Search for new or existing contacts</value>
+    <value>جستجو برای مخاطبان موجود یا جدید</value>
   </data>
   <data name="_thisDevice_.Text" xml:space="preserve">
     <value>این دستگاه</value>
@@ -499,19 +499,19 @@
     <value>بستن</value>
   </data>
   <data name="_add_to_conference_.Text" xml:space="preserve">
-    <value>Add to conference</value>
+    <value>افزودن به نشست</value>
   </data>
   <data name="_call_.Text" xml:space="preserve">
     <value>برقراری تماس</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Copy RingID</value>
+    <value>کپی RingID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>نام</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
-    <value>Network unavailable</value>
+    <value>شبکه ناموجود</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
     <value>Other linked devices</value>
@@ -538,13 +538,13 @@
     <value>Attempting to add this device...</value>
   </data>
   <data name="_m_creating_account_" xml:space="preserve">
-    <value>Creating account...</value>
+    <value>ایجاد حساب کاربری...</value>
   </data>
   <data name="_m_deleting_account_" xml:space="preserve">
-    <value>Deleting account...</value>
+    <value>حذف حساب کاربری...</value>
   </data>
   <data name="_m_generating_pin_" xml:space="preserve">
-    <value>Generating PIN</value>
+    <value>در حال تولید PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
     <value>Revoking device with ID:</value>
@@ -556,6 +556,6 @@
     <value>حذف مخاطب</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>خوش آمدید به</value>
   </data>
 </root>
