@@ -388,7 +388,7 @@
     <value>Bloquear este usuário de contacta-lo novamente</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(o usuário pode ser desbloqueado a partir das Configurações de painel da Conta)</value>
+    <value>(o usuário pode ser desbloqueado a partir do painel Configurações da Conta)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
     <value>Cancelar modificações da conta</value>
@@ -442,7 +442,7 @@
     <value>Remover este contato</value>
   </data>
   <data name="_tt_revoke_device_.Text" xml:space="preserve">
-    <value>revogar o dispositivo nesta conta</value>
+    <value>Revogar o dispositivo desta conta</value>
   </data>
   <data name="_tt_send_message_.Text" xml:space="preserve">
     <value>Enviar mensagem</value>
@@ -529,7 +529,7 @@
     <value>Nunca discado</value>
   </data>
   <data name="_c_artwork_by_.Text" xml:space="preserve">
-    <value>Artwork por:</value>
+    <value>Arte por:</value>
   </data>
   <data name="_c_created_by_.Text" xml:space="preserve">
     <value>Criado por:</value>
