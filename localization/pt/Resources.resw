@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -361,7 +361,7 @@
     <value>Add this user to your contacts</value>
   </data>
   <data name="_tt_account_cancel_.Text" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Cancelar</value>
   </data>
   <data name="_tt_account_list_menu_.Text" xml:space="preserve">
     <value>Contas</value>
@@ -427,7 +427,7 @@
     <value>Ignore this user's contact request</value>
   </data>
   <data name="_tt_link_device_.Text" xml:space="preserve">
-    <value>Link this device to an existing account</value>
+    <value>Ligar este dispositivo a uma conta existente</value>
   </data>
   <data name="_tt_pin_gen_no_.Text" xml:space="preserve">
     <value>Cancel PIN generation</value>
@@ -490,7 +490,7 @@
     <value>TURN server address</value>
   </data>
   <data name="_tt_delete_account_.Text" xml:space="preserve">
-    <value>Delete account</value>
+    <value>Eliminar conta</value>
   </data>
   <data name="_messageTextBox_.PlaceholderText" xml:space="preserve">
     <value>Type a message</value>
@@ -556,6 +556,6 @@
     <value>Remove contact</value>
   </data>
   <data name="_welcome_.Text" xml:space="preserve">
-    <value>Welcome to</value>
+    <value>Bem-vindo ao</value>
   </data>
 </root>

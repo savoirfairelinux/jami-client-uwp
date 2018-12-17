@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -124,7 +124,7 @@
     <value>Close</value>
   </data>
   <data name="_aboutCreditsButton_.Content" xml:space="preserve">
-    <value>Credits</value>
+    <value>Tekijät</value>
   </data>
   <data name="_aboutDisclaimer_.Text" xml:space="preserve">
     <value>This program comes with absolutely no warranty</value>
@@ -160,7 +160,7 @@
     <value>Add Device</value>
   </data>
   <data name="_accountsAddEnterPIN_.PlaceholderText" xml:space="preserve">
-    <value>Enter PIN</value>
+    <value>Syötä PIN-koodi</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
     <value>To link this device to a Ring account, you'll first need to generate a PIN from Ring on a device hosting the account.</value>
@@ -169,7 +169,7 @@
     <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Laitteet</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
     <value>Learn more</value>
@@ -412,7 +412,7 @@
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Laitteet</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>Valmis</value>
