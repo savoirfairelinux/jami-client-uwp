@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -142,10 +142,10 @@
     <value>a részletekért.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>A Ring egy biztonságos és elosztott kommunikációs szoftver. </value>
+    <value>A Jami egy biztonságos és elosztott csevegőprogram.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
-    <value>A Microsoft Windows Runtime kliens a Ring számára.</value>
+    <value>A Microsoft Windows Runtime ügyfél a Jami számára.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
     <value>Egység a sokféleségben - 1.0 verzió</value>
@@ -163,7 +163,7 @@
     <value>PIN-kód megadása</value>
   </data>
   <data name="_accountsAddStep1_.Text" xml:space="preserve">
-    <value>Az eszköz összekapcsolásához a Ring-fiókkal, először PIN-kódot kell létrehoznia a Ringből a fiókot kiszolgáló eszközön.</value>
+    <value>Az eszköz összekapcsolásához a Jami fiókkal, először PIN-kódot kell létrehoznia a Jamiből a fiókot kiszolgáló eszközön.</value>
   </data>
   <data name="_accountsAutoAnswer_.Text" xml:space="preserve">
     <value>Automatikus válasz</value>
@@ -175,7 +175,7 @@
     <value>Tudjon meg többet</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Írja be a jelszót</value>
+    <value>Adja meg a jelszót</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
     <value>Fogadja el a rejtett partnerektől származó hívásokat és üzeneteket</value>
@@ -184,7 +184,7 @@
     <value>PIN-kód generátor</value>
   </data>
   <data name="_accountsRegisterPublicName_.Text" xml:space="preserve">
-    <value>Regisztráljon nyilvános felhasználónevet</value>
+    <value>Nyilvános felhasználónév regisztrálása</value>
   </data>
   <data name="_accountsShare_.Text" xml:space="preserve">
     <value>Megosztás </value>
@@ -202,7 +202,7 @@
     <value>UPnP</value>
   </data>
   <data name="_accountsWaitingAndResult_.Text" xml:space="preserve">
-    <value>Fiók exportálása a Ringen…</value>
+    <value>Fiók exportálása a Jami-n…</value>
   </data>
   <data name="_callsLookingFor_" xml:space="preserve">
     <value>keresni</value>
@@ -268,7 +268,7 @@
     <value>Névjegy</value>
   </data>
   <data name="_welcomeDescription_.Text" xml:space="preserve">
-    <value>A Ring egy szabad szoftver az univerzális kommunikációhoz, mely tiszteletben tartja a felhasználók szabadságát és magán szféráját. </value>
+    <value>A Jami egy szabad szoftver az egyetemes közlés emelvény, mely tiszteletben tartja a felhasználók szabadságát és magán szféráját. </value>
   </data>
   <data name="_welcomePrivacyLink_.Content" xml:space="preserve">
     <value>Adatvédelmi irányelvek</value>
@@ -289,7 +289,7 @@
     <value>Még nem regisztrált.</value>
   </data>
   <data name="_whatWillHappen_2_" xml:space="preserve">
-    <value>El kell küldenie a Ring azonosítóját.</value>
+    <value>El kell küldenie a Jami azonosítóját.</value>
   </data>
   <data name="_accountsCredentialsExpired_" xml:space="preserve">
     <value>Hitelesítő adat hiba vagy lejárt PIN-kód.</value>
@@ -298,13 +298,13 @@
     <value>Nem található eszközazonosító!</value>
   </data>
   <data name="_contactsContactExists_" xml:space="preserve">
-    <value>már van kapcsolata ezzel a Ring azonosítóval</value>
+    <value>már van kapcsolata ezzel a Jami azonosítóval</value>
   </data>
   <data name="_contactsNetworkError_" xml:space="preserve">
     <value>hálózati hiba!</value>
   </data>
   <data name="_contactsRingIdAdded_" xml:space="preserve">
-    <value>ring azonosító hozzáadva</value>
+    <value>Jami azonosító hozzáadva</value>
   </data>
   <data name="_contactsUserAdded_" xml:space="preserve">
     <value>megtalált és hozzáadott felhasználónév</value>
@@ -325,7 +325,7 @@
     <value>Add meg a teljes neved</value>
   </data>
   <data name="_wizardRingAccountPassword_.Text" xml:space="preserve">
-    <value>RING fiók jelszava</value>
+    <value>Jami fiók jelszava</value>
   </data>
   <data name="_wizardStep1_.Content" xml:space="preserve">
     <value>1. lépés</value>
@@ -376,7 +376,7 @@
     <value>Fiók hozzáadása</value>
   </data>
   <data name="_tt_add_banned_.Text" xml:space="preserve">
-    <value>Tiltás feloldása és ennek a felhasználónak a hozzáadása a partnereihez</value>
+    <value>Letiltás feloldása és ennek a felhasználónak a hozzáadása a partnereihez</value>
   </data>
   <data name="_tt_add_device_.Text" xml:space="preserve">
     <value>Új eszköz hozzáadása ehhez a fiókhoz</value>
@@ -388,7 +388,7 @@
     <value>Felhasználó letiltása bármilyen további kapcsolathoz</value>
   </data>
   <data name="_tt_block_cr_2.Text" xml:space="preserve">
-    <value>(a felhasználó feloldható a Fiókbeállítások panelből)</value>
+    <value>(a partner Letiltás feloldása a Fiókbeállítások panelből)</value>
   </data>
   <data name="_tt_cancel_account_mod_.Text" xml:space="preserve">
     <value>Fiók módosításainak törlése</value>
@@ -451,7 +451,7 @@
     <value>Beállítások</value>
   </data>
   <data name="_tt_share_menu_.Text" xml:space="preserve">
-    <value>QR-kód és Ring azonosító megjelenítése</value>
+    <value>QR-kód és Jami azonosító megjelenítése</value>
   </data>
   <data name="_tt_video_call_.Text" xml:space="preserve">
     <value>Videóhívás indítása</value>
@@ -505,7 +505,7 @@
     <value>Hívás</value>
   </data>
   <data name="_copy_ring_id_.Text" xml:space="preserve">
-    <value>Ring azonosító másolása</value>
+    <value>Jami azonosító másolása</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
     <value>Név</value>

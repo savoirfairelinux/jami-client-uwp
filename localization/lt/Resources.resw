@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -142,13 +142,13 @@
     <value>, norėdami sužinoti daugiau.</value>
   </data>
   <data name="_aboutReleaseDescription_.Text" xml:space="preserve">
-    <value>Ring yra saugi ir paskirstytoji susisiekimo programinė įranga.</value>
+    <value>Ring yra saugi ir paskirstytoji bendravimo programinė įranga.</value>
   </data>
   <data name="_aboutReleasePlatform_.Text" xml:space="preserve">
     <value>The Microsoft Windows Runtime client for Ring.</value>
   </data>
   <data name="_aboutReleaseTitle_.Text" xml:space="preserve">
-    <value>In varietate concordia -  Version 1.0</value>
+    <value>In varietate concordia -  Versija 1.0</value>
   </data>
   <data name="_accountAliasTextBoxUid_.PlaceholderText" xml:space="preserve">
     <value>Enter alias</value>
@@ -175,7 +175,7 @@
     <value>Sužinoti daugiau</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Enter your password</value>
+    <value>Įveskite savo slaptažodį</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
     <value>Priimti skambučius ir žinutes nuo nepažįstamų kontaktų</value>
@@ -349,13 +349,13 @@
     <value>Rodyti užblokuotus kontaktus</value>
   </data>
   <data name="_accountNotRegistered_" xml:space="preserve">
-    <value>No connection available</value>
+    <value>Ryšys neprieinamas</value>
   </data>
   <data name="_tt_accept_account_mod_.Text" xml:space="preserve">
     <value>Accept account modifications</value>
   </data>
   <data name="_tt_accept_call_.Text" xml:space="preserve">
-    <value>Accept the incoming call</value>
+    <value>Priimti gaunamąjį skambutį</value>
   </data>
   <data name="_tt_accept_cr_.Text" xml:space="preserve">
     <value>Add this user to your contacts</value>
@@ -421,7 +421,7 @@
     <value>Open the Account Settings panel</value>
   </data>
   <data name="_tt_home_menu_.Text" xml:space="preserve">
-    <value>Home/About</value>
+    <value>Pradžia/Apie</value>
   </data>
   <data name="_tt_ingnore_cr_.Text" xml:space="preserve">
     <value>Nepaisyti šio naudotojo kontakto užklausos</value>
@@ -508,13 +508,13 @@
     <value>Kopijuoti RingID</value>
   </data>
   <data name="_deviceName_.Text" xml:space="preserve">
-    <value>Name </value>
+    <value>Pavadinimas</value>
   </data>
   <data name="_network_unavailable_.Text" xml:space="preserve">
     <value>Tinklas neprieinamas</value>
   </data>
   <data name="_other_linked_devices_.Text" xml:space="preserve">
-    <value>Other linked devices</value>
+    <value>Kiti susieti įrenginiai</value>
   </data>
   <data name="_removeContact_.Text" xml:space="preserve">
     <value>Šalinti kontaktą</value>
@@ -547,7 +547,7 @@
     <value>Generating PIN</value>
   </data>
   <data name="_m_revoking_device_" xml:space="preserve">
-    <value>Revoking device with ID:</value>
+    <value>Panaikinamas įrenginys, kurio ID:</value>
   </data>
   <data name="_m_updating_account_" xml:space="preserve">
     <value>Atnaujinama paskyra...</value>
