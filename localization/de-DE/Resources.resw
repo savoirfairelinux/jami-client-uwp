@@ -1,4 +1,4 @@
-<?xml version='1.0' encoding='UTF-8'?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -169,13 +169,13 @@
     <value>Auto answer</value>
   </data>
   <data name="_accountsDevices_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Geräte</value>
   </data>
   <data name="_accountsEditionLearnMore_.Content" xml:space="preserve">
     <value>Learn more</value>
   </data>
   <data name="_accountsEnterArchivePassword_.PlaceholderText" xml:space="preserve">
-    <value>Enter your password</value>
+    <value>Geben Sie Ihr Passwort ein</value>
   </data>
   <data name="_accountsIncognitoContacts_.Text" xml:space="preserve">
     <value>Accept calls and messages from incognito contacts</value>
@@ -412,7 +412,7 @@
     <value>Contact Requests</value>
   </data>
   <data name="_tt_devices_list_menu_.Text" xml:space="preserve">
-    <value>Devices</value>
+    <value>Geräte</value>
   </data>
   <data name="_tt_done_.Text" xml:space="preserve">
     <value>Done</value>
