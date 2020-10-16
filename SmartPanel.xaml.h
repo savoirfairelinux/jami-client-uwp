@@ -127,7 +127,7 @@ private:
     void _addAccountYes__Click(Platform::Object^ sender, RoutedEventArgs^ e);
     void OnregistrationStateErrorGeneric(const std::string& accountId);
     void _PINTextBox__GotFocus(Platform::Object^ sender, RoutedEventArgs^ e);
-    void OnnameRegistred(bool status, String ^accountId);
+    void OnnameRegistered(bool status, String ^accountId);
     void OnregistrationStateRegistered(const std::string& accountId);
     void OncallPlaced(Platform::String ^callId);
     void OncontactDataModified(Platform::String ^account, Contact^ contact);

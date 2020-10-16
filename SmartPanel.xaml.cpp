@@ -189,7 +189,7 @@ SmartPanel::SmartPanel()
 
     RingD::instance->newBuddyNotification += ref new RingClientUWP::NewBuddyNotification(this, &RingClientUWP::Views::SmartPanel::OnnewBuddyNotification);
 
-    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &SmartPanel::OnnameRegistred);
+    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &SmartPanel::OnnameRegistered);
 
     _networkConnectivityNotificationRow_->Height = Utils::hasInternet() ? 0 : 32;
 
@@ -197,7 +197,7 @@ SmartPanel::SmartPanel()
 }
 
 void
-SmartPanel::OnnameRegistred(bool status, String ^accountId)
+SmartPanel::OnnameRegistered(bool status, String ^accountId)
 {
     updatePageContent();
 }
@@ -1165,7 +1165,7 @@ void RingClientUWP::Views::SmartPanel::OnregisteredNameFound(RingClientUWP::Look
             MSG_("INVALID_NAME LOOKUP RESULT");
             std::regex sha1_regex("[0-9a-f]{40}");
             if (std::regex_match(name, sha1_regex)) {
-                /* first we check if some contact is registred with this ring id */
+                /* first we check if some contact is registered with this ring id */
                 auto contactAlreadyRecorded = contactListModel->findContactByRingId(Utils::toPlatformString(name));
                 if (contactAlreadyRecorded) {
                     /* delete the contact added recently */

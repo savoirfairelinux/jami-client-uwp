@@ -442,7 +442,7 @@ void RingClientUWP::MainPage::OnregistrationStateRegistered(const std::string& a
 {
     /* do not connect those delegates before initial registration on dht is fine.
        Otherwise your going to mess with the wizard */
-    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &RingClientUWP::MainPage::OnnameRegistred);
+    RingD::instance->nameRegistered += ref new RingClientUWP::NameRegistered(this, &RingClientUWP::MainPage::OnnameRegistered);
     RingD::instance->volatileDetailsChanged += ref new RingClientUWP::VolatileDetailsChanged(this, &MainPage::OnvolatileDetailsChanged);
 }
 
@@ -451,7 +451,7 @@ void RingClientUWP::MainPage::OncallPlaced(Platform::String ^callId)
 }
 
 void
-MainPage::OnnameRegistred(bool status, String ^accountId)
+MainPage::OnnameRegistered(bool status, String ^accountId)
 {
     showLoadingOverlay(false, false);
 }
