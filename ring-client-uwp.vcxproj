@@ -137,14 +137,14 @@
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>..\..\ring-daemon\MSVC;..\..\ring-daemon\src\media;..\..\ring-daemon\src;..\..\ring-daemon\src\dring;..\..\ring-daemon\contrib\include;..\..\ring-daemon\contrib\include\pjlib;..\..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\ring-daemon\MSVC;..\..\ring-daemon\src\media;..\..\ring-daemon\src;..\..\ring-daemon\src\jami;..\..\ring-daemon\contrib\include;..\..\ring-daemon\contrib\include\pjlib;..\..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
       <DisableSpecificWarnings>4453;28204;4267;4129;4973;4018;</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\daemon\MSVC;..\daemon\src\media;..\daemon\src;..\daemon\src\dring;..\daemon\contrib\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>contrib\sqlite-win32;contrib\qrencode-win32;..\daemon\MSVC;..\daemon\src\media;..\daemon\src;..\daemon\src\jami;..\daemon\contrib\msvc\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>SQLITE_OS_WINRT;STATICLIB;RING_UWP;WIN32_NATIVE;_UNICODE;UNICODE;OPENDHT_PROXY_CLIENT=1;OPENDHT_PROXY_SERVER=1;OPENDHT_PUSH_NOTIFICATIONS=1;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <CompileAsWinRT>true</CompileAsWinRT>
@@ -161,7 +161,7 @@
       <ForceFileOutput>MultiplyDefinedSymbolOnly</ForceFileOutput>
     </Link>
     <Link>
-      <AdditionalDependencies>kernel32.lib;shell32.lib;strmiids.lib;dring.lib;secp256k1.lib;WindowsApp.lib;qrcodelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;shell32.lib;strmiids.lib;jami.lib;secp256k1.lib;WindowsApp.lib;qrcodelib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link>
       <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
@@ -357,7 +357,7 @@
     <ClCompile Include="AccountsViewModel.cpp" />
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\dring;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Release|x64'">..\ring-daemon\MSVC;..\ring-daemon\src\media;..\ring-daemon\src;..\ring-daemon\src\jami;..\ring-daemon\contrib\include;..\ring-daemon\contrib\include\pjlib;..\ring-daemon\contrib\pjproject\third_party\speex\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <ClCompile Include="Contact.cpp" />
     <ClCompile Include="ContactRequestItem.cpp" />

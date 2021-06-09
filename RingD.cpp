@@ -19,8 +19,8 @@
 #include "pch.h"
 
 /* daemon */
-#include <dring.h>
-#include "dring/call_const.h"
+#include <jami.h>
+#include "jami/call_const.h"
 #include "callmanager_interface.h"
 #include "configurationmanager_interface.h"
 #include "presencemanager_interface.h"
